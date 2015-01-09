@@ -22,7 +22,7 @@ namespace System.Web.Http.ValueProviders.Providers
 
         public bool ContainsPrefix(string prefix)
         {
-            return PrefixContainer.IsPrefixMatch(Name, prefix);
+            return PrefixContainer.IsPrefixMatch(prefix, Name);
         }
 
         public ValueProviderResult GetValue(string key)

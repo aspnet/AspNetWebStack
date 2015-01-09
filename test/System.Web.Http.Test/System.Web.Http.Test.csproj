@@ -122,6 +122,12 @@
     <Compile Include="Hosting\SuppressHostPrincipalMessageHandlerTest.cs" />
     <Compile Include="HttpMessageHandlerExtensions.cs" />
     <Compile Include="HttpRouteCollectionTest.cs" />
+    <Compile Include="ModelBinding\ModelBindingEndToEndTests.cs" />
+    <Compile Include="ModelBinding\SharedModels\PeopleModel.cs" />
+    <Compile Include="ModelBinding\SharedModels\User.cs" />
+    <Compile Include="ModelBinding\SharedModels\Address.cs" />
+    <Compile Include="ModelBinding\SharedModels\StreetAddress.cs" />
+    <Compile Include="ModelBinding\SharedModels\Person.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -346,6 +352,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Validation\Validators\ErrorModelValidatorTest.cs" />
+    <Compile Include="ValueProviders\Providers\ElementalValueProviderTest.cs" />
     <Compile Include="ValueProviders\Providers\RouteDataValueProviderFactoryTest.cs" />
     <Compile Include="ValueProviders\Providers\NameValuePairsValueProviderTest.cs" />
     <Compile Include="ValueProviders\Providers\QueryStringValueProviderFactoryTest.cs" />

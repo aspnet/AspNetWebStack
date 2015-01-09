@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Http.Controllers;
+using System.Web.Http.Metadata;
 using System.Web.Http.Metadata.Providers;
 using System.Web.Http.ModelBinding.Binders;
 using System.Web.Http.Util;
@@ -215,6 +216,119 @@ namespace System.Web.Http.ModelBinding
             // Assert
             Assert.Equal(new[] { 42 }, boundCollection.ToArray());
             Assert.Equal(new[] { childValidationNode }, bindingContext.ValidationNode.ChildNodes.ToArray());
+        }
+
+        [Fact]
+        public void BindingUnboundedCollection_WhenNoValuesArePresent_ProducesSingleEntryCollection()
+        {
+            // Arrange
+            string propertyName = "Addresses";
+            ModelMetadata modelMetadata = new EmptyModelMetadataProvider().GetMetadataForProperty(
+                                                            modelAccessor: null,
+                                                            containerType: typeof(UserWithAddress),
+                                                            propertyName: propertyName);
+            ModelBindingContext bindingContext = new ModelBindingContext
+            {
+                ModelMetadata = modelMetadata,
+                ModelName = propertyName,
+                ValueProvider = new SimpleHttpValueProvider { { propertyName, "some value" } }
+            };
+            HttpActionContext context = ContextUtil.CreateActionContext();
+            CollectionModelBinder<UserWithAddress> binder = new CollectionModelBinder<UserWithAddress>();
+
+            // Act
+            bool result = binder.BindModel(context, bindingContext);
+
+            // Assert
+            Assert.True(result);
+            List<UserWithAddress> boundModel = Assert.IsType<List<UserWithAddress>>(bindingContext.Model);
+            UserWithAddress listModel = Assert.Single(boundModel);
+            Assert.Null(listModel.Addresses);
+        }
+
+        [Fact]
+        public void BindingNestedUnboundedCollection_WhenNoValuesArePresent_ProducesEmptyCollection()
+        {
+            // Arrange
+            string propertyName = "Addresses";
+            ModelMetadata modelMetadata = new EmptyModelMetadataProvider().GetMetadataForProperty(
+                                                            modelAccessor: null,
+                                                            containerType: typeof(UserWithAddress),
+                                                            propertyName: propertyName);
+            ModelBindingContext bindingContext = new ModelBindingContext
+            {
+                ModelMetadata = modelMetadata,
+                ModelName = propertyName,
+                ValueProvider = new SimpleHttpValueProvider { { "Addresses.AddressLines", "some value" } }
+            };
+            HttpActionContext context = ContextUtil.CreateActionContext();
+            CollectionModelBinder<UserWithAddress> binder = new CollectionModelBinder<UserWithAddress>();
+
+            // Act
+            bool result = binder.BindModel(context, bindingContext);
+
+            // Assert
+            Assert.True(result);
+            List<UserWithAddress> boundModel = Assert.IsType<List<UserWithAddress>>(bindingContext.Model);
+            Assert.Empty(boundModel);
+        }
+
+        [Fact]
+        public void BindingListsWithIndex_ProducesSingleLengthCollection_WithNullValues()
+        {
+            // Arrange
+            string propertyName = "Addresses";
+            ModelMetadata modelMetadata = new EmptyModelMetadataProvider().GetMetadataForProperty(
+                                                            modelAccessor: null,
+                                                            containerType: typeof(UserWithAddress),
+                                                            propertyName: propertyName);
+            ModelBindingContext bindingContext = new ModelBindingContext
+            {
+                ModelMetadata = modelMetadata,
+                ModelName = propertyName,
+                ValueProvider = new SimpleHttpValueProvider { { "Addresses.index", "10000" } }
+            };
+            HttpActionContext context = ContextUtil.CreateActionContext();
+            CollectionModelBinder<UserWithAddress> binder = new CollectionModelBinder<UserWithAddress>();
+
+            // Act
+            bool result = binder.BindModel(context, bindingContext);
+
+            // Assert
+            Assert.True(result);
+            List<UserWithAddress> boundModel = Assert.IsType<List<UserWithAddress>>(bindingContext.Model);
+            UserWithAddress listModel = Assert.Single(boundModel);
+            Assert.Null(listModel);
+        }
+
+        [Fact]
+        public void BindingUnboundedCollection_WithRecursiveRelation_ProducesSingleLengthCollection()
+        {
+            // Arrange
+            string propertyName = "People";
+            ModelMetadata modelMetadata = new EmptyModelMetadataProvider().GetMetadataForProperty(
+                                                            modelAccessor: null,
+                                                            containerType: typeof(PeopleModel),
+                                                            propertyName: propertyName);
+            ModelBindingContext bindingContext = new ModelBindingContext
+            {
+                ModelMetadata = modelMetadata,
+                ModelName = propertyName,
+                ValueProvider = new SimpleHttpValueProvider { { propertyName, "test value" } }
+            };
+            HttpActionContext context = ContextUtil.CreateActionContext();
+            CollectionModelBinder<Person> binder =
+                new CollectionModelBinder<Person>();
+
+            // Act
+            bool result = binder.BindModel(context, bindingContext);
+
+            // Assert
+            Assert.True(result);
+            List<Person> boundModel =
+                Assert.IsType<List<Person>>(bindingContext.Model);
+            Person type = Assert.Single(boundModel);
+            Assert.Null(type.Name);
         }
     }
 }

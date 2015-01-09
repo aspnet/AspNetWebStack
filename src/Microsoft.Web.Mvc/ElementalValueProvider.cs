@@ -24,7 +24,7 @@ namespace Microsoft.Web.Mvc
 
         public bool ContainsPrefix(string prefix)
         {
-            return ValueProviderUtil.IsPrefixMatch(Name, prefix);
+            return ValueProviderUtil.IsPrefixMatch(prefix, Name);
         }
 
         public ValueProviderResult GetValue(string key)
