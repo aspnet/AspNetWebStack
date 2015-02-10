@@ -64,8 +64,36 @@ namespace System.Web.Mvc.Test
             RedirectResult result = authContext.Result as RedirectResult;
 
             // Assert
+            Assert.IsFalse(attr.Permanent);
             Assert.NotNull(result);
             Assert.Equal("https://www.example.com/alpha/bravo/charlie?q=quux", result.Url);
+            Assert.IsFalse(result.Permanent);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void OnAuthorizationRedirectsIfPermanentConstructorParameterIsAndRequestIsNotSecureAndMethodIsGet(bool permanent)
+        {
+            // Arrange
+            Mock<AuthorizationContext> mockAuthContext = new Mock<AuthorizationContext>();
+            mockAuthContext.Setup(c => c.HttpContext.Request.HttpMethod).Returns("get");
+            mockAuthContext.Setup(c => c.HttpContext.Request.IsSecureConnection).Returns(false);
+            mockAuthContext.Setup(c => c.HttpContext.Request.RawUrl).Returns("/alpha/bravo/charlie?q=quux");
+            mockAuthContext.Setup(c => c.HttpContext.Request.Url).Returns(new Uri("http://www.example.com:8080/foo/bar/baz"));
+            AuthorizationContext authContext = mockAuthContext.Object;
+
+            RequireHttpsAttribute attr = new RequireHttpsAttribute(permanent);
+
+            // Act
+            attr.OnAuthorization(authContext);
+            RedirectResult result = authContext.Result as RedirectResult;
+
+            // Assert
+            Assert.Equal(permanent, attr.Permanent);
+            Assert.NotNull(result);
+            Assert.Equal("https://www.example.com/alpha/bravo/charlie?q=quux", result.Url);
+            Assert.Equal(permanent, result.Permanent);
         }
 
         [Fact]

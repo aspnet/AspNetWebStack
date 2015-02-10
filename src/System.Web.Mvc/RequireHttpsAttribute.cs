@@ -9,6 +9,25 @@ namespace System.Web.Mvc
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
     public class RequireHttpsAttribute : FilterAttribute, IAuthorizationFilter
     {
+        public RequireHttpsAttribute()
+            : this(permanent: false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RequireHttpsAttribute"/> class.
+        /// </summary>
+        /// <param name="permanent">Whether the redirect to HTTPS should be a permanent redirect.</param>
+        public RequireHttpsAttribute(bool permanent)
+        {
+            this.Permanent = permanent;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the redirect to HTTPS should be a permanent redirect.
+        /// </summary>
+        public bool Permanent { get; private set; }
+
         public virtual void OnAuthorization(AuthorizationContext filterContext)
         {
             if (filterContext == null)
@@ -34,7 +53,7 @@ namespace System.Web.Mvc
 
             // redirect to HTTPS version of page
             string url = "https://" + filterContext.HttpContext.Request.Url.Host + filterContext.HttpContext.Request.RawUrl;
-            filterContext.Result = new RedirectResult(url);
+            filterContext.Result = new RedirectResult(url, this.Permanent);
         }
     }
 }
