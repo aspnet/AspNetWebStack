@@ -64,10 +64,10 @@ namespace System.Web.Mvc.Test
             RedirectResult result = authContext.Result as RedirectResult;
 
             // Assert
-            Assert.IsFalse(attr.Permanent);
+            Assert.False(attr.Permanent);
             Assert.NotNull(result);
             Assert.Equal("https://www.example.com/alpha/bravo/charlie?q=quux", result.Url);
-            Assert.IsFalse(result.Permanent);
+            Assert.False(result.Permanent);
         }
 
         [Theory]
