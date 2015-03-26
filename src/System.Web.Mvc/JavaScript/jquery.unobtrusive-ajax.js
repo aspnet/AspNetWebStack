@@ -46,15 +46,10 @@
 
             switch (mode) {
             case "BEFORE":
-                top = update.firstChild;
-                $("<div />").html(data).contents().each(function () {
-                    update.insertBefore(this, top);
-                });
+                $(update).prepend(data);
                 break;
             case "AFTER":
-                $("<div />").html(data).contents().each(function () {
-                    update.appendChild(this);
-                });
+                $(update).append(data);
                 break;
             case "REPLACE-WITH":
                 $(update).replaceWith(data);
