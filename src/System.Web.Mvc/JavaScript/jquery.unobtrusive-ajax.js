@@ -42,8 +42,6 @@
 
         mode = (element.getAttribute("data-ajax-mode") || "").toUpperCase();
         $(element.getAttribute("data-ajax-update")).each(function (i, update) {
-            var top;
-
             switch (mode) {
             case "BEFORE":
                 $(update).prepend(data);
