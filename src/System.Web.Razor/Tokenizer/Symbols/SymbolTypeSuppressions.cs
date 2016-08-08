@@ -1,4 +1,5 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
+﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 // Centralized all the supressions for the CSharpSymbolType and VBSymbolType enum members here for clarity. They are
 // not in the CodeAnalysisDictionary because they are special case exclusions
