@@ -149,7 +149,7 @@ namespace System.Web.Http.SelfHost.Channels
                     byte[] buffer = stream.ToArray(out num);
                     ArraySegment<byte> messageData = new ArraySegment<byte>(buffer, 0, num - messageOffset);
 
-                    // ToArray transfers full ownership of buffer to us, meaning we are responsible for returning it to BufferManager.  
+                    // ToArray transfers full ownership of buffer to us, meaning we are responsible for returning it to BufferManager.
                     // But we must delay that release until WCF has finished with the buffer we are returning from this method.
                     HttpMessageEncodingRequestContext requestContext = HttpMessageEncodingRequestContext.GetContextFromMessage(message);
                     Contract.Assert(requestContext != null);
@@ -188,7 +188,10 @@ namespace System.Web.Http.SelfHost.Channels
                 }
             }
 
-            private async Task WriteMessageCore(HttpResponseMessage response, Stream stream, HttpMessageEncodingRequestContext requestContext)
+            private static async Task WriteMessageCore(
+                HttpResponseMessage response,
+                Stream stream,
+                HttpMessageEncodingRequestContext requestContext)
             {
                 try
                 {
