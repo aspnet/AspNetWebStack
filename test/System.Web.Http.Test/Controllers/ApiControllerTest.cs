@@ -69,8 +69,8 @@ namespace System.Web.Http
         public void Setting_CustomActionSelector()
         {
             // Arrange
-            var api = new UsersController();
-            HttpControllerContext controllerContext = ContextUtil.CreateControllerContext(instance: api);
+            ApiController api = new UsersController();
+            HttpControllerContext controllerContext = ContextUtil.CreateControllerContext();
 
             HttpControllerDescriptor controllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersController));
             controllerContext.ControllerDescriptor = controllerDescriptor;
@@ -80,7 +80,8 @@ namespace System.Web.Http
                 .Setup(invoker => invoker.SelectAction(It.IsAny<HttpControllerContext>()))
                 .Returns(() =>
                 {
-                    Func<HttpResponseMessage> testDelegate = api.Delete;
+                    Func<HttpResponseMessage> testDelegate =
+                        () => new HttpResponseMessage { Content = new StringContent("This is a test") };
                     return new ReflectedHttpActionDescriptor
                     {
                         Configuration = controllerContext.Configuration,
@@ -96,7 +97,7 @@ namespace System.Web.Http
                 CancellationToken.None).Result;
 
             // Assert
-            Assert.Equal("User deleted", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("This is a test", message.Content.ReadAsStringAsync().Result);
         }
 
         [Fact]
