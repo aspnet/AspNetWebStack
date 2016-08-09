@@ -11,7 +11,7 @@ namespace System.Net.Http
     /// Defines an exception type for signalling that a request's media type was not supported.
     /// </summary>
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This type is not meant to be serialized")]
-    [SuppressMessage("Microsoft.Usage", "CA2240:Implement ISerializable correctly", Justification = "This type is not meant to be serialized")]
+    [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly", Justification = "This type is not meant to be serialized")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "UnsupportedMediaTypeException is only used to propagate the media type back to the server layer")]
     public class UnsupportedMediaTypeException : Exception
     {

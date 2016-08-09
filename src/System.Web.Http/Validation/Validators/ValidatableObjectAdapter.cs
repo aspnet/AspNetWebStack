@@ -37,7 +37,7 @@ namespace System.Web.Http.Validation.Validators
             return ConvertResults(validatable.Validate(validationContext));
         }
 
-        private IEnumerable<ModelValidationResult> ConvertResults(IEnumerable<ValidationResult> results)
+        private static IEnumerable<ModelValidationResult> ConvertResults(IEnumerable<ValidationResult> results)
         {
             foreach (ValidationResult result in results)
             {
