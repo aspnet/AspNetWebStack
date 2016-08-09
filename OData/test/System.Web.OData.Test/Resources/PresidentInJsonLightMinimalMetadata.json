@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost:8081/$metadata#President","@odata.id":"http://localhost:8081/President","PerId":1,"Age":52,"MyGuid":"0fffef2b-e5de-4b7c-b943-b1f7da006fcd","Name":"Barack Obama","FavoriteColor":"0","Order":{
-    "OrderAmount":12345,"OrderName":"US Order"
-  }
-}

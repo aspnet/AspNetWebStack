@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost/$metadata#Collection(Edm.Boolean)","value":[
-    true,false,true,false
-  ]
-}

@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost:8081/$metadata#President","@odata.type":"#System.Web.OData.Formatter.FormatterPerson","@odata.id":"http://localhost:8081/President","@odata.editLink":"President","PerId":1,"Age":52,"MyGuid@odata.type":"#Guid","MyGuid":"0fffef2b-e5de-4b7c-b943-b1f7da006fcd","Name":"Barack Obama","FavoriteColor@odata.type":"#System.Web.OData.Builder.TestModels.Color","FavoriteColor":"0","Order":{
-    "@odata.type":"#System.Web.OData.Formatter.FormatterOrder","OrderAmount":12345,"OrderName":"US Order"
-  }
-}

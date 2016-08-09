@@ -1,3 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost/odata/$metadata#Oscorp","@odata.type":"#System.Web.OData.Corporation","@odata.id":"http://localhost/odata/Oscorp","@odata.editLink":"http://localhost/odata/Oscorp","CorpId":9999,"CorpName":"Oscorp Enterprise","CorpWeb":"www.Oscorp.com","CorpAddress":"Oscorp Way #001","SubSidiaries@odata.associationLink":"http://localhost/odata/Oscorp/SubSidiaries/$ref","SubSidiaries@odata.navigationLink":"http://localhost/odata/Oscorp/SubSidiaries"
-}

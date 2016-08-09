@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">
-  <element m:type="Edm.Boolean" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">true</element>
-  <element m:type="Edm.Boolean" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">false</element>
-  <element m:type="Edm.Boolean" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">true</element>
-  <element m:type="Edm.Boolean" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">false</element>
-</root>

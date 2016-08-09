@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">
-  <element m:type="Edm.Int32" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">10</element>
-  <element m:type="Edm.Int32" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">20</element>
-  <element m:type="Edm.Int32" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">30</element>
-  <element m:type="Edm.Int32" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">40</element>
-  <element m:type="Edm.Int32" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">50</element>
-</root>

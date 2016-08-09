@@ -1,5 +1,0 @@
-﻿{
-  "odata.metadata":"http://localhost:8081/$metadata#People/@Element","odata.type":"System.Web.Http.OData.Formatter.FormatterPerson","odata.id":"http://localhost:8081/People(10)","PerId":10,"Age":10,"MyGuid@odata.type":"Edm.Guid","MyGuid":"f99080c0-2f9e-472e-8c72-1a8ecd9f902d","Name":"Asha","Order":{
-    "odata.type":"System.Web.Http.OData.Formatter.FormatterOrder","OrderAmount":235342,"OrderName":"FirstOrder"
-  }
-}

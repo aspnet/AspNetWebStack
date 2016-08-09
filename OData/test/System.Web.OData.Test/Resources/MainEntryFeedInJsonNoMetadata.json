@@ -1,9 +1,0 @@
-﻿{
-  "@odata.count":3,"value":[
-    {
-      "Id":1,"Int16":-1
-    },{
-      "Id":2,"Int16":-2
-    }
-  ],"@odata.nextLink":"aa:b"
-}

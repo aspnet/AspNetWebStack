@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost:8081/$metadata#People/$entity","@odata.id":"http://localhost:8081/People(10)","PerId":10,"Age":10,"MyGuid":"f99080c0-2f9e-472e-8c72-1a8ecd9f902d","Name":"Asha","FavoriteColor":"Red, Green","Order":{
-    "OrderAmount":235342,"OrderName":"FirstOrder"
-  }
-}

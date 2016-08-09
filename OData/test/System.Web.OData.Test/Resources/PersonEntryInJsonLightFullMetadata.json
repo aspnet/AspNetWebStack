@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost:8081/$metadata#People/$entity","@odata.type":"#System.Web.OData.Formatter.FormatterPerson","@odata.id":"http://localhost:8081/People(10)","@odata.editLink":"People(10)","PerId":10,"Age":10,"MyGuid@odata.type":"#Guid","MyGuid":"f99080c0-2f9e-472e-8c72-1a8ecd9f902d","Name":"Asha","FavoriteColor@odata.type":"#System.Web.OData.Builder.TestModels.Color","FavoriteColor":"Red, Green","Order":{
-    "@odata.type":"#System.Web.OData.Formatter.FormatterOrder","OrderAmount":235342,"OrderName":"FirstOrder"
-  }
-}

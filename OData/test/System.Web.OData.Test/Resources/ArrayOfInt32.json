@@ -1,5 +1,0 @@
-﻿{
-  "@odata.context":"http://localhost/$metadata#Collection(Edm.Int32)","value":[
-    10,20,30,40,50
-  ]
-}
