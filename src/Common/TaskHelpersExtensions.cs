@@ -39,7 +39,7 @@ namespace System.Threading.Tasks
         /// Attempts to get the result value for the given task. If the task ran to completion, then
         /// it will return true and set the result value; otherwise, it will return false.
         /// </summary>
-        [SuppressMessage("Microsoft.Web.FxCop", "MW1201:DoNotCallProblematicMethodsOnTask", Justification = "The usages here are deemed safe, and provide the implementations that this rule relies upon.")]
+        [SuppressMessage("Microsoft.Web.FxCop", "MW1201", Justification = "The usages here are deemed safe, and provide the implementations that this rule relies upon.")]
         internal static bool TryGetResult<TResult>(this Task<TResult> task, out TResult result)
         {
             if (task.Status == TaskStatus.RanToCompletion)
