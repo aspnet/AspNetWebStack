@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -95,7 +96,7 @@ namespace System.Web.Mvc
 
             XmlElement typeCacheElement = doc.CreateElement("typeCache");
             doc.AppendChild(typeCacheElement);
-            typeCacheElement.SetAttribute("lastModified", CurrentDate.ToString());
+            typeCacheElement.SetAttribute("lastModified", CurrentDate.ToString(CultureInfo.InvariantCulture));
             typeCacheElement.SetAttribute("mvcVersionId", _mvcVersionId.ToString());
 
             foreach (var assemblyGroup in groupedByAssembly)

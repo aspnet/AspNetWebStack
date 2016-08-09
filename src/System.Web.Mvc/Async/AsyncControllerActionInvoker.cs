@@ -4,8 +4,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Security.Principal;
 using System.Threading;
 using System.Web.Mvc.Filters;
 using System.Web.Mvc.Routing;
@@ -18,6 +16,7 @@ namespace System.Web.Mvc.Async
         private static readonly object _invokeActionMethodTag = new object();
         private static readonly object _invokeActionMethodWithFiltersTag = new object();
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames", Justification = "FxCop unable to handle what new compiler generates.")]
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Refactoring to reduce coupling not currently justified.")]
         public virtual IAsyncResult BeginInvokeAction(ControllerContext controllerContext, string actionName, AsyncCallback callback, object state)
         {
