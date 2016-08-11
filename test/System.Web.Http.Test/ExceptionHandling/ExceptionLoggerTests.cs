@@ -16,7 +16,8 @@ namespace System.Web.Http.ExceptionHandling
         public void LogAsync_IfContextIsNull_Throws()
         {
             // Arrange
-            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger>(MockBehavior.Strict);
+            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger> { CallBase = true };
+
             IExceptionLogger product = mock.Object;
 
             ExceptionLoggerContext context = null;
@@ -30,7 +31,7 @@ namespace System.Web.Http.ExceptionHandling
         public void LogAsync_IfShouldLogReturnsTrue_DelegatesToLogAsyncCore()
         {
             // Arrange
-            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger>(MockBehavior.Strict);
+            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger> { CallBase = true };
             Task expectedTask = CreateCompletedTask();
             mock.Setup(h => h.ShouldLog(It.IsAny<ExceptionLoggerContext>())).Returns(true);
             mock
@@ -59,7 +60,7 @@ namespace System.Web.Http.ExceptionHandling
         public void LogAsync_IfShouldLogReturnsFalse_ReturnsCompletedTask()
         {
             // Arrange
-            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger>(MockBehavior.Strict);
+            Mock<ExceptionLogger> mock = new Mock<ExceptionLogger> { CallBase = true };
             mock.Setup(h => h.ShouldLog(It.IsAny<ExceptionLoggerContext>())).Returns(false);
 
             IExceptionLogger product = mock.Object;

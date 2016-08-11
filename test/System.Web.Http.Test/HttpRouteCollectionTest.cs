@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
-using Moq.Protected;
 
 namespace System.Web.Http
 {
@@ -19,10 +18,10 @@ namespace System.Web.Http
             var collection = new HttpRouteCollection();
 
             var handler1 = new Mock<HttpMessageHandler>();
-            handler1.Protected().Setup("Dispose", true).Verifiable();
+            handler1.As<IDisposable>().Setup(c => c.Dispose()).Verifiable();
 
             var handler2 = new Mock<HttpMessageHandler>();
-            handler1.Protected().Setup("Dispose", true).Verifiable();
+            handler1.As<IDisposable>().Setup(c => c.Dispose()).Verifiable();
 
             var route1 = new Mock<IHttpRoute>();
             route1.SetupGet(r => r.Handler).Returns(handler1.Object);
@@ -41,8 +40,8 @@ namespace System.Web.Http
             collection.Dispose();
 
             // Assert
-            handler1.Protected().Verify("Dispose", Times.Once(), true);
-            handler2.Protected().Verify("Dispose", Times.Once(), true);
+            handler1.As<IDisposable>().Verify(c => c.Dispose(), Times.Once());
+            handler2.As<IDisposable>().Verify(c => c.Dispose(), Times.Once());
         }
 
         [Fact]

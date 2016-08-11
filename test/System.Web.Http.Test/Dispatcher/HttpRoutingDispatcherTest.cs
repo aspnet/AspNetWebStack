@@ -109,7 +109,7 @@ namespace System.Web.Http.Dispatcher
         {
             // Arrange
             Mock<HttpMessageHandler> doNotUseDefaultHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            doNotUseDefaultHandlerMock.Protected().Setup("Dispose", true);
+            doNotUseDefaultHandlerMock.As<IDisposable>().Setup(c => c.Dispose());
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             using (HttpMessageHandler doNoUseDefaultHandler = doNotUseDefaultHandlerMock.Object)
@@ -145,7 +145,7 @@ namespace System.Web.Http.Dispatcher
         {
             // Arrange
             Mock<HttpMessageHandler> doNotUseDefaultHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            doNotUseDefaultHandlerMock.Protected().Setup("Dispose", true);
+            doNotUseDefaultHandlerMock.As<IDisposable>().Setup(c => c.Dispose());
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             using (HttpMessageHandler doNoUseDefaultHandler = doNotUseDefaultHandlerMock.Object)

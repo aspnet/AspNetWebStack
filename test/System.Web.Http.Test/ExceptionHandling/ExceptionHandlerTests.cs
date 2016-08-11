@@ -14,7 +14,7 @@ namespace System.Web.Http.ExceptionHandling
         public void HandleAsync_IfContextIsNull_Throws()
         {
             // Arrange
-            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler>(MockBehavior.Strict);
+            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler> { CallBase = true };
             IExceptionHandler product = mock.Object;
 
             ExceptionHandlerContext context = null;
@@ -28,7 +28,7 @@ namespace System.Web.Http.ExceptionHandling
         public void HandleAsync_IfShouldHandleReturnsTrue_DelegatesToHandleAsyncCore()
         {
             // Arrange
-            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler>(MockBehavior.Strict);
+            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler> { CallBase = true };
             Task expectedTask = CreateCompletedTask();
             mock.Setup(h => h.ShouldHandle(It.IsAny<ExceptionHandlerContext>())).Returns(true);
             mock

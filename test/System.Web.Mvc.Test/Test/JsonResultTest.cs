@@ -99,10 +99,15 @@ namespace System.Web.Mvc.Test
             Encoding contentEncoding = Encoding.UTF8;
 
             // Arrange expectations
-            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
+            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>(MockBehavior.Strict);
             mockControllerContext.SetupGet(c => c.HttpContext.Request.HttpMethod).Returns("POST").Verifiable();
-            mockControllerContext.SetupSet(c => c.HttpContext.Response.ContentType = contentType).Verifiable();
-            mockControllerContext.SetupSet(c => c.HttpContext.Response.ContentEncoding = contentEncoding).Verifiable();
+
+            // Though most other tests run fine with SetupSet(c => c.HttpContext.Response.ContentType = ...), this
+            // one does not. Explicitly ensure Response property is not null.
+            var response = new Mock<HttpResponseBase>(MockBehavior.Strict);
+            response.SetupSet(r => r.ContentType = contentType).Verifiable();
+            response.SetupSet(r => r.ContentEncoding = contentEncoding).Verifiable();
+            mockControllerContext.SetupGet(c => c.HttpContext.Response).Returns(response.Object);
 
             JsonResult result = new JsonResult
             {
@@ -115,6 +120,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             mockControllerContext.Verify();
+            response.Verify();
         }
 
         [Fact]
@@ -176,16 +182,21 @@ namespace System.Web.Mvc.Test
             // Arrange
             string data = new String('1', 2100000);
 
-            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
-            mockControllerContext.SetupGet(c => c.HttpContext.Request.HttpMethod).Returns("POST").Verifiable();
-            mockControllerContext.SetupSet(c => c.HttpContext.Response.ContentType = "application/json").Verifiable();
+            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>(MockBehavior.Strict);
+            mockControllerContext.SetupGet(c => c.HttpContext.Request.HttpMethod).Returns("POST");
+
+            // Though most other tests run fine with SetupSet(c => c.HttpContext.Response.ContentType = ...), this
+            // one does not. Explicitly ensure Response property is not null.
+            var response = new Mock<HttpResponseBase>(MockBehavior.Strict);
+            response.SetupSet(r => r.ContentType = "application/json");
+            mockControllerContext.SetupGet(c => c.HttpContext.Response).Returns(response.Object);
 
             JsonResult result = new JsonResult
             {
                 Data = data
             };
 
-            // Act & Assert 
+            // Act & Assert
             Assert.Throws<InvalidOperationException>(
                 () => result.ExecuteResult(mockControllerContext.Object),
                 "Error during serialization or deserialization using the JSON JavaScriptSerializer. The length of the string exceeds the value set on the maxJsonLength property.");
