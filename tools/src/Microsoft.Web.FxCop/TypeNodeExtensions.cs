@@ -21,6 +21,18 @@ namespace Microsoft.Web.FxCop
 
         public static bool IsTask(this TypeNode type)
         {
+            if (type.IsAbstract)
+            {
+                // Short-circuit because Task is not an abstract type.
+                //
+                // This also avoids NREs when the passed type is an interface. May be passed an interface when caller
+                // encounters a method that is explicitly implemented e.g. Dispose() is not visible directly on
+                // JsonReader though JsonReader implements System.IDisposable. Interfaces such as IDisposable are
+                // defined very low in the module hierarchy, leading to NREs in GetTaskAssembly(). Therefore, use only
+                // concrete types to initialize the fields.
+                return false;
+            }
+
             EnsureTaskTypesInitialized(type);
             return IsTaskCore(type);
         }

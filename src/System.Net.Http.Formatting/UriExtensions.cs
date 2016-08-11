@@ -6,9 +6,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Formatting;
-#if !NETFX_CORE
-using System.Net.Http.Formatting.Internal;
-#endif
 using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -70,7 +67,6 @@ namespace System.Net.Http
         /// <param name="value">An object to be initialized with this instance or null if the conversion cannot be performed.</param>
         /// <returns><c>true</c> if the query component can be read as the specified type; otherwise <c>false</c>.</returns>
         [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "This is the non-generic version.")]
-        [SuppressMessage("Microsoft.Web.FxCop", "MW1201", Justification = "Avoid an NRE in our custom rule (see AspNetWebStack#16). Occurs while handling JTokenReader.Dispose().")]
         public static bool TryReadQueryAs(this Uri address, Type type, out object value)
         {
             if (address == null)
