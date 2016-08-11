@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web.Http.Controllers;
@@ -15,7 +16,7 @@ namespace System.Web.Http.Routing
     /// </remarks>
     internal static class AttributeRoutingMapper
     {
-        // Attribute routing will inject a single top-level route into the route table. 
+        // Attribute routing will inject a single top-level route into the route table.
         private const string AttributeRouteName = "MS_attributerouteWebApi";
 
         public static void MapAttributeRoutes(
@@ -69,7 +70,7 @@ namespace System.Web.Http.Routing
                 };
         }
 
-        // Add generation hooks for the Attribute-routing subroutes. 
+        // Add generation hooks for the Attribute-routing subroutes.
         // This lets us generate urls for routes supplied by attr-based routing.
         private static void AddGenerationHooksForSubRoutes(HttpRouteCollection routeTable,
             IEnumerable<RouteEntry> entries)
@@ -90,8 +91,10 @@ namespace System.Web.Http.Routing
             }
         }
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling",
+            Justification = "This method is a coordinator, so this coupling is expected. Also fine unless building Debug configuration.")]
         private static void AddRouteEntries(
-            SubRouteCollection collector, 
+            SubRouteCollection collector,
             HttpConfiguration configuration,
             IInlineConstraintResolver constraintResolver,
             IDirectRouteProvider directRouteProvider)
@@ -149,7 +152,7 @@ namespace System.Web.Http.Routing
                         else
                         {
                             routeControllerDescriptor.SetIsAttributeRouted(true);
-                        }                        
+                        }
                     }
 
                     collector.AddRange(newEntries);

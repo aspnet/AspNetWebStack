@@ -150,11 +150,11 @@ namespace System.Web.Mvc.Async
             Task taskUser = dispatcher.Execute(controllerContext.Controller, parametersArray) as Task;
             Action cleanupAtEndExecute = () =>
             {
-                // Cleanup code that's run in EndExecute, after we've waited on the task value. 
+                // Cleanup code that's run in EndExecute, after we've waited on the task value.
 
                 if (taskCancelledTimer != null)
                 {
-                    // Timer callback may still fire after Dispose is called. 
+                    // Timer callback may still fire after Dispose is called.
                     taskCancelledTimer.Dispose();
                 }
 
@@ -166,8 +166,8 @@ namespace System.Web.Mvc.Async
                         tokenSource.Dispose();
                         if (tokenSource.IsCancellationRequested)
                         {
-                            // Give Timeout exceptions higher priority over other exceptions, mainly OperationCancelled exceptions 
-                            // that were signaled with out timeout token.                             
+                            // Give Timeout exceptions higher priority over other exceptions, mainly OperationCancelled exceptions
+                            // that were signaled with out timeout token.
                             throw new TimeoutException();
                         }
                     }
@@ -176,7 +176,7 @@ namespace System.Web.Mvc.Async
 
             TaskWrapperAsyncResult result = new TaskWrapperAsyncResult(taskUser, state, cleanupAtEndExecute);
 
-            // if user supplied a callback, invoke that when their task has finished running. 
+            // if user supplied a callback, invoke that when their task has finished running.
             if (callback != null)
             {
                 if (taskUser.IsCompleted)
