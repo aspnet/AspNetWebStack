@@ -78,7 +78,6 @@ namespace System.Web.Razor.Test.Generator
         [InlineData("HelpersMissingOpenParen")]
         [InlineData("NestedHelpers")]
         [InlineData("InlineBlocks")]
-        [InlineData("NestedHelpers")]
         [InlineData("LayoutDirective")]
         [InlineData("ConditionalAttributes")]
         [InlineData("ResolveUrl")]

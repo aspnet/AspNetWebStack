@@ -185,12 +185,12 @@ namespace Microsoft.TestCommon
         /// <summary>
         /// All expected permutations of an empty string.
         /// </summary>
-        public static readonly TestData<string> NonNullEmptyStrings = new RefTypeTestData<string>(() => new List<string>() { String.Empty, "", " ", "\t\r\n" });
+        public static readonly TestData<string> NonNullEmptyStrings = new RefTypeTestData<string>(() => new List<string>() { String.Empty, " ", "\t\r\n" });
 
         /// <summary>
         /// All expected permutations of an empty string.
         /// </summary>
-        public static readonly TestData<string> EmptyStrings = new RefTypeTestData<string>(() => new List<string>() { null, String.Empty, "", " ", "\t\r\n" });
+        public static readonly TestData<string> EmptyStrings = new RefTypeTestData<string>(() => new List<string>() { null, String.Empty, " ", "\t\r\n" });
 
         /// <summary>
         ///  Common <see cref="TestData"/> for a <see cref="string"/>.

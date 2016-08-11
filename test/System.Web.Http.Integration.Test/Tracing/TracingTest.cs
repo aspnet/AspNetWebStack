@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http.Tracing;
 using Microsoft.TestCommon;
@@ -375,6 +376,20 @@ namespace System.Web.Http.ModelBinding
 
             foreach (TraceRecord actualRecord in actualRecords)
             {
+                // Ignore record of a ReflectionTypeLoadException to allow test to succeed in Visual Studio. The record is an
+                // artifact specific to testing in VS. (Attempting to load all types from xunit.runner.visualstudio.testadapter.dll
+                // fails with recent xUnit.net packages. The assembly references Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
+                // which is not available with xUnit.net 2.0.x.)
+                if (actualRecord.Operation == null &&
+                    actualRecord.Exception is ReflectionTypeLoadException &&
+                    actualRecord.Message != null &&
+                    actualRecord.Message.StartsWith(
+                        "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 ExpectedTraceRecord expectedTrace = expectedRecords.FirstOrDefault(r =>
                     String.Equals(r.Category, actualRecord.Category, StringComparison.OrdinalIgnoreCase) &&
                     String.Equals(r.OperatorName, actualRecord.Operator, StringComparison.OrdinalIgnoreCase) &&
@@ -403,10 +418,28 @@ namespace System.Web.Http.ModelBinding
                     object.Equals(r.Kind, expectedRecord.TraceKind)
                     );
 
-                if (!object.ReferenceEquals(beginTrace, actualRecords.ElementAt(traceBeginPos)))
+                // Ignore record of a ReflectionTypeLoadException to allow test to succeed in Visual Studio. The record is an
+                // artifact specific to testing in VS. (Attempting to load all types from xunit.runner.visualstudio.testadapter.dll
+                // fails with recent xUnit.net packages. The assembly references Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
+                // which is not available with xUnit.net 2.0.x.)
+                var actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);
+                if (actualRecord != null &&
+                    actualRecord.Operation == null &&
+                    actualRecord.Exception is ReflectionTypeLoadException &&
+                    actualRecord.Message != null &&
+                    actualRecord.Message.StartsWith(
+                        "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
+                        StringComparison.Ordinal))
+                {
+                    traceBeginPos++;
+                    actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);
+                }
+
+                if (!object.ReferenceEquals(beginTrace, actualRecord))
                 {
                     return false;
                 }
+
                 traceBeginPos++;
             }
             return true;

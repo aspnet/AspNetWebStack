@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Script.Serialization;
@@ -155,12 +154,7 @@ namespace System.Web.Mvc.Html.Test
                         "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Second\",\"Value\":\"1\"}," +
                         "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Third\",\"Value\":\"2\"}," +
                         "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Fourth\",\"Value\":\"3\"}]" },
-                    { typeof(EnumWithDuplicates), EnumWithDuplicates.Second,
-                        "[{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"First\",\"Value\":\"0\"}," +
-                        "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Second\",\"Value\":\"1\"}," +
-                        "{\"Disabled\":false,\"Group\":null,\"Selected\":true,\"Text\":\"Third\",\"Value\":\"1\"}," +
-                        "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Fourth\",\"Value\":\"2\"}]" },
-                    { typeof(EnumWithDuplicates), EnumWithDuplicates.Third,
+                    { typeof(EnumWithDuplicates), EnumWithDuplicates.Second, // Same value as EnumWithDuplicates.Third
                         "[{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"First\",\"Value\":\"0\"}," +
                         "{\"Disabled\":false,\"Group\":null,\"Selected\":false,\"Text\":\"Second\",\"Value\":\"1\"}," +
                         "{\"Disabled\":false,\"Group\":null,\"Selected\":true,\"Text\":\"Third\",\"Value\":\"1\"}," +

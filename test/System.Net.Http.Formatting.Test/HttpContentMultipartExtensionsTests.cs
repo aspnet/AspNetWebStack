@@ -35,7 +35,6 @@ namespace System.Net.Http
                     { "multipart/form-data", false, "form-data", false },
                     { "multipart/form-data; boundary=1234", true, "related", false },
                     { "multipart/form-data; boundary=1234; charset=utf-8", true, "form-data", true },
-                    { "multipart/form-data; boundary=1234; charset=utf-8", true, "form-data", true },
                     { "Multipart/Related; boundary=example-1; start=\"<950120.aaCC@XIson.com>\"; type=\"Application/X-FixedRecord\"; start-info=\"-o ps\"", true, "related", true },
                 };
             }

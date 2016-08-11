@@ -34,9 +34,7 @@ namespace System.Net.Http.Formatting
                     { "application/xml; q=0.1", "text/xml; q=0.1" },
                     { "application/xml; parameter=value1; q=0.5", "text/xml; parameter=value2; q=0.5" },
                     { "text/xml", "text/xml;q=1" },
-                    { "text/xml", "text/xml; q=1" },
                     { "text/xml", "text/xml;q=1.0" },
-                    { "text/xml", "text/xml; q=1.0" },
                     { "text/xml", "text/xml; q=1.00000" },
                     { "text/xml; q=0.5", "text/xml; q=0.5" },
                     { "text/xml; q=1.0", "text/xml; q=1.0" },
@@ -46,10 +44,6 @@ namespace System.Net.Http.Formatting
                     { "*/*", "*/*; q=1.0" },
                     { "*/*; q=0.5", "*/*; q=0.5" },
                     { "*/*; q=1.0", "*/*; q=1.0" },
-                    { "text/xml", "text/xml;q=1" },
-                    { "text/xml", "text/xml; q=1" },
-                    { "text/xml", "text/xml;q=1.0" },
-                    { "text/xml", "text/xml; q=1.0" },
                 };
             }
         }
@@ -87,7 +81,7 @@ namespace System.Net.Http.Formatting
             {
                 return new TheoryDataSet<string[], string[]>
                 {
-                    { 
+                    {
                         new string[]
                         {
                             "application/*",
@@ -105,7 +99,7 @@ namespace System.Net.Http.Formatting
                             "*/*;q=0.4",
                             "text/plain;q=0.6",
                             "text/xml",
-                        }, 
+                        },
                         new string[]
                         {
                             "text/plain",
