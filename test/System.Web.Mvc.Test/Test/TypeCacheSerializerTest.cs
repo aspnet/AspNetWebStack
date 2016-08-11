@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Microsoft.TestCommon;
 
@@ -138,7 +139,8 @@ namespace System.Web.Mvc.Test
               + "  </assembly>" + Environment.NewLine
               + "</typeCache>";
 
-            string expected = String.Format(expectedFormat,
+            string expected = String.Format(CultureInfo.InvariantCulture,
+                                            expectedFormat,
                                             expectedDate /* lastModified */,
                                             GetMvidForType(typeof(TypeCacheSerializer)) /* mvcVersionId */,
                                             _mscorlibAsmFullName /* assembly.name */,
