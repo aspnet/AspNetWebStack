@@ -20,8 +20,8 @@ namespace Microsoft.TestCommon
         /// Indicates that the test wants to run on .NET 4 (when used with
         /// <see cref="FactAttribute.Platforms"/> and/or <see cref="TheoryAttribute.Platforms"/>),
         /// or that the current platform that the test is running on is .NET 4 (when used with the
-        /// <see cref="PlatformInfo.Platform"/>, <see cref="FactAttribute.Platform"/>, and/or
-        /// <see cref="TheoryAttribute.Platform"/>).
+        /// <see cref="PlatformInfo.Platform"/>, <see cref="FactDiscoverer.Platform"/>, and/or
+        /// <see cref="TheoryDiscoverer.Platform"/>).
         /// </summary>
         Net40 = 0x01,
 
@@ -29,8 +29,8 @@ namespace Microsoft.TestCommon
         /// Indicates that the test wants to run on .NET 4.5 (when used with
         /// <see cref="FactAttribute.Platforms"/> and/or <see cref="TheoryAttribute.Platforms"/>),
         /// or that the current platform that the test is running on is .NET 4.5 (when used with the
-        /// <see cref="PlatformInfo.Platform"/>, <see cref="FactAttribute.Platform"/>, and/or
-        /// <see cref="TheoryAttribute.Platform"/>).
+        /// <see cref="PlatformInfo.Platform"/>, <see cref="FactDiscoverer.Platform"/>, and/or
+        /// <see cref="TheoryDiscoverer.Platform"/>).
         /// </summary>
         Net45 = 0x02,
     }

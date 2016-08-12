@@ -327,11 +327,11 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegate)(() => 
+                yield return new Action[] { () =>
                 {
                     HelpPageSampleGenerator sampleGenerator = new HelpPageSampleGenerator();
                     sampleGenerator.GetSample(null, SampleDirection.Request);
-                })};
+                }};
             }
         }
 
@@ -339,12 +339,12 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegate)(() => 
+                yield return new Action[] { () =>
                 {
                     HelpPageSampleGenerator sampleGenerator = new HelpPageSampleGenerator();
                     Collection<MediaTypeFormatter> formatters;
                     sampleGenerator.ResolveType(null, "a", "c", new string[0], SampleDirection.Request, out formatters);
-                })};
+                }};
             }
         }
 
@@ -352,16 +352,16 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegate)(() => 
+                yield return new Action[] { () =>
                 {
                     HelpPageSampleGenerator sampleGenerator = new HelpPageSampleGenerator();
                     sampleGenerator.WriteSampleObjectUsingFormatter(null, "sample", typeof(string), new MediaTypeHeaderValue("text/xml"));
-                })};
-                yield return new object[] { (Assert.ThrowsDelegate)(() => 
+                }};
+                yield return new Action[] { () =>
                 {
                     HelpPageSampleGenerator sampleGenerator = new HelpPageSampleGenerator();
                     sampleGenerator.WriteSampleObjectUsingFormatter(new XmlMediaTypeFormatter(), "sample", typeof(string), null);
-                })};
+                }};
             }
         }
 
@@ -369,7 +369,7 @@ namespace WebApiHelpPageWebHost.UnitTest
         [PropertyData("GetSample_ThrowsArgumentNullException_PropertyData")]
         [PropertyData("ResolveType_ThrowsArgumentNullException_PropertyData")]
         [PropertyData("WriteSampleObjectUsingFormatter_ThrowsArgumentNullException_PropertyData")]
-        public void Method_ThrowsArgumentNullException(Assert.ThrowsDelegate constructorDelegate)
+        public void Method_ThrowsArgumentNullException(Action constructorDelegate)
         {
             Assert.Throws(typeof(ArgumentNullException), constructorDelegate);
         }

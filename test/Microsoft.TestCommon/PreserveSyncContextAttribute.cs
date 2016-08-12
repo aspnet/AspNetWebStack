@@ -9,7 +9,7 @@ namespace Microsoft.TestCommon
     /// Preserves the current <see cref="SynchronizationContext"/>. Use this attribute on
     /// tests which modify the current <see cref="SynchronizationContext"/>.
     /// </summary>
-    public class PreserveSyncContextAttribute : Xunit.BeforeAfterTestAttribute
+    public class PreserveSyncContextAttribute : Xunit.Sdk.BeforeAfterTestAttribute
     {
         private SynchronizationContext _syncContext;
 

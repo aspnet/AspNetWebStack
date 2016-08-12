@@ -39,6 +39,8 @@
   <ItemGroup>
     <Compile Include="DataAttribute.cs" />
     <Compile Include="EnumHelperTestBase.cs" />
+    <Compile Include="ExceptionUtility.cs" />
+    <Compile Include="FactDiscoverer.cs" />
     <Compile Include="InlineDataAttribute.cs" />
     <Compile Include="MatrixTheoryDataSet.cs" />
     <Compile Include="Microsoft\TestCommon\DataSets\TestDataHolder.cs" />
@@ -59,8 +61,7 @@
     </Compile>
     <Compile Include="CultureReplacer.cs" />
     <Compile Include="FactAttribute.cs" />
-    <Compile Include="StringAssertions.cs" />
-    <Compile Include="StringAssertException.cs" />
+    <Compile Include="SkippedXunitTestCase.cs" />
     <Compile Include="TheoryAttribute.cs" />
     <Compile Include="DictionaryEqualityComparer.cs" />
     <Compile Include="ExceptionAssertions.cs">
@@ -98,6 +99,7 @@
     <Compile Include="TestFile.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="TheoryDataSet.cs" />
+    <Compile Include="TheoryDiscoverer.cs" />
     <Compile Include="ThreadPoolSyncContext.cs" />
     <Compile Include="TraitAttribute.cs" />
     <Compile Include="VersionTestHelper.cs" />

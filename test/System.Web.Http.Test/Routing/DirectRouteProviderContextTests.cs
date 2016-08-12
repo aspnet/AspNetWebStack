@@ -42,8 +42,9 @@ namespace System.Web.Http.Routing
 
             var ex = Assert.Throws<InvalidOperationException>(
                 () => BuildWithResolver(@"hello/{param:constraint}", constraintResolver: constraintResolver.Object));
-            Assert.Contains("The inline constraint resolver of type 'ObjectProxy_", ex.Message);
-            Assert.Contains("' was unable to resolve the following inline constraint: 'constraint'.", ex.Message);
+            Assert.Matches(
+                "The inline constraint resolver of type 'ObjectProxy(_\\d+)?' was unable to resolve the following inline constraint: 'constraint'.",
+                ex.Message);
         }
 
         [Fact]

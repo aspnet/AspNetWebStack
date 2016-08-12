@@ -54,23 +54,23 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(null, typeof(Tuple<int, string>))) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), null)) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(null, typeof(Tuple<int, string>)) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), null) };
 
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(SampleDirection.Request, "c", "a", null)) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(SampleDirection.Request, null, "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(SampleDirection.Request, "c", null, new string[0])) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(SampleDirection.Request, "c", "a", null) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(SampleDirection.Request, null, "a", new string[0]) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(SampleDirection.Request, "c", null, new string[0]) };
 
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(null, SampleDirection.Request, "c", "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", "a", null)) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, null, "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", null, new string[0])) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(null, SampleDirection.Request, "c", "a", new string[0]) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", "a", null) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, null, "a", new string[0]) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", null, new string[0]) };
             }
         }
 
         [Theory]
         [PropertyData("Constructor_ThrowsArgumentNullException_PropertyData")]
-        public void Constructor_ThrowsArgumentNullException(Assert.ThrowsDelegateWithReturn constructorDelegate)
+        public void Constructor_ThrowsArgumentNullException(Func<object> constructorDelegate)
         {
             Assert.Throws(typeof(ArgumentNullException), constructorDelegate);
         }
@@ -79,11 +79,11 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(SampleDirection.Request, null, "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(SampleDirection.Request, "c", null, new string[0])) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(SampleDirection.Request, null, "a", new string[0])};
+                yield return new Func<object>[] { () => new HelpPageSampleKey(SampleDirection.Request, "c", null, new string[0]) };
 
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, null, "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", null, new string[0])) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, null, "a", new string[0]) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), SampleDirection.Request, "c", null, new string[0]) };
             }
         }
 
@@ -91,14 +91,14 @@ namespace WebApiHelpPageWebHost.UnitTest
         {
             get
             {
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey((SampleDirection)10, "c", "a", new string[0])) };
-                yield return new object[] { (Assert.ThrowsDelegateWithReturn)(() => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), (SampleDirection)9, "c", "a", new string[0])) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey((SampleDirection)10, "c", "a", new string[0]) };
+                yield return new Func<object>[] { () => new HelpPageSampleKey(new MediaTypeHeaderValue("application/xml"), (SampleDirection)9, "c", "a", new string[0]) };
             }
         }
 
         [Theory]
         [PropertyData("Constructor_ThrowsInvalidEnumArgumentException_PropertyData")]
-        public void Constructor_ThrowsInvalidEnumArgumentException(Assert.ThrowsDelegateWithReturn constructorDelegate)
+        public void Constructor_ThrowsInvalidEnumArgumentException(Func<object> constructorDelegate)
         {
             Assert.Throws(typeof(InvalidEnumArgumentException), constructorDelegate);
         }

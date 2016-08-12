@@ -11,6 +11,12 @@ namespace Microsoft.TestCommon
 {
     public partial class Assert
     {
+        // Method has been removed in xUnit.net v2.0.0+.
+        public static void DoesNotThrow(Action testCode)
+        {
+            testCode();
+        }
+
         /// <summary>
         /// Verifies that the exact exception is thrown (and not a derived exception type).
         /// </summary>
@@ -18,7 +24,7 @@ namespace Microsoft.TestCommon
         /// <param name="testCode">A delegate to the code to be tested</param>
         /// <returns>The exception that was thrown, when successful</returns>
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
-        public static T Throws<T>(Action testCode)
+        public static new T Throws<T>(Action testCode)
             where T : Exception
         {
             return (T)Throws(typeof(T), testCode);
@@ -32,7 +38,7 @@ namespace Microsoft.TestCommon
         /// <param name="testCode">A delegate to the code to be tested</param>
         /// <returns>The exception that was thrown, when successful</returns>
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
-        public static T Throws<T>(Func<object> testCode)
+        public static new T Throws<T>(Func<object> testCode)
             where T : Exception
         {
             return (T)Throws(typeof(T), testCode);
@@ -45,7 +51,7 @@ namespace Microsoft.TestCommon
         /// <param name="testCode">A delegate to the code to be tested</param>
         /// <returns>The exception that was thrown, when successful</returns>
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
-        public static Exception Throws(Type exceptionType, Action testCode)
+        public static new Exception Throws(Type exceptionType, Action testCode)
         {
             Exception exception = RecordException(testCode);
             return VerifyException(exceptionType, exception);
@@ -59,7 +65,7 @@ namespace Microsoft.TestCommon
         /// <param name="testCode">A delegate to the code to be tested</param>
         /// <returns>The exception that was thrown, when successful</returns>
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
-        public static Exception Throws(Type exceptionType, Func<object> testCode)
+        public static new Exception Throws(Type exceptionType, Func<object> testCode)
         {
             return Throws(exceptionType, () => { testCode(); });
         }
@@ -524,7 +530,7 @@ namespace Microsoft.TestCommon
         /// <remarks>
         /// Unlike other Throws* methods, this method does not enforce running the exception delegate with a known Thread Culture.
         /// </remarks>
-        public static async Task<TException> ThrowsAsync<TException>(Func<Task> testCode)
+        public static new async Task<TException> ThrowsAsync<TException>(Func<Task> testCode)
             where TException : Exception
         {
             Exception exception = null;
@@ -570,7 +576,7 @@ namespace Microsoft.TestCommon
         // of AggregateException. In addition to unwrapping exceptions, this method ensures
         // that tests are executed in with a known set of Culture and UICulture. This prevents
         // tests from failing when executed on a non-English machine.
-        private static Exception RecordException(Action testCode)
+        private static new Exception RecordException(Action testCode)
         {
             try
             {
@@ -633,14 +639,12 @@ namespace Microsoft.TestCommon
 
             public ThrowsException(Type type, Exception ex) : base(type, ex) { }
 
-            protected override bool ExcludeStackFrame(string stackFrame)
+            public override string StackTrace
             {
-                if (stackFrame.StartsWith("at Microsoft.TestCommon.Assert.", StringComparison.OrdinalIgnoreCase))
+                get
                 {
-                    return true;
+                    return ExceptionUtility.FilterStackTrace(base.StackTrace);
                 }
-
-                return base.ExcludeStackFrame(stackFrame);
             }
         }
     }

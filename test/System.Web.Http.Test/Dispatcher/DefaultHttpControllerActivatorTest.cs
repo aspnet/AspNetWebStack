@@ -152,10 +152,10 @@ namespace System.Web.Http.Dispatcher
                 "An error occurred when trying to create a controller of type 'SimpleController'. Make sure that the controller has a parameterless public constructor.",
                 exception.Message);
             Assert.NotNull(exception.InnerException);
-            Assert.Contains("A dependency resolver of type 'ObjectProxy_", exception.InnerException.Message);
-            Assert.Contains(
-                "' returned an invalid value of null from its BeginScope method. If the container does not have a concept " +
-                "of scope, consider returning a scope that resolves in the root of the container instead.",
+            Assert.Matches(
+                "A dependency resolver of type 'ObjectProxy(_\\d+)?' returned an invalid value of null from its " +
+                "BeginScope method. If the container does not have a concept of scope, consider returning a scope " +
+                "that resolves in the root of the container instead.",
                 exception.InnerException.Message);
 
             mockResolver.Verify();
