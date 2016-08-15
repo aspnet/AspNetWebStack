@@ -151,11 +151,13 @@ namespace System.Web.Mvc.Test
             SingleServiceResolver<TestProvider> singleResolver = new SingleServiceResolver<TestProvider>(() => null, providerFromDefaultValue, resolver.Object, "TestProvider.Current");
 
             // Act & Assert
-            Assert.Throws<MockException>(
-                () => singleResolver.Current,
-                "IDependencyResolver.GetService(System.Web.Mvc.Test.SingleServiceResolverTest+TestProvider) invocation failed with mock behavior Strict." + Environment.NewLine
-              + "All invocations on the mock must have a corresponding setup."
-                );
+            var ex = Assert.Throws<MockException>(() => singleResolver.Current);
+            Assert.Equal(
+                "IDependencyResolver.GetService(System.Web.Mvc.Test.SingleServiceResolverTest+TestProvider) invocation failed with mock behavior Strict." +
+                Environment.NewLine +
+                "All invocations on the mock must have a corresponding setup.",
+                ex.Message,
+                ignoreLineEndingDifferences: true);
         }
 
         private class TestProvider

@@ -1171,8 +1171,10 @@ namespace System.Web.Mvc.Test
             {
                 ViewDataDictionary viewData = new ViewDataDictionary();
 
-                Mock<ViewContext> mockViewContext = new Mock<ViewContext>() { DefaultValue = DefaultValue.Mock };
+                Mock<ViewContext> mockViewContext = new Mock<ViewContext>();
                 mockViewContext.Setup(c => c.HttpContext.Response.Output).Throws(new Exception("Response.Output should never be called."));
+                mockViewContext.SetupGet(c => c.TempData).Returns(new TempDataDictionary());
+                mockViewContext.SetupGet(c => c.View).Returns(Mock.Of<IView>());
                 mockViewContext.Setup(c => c.ViewData).Returns(viewData);
                 mockViewContext.Setup(c => c.Writer).Returns(new StringWriter());
 

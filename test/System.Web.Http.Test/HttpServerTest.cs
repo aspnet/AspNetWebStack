@@ -582,7 +582,7 @@ namespace System.Web.Http
         private static HttpMessageHandler CreateDummyMessageHandler()
         {
             Mock<HttpMessageHandler> mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            mock.Protected().Setup("Dispose", ItExpr.IsAny<bool>());
+            mock.As<IDisposable>().Setup(c => c.Dispose());
             return mock.Object;
         }
 

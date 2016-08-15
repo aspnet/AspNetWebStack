@@ -52,6 +52,7 @@ namespace System.Web.Mvc.Test
             MvcHandler mvcHandler = new MvcHandler(requestContext);
 
             Mock<ControllerBase> controllerMock = new Mock<ControllerBase>();
+            controllerMock.As<IController>().CallBase = true;
             controllerMock.Protected().Setup("Execute", requestContext).Verifiable();
 
             ControllerBuilder cb = new ControllerBuilder();
@@ -83,6 +84,7 @@ namespace System.Web.Mvc.Test
             MvcHandler mvcHandler = new MvcHandler(requestContext);
 
             Mock<ControllerBase> controllerMock = new Mock<ControllerBase>();
+            controllerMock.As<IController>().CallBase = true;
             controllerMock.Protected().Setup("Execute", requestContext).Verifiable();
 
             ControllerBuilder cb = new ControllerBuilder();
@@ -116,6 +118,7 @@ namespace System.Web.Mvc.Test
                 MvcHandler mvcHandler = new MvcHandler(requestContext);
 
                 Mock<ControllerBase> controllerMock = new Mock<ControllerBase>();
+                controllerMock.As<IController>().CallBase = true;
                 controllerMock.Protected().Setup("Execute", requestContext).Verifiable();
 
                 ControllerBuilder cb = new ControllerBuilder();
@@ -142,7 +145,8 @@ namespace System.Web.Mvc.Test
         {
             // Arrange
             Mock<ControllerBase> mockController = new Mock<ControllerBase>();
-            mockController.As<IDisposable>(); // so that Verify can be called on Dispose later
+            mockController.As<IDisposable>().Setup(c => c.Dispose()); // so that Verify can be called on Dispose later
+            mockController.As<IController>().CallBase = true;
             mockController.Protected().Setup("Execute", ItExpr.IsAny<RequestContext>()).Verifiable();
 
             ControllerBuilder builder = new ControllerBuilder();
@@ -170,8 +174,9 @@ namespace System.Web.Mvc.Test
         public void ProcessRequestDisposesControllerIfExecuteThrowsException()
         {
             // Arrange
-            Mock<ControllerBase> mockController = new Mock<ControllerBase>(MockBehavior.Strict);
+            Mock<ControllerBase> mockController = new Mock<ControllerBase>();
             mockController.As<IDisposable>().Setup(d => d.Dispose()); // so that Verify can be called on Dispose later
+            mockController.As<IController>().CallBase = true;
             mockController.Protected().Setup("Execute", ItExpr.IsAny<RequestContext>()).Throws(new Exception("some exception"));
 
             ControllerBuilder builder = new ControllerBuilder();
@@ -298,11 +303,11 @@ namespace System.Web.Mvc.Test
 
             protected override IActionInvoker CreateActionInvoker()
             {
-                // The default action invoker relies on too much state (like having an HttpRequestContext), so stub it out. 
+                // The default action invoker relies on too much state (like having an HttpRequestContext), so stub it out.
                 return new EmptyActionInvoker();
             }
 
-            // Workaround. 
+            // Workaround.
             protected override bool DisableAsyncSupport
             {
                 get

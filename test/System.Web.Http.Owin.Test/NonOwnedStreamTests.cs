@@ -29,6 +29,7 @@ namespace System.Web.Http.Owin
             mock.Setup(s => s.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(expectedBytesRead);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -52,6 +53,7 @@ namespace System.Web.Http.Owin
             // Arrange
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -77,6 +79,7 @@ namespace System.Web.Http.Owin
             mock.SetupGet(s => s.CanRead)
                 .Returns(expectedCanRead);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -95,6 +98,7 @@ namespace System.Web.Http.Owin
             // Arrange
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -116,7 +120,8 @@ namespace System.Web.Http.Owin
             bool innerStreamDisposed = false;
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close()).Callback(() => innerStreamDisposed = true);
-            mock.Protected().Setup("Dispose", ItExpr.IsAny<bool>()).Callback(() => innerStreamDisposed = true);
+            mock.As<IDisposable>().Setup(s => s.Dispose());
+            mock.Protected().Setup("Dispose", true).Callback(() => innerStreamDisposed = true);
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -134,6 +139,7 @@ namespace System.Web.Http.Owin
             // Arrange
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -152,7 +158,8 @@ namespace System.Web.Http.Owin
             bool innerStreamDisposed = false;
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close()).Callback(() => innerStreamDisposed = true);
-            mock.Protected().Setup("Dispose", ItExpr.IsAny<bool>()).Callback(() => innerStreamDisposed = true);
+            mock.As<IDisposable>().Setup(s => s.Dispose());
+            mock.Protected().Setup("Dispose", true).Callback(() => innerStreamDisposed = true);
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -170,6 +177,7 @@ namespace System.Web.Http.Owin
             // Arrange
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close());
+            mock.As<IDisposable>().Setup(s => s.Dispose());
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))

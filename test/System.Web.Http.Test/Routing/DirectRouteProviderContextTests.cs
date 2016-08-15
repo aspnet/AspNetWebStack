@@ -40,9 +40,10 @@ namespace System.Web.Http.Routing
             Mock<IInlineConstraintResolver> constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(r => r.ResolveConstraint("constraint")).Returns<IHttpRouteConstraint>(null);
 
-            Assert.Throws<InvalidOperationException>(
-                () => BuildWithResolver(@"hello/{param:constraint}", constraintResolver: constraintResolver.Object),
-                "The inline constraint resolver of type 'IInlineConstraintResolverProxy' was unable to resolve the following inline constraint: 'constraint'.");
+            var ex = Assert.Throws<InvalidOperationException>(
+                () => BuildWithResolver(@"hello/{param:constraint}", constraintResolver: constraintResolver.Object));
+            Assert.Contains("The inline constraint resolver of type 'ObjectProxy_", ex.Message);
+            Assert.Contains("' was unable to resolve the following inline constraint: 'constraint'.", ex.Message);
         }
 
         [Fact]

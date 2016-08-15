@@ -22,7 +22,6 @@ using System.Web.Http.Routing;
 using Microsoft.Owin;
 using Microsoft.TestCommon;
 using Moq;
-using Moq.Protected;
 
 namespace System.Web.Http.Owin
 {
@@ -1705,7 +1704,7 @@ namespace System.Web.Http.Owin
         private static HttpMessageHandler CreateDummyMessageHandler()
         {
             Mock<HttpMessageHandler> mock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            mock.Protected().Setup("Dispose", ItExpr.IsAny<bool>());
+            mock.As<IDisposable>().Setup(c => c.Dispose());
             return mock.Object;
         }
 
