@@ -1,11 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -16,7 +12,7 @@ namespace System.Web.Http.ExceptionHandling
     public class ExceptionHandlerExtensionsTests
     {
         [Fact]
-        public void HandleAsync_CallsInterfaceHandleAsync()
+        public async Task HandleAsync_CallsInterfaceHandleAsync()
         {
             // Arrange
             Mock<IExceptionHandler> mock = CreateStubHandlerMock();
@@ -28,21 +24,17 @@ namespace System.Web.Http.ExceptionHandling
                 CancellationToken expectedCancellationToken = tokenSource.Token;
 
                 // Act
-                Task task = ExceptionHandlerExtensions.HandleAsync(handler, expectedContext,
+                await ExceptionHandlerExtensions.HandleAsync(handler, expectedContext,
                     expectedCancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                task.ThrowIfFaulted();
-
                 mock.Verify(h => h.HandleAsync(It.Is<ExceptionHandlerContext>(
                     c => c.ExceptionContext == expectedContext), expectedCancellationToken), Times.Once());
             }
         }
 
         [Fact]
-        public void HandleAsync_IfResultIsNotSet_ReturnsCompletedTaskWithNullResponse()
+        public async Task HandleAsync_IfResultIsNotSet_ReturnsCompletedTaskWithNullResponse()
         {
             // Arrange
             IExceptionHandler handler = CreateStubHandler();
@@ -50,18 +42,14 @@ namespace System.Web.Http.ExceptionHandling
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Act
-            Task<HttpResponseMessage> task = ExceptionHandlerExtensions.HandleAsync(handler, context,
-                cancellationToken);
+            HttpResponseMessage response = await ExceptionHandlerExtensions.HandleAsync(handler, context, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-            Assert.Null(task.Result);
+            Assert.Null(response);
         }
 
         [Fact]
-        public void HandleAsync_IfResultIsSet_CallsResultExecuteAsync()
+        public async Task HandleAsync_IfResultIsSet_CallsResultExecuteAsync()
         {
             // Arrange
             using (HttpResponseMessage response = CreateResponse())
@@ -77,21 +65,17 @@ namespace System.Web.Http.ExceptionHandling
                     CancellationToken expectedCancellationToken = tokenSource.Token;
 
                     // Act
-                    Task task = ExceptionHandlerExtensions.HandleAsync(handler, context,
+                    await ExceptionHandlerExtensions.HandleAsync(handler, context,
                         expectedCancellationToken);
 
                     // Assert
-                    Assert.NotNull(task);
-                    task.WaitUntilCompleted();
-                    task.ThrowIfFaulted();
-
                     mock.Verify(h => h.ExecuteAsync(expectedCancellationToken), Times.Once());
                 }
             }
         }
 
         [Fact]
-        public void HandleAsync_IfResultIsSet_ReturnsCompletedTaskWithResultResponse()
+        public async Task HandleAsync_IfResultIsSet_ReturnsCompletedTaskWithResultResponse()
         {
             // Arrange
             using (HttpResponseMessage expectedResponse = CreateResponse())
@@ -105,13 +89,10 @@ namespace System.Web.Http.ExceptionHandling
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task<HttpResponseMessage> task = handler.HandleAsync(context, cancellationToken);
+                HttpResponseMessage response = await handler.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                Assert.Same(expectedResponse, task.Result);
+                Assert.Same(expectedResponse, response);
             }
         }
 
@@ -142,7 +123,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void HandleAsync_IfResultIsSetButReturnsNull_ReturnsFaultedTask()
+        public async Task HandleAsync_IfResultIsSetButReturnsNull_ReturnsFaultedTask()
         {
             // Arrange
             Mock<IHttpActionResult> mock = new Mock<IHttpActionResult>(MockBehavior.Strict);
@@ -154,17 +135,9 @@ namespace System.Web.Http.ExceptionHandling
             ExceptionContext context = CreateMinimalValidContext();
             CancellationToken cancellationToken = CancellationToken.None;
 
-            // Act
-            Task<HttpResponseMessage> task =
-                ExceptionHandlerExtensions.HandleAsync(handler, context, cancellationToken);
-
-            // Assert
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.Faulted, task.Status);
-            Assert.NotNull(task.Exception);
-            Exception exception = task.Exception.GetBaseException();
-            Assert.IsType<InvalidOperationException>(exception);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => ExceptionHandlerExtensions.HandleAsync(handler, context, cancellationToken));
             Assert.Equal("IHttpActionResult.ExecuteAsync must not return null.", exception.Message);
         }
 

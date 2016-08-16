@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Web.Http.ModelBinding
@@ -12,7 +13,7 @@ namespace System.Web.Http.ModelBinding
     public class CustomBindingTests : ModelBindingTests
     {
         [Fact]
-        public void Custom_ValueProvider_Binds_Simple_Types_Get()
+        public async Task Custom_ValueProvider_Binds_Simple_Types_Get()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -24,10 +25,10 @@ namespace System.Web.Http.ModelBinding
             request.Headers.Add("value", "5");
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            string responseString = response.Content.ReadAsStringAsync().Result;
+            string responseString = await response.Content.ReadAsStringAsync();
             Assert.Equal<string>("5", responseString);
         }
 

@@ -98,7 +98,7 @@ namespace System.Net.Http.Formatting
                     { new SerializableType("protected") { publicField = "public", protectedInternalField = "protected internal", internalField = "internal", PublicProperty = "private", nonSerializedField = "Error" }, "{\"publicField\":\"public\",\"PublicProperty\":\"private\"}" },
 #endif
                     { new { field1 = "x", field2 = (string)null, field3 = "y" }, "{\"field1\":\"x\",\"field2\":null,\"field3\":\"y\"}" },
-                    
+
                     // Generics
                     { new KeyValuePair<string, bool>("foo", false), "{\"Key\":\"foo\",\"Value\":false}" },
 
@@ -139,96 +139,96 @@ namespace System.Net.Http.Formatting
 
         [Theory]
         [PropertyData("SerializedJson")]
-        public void ObjectsSerializeToExpectedJson(object o, string expectedJson)
+        public Task ObjectsSerializeToExpectedJson(object o, string expectedJson)
         {
-            ObjectsSerializeToExpectedJsonWithProvidedType(o, expectedJson, o.GetType());
+            return ObjectsSerializeToExpectedJsonWithProvidedType(o, expectedJson, o.GetType());
         }
 
         [Theory]
         [PropertyData("SerializedJson")]
-        public void JsonDeserializesToExpectedObject(object expectedObject, string json)
+        public Task JsonDeserializesToExpectedObject(object expectedObject, string json)
         {
-            JsonDeserializesToExpectedObjectWithProvidedType(expectedObject, json, expectedObject.GetType());
+            return JsonDeserializesToExpectedObjectWithProvidedType(expectedObject, json, expectedObject.GetType());
         }
 
         [Theory]
         [PropertyData("TypedSerializedJson")]
-        public void ObjectsSerializeToExpectedJsonWithProvidedType(object o, string expectedJson, Type type)
+        public async Task ObjectsSerializeToExpectedJsonWithProvidedType(object o, string expectedJson, Type type)
         {
-            Assert.Equal(expectedJson, Serialize(o, type));
+            Assert.Equal(expectedJson, await SerializeAsync(o, type));
         }
 
         [Theory]
         [PropertyData("TypedSerializedJson")]
-        public void JsonDeserializesToExpectedObjectWithProvidedType(object expectedObject, string json, Type type)
+        public async Task JsonDeserializesToExpectedObjectWithProvidedType(object expectedObject, string json, Type type)
         {
             if (expectedObject == null)
             {
-                Assert.Null(Deserialize(json, type));
+                Assert.Null(await DeserializeAsync(json, type));
             }
             else
             {
-                object o = Deserialize(json, type);
+                object o = await DeserializeAsync(json, type);
                 Assert.Equal(expectedObject, o, new ObjectComparer());
             }
         }
 
         [Fact]
-        public void CallbacksGetCalled()
+        public async Task CallbacksGetCalled()
         {
             TypeWithCallbacks o = new TypeWithCallbacks();
 
-            string json = Serialize(o, typeof(TypeWithCallbacks));
+            string json = await SerializeAsync(o, typeof(TypeWithCallbacks));
             Assert.Equal("12", o.callbackOrder);
 
-            TypeWithCallbacks deserializedObject = Deserialize(json, typeof(TypeWithCallbacks)) as TypeWithCallbacks;
+            TypeWithCallbacks deserializedObject = (await DeserializeAsync(json, typeof(TypeWithCallbacks))) as TypeWithCallbacks;
             Assert.Equal("34", deserializedObject.callbackOrder);
         }
 
         [Fact]
-        public void DerivedTypesArePreserved()
+        public async Task DerivedTypesArePreserved()
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter();
             formatter.SerializerSettings.TypeNameHandling = TypeNameHandling.Objects;
-            string json = Serialize(new Derived(), typeof(Base), formatter);
-            object deserializedObject = Deserialize(json, typeof(Base), formatter);
+            string json = await SerializeAsync(new Derived(), typeof(Base), formatter);
+            object deserializedObject = await DeserializeAsync(json, typeof(Base), formatter);
             Assert.IsType(typeof(Derived), deserializedObject);
         }
 
         [Fact]
-        public void ArbitraryTypesArentDeserializedByDefault()
+        public async Task ArbitraryTypesArentDeserializedByDefault()
         {
             string json = "{\"$type\":\"" + typeof(DangerousType).AssemblyQualifiedName + "\"}";
-            object deserializedObject = Deserialize(json, typeof(object));
+            object deserializedObject = await DeserializeAsync(json, typeof(object));
             Assert.IsNotType(typeof(DangerousType), deserializedObject);
         }
 
         [Fact]
-        public void ReferencesArePreserved()
+        public async Task ReferencesArePreserved()
         {
             Ref ref1 = new Ref();
             Ref ref2 = new Ref();
             ref1.Reference = ref2;
             ref2.Reference = ref1;
 
-            string json = Serialize(ref1, typeof(Ref));
-            Ref deserializedObject = Deserialize(json, typeof(Ref)) as Ref;
+            string json = await SerializeAsync(ref1, typeof(Ref));
+            Ref deserializedObject = (await DeserializeAsync(json, typeof(Ref))) as Ref;
 
             Assert.ReferenceEquals(deserializedObject, deserializedObject.Reference.Reference);
         }
 
         [Fact]
-        public void MissingMemberGetsDeserializedToNull()
+        public async Task MissingMemberGetsDeserializedToNull()
         {
             string json = "{}";
 
-            POCOType deserializedObject = Deserialize(json, typeof(POCOType)) as POCOType;
+            POCOType deserializedObject = (await DeserializeAsync(json, typeof(POCOType))) as POCOType;
 
             Assert.Null(deserializedObject.s);
         }
 
         [Fact]
-        public void DeserializingDeepArraysThrows()
+        public Task DeserializingDeepArraysThrows()
         {
             StringBuilder sb = new StringBuilder();
             int depth = 500;
@@ -243,7 +243,7 @@ namespace System.Net.Http.Formatting
             }
             string json = sb.ToString();
 
-            Assert.Throws(typeof(JsonReaderException), () => Deserialize(json, typeof(object)));
+            return Assert.ThrowsAsync<JsonReaderException>(() => DeserializeAsync(json, typeof(object)));
         }
 
         [Theory]
@@ -259,26 +259,26 @@ namespace System.Net.Http.Formatting
         [InlineData("ABC \\udc00\\ud800 DEF", "ABC \ufffd\ufffd DEF")]
         // make sure unencoded invalid surrogate characters don't make it through
         [InlineData("\udc00\ud800\ud800", "??????")]
-        public void InvalidUnicodeStringsAreFixedUp(string input, string expectedString)
+        public async Task InvalidUnicodeStringsAreFixedUp(string input, string expectedString)
         {
             string json = "\"" + input + "\"";
-            string deserializedString = Deserialize(json, typeof(string)) as string;
+            string deserializedString = (await DeserializeAsync(json, typeof(string))) as string;
 
             Assert.Equal(expectedString, deserializedString);
 
         }
 
-        private static string Serialize(object o, Type type, MediaTypeFormatter formatter = null)
+        private static async Task<string> SerializeAsync(object o, Type type, MediaTypeFormatter formatter = null)
         {
             formatter = formatter ?? new JsonMediaTypeFormatter();
             MemoryStream ms = new MemoryStream();
-            formatter.WriteToStreamAsync(type, o, ms, null, null).Wait();
+            await formatter.WriteToStreamAsync(type, o, ms, null, null);
             ms.Flush();
             ms.Position = 0;
             return new StreamReader(ms).ReadToEnd();
         }
 
-        internal static object Deserialize(string json, Type type, MediaTypeFormatter formatter = null, IFormatterLogger formatterLogger = null)
+        internal static Task<object> DeserializeAsync(string json, Type type, MediaTypeFormatter formatter = null, IFormatterLogger formatterLogger = null)
         {
             formatter = formatter ?? new JsonMediaTypeFormatter();
             MemoryStream ms = new MemoryStream();
@@ -286,13 +286,8 @@ namespace System.Net.Http.Formatting
             ms.Write(bytes, 0, bytes.Length);
             ms.Flush();
             ms.Position = 0;
-            Task<object> readTask = formatter.ReadFromStreamAsync(type, ms, content: null, formatterLogger: formatterLogger);
-            readTask.WaitUntilCompleted();
-            if (readTask.IsFaulted)
-            {
-                throw readTask.Exception.GetBaseException();
-            }
-            return readTask.Result;
+
+            return formatter.ReadFromStreamAsync(type, ms, content: null, formatterLogger: formatterLogger);
         }
     }
 
@@ -497,7 +492,7 @@ namespace System.Net.Http.Formatting
                 this.protectedInternalField == other.protectedInternalField &&
                 this.protectedField == other.protectedField &&
                 this.privateField == other.privateField;
-#else 
+#else
             // this.privateField is serialized through this.PublicProperty, thus the comparison here
             return this.publicField == other.publicField &&
                 this.privateField == other.privateField;

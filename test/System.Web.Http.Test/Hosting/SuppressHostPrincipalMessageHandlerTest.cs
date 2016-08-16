@@ -42,7 +42,7 @@ namespace System.Web.Http.Hosting
         }
 
         [Fact]
-        public void SendAsync_Throws_WhenRequestContextIsNull()
+        public async Task SendAsync_Throws_WhenRequestContextIsNull()
         {
             // Arrange
             HttpMessageHandler innerHandler = CreateDummyHandler();
@@ -51,8 +51,8 @@ namespace System.Web.Http.Hosting
             using (HttpRequestMessage request = new HttpRequestMessage())
             {
                 // Act & Assert
-                Assert.ThrowsArgument(
-                    () => { var ignore = handler.SendAsync(request, CancellationToken.None).Result; },
+                await Assert.ThrowsArgumentAsync(
+                    () => handler.SendAsync(request, CancellationToken.None),
                     "request",
                     "The request must have a request context.");
             }

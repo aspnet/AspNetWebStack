@@ -14,7 +14,7 @@ namespace System.Web.Http.Controllers
     public class AuthorizationFilterResultTests
     {
         [Fact]
-        public void ExecuteAsync_ChainsFiltersInOrderFollowedByInnerActionContinuation()
+        public async Task ExecuteAsync_ChainsFiltersInOrderFollowedByInnerActionContinuation()
         {
             // Arrange
             HttpActionContext actionContextInstance = ContextUtil.CreateActionContext();
@@ -44,11 +44,9 @@ namespace System.Web.Http.Controllers
                 innerResult);
 
             // Act
-            Task<HttpResponseMessage> result = authorizationFilter.ExecuteAsync(CancellationToken.None);
+            await authorizationFilter.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(result);
-            result.WaitUntilCompleted();
             Assert.Equal(new[] { "globalFilter", "actionFilter", "innerAction" }, log.ToArray());
             globalFilterMock.Verify();
             actionFilterMock.Verify();

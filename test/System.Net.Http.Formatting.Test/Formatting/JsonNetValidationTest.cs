@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Moq;
 
@@ -45,21 +46,20 @@ namespace System.Net.Http.Formatting
 #if !NETFX_CORE // IRequiredMemeberSelector is not in portable libraries because there is no model state on the client.
         [Theory]
         [PropertyData("Theories")]
-        public void ModelErrorsPopulatedWithValidationErrors(string json, Type type, int expectedErrors)
+        public async Task ModelErrorsPopulatedWithValidationErrors(string json, Type type, int expectedErrors)
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter();
             formatter.RequiredMemberSelector = new SimpleRequiredMemberSelector();
             Mock<IFormatterLogger> mockLogger = new Mock<IFormatterLogger>() { };
 
-
-            JsonNetSerializationTest.Deserialize(json, type, formatter, mockLogger.Object);
+            await JsonNetSerializationTest.DeserializeAsync(json, type, formatter, mockLogger.Object);
 
             mockLogger.Verify(mock => mock.LogError(It.IsAny<string>(), It.IsAny<Exception>()), Times.Exactly(expectedErrors));
         }
 #endif
 
         [Fact]
-        public void HittingMaxDepthRaisesOnlyOneValidationError()
+        public async Task HittingMaxDepthRaisesOnlyOneValidationError()
         {
             // Arrange
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter();
@@ -74,7 +74,7 @@ namespace System.Net.Http.Formatting
             string json = sb.ToString();
 
             // Act
-            JsonNetSerializationTest.Deserialize(json, typeof(Nest), formatter, mockLogger.Object);
+            await JsonNetSerializationTest.DeserializeAsync(json, typeof(Nest), formatter, mockLogger.Object);
 
             // Assert
             mockLogger.Verify(mock => mock.LogError(It.IsAny<string>(), It.IsAny<Exception>()), Times.Once());

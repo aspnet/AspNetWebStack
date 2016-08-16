@@ -211,7 +211,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationSucceeds()
+        public async Task ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationSucceeds()
         {
             // Arrange
             Uri expectedLocation = CreateLocation();
@@ -238,9 +238,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -258,7 +257,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationFails()
+        public async Task ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationFails()
         {
             // Arrange
             Uri location = CreateLocation();
@@ -282,9 +281,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
@@ -310,7 +308,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
         {
             // Arrange
             Uri expectedLocation = CreateLocation();
@@ -345,9 +343,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(task);
-                    task.WaitUntilCompleted();
 
-                    using (HttpResponseMessage response = task.Result)
+                    using (HttpResponseMessage response = await task)
                     {
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.Created, response.StatusCode);

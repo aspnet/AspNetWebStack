@@ -14,7 +14,7 @@ namespace System.Web.Http.Controllers
     public class ActionFilterResultTests
     {
         [Fact]
-        public void InvokeActionWithActionFilters_ChainsFiltersInOrderFollowedByInnerActionContinuation()
+        public async Task InvokeActionWithActionFilters_ChainsFiltersInOrderFollowedByInnerActionContinuation()
         {
             // Arrange
             HttpActionContext actionContextInstance = ContextUtil.CreateActionContext();
@@ -45,9 +45,8 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(result);
-            var resultTask = result();
-            Assert.NotNull(resultTask);
-            resultTask.WaitUntilCompleted();
+            await result();
+
             Assert.Equal(new[] { "globalFilter", "actionFilter", "innerAction" }, log.ToArray());
             globalFilterMock.Verify();
             actionFilterMock.Verify();

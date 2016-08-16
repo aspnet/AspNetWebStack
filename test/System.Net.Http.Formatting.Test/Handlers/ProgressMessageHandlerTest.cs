@@ -19,7 +19,7 @@ namespace System.Net.Http.Handlers
         [InlineData(false, true)]
         [InlineData(true, false)]
         [InlineData(true, true)]
-        public Task SendAsync_DoesNotInsertSendProgressWithoutEntityOrHandlerPresent(bool insertRequestEntity, bool addSendProgressHandler)
+        public async Task SendAsync_DoesNotInsertSendProgressWithoutEntityOrHandlerPresent(bool insertRequestEntity, bool addSendProgressHandler)
         {
             // Arrange
             HttpMessageInvoker invoker = CreateMessageInvoker(includeResponseEntity: false, addReceiveProgressHandler: false, addSendProgressHandler: addSendProgressHandler);
@@ -33,29 +33,26 @@ namespace System.Net.Http.Handlers
             }
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None).ContinueWith(
-                task =>
+            await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            if (insertRequestEntity && addSendProgressHandler)
+            {
+                ValidateContentHeader(request.Content);
+                Assert.NotSame(content, request.Content);
+                Assert.IsType<ProgressContent>(request.Content);
+            }
+            else
+            {
+                if (insertRequestEntity)
                 {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                    if (insertRequestEntity && addSendProgressHandler)
-                    {
-                        ValidateContentHeader(request.Content);
-                        Assert.NotSame(content, request.Content);
-                        Assert.IsType<ProgressContent>(request.Content);
-                    }
-                    else
-                    {
-                        if (insertRequestEntity)
-                        {
-                            Assert.IsType<StringContent>(request.Content);
-                        }
-                        else
-                        {
-                            Assert.Null(request.Content);
-                        }
-                    }
-                });
+                    Assert.IsType<StringContent>(request.Content);
+                }
+                else
+                {
+                    Assert.Null(request.Content);
+                }
+            }
         }
 
         [Theory]
@@ -63,39 +60,33 @@ namespace System.Net.Http.Handlers
         [InlineData(false, true)]
         [InlineData(true, false)]
         [InlineData(true, true)]
-        public Task SendAsync_InsertsReceiveProgressWhenResponseEntityPresent(bool insertResponseEntity, bool addReceiveProgressHandler)
+        public async Task SendAsync_InsertsReceiveProgressWhenResponseEntityPresent(bool insertResponseEntity, bool addReceiveProgressHandler)
         {
             // Arrange
             HttpMessageInvoker invoker = CreateMessageInvoker(includeResponseEntity: insertResponseEntity, addSendProgressHandler: false, addReceiveProgressHandler: addReceiveProgressHandler);
             HttpRequestMessage request = new HttpRequestMessage();
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None).ContinueWith(
-                task =>
-                {
-                    HttpResponseMessage response = task.Result;
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
-                    // Assert
-                    if (insertResponseEntity && addReceiveProgressHandler)
-                    {
-                        ValidateContentHeader(response.Content);
-                        Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                        Assert.NotNull(response.Content);
-                        Assert.IsType<StreamContent>(response.Content);
-                    }
-                    else
-                    {
-                        if (insertResponseEntity)
-                        {
-                            Assert.IsType<StringContent>(response.Content);
-                        }
-                        else
-                        {
-                            Assert.Null(response.Content);
-                        }
-                    }
-                });
+            // Assert
+            if (insertResponseEntity && addReceiveProgressHandler)
+            {
+                ValidateContentHeader(response.Content);
+                Assert.NotNull(response.Content);
+                Assert.IsType<StreamContent>(response.Content);
+            }
+            else
+            {
+                if (insertResponseEntity)
+                {
+                    Assert.IsType<StringContent>(response.Content);
+                }
+                else
+                {
+                    Assert.Null(response.Content);
+                }
+            }
         }
 
         private static HttpMessageInvoker CreateMessageInvoker(bool includeResponseEntity, bool addSendProgressHandler, bool addReceiveProgressHandler)

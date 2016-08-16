@@ -212,7 +212,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsTrue()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsTrue()
         {
             // Arrange
             ModelStateDictionary modelState = CreateModelState();
@@ -243,9 +243,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -271,7 +270,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsFalse()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsFalse()
         {
             // Arrange
             ModelStateDictionary modelState = CreateModelState();
@@ -304,9 +303,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -332,7 +330,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
         {
             // Arrange
             ModelStateDictionary modelState = CreateModelStateWithError();
@@ -356,9 +354,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
@@ -379,7 +376,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
         {
             // Arrange
             ModelStateDictionary modelState = CreateModelState();
@@ -421,9 +418,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(task);
-                    task.WaitUntilCompleted();
 
-                    using (HttpResponseMessage response = task.Result)
+                    using (HttpResponseMessage response = await task)
                     {
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

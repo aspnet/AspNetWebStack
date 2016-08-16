@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using System.Web.Http.Util;
 using Microsoft.TestCommon;
@@ -27,7 +28,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("text/xml")]
         [InlineData("application/json")]
         [InlineData("text/json")]
-        public void Action_Directly_Reads_HttpRequestMessage(string mediaType)
+        public async Task Action_Directly_Reads_HttpRequestMessage(string mediaType)
         {
             Order order = new Order() { OrderId = "99", OrderValue = 100.0 };
             var formatter = new MediaTypeFormatterCollection().FindWriter(typeof(Order), new MediaTypeHeaderValue(mediaType));
@@ -38,9 +39,9 @@ namespace System.Web.Http.ModelBinding
                 Method = HttpMethod.Post
             };
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
-            Order receivedOrder = response.Content.ReadAsAsync<Order>().Result;
+            Order receivedOrder = await response.Content.ReadAsAsync<Order>();
             Assert.Equal(order.OrderId, receivedOrder.OrderId);
             Assert.Equal(order.OrderValue, receivedOrder.OrderValue);
         }
@@ -72,9 +73,9 @@ namespace System.Web.Http.ModelBinding
     public class HttpContentBindingController : ApiController
     {
         [HttpPost]
-        public HttpResponseMessage HandleMessage()
+        public async Task<HttpResponseMessage> HandleMessage()
         {
-            Order order = Request.Content.ReadAsAsync<Order>().Result;
+            Order order = await Request.Content.ReadAsAsync<Order>();
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ObjectContent<Order>(order, new JsonMediaTypeFormatter())

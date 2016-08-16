@@ -160,7 +160,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse()
+        public async Task ExecuteAsync_Returns_CorrectResponse()
         {
             // Arrange
             HttpStatusCode expectedStatusCode = CreateStatusCode();
@@ -178,9 +178,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(expectedStatusCode, response.StatusCode);
@@ -214,7 +213,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse()
         {
             // Arrange
             HttpStatusCode expectedStatusCode = CreateStatusCode();
@@ -234,9 +233,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(expectedStatusCode, response.StatusCode);

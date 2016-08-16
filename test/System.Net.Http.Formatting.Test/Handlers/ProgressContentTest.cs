@@ -33,7 +33,7 @@ namespace System.Net.Http.Handlers
         }
 
         [Fact]
-        public Task SerializeToStreamAsync_InsertsProgressStream()
+        public async Task SerializeToStreamAsync_InsertsProgressStream()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -45,15 +45,12 @@ namespace System.Net.Http.Handlers
             MemoryStream memStream = new MemoryStream();
 
             // Act
-            return progressContent.CopyToAsync(memStream).ContinueWith(
-                task =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                    Assert.True(progressEventHandler.WasInvoked);
-                    Assert.Equal(request, progressEventHandler.Sender);
-                    Assert.Equal(request.Content.Headers.ContentLength, progressEventHandler.EventArgs.TotalBytes);
-                });
+            await progressContent.CopyToAsync(memStream);
+
+            // Assert
+            Assert.True(progressEventHandler.WasInvoked);
+            Assert.Equal(request, progressEventHandler.Sender);
+            Assert.Equal(request.Content.Headers.ContentLength, progressEventHandler.EventArgs.TotalBytes);
         }
 
         [Fact]

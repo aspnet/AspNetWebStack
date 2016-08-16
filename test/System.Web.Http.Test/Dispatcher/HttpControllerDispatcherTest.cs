@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.ExceptionHandling;
-using System.Web.Http.Hosting;
 using System.Web.Http.Results;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
@@ -115,7 +114,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_CallsControllerSelectorToGetControllerDescriptor()
+        public async Task SendAsync_CallsControllerSelectorToGetControllerDescriptor()
         {
             var mockSelector = new Mock<IHttpControllerSelector>();
             var config = new HttpConfiguration();
@@ -124,13 +123,13 @@ namespace System.Web.Http.Dispatcher
             var dispatcher = new HttpControllerDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             mockSelector.Verify(s => s.SelectController(request), Times.Once());
         }
 
         [Fact]
-        public void SendAsync_CallsControllerDescriptorToCreateController()
+        public async Task SendAsync_CallsControllerDescriptorToCreateController()
         {
             var mockSelector = new Mock<IHttpControllerSelector>();
             var mockDescriptor = new Mock<HttpControllerDescriptor>();
@@ -145,13 +144,13 @@ namespace System.Web.Http.Dispatcher
             var dispatcher = new HttpControllerDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             mockDescriptor.Verify();
         }
 
         [Fact]
-        public void SendAsync_CallsControllerExecuteAsyncWithPopulatedControllerContext()
+        public async Task SendAsync_CallsControllerExecuteAsyncWithPopulatedControllerContext()
         {
             HttpControllerContext calledContext = null;
             var mockSelector = new Mock<IHttpControllerSelector>();
@@ -170,7 +169,7 @@ namespace System.Web.Http.Dispatcher
             var dispatcher = new HttpControllerDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.NotNull(calledContext);
             Assert.Same(mockController.Object, calledContext.Controller);
@@ -181,23 +180,22 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_Returns404WhenControllerSelectorReturnsNullControllerDescriptor()
+        public async Task SendAsync_Returns404WhenControllerSelectorReturnsNullControllerDescriptor()
         {
             var config = new HttpConfiguration();
             var request = CreateRequest(config, "http://localhost/api/foo");
             var dispatcher = new HttpControllerDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            Task<HttpResponseMessage> resultTask = invoker.SendAsync(request, CancellationToken.None);
-            resultTask.WaitUntilCompleted();
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
-            Assert.Equal(HttpStatusCode.NotFound, resultTask.Result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         // In this case the controller selector throws, so we don't get a controller context in the
-        // exception handlers. 
+        // exception handlers.
         [Fact]
-        public void SendAsync_IfSendAsyncThrows_InControllerSelector_CallsExceptionServices()
+        public async Task SendAsync_IfSendAsyncThrows_InControllerSelector_CallsExceptionServices()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -218,10 +216,8 @@ namespace System.Web.Http.Dispatcher
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                await Assert.ThrowsAsync<Exception>(() => product.SendAsync(expectedRequest, cancellationToken));
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -242,9 +238,9 @@ namespace System.Web.Http.Dispatcher
         }
 
         // In this case the controller itself throws, so we get a controller context in the
-        // exception handlers. 
+        // exception handlers.
         [Fact]
-        public void SendAsync_IfSendAsyncThrows_Controller_CallsExceptionServices()
+        public async Task SendAsync_IfSendAsyncThrows_Controller_CallsExceptionServices()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -261,8 +257,8 @@ namespace System.Web.Http.Dispatcher
             controllerActivator
                 .Setup(
                     activator => activator.Create(
-                        It.IsAny<HttpRequestMessage>(), 
-                        It.IsAny<HttpControllerDescriptor>(), 
+                        It.IsAny<HttpRequestMessage>(),
+                        It.IsAny<HttpControllerDescriptor>(),
                         It.IsAny<Type>()))
                 .Returns(controller);
 
@@ -281,10 +277,8 @@ namespace System.Web.Http.Dispatcher
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                await Assert.ThrowsAsync<Exception>(() => product.SendAsync(expectedRequest, cancellationToken));
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -308,7 +302,7 @@ namespace System.Web.Http.Dispatcher
 
 
         [Fact]
-        public void SendAsync_IfSendAsyncCancels_InControllerSelector_DoesNotCallExceptionServices()
+        public async Task SendAsync_IfSendAsyncCancels_InControllerSelector_DoesNotCallExceptionServices()
         {
             // Arrange
             Exception expectedException = new OperationCanceledException();
@@ -329,18 +323,13 @@ namespace System.Web.Http.Dispatcher
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
-                // Act
-                task.WaitUntilCompleted();
-
-                // Assert
-                Assert.Equal(TaskStatus.Canceled, task.Status);
+                // Act & Assert
+                await Assert.ThrowsAsync<OperationCanceledException>(() => product.SendAsync(expectedRequest, cancellationToken));
             }
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
+        public async Task SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
         {
             // Arrange
             ExceptionDispatchInfo exceptionInfo = CreateExceptionInfo();
@@ -365,15 +354,9 @@ namespace System.Web.Http.Dispatcher
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
+                // Act & Assert
+                var exception = await Assert.ThrowsAsync<Exception>(() => product.SendAsync(request, cancellationToken));
 
-                // Act
-                task.WaitUntilCompleted();
-
-                // Assert
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception);
-                Exception exception = task.Exception.GetBaseException();
                 Assert.Same(exceptionInfo.SourceException, exception);
                 Assert.NotNull(exception.StackTrace);
                 Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
@@ -381,7 +364,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
+        public async Task SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
         {
             // Arrange
             IExceptionLogger exceptionLogger = CreateStubExceptionLogger();
@@ -406,38 +389,33 @@ namespace System.Web.Http.Dispatcher
 
                     CancellationToken cancellationToken = CreateCancellationToken();
 
-                    Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
-
                     // Act
-                    task.WaitUntilCompleted();
+                    HttpResponseMessage response = await product.SendAsync(request, cancellationToken);
 
                     // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                    HttpResponseMessage response = task.Result;
                     Assert.Same(expectedResponse, response);
                 }
             }
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerIsDefault_Returns500WithHttpErrorWhenControllerThrows()
+        public async Task SendAsync_IfExceptionHandlerIsDefault_Returns500WithHttpErrorWhenControllerThrows()
         {
             var config = new HttpConfiguration() { IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always };
             var request = CreateRequest(config, "http://localhost/api/HttpControllerDispatcherThrowing");
             var dispatcher = new HttpControllerDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            Task<HttpResponseMessage> resultTask = invoker.SendAsync(request, CancellationToken.None);
-            resultTask.WaitUntilCompleted();
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
-            Assert.Equal(HttpStatusCode.InternalServerError, resultTask.Result.StatusCode);
-            var objectContent = Assert.IsType<ObjectContent<HttpError>>(resultTask.Result.Content);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            var objectContent = Assert.IsType<ObjectContent<HttpError>>(response.Content);
             var error = Assert.IsType<HttpError>(objectContent.Value);
             Assert.Equal("Hello from the throwing controller", error["ExceptionMessage"]);
         }
 
         [Fact]
-        public void SendAsync_CreatesControllerContext_WithRequestContextFromRequest()
+        public async Task SendAsync_CreatesControllerContext_WithRequestContextFromRequest()
         {
             // Arrange
             using (HttpConfiguration configuration = new HttpConfiguration())
@@ -470,7 +448,7 @@ namespace System.Web.Http.Dispatcher
                 request.SetRouteData(new Mock<IHttpRouteData>(MockBehavior.Strict).Object);
 
                 // Act
-                HttpResponseMessage ignore = invoker.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
                 Assert.Same(expectedRequestContext, requestContext);
@@ -478,7 +456,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_CreatesControllerContextWithRequestBackedRequestContext_WhenRequestRequestContextIsNull()
+        public async Task SendAsync_CreatesControllerContextWithRequestBackedRequestContext_WhenRequestRequestContextIsNull()
         {
             // Arrange
             using (HttpConfiguration configuration = new HttpConfiguration())
@@ -505,7 +483,7 @@ namespace System.Web.Http.Dispatcher
                 request.SetRouteData(new Mock<IHttpRouteData>(MockBehavior.Strict).Object);
 
                 // Act
-                HttpResponseMessage ignore = invoker.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
                 Assert.IsType<RequestBackedHttpRequestContext>(requestContext);
@@ -516,7 +494,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_SetsRequestBackedRequestContextOnRequest_WhenRequestRequestContextIsNull()
+        public async Task SendAsync_SetsRequestBackedRequestContextOnRequest_WhenRequestRequestContextIsNull()
         {
             // Arrange
             using (HttpConfiguration configuration = new HttpConfiguration())
@@ -543,7 +521,7 @@ namespace System.Web.Http.Dispatcher
                 request.SetRouteData(new Mock<IHttpRouteData>(MockBehavior.Strict).Object);
 
                 // Act
-                HttpResponseMessage ignore = invoker.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
                 Assert.IsType<RequestBackedHttpRequestContext>(requestContext);

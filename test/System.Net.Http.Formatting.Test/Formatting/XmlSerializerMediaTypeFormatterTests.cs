@@ -57,12 +57,12 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void ReadDeeplyNestedObjectWorks()
+        public async Task ReadDeeplyNestedObjectWorks()
         {
-            XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter() 
-            { 
+            XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter()
+            {
 #if !NETFX_CORE // We don't support MaxDepth in the portable library
-                MaxDepth = 5001 
+                MaxDepth = 5001
 #endif
             };
 
@@ -70,7 +70,7 @@ namespace System.Net.Http.Formatting
 
             content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
 
-            Assert.IsType<Nest>(formatter.ReadFromStreamAsync(typeof(Nest), content.ReadAsStreamAsync().Result, content, null).Result);
+            Assert.IsType<Nest>(await formatter.ReadFromStreamAsync(typeof(Nest), await content.ReadAsStreamAsync(), content, null));
         }
 
         [Fact]
@@ -85,12 +85,12 @@ namespace System.Net.Http.Formatting
         [Theory]
         [InlineData(typeof(IQueryable<string>))]
         [InlineData(typeof(IEnumerable<string>))]
-        public void UseXmlFormatterWithNull(Type type)
+        public async Task UseXmlFormatterWithNull(Type type)
         {
             XmlMediaTypeFormatter xmlFormatter = new XmlSerializerMediaTypeFormatter();
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(xmlFormatter.WriteToStreamAsync(type, null, memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(xmlFormatter.WriteToStreamAsync(type, null, memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("nil=\"true\""),
@@ -100,12 +100,12 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void UseXmlSerializer_True()
+        public async Task UseXmlSerializer_True()
         {
             XmlSerializerMediaTypeFormatter xmlFormatter = new XmlSerializerMediaTypeFormatter();
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(xmlFormatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(xmlFormatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.False(serializedString.Contains("DataContractSampleType"),
@@ -116,12 +116,12 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void UseXmlSerializer_True_Indent()
+        public async Task UseXmlSerializer_True_Indent()
         {
             XmlSerializerMediaTypeFormatter xmlFormatter = new XmlSerializerMediaTypeFormatter { Indent = true };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(xmlFormatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(xmlFormatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("\r\n"), "Using default XmlSerializer with Indent set to true should emit data with indentation.");
@@ -199,7 +199,7 @@ namespace System.Net.Http.Formatting
 
         [Theory]
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection", RoundTripDataVariations)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer(Type variationType, object testData)
         {
             // Guard
             bool canSerialize = IsSerializableWithXmlSerializer(variationType, testData) && Assert.Http.CanRoundTrip(variationType);
@@ -210,14 +210,14 @@ namespace System.Net.Http.Formatting
                 formatter.SetSerializer(variationType, new XmlSerializer(variationType));
 
                 // Arrange & Act & Assert
-                object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+                object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
                 Assert.Equal(testData, readObj);
             }
         }
 
         [Theory]
         [TestDataSet(typeof(XmlMediaTypeFormatterTests), "BunchOfTypedObjectsTestDataCollection", RoundTripDataVariations)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer_ExtraTypes(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer_ExtraTypes(Type variationType, object testData)
         {
             // Guard
             bool canSerialize = IsSerializableWithXmlSerializer(variationType, testData) && Assert.Http.CanRoundTrip(variationType);
@@ -228,14 +228,14 @@ namespace System.Net.Http.Formatting
                 formatter.SetSerializer(variationType, new XmlSerializer(variationType, new Type[] { typeof(DBNull), }));
 
                 // Arrange & Act & Assert
-                object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+                object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
                 Assert.Equal(testData, readObj);
             }
         }
 
         // Test alternate null value; this serializer attempts to cast DBNull to variationType so typeof(string) variation fails
         [Fact]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer_DBNull()
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingXmlSerializer_DBNull()
         {
             // Arrange
             TestXmlSerializerMediaTypeFormatter formatter = new TestXmlSerializerMediaTypeFormatter();
@@ -244,7 +244,7 @@ namespace System.Net.Http.Formatting
             object testData = DBNull.Value;
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
             Assert.Equal(testData, readObj);
         }
 

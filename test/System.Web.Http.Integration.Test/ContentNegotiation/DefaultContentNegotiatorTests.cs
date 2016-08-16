@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Moq;
 
@@ -13,7 +14,7 @@ namespace System.Web.Http.ContentNegotiation
     public class DefaultContentNegotiatorTests : ContentNegotiationTestBase
     {
         [Fact]
-        public void Custom_ContentNegotiator_Used_In_Response()
+        public async Task Custom_ContentNegotiator_Used_In_Response()
         {
             // Arrange
             Configuration.Formatters.Clear();
@@ -29,7 +30,7 @@ namespace System.Web.Http.ContentNegotiation
             // Act
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, BaseAddress);
             request.Headers.Accept.Add(requestContentType);
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
             responseContentType = response.Content.Headers.ContentType;
 

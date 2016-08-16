@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http.Hosting;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
@@ -24,14 +25,14 @@ namespace System.Web.Http
                     { false, IncludeErrorDetailPolicy.LocalOnly, false, false },
                     { true, IncludeErrorDetailPolicy.LocalOnly, null, true },
                     { false, IncludeErrorDetailPolicy.LocalOnly, null, false },
-                    
+
                     { true, IncludeErrorDetailPolicy.Always, true, true },
                     { false, IncludeErrorDetailPolicy.Always, true, true },
                     { true, IncludeErrorDetailPolicy.Always, false, true },
                     { false, IncludeErrorDetailPolicy.Always, false, true },
                     { true, IncludeErrorDetailPolicy.Always, null, true },
                     { false, IncludeErrorDetailPolicy.Always, null, true },
-                    
+
                     { true, IncludeErrorDetailPolicy.Never, true, false },
                     { false, IncludeErrorDetailPolicy.Never, true, false },
                     { true, IncludeErrorDetailPolicy.Never, false, false },
@@ -51,7 +52,7 @@ namespace System.Web.Http
 
         [Theory]
         [PropertyData("ThrowingOnActionIncludesErrorDetailData")]
-        public void ThrowingOnActionIncludesErrorDetail(bool isLocal, IncludeErrorDetailPolicy includeErrorDetail, bool? customErrors, bool expectErrorDetail)
+        public async Task ThrowingOnActionIncludesErrorDetail(bool isLocal, IncludeErrorDetailPolicy includeErrorDetail, bool? customErrors, bool expectErrorDetail)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", "http://www.foo.com", controllerName, "ArgumentNull");
@@ -62,19 +63,19 @@ namespace System.Web.Http
                 request.Properties[HttpPropertyKeys.IncludeErrorDetailKey] = new Lazy<bool>(() => !(bool)customErrors);
             }
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 request,
-                (response) =>
+                async (response) =>
                 {
                     if (expectErrorDetail)
                     {
-                        AssertResponseIncludesErrorDetail(response);
+                        await AssertResponseIncludesErrorDetailAsync(response);
                     }
                     else
                     {
-                        AssertResponseDoesNotIncludeErrorDetail(response);
+                        await AssertResponseDoesNotIncludeErrorDetailAsync(response);
                     }
                 },
                 (config) =>
@@ -84,18 +85,18 @@ namespace System.Web.Http
             );
         }
 
-        private void AssertResponseIncludesErrorDetail(HttpResponseMessage response)
+        private async Task AssertResponseIncludesErrorDetailAsync(HttpResponseMessage response)
         {
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            dynamic json = JToken.Parse(response.Content.ReadAsStringAsync().Result);
+            dynamic json = JToken.Parse(await response.Content.ReadAsStringAsync());
             string result = json.ExceptionType;
             Assert.Equal(typeof(ArgumentNullException).FullName, result);
         }
 
-        private void AssertResponseDoesNotIncludeErrorDetail(HttpResponseMessage response)
+        private async Task AssertResponseDoesNotIncludeErrorDetailAsync(HttpResponseMessage response)
         {
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            JObject json = JToken.Parse(response.Content.ReadAsStringAsync().Result) as JObject;
+            JObject json = JToken.Parse(await response.Content.ReadAsStringAsync()) as JObject;
             Assert.Equal(1, json.Count);
             string errorMessage = ((JValue)json["Message"]).ToString();
             Assert.Equal("An error has occurred.", errorMessage);

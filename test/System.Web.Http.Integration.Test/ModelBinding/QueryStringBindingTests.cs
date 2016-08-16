@@ -3,6 +3,7 @@
 
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Web.Http.ModelBinding
@@ -25,7 +26,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("GetIntAsync", "?value=5", "5")]
         [InlineData("GetOptionalNullableInt", "", "null")]
         [InlineData("GetOptionalNullableInt", "?value=6", "6")]
-        public void Query_String_Binds_Simple_Types_Get(string action, string queryString, string expectedResponse)
+        public async Task Query_String_Binds_Simple_Types_Get(string action, string queryString, string expectedResponse)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -35,10 +36,10 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            string responseString = response.Content.ReadAsStringAsync().Result;
+            string responseString = await response.Content.ReadAsStringAsync();
             Assert.Equal<string>(expectedResponse, responseString);
         }
 
@@ -50,7 +51,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("PostIntFromUri", "?value=99", "99")]           // [FromUri]
         [InlineData("PostIntUriPrefixed", "?somePrefix=99", "99")]  // [FromUri(Prefix=somePrefix)]
         [InlineData("PostIntArray", "?value={[1,2,3]}", "0")]       // TODO: DevDiv2 333257 -- make this array real when fix JsonValue array model binding
-        public void Query_String_Binds_Simple_Types_Post(string action, string queryString, string expectedResponse)
+        public async Task Query_String_Binds_Simple_Types_Post(string action, string queryString, string expectedResponse)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -60,16 +61,16 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            string responseString = response.Content.ReadAsStringAsync().Result;
+            string responseString = await response.Content.ReadAsStringAsync();
             Assert.Equal<string>(expectedResponse, responseString);
         }
 
         [Theory]
         [InlineData("GetComplexTypeFromUri", "itemName=Tires&quantity=2&customer.Name=Sue", "Tires", 2, "Sue")]
-        public void Query_String_ComplexType_Type_Get(string action, string queryString, string itemName, int quantity, string customerName)
+        public async Task Query_String_ComplexType_Type_Get(string action, string queryString, string itemName, int quantity, string customerName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -86,16 +87,16 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            ModelBindOrder actualItem = response.Content.ReadAsAsync<ModelBindOrder>().Result;
+            ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
             Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
 
         [Theory]
         [InlineData("PostComplexTypeFromUri", "itemName=Tires&quantity=2&customer.Name=Bob", "Tires", 2, "Bob")]
-        public void Query_String_ComplexType_Type_Post(string action, string queryString, string itemName, int quantity, string customerName)
+        public async Task Query_String_ComplexType_Type_Post(string action, string queryString, string itemName, int quantity, string customerName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -111,16 +112,16 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            ModelBindOrder actualItem = response.Content.ReadAsAsync<ModelBindOrder>().Result;
+            ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
             Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
 
         [Theory]
         [InlineData("PostComplexTypeFromUriWithNestedCollection", "value.Numbers[0]=1&value.Numbers[1]=2", new[] { 1, 2 })]
-        public void Query_String_ComplexType_Type_Post_NestedCollection(string action, string queryString, int[] expectedValues)
+        public async Task Query_String_ComplexType_Type_Post_NestedCollection(string action, string queryString, int[] expectedValues)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage()
@@ -130,10 +131,10 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            ComplexTypeWithNestedCollection actualResult = response.Content.ReadAsAsync<ComplexTypeWithNestedCollection>().Result;
+            ComplexTypeWithNestedCollection actualResult = await response.Content.ReadAsAsync<ComplexTypeWithNestedCollection>();
             int[] actualValues = actualResult.Numbers.ToArray();
             Assert.Equal(expectedValues.Length, actualValues.Length);
             for (int i = 0; i < expectedValues.Length; i++)

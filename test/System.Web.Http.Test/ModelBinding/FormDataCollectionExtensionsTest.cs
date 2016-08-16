@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Validation;
 using System.Web.Http.Validation.Providers;
@@ -20,7 +21,7 @@ namespace System.Web.Http.ModelBinding
     {
         [Theory]
         [InlineData("", null)]
-        [InlineData("", "")] // empty 
+        [InlineData("", "")] // empty
         [InlineData("x", "x")] // normal key
         [InlineData("", "[]")] // trim []
         [InlineData("x", "x[]")] // trim []
@@ -30,7 +31,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("x.y[234].x", "x[y][234][x]")] // compound
         public void TestNormalize(string expectedMvc, string jqueryString)
         {
-            Assert.Equal(expectedMvc, FormDataCollectionExtensions.NormalizeJQueryToMvc(jqueryString));            
+            Assert.Equal(expectedMvc, FormDataCollectionExtensions.NormalizeJQueryToMvc(jqueryString));
         }
 
         [Fact]
@@ -51,42 +52,42 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadIntArray()
+        public async Task ReadIntArray()
         {
             // No key name means the top level object is an array
-            int[] result = ParseJQuery<int[]>("=30&=40&=50");
+            int[] result = await ParseJQueryAsync<int[]>("=30&=40&=50");
 
             Assert.Equal(new int[] { 30,40,50 } , result);
         }
 
         [Fact]
-        public void ReadIntArrayWithBrackets()
+        public async Task ReadIntArrayWithBrackets()
         {
             // brackets for explicit array
-            int[] result = ParseJQuery<int[]>("[]=30&[]=40&[]=50");
+            int[] result = await ParseJQueryAsync<int[]>("[]=30&[]=40&[]=50");
 
             Assert.Equal(new int[] { 30, 40, 50 }, result);
         }
 
         [Fact]
-        public void ReadIntArrayFromSingleElement()
+        public async Task ReadIntArrayFromSingleElement()
         {
             // No key name means the top level object is an array
-            int[] result = ParseJQuery<int[]>("=30");
+            int[] result = await ParseJQueryAsync<int[]>("=30");
 
             Assert.Equal(new int[] { 30 }, result);
         }
 
         [Fact]
-        public void ReadClassWithIntArray()
+        public async Task ReadClassWithIntArray()
         {
-            // specifying key name 'x=30' means that we have a field named x. 
+            // specifying key name 'x=30' means that we have a field named x.
             // multiple x keys mean that field is an array.
-            var result = ParseJQuery<ClassWithArrayField>("x=30&x=40&x=50");
-                        
+            var result = await ParseJQueryAsync<ClassWithArrayField>("x=30&x=40&x=50");
+
             Assert.Equal(new int[] { 30, 40, 50 }, result.x);
         }
-        
+
         public class ComplexType
         {
             public string Str { get; set; }
@@ -100,10 +101,10 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadClassWithFields()
+        public async Task ReadClassWithFields()
         {
             // Basic container class with multiple fields
-            var result = ParseJQuery<Point>("X=3&Y=4");            
+            var result = await ParseJQueryAsync<Point>("X=3&Y=4");
             Assert.Equal(3, result.X);
             Assert.Equal(4, result.Y);
         }
@@ -120,11 +121,11 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadClassWithFieldsAndPartialBind()
+        public async Task ReadClassWithFieldsAndPartialBind()
         {
             // Basic container class with multiple fields
-            // Extra Z=5 field, ignored since we're reading point. 
-            var result = ParseJQuery<Point>("X=3&Y=4&Z=5");
+            // Extra Z=5 field, ignored since we're reading point.
+            var result = await ParseJQueryAsync<Point>("X=3&Y=4&Z=5");
             Assert.Equal(3, result.X);
             Assert.Equal(4, result.Y);
         }
@@ -135,7 +136,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadDeeplyNestedFormUrlThrows()
+        public Task ReadDeeplyNestedFormUrlThrows()
         {
             StringBuilder sb = new StringBuilder("A");
             for (int i = 0; i < 10000; i++)
@@ -144,11 +145,11 @@ namespace System.Web.Http.ModelBinding
             }
             sb.Append("=1");
 
-            Assert.Throws<InsufficientExecutionStackException>(() => ParseJQuery<Nest>(sb.ToString()));
+            return Assert.ThrowsAsync<InsufficientExecutionStackException>(() => ParseJQueryAsync<Nest>(sb.ToString()));
         }
 
         [Fact]
-        public void ReadDeeplyNestedMvcThrows()
+        public Task ReadDeeplyNestedMvcThrows()
         {
             StringBuilder sb = new StringBuilder("A");
             for (int i = 0; i < 10000; i++)
@@ -157,7 +158,7 @@ namespace System.Web.Http.ModelBinding
             }
             sb.Append("=1");
 
-            Assert.Throws<InsufficientExecutionStackException>(() => ParseJQuery<Nest>(sb.ToString()));
+            return Assert.ThrowsAsync<InsufficientExecutionStackException>(() => ParseJQueryAsync<Nest>(sb.ToString()));
         }
 
         public class ClassWithPointArray
@@ -166,11 +167,11 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadArrayOfClasses()
+        public async Task ReadArrayOfClasses()
         {
-            // Array of classes. 
+            // Array of classes.
             string s = "Data[0][X]=10&Data[0][Y]=20&Data[1][X]=30&Data[1][Y]=40";
-            var result = ParseJQuery<ClassWithPointArray>(s);
+            var result = await ParseJQueryAsync<ClassWithPointArray>(s);
 
             Assert.NotNull(result.Data);
             Assert.Equal(2, result.Data.Length);
@@ -181,9 +182,9 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadComplexNestedType()
+        public async Task ReadComplexNestedType()
         {
-            var result = ParseJQuery<ComplexType>("Str=Hello+world&I=123&P[X]=3&P[Y]=4");
+            var result = await ParseJQueryAsync<ComplexType>("Str=Hello+world&I=123&P[X]=3&P[Y]=4");
             Assert.Equal("Hello world", result.Str);
             Assert.Equal(123, result.I);
             Assert.NotNull(result.P); // failed to find P
@@ -210,11 +211,11 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadComplexNestedType2()
+        public async Task ReadComplexNestedType2()
         {
             // Jquery encoding from this JSON: "{a:[1,2],b:[{c:3,d:4},{c:5,d:6}],e:{f:[7,8,9]}}";
             string s = "a[]=1&a[]=2&b[0][c]=3&b[0][d]=4&b[1][c]=5&b[1][d]=6&e[f][]=7&e[f][]=8&e[f][]=9";
-            var result = ParseJQuery<ComplexType2>(s);
+            var result = await ParseJQueryAsync<ComplexType2>(s);
 
             Assert.NotNull(result);
             Assert.Equal(new int[] { 1, 2 }, result.a);
@@ -225,70 +226,70 @@ namespace System.Web.Http.ModelBinding
             Assert.Equal(6, result.b[1].d);
             Assert.Equal(new int[] { 7, 8, 9 }, result.e.f);
         }
-                
+
         [Fact]
-        public void ReadJaggedArray()
+        public async Task ReadJaggedArray()
         {
             string s = "[0][]=9&[0][]=10&[1][]=11&[1][]=12&[2][]=13&[2][]=14";
-            var result = ParseJQuery<int[][]>(s);
+            var result = await ParseJQueryAsync<int[][]>(s);
 
             Assert.Equal(9, result[0][0]);
             Assert.Equal(10, result[0][1]);
             Assert.Equal(11, result[1][0]);
             Assert.Equal(12, result[1][1]);
             Assert.Equal(13, result[2][0]);
-            Assert.Equal(14, result[2][1]);            
+            Assert.Equal(14, result[2][1]);
         }
 
         [Fact]
-        public void ReadMultipleParameters()
+        public async Task ReadMultipleParameters()
         {
             // Basic container class with multiple fields
             HttpContent content = FormContent("X=3&Y=4");
-            FormDataCollection fd = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection fd = await content.ReadAsAsync<FormDataCollection>();
 
             Assert.Equal(3, fd.ReadAs<int>("X", requiredMemberSelector: null, formatterLogger: null));
             Assert.Equal("3", fd.ReadAs<string>("X", requiredMemberSelector: null, formatterLogger: null));
-            Assert.Equal(4, fd.ReadAs<int>("Y", requiredMemberSelector: null, formatterLogger: null));            
+            Assert.Equal(4, fd.ReadAs<int>("Y", requiredMemberSelector: null, formatterLogger: null));
         }
 
         [Fact]
-        public void ReadInvalidInt_ReturnsDefaultValue()
+        public async Task ReadInvalidInt_ReturnsDefaultValue()
         {
-            int result = ParseJQuery<int>("xyz");
+            int result = await ParseJQueryAsync<int>("xyz");
             Assert.Equal(0, result);
         }
 
         [Fact]
-        public void ReadForThrowingSetterTypeRecordsCorrectModelError()
+        public async Task ReadForThrowingSetterTypeRecordsCorrectModelError()
         {
             HttpContent content = FormContent("Throws=text");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
             Mock<IFormatterLogger> mockLogger = new Mock<IFormatterLogger>();
 
             formData.ReadAs<ThrowingSetterType>(String.Empty, requiredMemberSelector: null, formatterLogger: mockLogger.Object);
-            
+
             mockLogger.Verify(mock => mock.LogError("Throws", ThrowingSetterType.Exception));
         }
 
         [Fact]
-        public void ReadAs_NullActionContextThrows()
+        public async Task ReadAs_NullActionContextThrows()
         {
             // Arrange
             HttpContent content = FormContent("=30");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
 
             // Act/Assert
             Assert.Throws<ArgumentNullException>(() => formData.ReadAs<int>((HttpActionContext)null));
         }
 
         [Fact]
-        public void ReadAs_WithHttpActionContext()
+        public async Task ReadAs_WithHttpActionContext()
         {
             // Arrange
             int expected = 30;
             HttpContent content = FormContent("=30");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             {
@@ -303,12 +304,12 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ReadAs_WithModelNameAndHttpActionContext()
+        public async Task ReadAs_WithModelNameAndHttpActionContext()
         {
             // Arrange
             int expected = 30;
             HttpContent content = FormContent("a=30");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             {
@@ -325,17 +326,17 @@ namespace System.Web.Http.ModelBinding
         // This test verifies the user scenario behind codeplex-999 - ReadAs should take HttpActionContext
         // as a parameter to make use of ModelBinders in the configuration.
         [Fact]
-        public void Read_As_WithHttpActionContextAndCustomModelBinder()
+        public async Task Read_As_WithHttpActionContextAndCustomModelBinder()
         {
             // Arrange
             int expected = 15;
             HttpContent content = FormContent("a=30");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             {
                 configuration.Services.Insert(typeof(ModelBinderProvider), 0, new CustomIntModelBinderProvider());
-                
+
                 HttpActionContext actionContext = CreateActionContext(configuration);
 
                 // Act
@@ -346,22 +347,22 @@ namespace System.Web.Http.ModelBinding
             }
         }
 
-        // This test is to make sure that the ServicesConfigurationWrapper has not 
+        // This test is to make sure that the ServicesConfigurationWrapper has not
         // altered HttpConfiguration.Services in any way
         [Fact]
-        public void Read_As_NoServicesChangeInConfig()
+        public async Task Read_As_NoServicesChangeInConfig()
         {
             // Arrange
             HttpContent content = FormContent("a=30");
-            FormDataCollection formData = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection formData = await content.ReadAsAsync<FormDataCollection>();
 
             using (HttpConfiguration configuration = new HttpConfiguration())
             {
                 // Act
                 HttpControllerSettings settings = new HttpControllerSettings(configuration);
-                HttpConfiguration clonedConfiguration = 
+                HttpConfiguration clonedConfiguration =
                     HttpConfiguration.ApplyControllerSettings(settings, configuration);
-                int actual = (int)formData.ReadAs(typeof(int), "a", requiredMemberSelector: null, 
+                int actual = (int)formData.ReadAs(typeof(int), "a", requiredMemberSelector: null,
                     formatterLogger: (new Mock<IFormatterLogger>()).Object, config: configuration);
 
                 // Assert
@@ -374,7 +375,7 @@ namespace System.Web.Http.ModelBinding
         public void ServicesContainerWrapper_GetServices_Returns_RequiredModelValidatorProvider()
         {
             // Arrange
-            var requiredMemberModelValidatorProvider = 
+            var requiredMemberModelValidatorProvider =
                 new RequiredMemberModelValidatorProvider(requiredMemberSelector: null);
             FormDataCollectionExtensions.ServicesContainerWrapper wrapper =
                 new FormDataCollectionExtensions.ServicesContainerWrapper(
@@ -424,7 +425,7 @@ namespace System.Web.Http.ModelBinding
         private static HttpActionContext CreateActionContext(HttpConfiguration configuration)
         {
             HttpControllerContext controllerContext = new HttpControllerContext()
-            { 
+            {
                 Configuration = configuration,
                 ControllerDescriptor = new HttpControllerDescriptor(configuration),
             };
@@ -440,10 +441,10 @@ namespace System.Web.Http.ModelBinding
             return content;
         }
 
-        private T ParseJQuery<T>(string jquery)
+        private async Task<T> ParseJQueryAsync<T>(string jquery)
         {
             HttpContent content = FormContent(jquery);
-            FormDataCollection fd = content.ReadAsAsync<FormDataCollection>().Result;
+            FormDataCollection fd = await content.ReadAsAsync<FormDataCollection>();
             T result = fd.ReadAs<T>();
             return result;
         }

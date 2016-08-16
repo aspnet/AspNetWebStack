@@ -34,7 +34,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_InstanceProvided()
+        public async Task ExecuteAsync_Returns_InstanceProvided()
         {
             // Arrange
             using (HttpResponseMessage expectedResponse = CreateResponse())
@@ -46,9 +46,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.Same(expectedResponse, response);
                 }

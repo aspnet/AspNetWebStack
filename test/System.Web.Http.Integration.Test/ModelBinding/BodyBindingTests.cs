@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http.Properties;
 using Microsoft.TestCommon;
 
@@ -18,7 +19,7 @@ namespace System.Web.Http.ModelBinding
     {
         [Fact]
         [ReplaceCulture]
-        public void Body_Bad_Input_Receives_Validation_Error()
+        public async Task Body_Bad_Input_Receives_Validation_Error()
         {
             // Arrange
             string formUrlEncodedString = "Id=101&Name=testFirstNameTooLong";
@@ -32,15 +33,16 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("Failed to bind customer.RequiredValue. The errors are:\nErrorMessage: The RequiredValue property is required.\nFailed to bind customer.Name. The errors are:\nErrorMessage: The field Name must be a string with a maximum length of 6.\n", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("Failed to bind customer.RequiredValue. The errors are:\nErrorMessage: The RequiredValue property is required.\nFailed to bind customer.Name. The errors are:\nErrorMessage: The field Name must be a string with a maximum length of 6.\n",
+                await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Body_Good_Input_Succeed()
+        public async Task Body_Good_Input_Succeed()
         {
             // Arrange
             string formUrlEncodedString = "Id=111&Name=John&RequiredValue=9";
@@ -54,17 +56,17 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("111", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("111", await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
         [InlineData("PostWithOptionalBodyParameter")]
         [InlineData("PostWithOptionalBodyParameterAndUriParameter?id=3")]
-        public void Body_OptionalParameter_Throws(string actionName)
+        public async Task Body_OptionalParameter_Throws(string actionName)
         {
             // Arrange
             StringContent stringContent = new StringContent(@"""string value""", Encoding.UTF8, "application/json");
@@ -76,8 +78,8 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
-            HttpError error = response.Content.ReadAsAsync<HttpError>().Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
+            HttpError error = await response.Content.ReadAsAsync<HttpError>();
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -87,7 +89,7 @@ namespace System.Web.Http.ModelBinding
         [Theory]
         [InlineData("application/json")]
         [InlineData(null)]
-        public void Body_Binds_EmptyContentWithOrWithoutContentTypeHeader(string mediaType)
+        public async Task Body_Binds_EmptyContentWithOrWithoutContentTypeHeader(string mediaType)
         {
             // Arrange
             StringContent stringContent = new StringContent(String.Empty);
@@ -101,12 +103,12 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            ModelBindOrder actualItem = response.Content.ReadAsAsync<ModelBindOrder>().Result;
-            Assert.Equal(null, actualItem);
+            ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
+            Assert.Null(actualItem);
         }
 
         [Theory]
@@ -114,7 +116,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("PostComplexType", "application/xml")]
         [InlineData("PostComplexTypeFromBody", "application/json")]
         [InlineData("PostComplexTypeFromBody", "application/xml")]
-        public void Body_Binds_ComplexType_Type_Key_Value_Read(string action, string mediaType)
+        public async Task Body_Binds_ComplexType_Type_Key_Value_Read(string action, string mediaType)
         {
             // Arrange
             ModelBindOrder expectedItem = new ModelBindOrder()
@@ -132,10 +134,10 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            ModelBindOrder actualItem = response.Content.ReadAsAsync<ModelBindOrder>().Result;
+            ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
             Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
 
@@ -144,7 +146,7 @@ namespace System.Web.Http.ModelBinding
         [InlineData("PostComplexType", "application/xml")]
         [InlineData("PostComplexTypeFromBody", "application/json")]
         [InlineData("PostComplexTypeFromBody", "application/xml")]
-        public void Body_Binds_ComplexType_Type_Whole_Body_Read(string action, string mediaType)
+        public async Task Body_Binds_ComplexType_Type_Whole_Body_Read(string action, string mediaType)
         {
             // Arrange
             ModelBindOrder expectedItem = new ModelBindOrder()
@@ -162,10 +164,10 @@ namespace System.Web.Http.ModelBinding
             };
 
             // Act
-            HttpResponseMessage response = Client.SendAsync(request).Result;
+            HttpResponseMessage response = await Client.SendAsync(request);
 
             // Assert
-            ModelBindOrder actualItem = response.Content.ReadAsAsync<ModelBindOrder>().Result;
+            ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
             Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
     }

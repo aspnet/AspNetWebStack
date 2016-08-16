@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web.Http.Services;
 using Microsoft.TestCommon;
 using Moq;
@@ -165,7 +166,7 @@ namespace System.Web.Http.Tracing.Tracers
         [Theory]
         [ReplaceCulture]
         [PropertyData("RequestBodies")]
-        public void ReadFromStreamAsync_LogErrorFromJsonRequestBody(IList<TraceRecord> expectedTraces,
+        public async Task ReadFromStreamAsync_LogErrorFromJsonRequestBody(IList<TraceRecord> expectedTraces,
                                                                     HttpRequestMessage request,
                                                                     string requestBody)
         {
@@ -180,10 +181,10 @@ namespace System.Web.Http.Tracing.Tracers
             var tracer = new MediaTypeFormatterTracer(formatter, traceWriter, request);
 
             // Act
-            tracer.ReadFromStreamAsync(typeof(SampleType),
-                                       content.ReadAsStreamAsync().Result,
+            await tracer.ReadFromStreamAsync(typeof(SampleType),
+                                       await content.ReadAsStreamAsync(),
                                        content, loggerMock.Object
-                                      ).Wait();
+                                      );
 
             // Assert
             // Error must always be marked as handled at ReadFromStream in BaseJsonMediaTypeFormatters,

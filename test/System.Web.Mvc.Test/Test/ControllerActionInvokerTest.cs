@@ -1823,19 +1823,19 @@ namespace System.Web.Mvc.Test
             {
                 new ActionFilterImpl()
                 {
-                    OnResultExecutingImpl = delegate(ResultExecutingContext ctx) 
+                    OnResultExecutingImpl = delegate(ResultExecutingContext ctx)
                     {
                         Assert.NotNull(ctx);
-                        storedContext = ctx; 
+                        storedContext = ctx;
                     },
                     OnResultExecutedImpl = delegate { }
                 },
                 new ActionFilterImpl()
                 {
-                    OnResultExecutingImpl = delegate(ResultExecutingContext ctx) 
-                    { 
+                    OnResultExecutingImpl = delegate(ResultExecutingContext ctx)
+                    {
                         Assert.NotNull(ctx);
-                        Assert.Same(storedContext, ctx); 
+                        Assert.Same(storedContext, ctx);
                     },
                     OnResultExecutedImpl = delegate { }
                 },

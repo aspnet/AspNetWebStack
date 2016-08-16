@@ -5,6 +5,7 @@ using System.IdentityModel.Selectors;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.Threading.Tasks;
 using System.Web.Http.SelfHost.Channels;
 using Microsoft.TestCommon;
 using Moq;
@@ -242,7 +243,7 @@ namespace System.Web.Http.SelfHost
         }
 
         [Fact]
-        public void HttpSelfHostConfiguration_ClientCredentialType_RoundTrips()
+        public Task HttpSelfHostConfiguration_ClientCredentialType_RoundTrips()
         {
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration("http://localhost");
 
@@ -254,11 +255,7 @@ namespace System.Web.Http.SelfHost
 
             // now let us check the illegal value differently
             config.ClientCredentialType = (HttpClientCredentialType)999;
-            Assert.ThrowsArgumentOutOfRange(
-                () =>
-                {
-                    new HttpSelfHostServer(config).OpenAsync().Wait();
-                }, "value", null, false, 999);
+            return Assert.ThrowsArgumentOutOfRangeAsync(() => new HttpSelfHostServer(config).OpenAsync(), "value", null, 999);
         }
 
         [Fact]

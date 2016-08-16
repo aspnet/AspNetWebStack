@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.ServiceModel;
+using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using System.Web.Http.Util;
 using Microsoft.TestCommon;
@@ -28,7 +28,7 @@ namespace System.Web.Http.ContentNegotiation
         [InlineData("ReturnHttpResponseMessage")]
         [InlineData("ReturnHttpResponseMessageAsObject")]
         [InlineData("ReturnString")]
-        public void ActionReturnsHttpResponseMessage(string action)
+        public async Task ActionReturnsHttpResponseMessage(string action)
         {
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">Hello</string>";
 
@@ -37,17 +37,17 @@ namespace System.Web.Http.ContentNegotiation
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
             request.Method = HttpMethod.Get;
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal<string>("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal<string>(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
         [InlineData("ReturnHttpResponseMessageAsXml")]
-        public void ActionReturnsHttpResponseMessageWithExplicitMediaType(string action)
+        public async Task ActionReturnsHttpResponseMessageWithExplicitMediaType(string action)
         {
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">Hello</string>";
 
@@ -55,22 +55,22 @@ namespace System.Web.Http.ContentNegotiation
             request.RequestUri = new Uri(baseAddress + String.Format("HttpResponseReturn/{0}", action));
             request.Method = HttpMethod.Get;
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal<string>("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal<string>(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
         [InlineData("ReturnMultipleSetCookieHeaders")]
-        public void ReturnMultipleSetCookieHeadersShouldWork(string action)
+        public async Task ReturnMultipleSetCookieHeadersShouldWork(string action)
         {
             HttpRequestMessage request = new HttpRequestMessage();
             request.RequestUri = new Uri(baseAddress + String.Format("HttpResponseReturn/{0}", action));
             request.Method = HttpMethod.Get;
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             IEnumerable<string> list;
             Assert.True(response.Headers.TryGetValues("Set-Cookie", out list));

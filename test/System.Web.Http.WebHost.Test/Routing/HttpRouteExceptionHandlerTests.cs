@@ -112,7 +112,7 @@ namespace System.Web.Http.WebHost.Routing
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfExceptionIsHttpResponseException_UsesExceptionResponse()
+        public async Task ProcessRequestAsync_IfExceptionIsHttpResponseException_UsesExceptionResponse()
         {
             // Arrange
             HttpStatusCode expectedStatusCode = HttpStatusCode.Forbidden;
@@ -135,19 +135,15 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(request);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 Assert.Equal((int)expectedStatusCode, statusCode);
             }
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfExceptionIsNotHttpResponseException_CallsExceptionServices()
+        public async Task ProcessRequestAsync_IfExceptionIsNotHttpResponseException_CallsExceptionServices()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -167,13 +163,8 @@ namespace System.Web.Http.WebHost.Routing
             {
                 contextBase.SetHttpRequestMessage(expectedRequest);
 
-                // Act
-                Task task = product.ProcessRequestAsync(contextBase);
-
-                // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.Faulted, task.Status);
+                // Act & Assert
+                await Assert.ThrowsAsync<Exception>(() => product.ProcessRequestAsync(contextBase));
 
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
                     c != null
@@ -189,7 +180,7 @@ namespace System.Web.Http.WebHost.Routing
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfHandlerHandles_UsesHandlerResult()
+        public async Task ProcessRequestAsync_IfHandlerHandles_UsesHandlerResult()
         {
             // Arrange
             ExceptionDispatchInfo exceptionInfo = CreateExceptionInfo();
@@ -220,19 +211,15 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(request);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 Assert.Equal((int)expectedStatusCode, statusCode);
             }
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfHandlerDoesNotHandle_ReturnsTaskPropagatingException()
+        public async Task ProcessRequestAsync_IfHandlerDoesNotHandle_ReturnsTaskPropagatingException()
         {
             // Arrange
             Exception expectedException = CreateExceptionWithCallStack();
@@ -251,15 +238,9 @@ namespace System.Web.Http.WebHost.Routing
             {
                 contextBase.SetHttpRequestMessage(request);
 
-                // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                // Act & Assert
+                var exception = await Assert.ThrowsAsync<Exception>(() => product.ProcessRequestAsync(contextBase));
 
-                // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception); // Guard
-                Exception exception = task.Exception.GetBaseException();
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
                 Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
@@ -268,7 +249,7 @@ namespace System.Web.Http.WebHost.Routing
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfCopyToAsyncOnErrorResponseThrows_CallsExceptionLogger()
+        public async Task ProcessRequestAsync_IfCopyToAsyncOnErrorResponseThrows_CallsExceptionLogger()
         {
             // Arrange
             Exception expectedOriginalException = CreateException();
@@ -301,13 +282,9 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(expectedRequest);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 loggerMock.Verify(l => l.LogAsync(It.Is<ExceptionLoggerContext>(c =>
                     c.ExceptionContext != null
                     && c.ExceptionContext.Exception == expectedOriginalException
@@ -325,7 +302,7 @@ namespace System.Web.Http.WebHost.Routing
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfExceptionIsHttpResponseException_DisposesRequestAndResponse()
+        public async Task ProcessRequestAsync_IfExceptionIsHttpResponseException_DisposesRequestAndResponse()
         {
             // Arrange
             using (HttpResponseMessage response = CreateResponse())
@@ -347,13 +324,9 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(request);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 Assert.True(spy.Disposed);
                 Assert.ThrowsObjectDisposed(() => request.Method = HttpMethod.Get,
                     typeof(HttpRequestMessage).FullName);
@@ -363,7 +336,7 @@ namespace System.Web.Http.WebHost.Routing
         }
 
         [Fact]
-        public void ProcessRequestAsync_IfExceptionIsNotHttpResponseException_DisposesRequest()
+        public async Task ProcessRequestAsync_IfExceptionIsNotHttpResponseException_DisposesRequest()
         {
             // Arrange
             using (HttpRequestMessage request = CreateRequest())
@@ -372,10 +345,16 @@ namespace System.Web.Http.WebHost.Routing
                 request.RegisterForDispose(spy);
 
                 ExceptionDispatchInfo exceptionInfo = CreateExceptionInfo(CreateException());
-                IExceptionLogger logger = CreateDummyLogger();
-                IExceptionHandler handler = CreateDummyHandler();
+                Mock<IExceptionLogger> loggerMock = new Mock<IExceptionLogger>(MockBehavior.Strict);
+                loggerMock
+                    .Setup(l => l.LogAsync(It.IsAny<ExceptionLoggerContext>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(0));
+                Mock<IExceptionHandler> handlerMock = new Mock<IExceptionHandler>(MockBehavior.Strict);
+                handlerMock
+                    .Setup(h => h.HandleAsync(It.IsAny<ExceptionHandlerContext>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(0));
 
-                HttpRouteExceptionHandler product = CreateProductUnderTest(exceptionInfo, logger, handler);
+                HttpRouteExceptionHandler product = CreateProductUnderTest(exceptionInfo, loggerMock.Object, handlerMock.Object);
 
                 Mock<HttpResponseBase> responseBaseMock = new Mock<HttpResponseBase>();
                 responseBaseMock.SetupGet(r => r.Cache).Returns(() => new Mock<HttpCachePolicyBase>().Object);
@@ -383,13 +362,8 @@ namespace System.Web.Http.WebHost.Routing
                 HttpContextBase contextBase = CreateStubContextBase(responseBase);
                 contextBase.SetHttpRequestMessage(request);
 
-                // Act
-                Task task = product.ProcessRequestAsync(contextBase);
-
-                // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.Faulted, task.Status);
+                // Act & Assert
+                await Assert.ThrowsAsync<Exception>(() => product.ProcessRequestAsync(contextBase));
 
                 Assert.True(spy.Disposed);
                 Assert.ThrowsObjectDisposed(() => request.Method = HttpMethod.Get,
@@ -399,7 +373,7 @@ namespace System.Web.Http.WebHost.Routing
 
         // This scenario emulates what would happen if a route throws OperationCanceledException.
         [Fact]
-        public void ProcessRequestAsync_RouteCanceled_CancelsRequest()
+        public async Task ProcessRequestAsync_RouteCanceled_CancelsRequest()
         {
             // Arrange
             using (HttpRequestMessage request = CreateRequest())
@@ -419,13 +393,9 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(request);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 requestBase.Verify(r => r.Abort(), Times.Once());
             }
         }
@@ -433,7 +403,7 @@ namespace System.Web.Http.WebHost.Routing
         // This scenario emulates what would happen if the request is canceled while trying to handle an http response exception
         // thrown by routing.
         [Fact]
-        public void ProcessRequestAsync_WritingResponseCanceled_CancelsRequest()
+        public async Task ProcessRequestAsync_WritingResponseCanceled_CancelsRequest()
         {
             // Arrange
             using (HttpRequestMessage request = CreateRequest())
@@ -454,13 +424,9 @@ namespace System.Web.Http.WebHost.Routing
                 contextBase.SetHttpRequestMessage(request);
 
                 // Act
-                Task task = product.ProcessRequestAsync(contextBase);
+                await product.ProcessRequestAsync(contextBase);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 requestBase.Verify(r => r.Abort(), Times.Once());
             }
         }

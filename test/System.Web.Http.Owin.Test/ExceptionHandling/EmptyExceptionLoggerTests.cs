@@ -23,7 +23,6 @@ namespace System.Web.Http.Owin.ExceptionHandling
 
             // Assert
             Assert.NotNull(task);
-            task.WaitUntilCompleted();
             Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 

@@ -7,7 +7,6 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
-using System.Web.Http.Hosting;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.TestCommon;
@@ -18,7 +17,7 @@ namespace System.Web.Http.Owin
     public class PassiveAuthenticationMessageHandlerTest
     {
         [Fact]
-        public void SendAsync_DelegatesToInnerHandler()
+        public async Task SendAsync_DelegatesToInnerHandler()
         {
             // Arrange
             HttpRequestMessage request = null;
@@ -39,8 +38,7 @@ namespace System.Web.Http.Owin
                 using (HttpRequestMessage expectedRequest = CreateRequestWithOwinContextAndRequestContext(context))
                 {
                     // Act
-                    HttpResponseMessage response = handler.SendAsync(expectedRequest,
-                        expectedCancellationToken).Result;
+                    HttpResponseMessage response = await handler.SendAsync(expectedRequest, expectedCancellationToken);
 
                     // Assert
                     Assert.Same(expectedRequest, request);
@@ -51,7 +49,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void SendAsync_Throws_WhenRequestContextIsNull()
+        public async Task SendAsync_Throws_WhenRequestContextIsNull()
         {
             // Arrange
             HttpMessageHandler innerHandler = CreateDummyHandler();
@@ -60,15 +58,15 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = new HttpRequestMessage())
             {
                 // Act & Assert
-                Assert.ThrowsArgument(
-                    () => { var ignore = handler.SendAsync(request, CancellationToken.None).Result; },
+                await Assert.ThrowsArgumentAsync(
+                    () => handler.SendAsync(request, CancellationToken.None),
                     "request",
                     "The request must have a request context.");
             }
         }
 
         [Fact]
-        public void SendAsync_Throws_WhenOwinContextIsNull()
+        public async Task SendAsync_Throws_WhenOwinContextIsNull()
         {
             // Arrange
             HttpMessageHandler innerHandler = CreateStubHandler();
@@ -79,16 +77,14 @@ namespace System.Web.Http.Owin
                 request.SetRequestContext(new HttpRequestContext());
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
-                });
+                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => handler.SendAsync(request, CancellationToken.None));
                 Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
             }
         }
 
         [Fact]
-        public void SendAsync_Throws_WhenAuthenticationManagerIsNull()
+        public async Task SendAsync_Throws_WhenAuthenticationManagerIsNull()
         {
             // Arrange
             HttpMessageHandler innerHandler = CreateStubHandler();
@@ -98,16 +94,14 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = CreateRequestWithOwinContextAndRequestContext(context))
             {
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
-                });
+                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => handler.SendAsync(request, CancellationToken.None));
                 Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
             }
         }
 
         [Fact]
-        public void SendAsync_SetsRequestContextPrincipalToAnonymous_BeforeCallingInnerHandler()
+        public async Task SendAsync_SetsRequestContextPrincipalToAnonymous_BeforeCallingInnerHandler()
         {
             // Arrange
             IPrincipal requestContextPrincipal = null;
@@ -130,7 +124,7 @@ namespace System.Web.Http.Owin
                 request.SetRequestContext(requestContextMock.Object);
 
                 // Act
-                HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
@@ -143,7 +137,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void SendAsync_SuppressesAuthenticationChallenges_WhenNoChallengeIsSet()
+        public async Task SendAsync_SuppressesAuthenticationChallenges_WhenNoChallengeIsSet()
         {
             // Arrange
             HttpMessageHandler inner = CreateStubHandler();
@@ -153,7 +147,7 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = CreateRequestWithOwinContextAndRequestContext(context))
             {
                 // Act
-                HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
@@ -168,7 +162,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void SendAsync_SuppressesAuthenticationChallenges_WhenExistingAuthenticationTypesIsNull()
+        public async Task SendAsync_SuppressesAuthenticationChallenges_WhenExistingAuthenticationTypesIsNull()
         {
             // Arrange
             HttpMessageHandler inner = CreateStubHandler();
@@ -183,7 +177,7 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = CreateRequestWithOwinContextAndRequestContext(context))
             {
                 // Act
-                HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
@@ -200,7 +194,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void SendAsync_SuppressesAuthenticationChallenges_WhenExistingAuthenticationTypesIsEmpty()
+        public async Task SendAsync_SuppressesAuthenticationChallenges_WhenExistingAuthenticationTypesIsEmpty()
         {
             // Arrange
             HttpMessageHandler inner = CreateStubHandler();
@@ -215,7 +209,7 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = CreateRequestWithOwinContextAndRequestContext(context))
             {
                 // Act
-                HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
@@ -232,7 +226,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void SendAsync_LeavesAuthenticationChallenges_WhenExistingAuthenticationTypesIsNonEmpty()
+        public async Task SendAsync_LeavesAuthenticationChallenges_WhenExistingAuthenticationTypesIsNonEmpty()
         {
             // Arrange
             HttpMessageHandler inner = CreateStubHandler();
@@ -248,7 +242,7 @@ namespace System.Web.Http.Owin
             using (HttpRequestMessage request = CreateRequestWithOwinContextAndRequestContext(context))
             {
                 // Act
-                HttpResponseMessage ignore = handler.SendAsync(request, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Microsoft.TestCommon
 {
@@ -26,7 +27,7 @@ namespace Microsoft.TestCommon
         /// </summary>
         /// <param name="expected">The expected <see cref="HttpRequestMessage"/>. Should not be <c>null</c>.</param>
         /// <param name="actual">The actual <see cref="HttpRequestMessage"/>. Should not be <c>null</c>.</param>
-        public void Equal(HttpRequestMessage expected, HttpRequestMessage actual)
+        public async Task EqualAsync(HttpRequestMessage expected, HttpRequestMessage actual)
         {
             Assert.NotNull(expected);
             Assert.NotNull(actual);
@@ -40,8 +41,8 @@ namespace Microsoft.TestCommon
             }
             else
             {
-                string expectedContent = CleanContentString(expected.Content.ReadAsStringAsync().Result);
-                string actualContent = CleanContentString(actual.Content.ReadAsStringAsync().Result);
+                string expectedContent = CleanContentString(await expected.Content.ReadAsStringAsync());
+                string actualContent = CleanContentString(await actual.Content.ReadAsStringAsync());
                 Assert.Equal(expectedContent, actualContent);
                 Equal(expected.Content.Headers, actual.Content.Headers);
             }
@@ -52,9 +53,9 @@ namespace Microsoft.TestCommon
         /// </summary>
         /// <param name="expected">The expected <see cref="HttpResponseMessage"/>. Should not be <c>null</c>.</param>
         /// <param name="actual">The actual <see cref="HttpResponseMessage"/>. Should not be <c>null</c>.</param>
-        public void Equal(HttpResponseMessage expected, HttpResponseMessage actual)
+        public Task EqualAsync(HttpResponseMessage expected, HttpResponseMessage actual)
         {
-            Equal(expected, actual, null);
+            return EqualAsync(expected, actual, verifyContentStringCallback: null);
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Microsoft.TestCommon
         /// <param name="expected">The expected <see cref="HttpResponseMessage"/>. Should not be <c>null</c>.</param>
         /// <param name="actual">The actual <see cref="HttpResponseMessage"/>. Should not be <c>null</c>.</param>
         /// <param name="verifyContentCallback">The callback to verify the Content string. If it is null, Assert.Equal will be used. </param>
-        public void Equal(HttpResponseMessage expected, HttpResponseMessage actual, Action<string, string> verifyContentStringCallback)
+        public async Task EqualAsync(HttpResponseMessage expected, HttpResponseMessage actual, Action<string, string> verifyContentStringCallback)
         {
             Assert.NotNull(expected);
             Assert.NotNull(actual);
@@ -79,8 +80,8 @@ namespace Microsoft.TestCommon
             }
             else
             {
-                string expectedContent = CleanContentString(expected.Content.ReadAsStringAsync().Result);
-                string actualContent = CleanContentString(actual.Content.ReadAsStringAsync().Result);
+                string expectedContent = CleanContentString(await expected.Content.ReadAsStringAsync());
+                string actualContent = CleanContentString(await actual.Content.ReadAsStringAsync());
                 if (verifyContentStringCallback != null)
                 {
                     verifyContentStringCallback(expectedContent, actualContent);

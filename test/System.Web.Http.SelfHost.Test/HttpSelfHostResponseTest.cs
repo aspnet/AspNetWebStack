@@ -15,7 +15,7 @@ namespace System.Web.Http.SelfHost
     public class HttpSelfHostResponseTest
     {
         [Fact]
-        public void Get_Returns_500_And_No_Content_For_Null_HttpResponseMessage_From_MessageHandler()
+        public async Task Get_Returns_500_And_No_Content_For_Null_HttpResponseMessage_From_MessageHandler()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -27,7 +27,7 @@ namespace System.Web.Http.SelfHost
                 request.Method = HttpMethod.Get;
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -36,7 +36,7 @@ namespace System.Web.Http.SelfHost
         }
 
         [Fact]
-        public void Post_Returns_500_And_No_Content_For_Null_HttpResponseMessage_From_MessageHandler()
+        public async Task Post_Returns_500_And_No_Content_For_Null_HttpResponseMessage_From_MessageHandler()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -49,7 +49,7 @@ namespace System.Web.Http.SelfHost
                 request.Content = new ObjectContent<NullResponseCustomer>(new NullResponseCustomer() { Name = "Sue", Age = 39 }, new JsonMediaTypeFormatter());
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -58,7 +58,7 @@ namespace System.Web.Http.SelfHost
         }
 
         [Fact]
-        public void Get_Returns_500_And_Error_Content_For_Null_HttpResponseMessage_From_Action()
+        public async Task Get_Returns_500_And_Error_Content_For_Null_HttpResponseMessage_From_Action()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -70,16 +70,16 @@ namespace System.Web.Http.SelfHost
                 request.Method = HttpMethod.Get;
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"Message\":\"An error has occurred.\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Contains("\"Message\":\"An error has occurred.\"", await response.Content.ReadAsStringAsync());
             }
         }
 
         [Fact]
-        public void Post_Returns_500_And_Error_Content_For_Null_HttpResponseMessage_From_Action()
+        public async Task Post_Returns_500_And_Error_Content_For_Null_HttpResponseMessage_From_Action()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -92,16 +92,16 @@ namespace System.Web.Http.SelfHost
                 request.Content = new ObjectContent<NullResponseCustomer>(new NullResponseCustomer() { Name = "Sue", Age = 39 }, new JsonMediaTypeFormatter());
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"Message\":\"An error has occurred.\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Contains("\"Message\":\"An error has occurred.\"", await response.Content.ReadAsStringAsync());
             }
         }
 
         [Fact]
-        public void Get_Returns_500_And_Error_Content_For_Null_Task_From_Action()
+        public async Task Get_Returns_500_And_Error_Content_For_Null_Task_From_Action()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -113,16 +113,16 @@ namespace System.Web.Http.SelfHost
                 request.Method = HttpMethod.Get;
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"Message\":\"An error has occurred.\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Contains("\"Message\":\"An error has occurred.\"", await response.Content.ReadAsStringAsync());
             }
         }
 
         [Fact]
-        public void Post_Returns_500_And_Error_Content_For_Null_Task_From_Action()
+        public async Task Post_Returns_500_And_Error_Content_For_Null_Task_From_Action()
         {
             using (var selfHostTester = new SelfHostTester())
             {
@@ -135,11 +135,11 @@ namespace System.Web.Http.SelfHost
                 request.Content = new ObjectContent<NullResponseCustomer>(new NullResponseCustomer() { Name = "Sue", Age = 39 }, new JsonMediaTypeFormatter());
 
                 // Action
-                HttpResponseMessage response = selfHostTester.HttpClient.SendAsync(request).Result;
+                HttpResponseMessage response = await selfHostTester.HttpClient.SendAsync(request);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"Message\":\"An error has occurred.\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Contains("\"Message\":\"An error has occurred.\"", await response.Content.ReadAsStringAsync());
             }
         }
 

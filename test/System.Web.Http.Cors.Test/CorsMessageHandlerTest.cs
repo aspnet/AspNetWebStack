@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Cors;
 using System.Web.Http.Hosting;
 using Microsoft.TestCommon;
@@ -20,7 +21,7 @@ namespace System.Web.Http.Cors
         }
 
         [Fact]
-        public void SendAsync_DoesNotAddHeaders_WhenOriginIsMissing()
+        public async Task SendAsync_DoesNotAddHeaders_WhenOriginIsMissing()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -30,7 +31,7 @@ namespace System.Web.Http.Cors
             HttpMessageInvoker invoker = new HttpMessageInvoker(corsHandler);
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/sample");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Empty(response.Headers);
         }
@@ -39,7 +40,7 @@ namespace System.Web.Http.Cors
         [InlineData("GET", "*")]
         [InlineData("DELETE", "*")]
         [InlineData("HEAD", "http://example.com")]
-        public void SendAsync_ReturnsAllowAOrigin(string httpMethod, string expectedOrigin)
+        public async Task SendAsync_ReturnsAllowAOrigin(string httpMethod, string expectedOrigin)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -50,7 +51,7 @@ namespace System.Web.Http.Cors
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/sample");
             request.Headers.Add(CorsConstants.Origin, "http://example.com");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
             string origin = response.Headers.GetValues("Access-Control-Allow-Origin").FirstOrDefault();
 
             Assert.Equal(expectedOrigin, origin);
@@ -59,7 +60,7 @@ namespace System.Web.Http.Cors
         [Theory]
         [InlineData("DELETE", "*", "foo,bar")]
         [InlineData("PUT", "http://localhost", "content-type,custom")]
-        public void SendAsync_Preflight_ReturnsAllowMethodsAndAllowHeaders(string requestedMethod, string expectedOrigin, string requestedHeaders)
+        public async Task SendAsync_Preflight_ReturnsAllowMethodsAndAllowHeaders(string requestedMethod, string expectedOrigin, string requestedHeaders)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -73,7 +74,7 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, requestedMethod);
             request.Headers.Add(CorsConstants.AccessControlRequestHeaders, requestedHeaders);
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
             string origin = response.Headers.GetValues(CorsConstants.AccessControlAllowOrigin).FirstOrDefault();
             string allowMethod = response.Headers.GetValues(CorsConstants.AccessControlAllowMethods).FirstOrDefault();
             string[] allowHeaders = response.Headers.GetValues(CorsConstants.AccessControlAllowHeaders).FirstOrDefault().Split(',');
@@ -89,7 +90,7 @@ namespace System.Web.Http.Cors
         }
 
         [Fact]
-        public void SendAsync_Preflight_ReturnsOriginalResponse_WhenNoCorsPolicyProviderIsFound()
+        public async Task SendAsync_Preflight_ReturnsOriginalResponse_WhenNoCorsPolicyProviderIsFound()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -100,13 +101,13 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.Origin, "http://localhost");
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, "GET");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
         }
 
         [Fact]
-        public void SendAsync_Preflight_ReturnsBadRequest_WhenOriginIsNotAllowed()
+        public async Task SendAsync_Preflight_ReturnsBadRequest_WhenOriginIsNotAllowed()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -117,14 +118,14 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.Origin, "http://localhost");
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, "POST");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("{\"Message\":\"The origin 'http://localhost' is not allowed.\"}", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("{\"Message\":\"The origin 'http://localhost' is not allowed.\"}", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void SendAsync_Preflight_ReturnsSoftNotFound_WhenNoRouteMatches()
+        public async Task SendAsync_Preflight_ReturnsSoftNotFound_WhenNoRouteMatches()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "foo");
@@ -135,16 +136,16 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.Origin, "http://localhost");
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, "POST");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             bool noRouteMatched = Assert.IsType<bool>(request.Properties[HttpPropertyKeys.NoRouteMatched]);
             Assert.True(noRouteMatched);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            Assert.Equal("{\"Message\":\"No HTTP resource was found that matches the request URI 'http://localhost/nomatch'.\"}", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("{\"Message\":\"No HTTP resource was found that matches the request URI 'http://localhost/nomatch'.\"}", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void SendAsync_Preflight_ReturnsSoftNotFound_WhenControllerSelectionFails()
+        public async Task SendAsync_Preflight_ReturnsSoftNotFound_WhenControllerSelectionFails()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -155,13 +156,13 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.Origin, "http://localhost");
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, "POST");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
-        public void SendAsync_HandlesExceptions_ThrownDuringPreflight()
+        public async Task SendAsync_HandlesExceptions_ThrownDuringPreflight()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}");
@@ -174,74 +175,68 @@ namespace System.Web.Http.Cors
             request.Headers.Add(CorsConstants.Origin, "http://localhost");
             request.Headers.Add(CorsConstants.AccessControlRequestMethod, "RandomMethod");
 
-            HttpResponseMessage response = invoker.SendAsync(request, CancellationToken.None).Result;
+            HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
         }
 
         [Fact]
-        public void HandleCorsRequestAsync_NullConfig_Throws()
+        public Task HandleCorsRequestAsync_NullConfig_Throws()
         {
             CorsMessageHandler corsHandler = new CorsMessageHandler(new HttpConfiguration());
-            Assert.ThrowsArgumentNull(() =>
-            {
-                HttpResponseMessage response = corsHandler.HandleCorsRequestAsync(null, new CorsRequestContext(), CancellationToken.None).Result;
-            },
-            "request");
+            return Assert.ThrowsArgumentNullAsync(
+                () => corsHandler.HandleCorsRequestAsync(null, new CorsRequestContext(), CancellationToken.None),
+                "request");
         }
 
         [Fact]
-        public void HandleCorsRequestAsync_NullContext_Throws()
+        public Task HandleCorsRequestAsync_NullContext_Throws()
         {
             CorsMessageHandler corsHandler = new CorsMessageHandler(new HttpConfiguration());
-            Assert.ThrowsArgumentNull(() =>
-            {
-                HttpResponseMessage response = corsHandler.HandleCorsRequestAsync(new HttpRequestMessage(), null, CancellationToken.None).Result;
-            },
-            "corsRequestContext");
+            return Assert.ThrowsArgumentNullAsync(
+                () => corsHandler.HandleCorsRequestAsync(new HttpRequestMessage(), null, CancellationToken.None),
+                "corsRequestContext");
         }
 
         [Fact]
-        public void HandleCorsPreflightRequestAsync_ReturnsBadRequestWhenAccessControlRequestMethodIsInvalid()
+        public async Task HandleCorsPreflightRequestAsync_ReturnsBadRequestWhenAccessControlRequestMethodIsInvalid()
         {
             CorsMessageHandler corsHandler = new CorsMessageHandler(new HttpConfiguration());
-            HttpResponseMessage response = corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(),
+            HttpResponseMessage response = await corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(),
                 new CorsRequestContext
                 {
                     AccessControlRequestMethod = "Get-http://localhost"
                 },
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("The \"Access-Control-Request-Method\" header value 'Get-http://localhost' is invalid.", response.Content.ReadAsAsync<HttpError>().Result.Message);
+            Assert.Equal("The \"Access-Control-Request-Method\" header value 'Get-http://localhost' is invalid.", (await response.Content.ReadAsAsync<HttpError>()).Message);
         }
 
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void HandleCorsPreflightRequestAsync_ReturnsBadRequestWhenAccessControlRequestMethodIsNullOrEmpty(string accessControlRequestMethod)
+        public async Task HandleCorsPreflightRequestAsync_ReturnsBadRequestWhenAccessControlRequestMethodIsNullOrEmpty(string accessControlRequestMethod)
         {
             CorsMessageHandler corsHandler = new CorsMessageHandler(new HttpConfiguration());
-            HttpResponseMessage response = corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(),
+            HttpResponseMessage response = await corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(),
                 new CorsRequestContext
                 {
                     AccessControlRequestMethod = accessControlRequestMethod
                 },
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("The \"Access-Control-Request-Method\" header value cannot be null or empty.", response.Content.ReadAsAsync<HttpError>().Result.Message);
+            Assert.Equal("The \"Access-Control-Request-Method\" header value cannot be null or empty.", (await response.Content.ReadAsAsync<HttpError>()).Message);
         }
 
         [Fact]
-        public void HandleCorsPreflightRequestAsync_NullContext_Throws()
+        public Task HandleCorsPreflightRequestAsync_NullContext_Throws()
         {
             CorsMessageHandler corsHandler = new CorsMessageHandler(new HttpConfiguration());
-            Assert.ThrowsArgumentNull(() =>
-            {
-                HttpResponseMessage response = corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(), null, CancellationToken.None).Result;
-            },
-            "corsRequestContext");
+            return Assert.ThrowsArgumentNullAsync(
+                () => corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(), null, CancellationToken.None),
+                "corsRequestContext");
         }
     }
 }

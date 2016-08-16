@@ -112,62 +112,52 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void ReadAsFromDataAsync_PassesCancellationToken()
+        public async Task ReadAsFromDataAsync_PassesCancellationToken()
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             cts.Cancel();
             HttpContent content = new StringContent("");
             content.Headers.ContentType = MediaTypeConstants.ApplicationFormUrlEncodedMediaType;
 
-            Assert.Throws<TaskCanceledException>(() => content.ReadAsFormDataAsync(cts.Token).Wait());
+            await Assert.ThrowsAsync<OperationCanceledException>(() => content.ReadAsFormDataAsync(cts.Token));
         }
 
         [Theory]
         [PropertyData("FormData")]
-        public Task ReadAsFormDataAsync_HandlesFormData(string formData)
+        public async Task ReadAsFormDataAsync_HandlesFormData(string formData)
         {
             // Arrange
             HttpContent content = new StringContent(formData);
             content.Headers.ContentType = MediaTypeConstants.ApplicationFormUrlEncodedMediaType;
 
             // Act
-            return content.ReadAsFormDataAsync().ContinueWith(
-                readTask =>
-                {
-                    NameValueCollection data = readTask.Result;
+            NameValueCollection data = await content.ReadAsFormDataAsync();
 
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.Equal(formData, data.ToString());
-                });
+            // Assert
+            Assert.Equal(formData, data.ToString());
         }
 
         [Theory]
         [PropertyData("IrregularFormData")]
-        public Task ReadAsFormDataAsync_HandlesIrregularFormData(string irregularFormData)
+        public async Task ReadAsFormDataAsync_HandlesIrregularFormData(string irregularFormData)
         {
             // Arrange
             HttpContent content = new StringContent(irregularFormData);
             content.Headers.ContentType = MediaTypeConstants.ApplicationFormUrlEncodedMediaType;
 
             // Act
-            return content.ReadAsFormDataAsync().ContinueWith(
-                readTask =>
-                {
-                    NameValueCollection data = readTask.Result;
+            NameValueCollection data = await content.ReadAsFormDataAsync();
 
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.Equal(1, data.Count);
-                    Assert.Equal(irregularFormData, data.AllKeys[0]);
-                });
+            // Assert
+            Assert.Equal(1, data.Count);
+            Assert.Equal(irregularFormData, data.AllKeys[0]);
         }
 
         [Fact]
-        public void ReadAsFormDataAsync_HandlesNonFormData()
+        public Task ReadAsFormDataAsync_HandlesNonFormData()
         {
             HttpContent content = new StringContent("{}", Encoding.UTF8, "test/unknown");
-            Assert.Throws<UnsupportedMediaTypeException>(() => content.ReadAsFormDataAsync().Wait());
+            return Assert.ThrowsAsync<UnsupportedMediaTypeException>(() => content.ReadAsFormDataAsync());
         }
     }
 }

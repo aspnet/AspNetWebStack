@@ -151,7 +151,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void FormatterThrowsOnWriteWhenOverridenCreateFails()
+        public async Task FormatterThrowsOnWriteWhenOverridenCreateFails()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -162,15 +162,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent(String.Empty);
 
             // Act & Assert
-            Action action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'CreateJsonSerializer' method threw an exception when attempting to create a JSON serializer.");
+            Func<Task> action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'CreateJsonSerializer' method threw an exception when attempting to create a JSON serializer.");
 
             Assert.Null(formatter.InnerDataContractSerializer);
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void FormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
+        public async Task FormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -181,15 +181,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent(String.Empty);
 
             // Act & Assert
-            Action action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'CreateJsonSerializer' method returned null. It must return a JSON serializer instance.");
+            Func<Task> action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'CreateJsonSerializer' method returned null. It must return a JSON serializer instance.");
 
             Assert.Null(formatter.InnerDataContractSerializer);
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void FormatterThrowsOnReadWhenOverridenCreateFails()
+        public async Task FormatterThrowsOnReadWhenOverridenCreateFails()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -202,15 +202,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent("foo");
 
             // Act & Assert
-            Action action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'CreateJsonSerializer' method threw an exception when attempting to create a JSON serializer.");
+            Func<Task> action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'CreateJsonSerializer' method threw an exception when attempting to create a JSON serializer.");
 
             Assert.Null(formatter.InnerDataContractSerializer);
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void FormatterThrowsOnReadWhenOverridenCreateReturnsNull()
+        public async Task FormatterThrowsOnReadWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -223,9 +223,8 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent("foo");
 
             // Act & Assert
-            Action action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null).Wait();
-
-            Assert.Throws<InvalidOperationException>(action, "The 'CreateJsonSerializer' method returned null. It must return a JSON serializer instance.");
+            Func<Task> action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'CreateJsonSerializer' method returned null. It must return a JSON serializer instance.");
 
             Assert.Null(formatter.InnerDataContractSerializer);
             Assert.NotNull(formatter.InnerJsonSerializer);
@@ -233,7 +232,7 @@ namespace System.Net.Http.Formatting
 
 #if !NETFX_CORE
         [Fact]
-        public void DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
+        public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -245,15 +244,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent(String.Empty);
 
             // Act & Assert
-            Action action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
+            Func<Task> action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
 
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void DataContractFormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
+        public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -265,15 +264,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent(String.Empty);
 
             // Act & Assert
-            Action action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
+            Func<Task> action = () => formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
 
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void DataContractFormatterThrowsOnReadWhenOverridenCreateFails()
+        public async Task DataContractFormatterThrowsOnReadWhenOverridenCreateFails()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -287,15 +286,15 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent("foo");
 
             // Act & Assert
-            Action action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null).Wait();
-            Assert.Throws<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
+            Func<Task> action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null);
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
 
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
 
         [Fact]
-        public void DataContractFormatterThrowsOnReadWhenOverridenCreateReturnsNull()
+        public async Task DataContractFormatterThrowsOnReadWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -309,9 +308,9 @@ namespace System.Net.Http.Formatting
             HttpContent content = new StringContent("foo");
 
             // Act & Assert
-            Action action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null).Wait();
+            Func<Task> action = () => formatter.ReadFromStreamAsync(typeof(SampleType), memoryStream, content, null);
 
-            Assert.Throws<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
+            await Assert.ThrowsAsync<InvalidOperationException>(action, "The 'DataContractJsonSerializer' serializer cannot serialize the type 'SampleType'.");
 
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
@@ -339,7 +338,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void ReadFromStreamAsync_RoundTripsJToken()
+        public async Task ReadFromStreamAsync_RoundTripsJToken()
         {
             string beforeMessage = "Hello World";
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -350,7 +349,7 @@ namespace System.Net.Http.Formatting
             jsonWriter.Flush();
             memStream.Position = 0;
 
-            JToken after = Assert.Task.SucceedsWithResult<object>(formatter.ReadFromStreamAsync(typeof(JToken), memStream, null, null)) as JToken;
+            JToken after = (await Assert.Task.SucceedsWithResultAsync<object>(formatter.ReadFromStreamAsync(typeof(JToken), memStream, null, null))) as JToken;
             Assert.NotNull(after);
             string afterMessage = after.ToObject<string>();
 
@@ -360,7 +359,7 @@ namespace System.Net.Http.Formatting
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "ValueAndRefTypeTestDataCollectionExceptULong", RoundTripDataVariations)]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "BunchOfJsonObjectsTestDataCollection", RoundTripDataVariations)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync(Type variationType, object testData)
         {
             // Guard
             bool canSerialize = IsTypeSerializableWithJsonSerializer(variationType, testData) && Assert.Http.CanRoundTrip(variationType);
@@ -370,7 +369,7 @@ namespace System.Net.Http.Formatting
                 TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
 
                 // Arrange & Act & Assert
-                object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+                object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
                 Assert.Equal(testData, readObj);
             }
         }
@@ -378,13 +377,13 @@ namespace System.Net.Http.Formatting
         // Test alternate null value; always serialized as "null"
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AllSingleInstances)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull(Type variationType, object testData)
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // DBNull.Value can be read back as null object.
             Assert.Null(readObj);
@@ -392,7 +391,7 @@ namespace System.Net.Http.Formatting
 
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AsDictionary)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
         {
             // Guard
             Assert.IsType<Dictionary<string, object>>(testData);
@@ -402,7 +401,7 @@ namespace System.Net.Http.Formatting
             IDictionary<string, object> expectedDictionary = (IDictionary<string, object>)testData;
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // DBNull.Value can be read back as null object. Reach into collections.
             Assert.Equal(testData.GetType(), readObj.GetType());
@@ -420,7 +419,7 @@ namespace System.Net.Http.Formatting
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection",
             TestDataVariations.AsArray | TestDataVariations.AsList)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Enumerable(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Enumerable(Type variationType, object testData)
         {
             // Guard
             Assert.True((testData as IEnumerable<object>) != null);
@@ -430,7 +429,7 @@ namespace System.Net.Http.Formatting
             IEnumerable<object> expectedEnumerable = (IEnumerable<object>)testData;
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // DBNull.Value can be read back as null object. Reach into collections.
             Assert.Equal(testData.GetType(), readObj.GetType());
@@ -446,7 +445,7 @@ namespace System.Net.Http.Formatting
 
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AsClassMember)]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Holder(Type variationType, object testData)
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Holder(Type variationType, object testData)
         {
             // Guard
             Assert.IsType<TestDataHolder<object>>(testData);
@@ -455,7 +454,7 @@ namespace System.Net.Http.Formatting
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // DBNull.Value can be read back as null object. Reach into objects.
             Assert.Equal(testData.GetType(), readObj.GetType());
@@ -465,7 +464,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNullString()
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNullString()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -473,14 +472,14 @@ namespace System.Net.Http.Formatting
             object testData = DBNull.Value;
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // DBNull.value can be read as null of any nullable type
             Assert.Null(readObj);
         }
 
         [Fact]
-        public void ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNull()
+        public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNull()
         {
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
@@ -488,14 +487,14 @@ namespace System.Net.Http.Formatting
             object testData = DBNull.Value;
 
             // Arrange & Act & Assert
-            object readObj = ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
+            object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
 
             // Only JSON case where DBNull.Value round-trips
             Assert.Equal(testData, readObj);
         }
 
         [Fact]
-        public void UseDataContractJsonSerializer_False()
+        public async Task UseDataContractJsonSerializer_False()
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
@@ -505,7 +504,7 @@ namespace System.Net.Http.Formatting
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             //Assert.True(serializedString.Contains("DataContractSampleType"),
@@ -514,7 +513,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void UseDataContractJsonSerializer_False_Indent()
+        public async Task UseDataContractJsonSerializer_False_Indent()
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
@@ -525,7 +524,7 @@ namespace System.Net.Http.Formatting
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(formatter.WriteToStreamAsync(typeof(SampleType), new SampleType(), memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("\r\n"), "Using JsonSerializer with Indent set to true should emit data with indentation.");
@@ -534,7 +533,7 @@ namespace System.Net.Http.Formatting
         [Theory]
         [InlineData(typeof(IQueryable<string>))]
         [InlineData(typeof(IEnumerable<string>))]
-        public void UseJsonFormatterWithNull(Type type)
+        public async Task UseJsonFormatterWithNull(Type type)
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
@@ -544,21 +543,21 @@ namespace System.Net.Http.Formatting
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
-            Assert.Task.Succeeds(formatter.WriteToStreamAsync(type, null, memoryStream, content, transportContext: null));
+            await Assert.Task.SucceedsAsync(formatter.WriteToStreamAsync(type, null, memoryStream, content, transportContext: null));
             memoryStream.Position = 0;
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("null"), "Using Json formatter to serialize null should emit 'null'.");
         }
 
         [Fact]
-        public void WriteToStreamAsync_RoundTripsJToken()
+        public async Task WriteToStreamAsync_RoundTripsJToken()
         {
             string beforeMessage = "Hello World";
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
             JToken before = new JValue(beforeMessage);
             MemoryStream memStream = new MemoryStream();
 
-            Assert.Task.Succeeds(formatter.WriteToStreamAsync(typeof(JToken), before, memStream, null, null));
+            await Assert.Task.SucceedsAsync(formatter.WriteToStreamAsync(typeof(JToken), before, memStream, null, null));
             memStream.Position = 0;
             JToken after = JToken.Load(new JsonTextReader(new StreamReader(memStream)));
             string afterMessage = after.ToObject<string>();
@@ -576,7 +575,7 @@ namespace System.Net.Http.Formatting
             string mediaType = string.Format("application/json; charset={0}", encoding);
 
             // Act & assert
-            return ReadContentUsingCorrectCharacterEncodingHelper(
+            return ReadContentUsingCorrectCharacterEncodingHelperAsync(
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
 
@@ -590,7 +589,7 @@ namespace System.Net.Http.Formatting
             string mediaType = string.Format("application/json; charset={0}", encoding);
 
             // Act & assert
-            return WriteContentUsingCorrectCharacterEncodingHelper(
+            return WriteContentUsingCorrectCharacterEncodingHelperAsync(
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
 

@@ -33,14 +33,14 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_PopulatesRouteDataWhenNotPresentInRequest()
+        public async Task SendAsync_PopulatesRouteDataWhenNotPresentInRequest()
         {
             var config = new HttpConfiguration();
             var request = CreateRequest(config, "http://localhost/api/controllerName/42");
             var dispatcher = new HttpRoutingDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             var routeData = request.GetRouteData();
             Assert.NotNull(routeData);
@@ -50,30 +50,29 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_RemovesRouteParameterOptionalValuesThatAreNotPresent()
+        public async Task SendAsync_RemovesRouteParameterOptionalValuesThatAreNotPresent()
         {
             var config = new HttpConfiguration();
             var request = CreateRequest(config, "http://localhost/api/controllerName");
             var dispatcher = new HttpRoutingDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.False(request.GetRouteData().Values.ContainsKey("id"));
         }
 
         [Fact]
-        public void SendAsync_Returns404WhenNoMatchingRoute()
+        public async Task SendAsync_Returns404WhenNoMatchingRoute()
         {
             var config = new HttpConfiguration();
             var request = CreateRequest(config, "http://localhost/noMatch");
             var dispatcher = new HttpRoutingDispatcher(config);
             var invoker = new HttpMessageInvoker(dispatcher);
 
-            var responseTask = invoker.SendAsync(request, CancellationToken.None);
-            responseTask.WaitUntilCompleted();
+            var response = await invoker.SendAsync(request, CancellationToken.None);
 
-            Assert.Equal(HttpStatusCode.NotFound, responseTask.Result.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             Assert.True((bool)request.Properties[HttpPropertyKeys.NoRouteMatched]);
         }
 
@@ -106,7 +105,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_UsesRouteDataFromRequestContext()
+        public async Task SendAsync_UsesRouteDataFromRequestContext()
         {
             // Arrange
             Mock<HttpMessageHandler> doNotUseDefaultHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -133,7 +132,7 @@ namespace System.Web.Http.Dispatcher
                 expectedRequest.SetRequestContext(context);
 
                 // Act
-                HttpResponseMessage response = invoker.SendAsync(expectedRequest, CancellationToken.None).Result;
+                HttpResponseMessage response = await invoker.SendAsync(expectedRequest, CancellationToken.None);
 
                 // Assert
                 Assert.Same(expectedResponse, response);
@@ -142,7 +141,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SendAsync_IgnoreRoute_UsesRouteDataWithStopRoutingHandlerFromRequestContext()
+        public async Task SendAsync_IgnoreRoute_UsesRouteDataWithStopRoutingHandlerFromRequestContext()
         {
             // Arrange
             Mock<HttpMessageHandler> doNotUseDefaultHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -169,7 +168,7 @@ namespace System.Web.Http.Dispatcher
                 expectedRequest.SetRequestContext(context);
 
                 // Act
-                HttpResponseMessage response = invoker.SendAsync(expectedRequest, CancellationToken.None).Result;
+                HttpResponseMessage response = await invoker.SendAsync(expectedRequest, CancellationToken.None);
 
                 // Assert
                 Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);

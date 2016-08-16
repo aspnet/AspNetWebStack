@@ -4,6 +4,7 @@
 using System.Net;
 using System.Net.Http;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using Microsoft.TestCommon;
 
@@ -12,30 +13,30 @@ namespace System.Web.Http
     public class BasicOverHttpTest
     {
         [Fact]
-        public void AuthenticateWithUsernameTokenSucceed()
+        public Task AuthenticateWithUsernameTokenSucceed()
         {
-            RunBasicAuthTest("Sample", "", new NetworkCredential("username", "password"),
+            return RunBasicAuthTest("Sample", "", new NetworkCredential("username", "password"),
                 (response) => Assert.Equal(HttpStatusCode.OK, response.StatusCode)
                 );
         }
 
         [Fact]
-        public void AuthenticateWithWrongPasswordFail()
+        public Task AuthenticateWithWrongPasswordFail()
         {
-            RunBasicAuthTest("Sample", "", new NetworkCredential("username", "wrong password"),
+            return RunBasicAuthTest("Sample", "", new NetworkCredential("username", "wrong password"),
                 (response) => Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode)
                 );
         }
 
         [Fact]
-        public void AuthenticateWithNoCredentialFail()
+        public Task AuthenticateWithNoCredentialFail()
         {
-            RunBasicAuthTest("Sample", "", null,
+            return RunBasicAuthTest("Sample", "", null,
                 (response) => Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode)
                 );
         }
 
-        private static void RunBasicAuthTest(string controllerName, string routeSuffix, NetworkCredential credential, Action<HttpResponseMessage> assert)
+        private static async Task RunBasicAuthTest(string controllerName, string routeSuffix, NetworkCredential credential, Action<HttpResponseMessage> assert)
         {
             using (var port = new PortReserver())
             {
@@ -47,7 +48,7 @@ namespace System.Web.Http
                 config.MessageHandlers.Add(new CustomMessageHandler());
                 HttpSelfHostServer server = new HttpSelfHostServer(config);
 
-                server.OpenAsync().Wait();
+                await server.OpenAsync();
 
                 // Create a GET request with correct username and password
                 HttpClientHandler handler = new HttpClientHandler();
@@ -58,7 +59,7 @@ namespace System.Web.Http
                 try
                 {
                     // Act
-                    response = client.GetAsync(port.BaseUri).Result;
+                    response = await client.GetAsync(port.BaseUri);
 
                     // Assert
                     assert(response);
@@ -72,7 +73,7 @@ namespace System.Web.Http
                     client.Dispose();
                 }
 
-                server.CloseAsync().Wait();
+                await server.CloseAsync();
             }
         }
 

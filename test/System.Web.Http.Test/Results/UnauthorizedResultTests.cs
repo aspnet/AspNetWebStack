@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -74,7 +73,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse()
+        public async Task ExecuteAsync_Returns_CorrectResponse()
         {
             // Arrange
             AuthenticationHeaderValue expectedChallenge1 = CreateChallenge();
@@ -90,9 +89,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -117,7 +115,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse()
         {
             // Arrange
             AuthenticationHeaderValue expectedChallenge1 = CreateChallenge();
@@ -135,9 +133,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

@@ -28,7 +28,7 @@ namespace System.Net.Http.Internal
             // Act
             bool canRead = mockStream.CanRead;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.CanRead, Times.Once());
         }
 
@@ -42,7 +42,7 @@ namespace System.Net.Http.Internal
             // Act
             bool canSeek = mockStream.CanSeek;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.CanSeek, Times.Once());
         }
 
@@ -56,7 +56,7 @@ namespace System.Net.Http.Internal
             // Act
             bool canWrite = mockStream.CanWrite;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.CanWrite, Times.Once());
         }
 
@@ -70,7 +70,7 @@ namespace System.Net.Http.Internal
             // Act
             long length = mockStream.Length;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Length, Times.Once());
         }
 
@@ -84,7 +84,7 @@ namespace System.Net.Http.Internal
             // Act
             long position = mockStream.Position;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Position, Times.Once());
         }
 
@@ -98,7 +98,7 @@ namespace System.Net.Http.Internal
             // Act
             int readTimeout = mockStream.ReadTimeout;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.ReadTimeout, Times.Once());
         }
 
@@ -112,7 +112,7 @@ namespace System.Net.Http.Internal
             // Act
             bool canTimeout = mockStream.CanTimeout;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.CanTimeout, Times.Once());
         }
 
@@ -126,7 +126,7 @@ namespace System.Net.Http.Internal
             // Act
             int writeTimeout = mockStream.WriteTimeout;
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.WriteTimeout, Times.Once());
         }
 
@@ -140,7 +140,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Dispose();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Once());
         }
@@ -155,7 +155,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Close();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Once());
         }
@@ -172,7 +172,7 @@ namespace System.Net.Http.Internal
             // Act
             long seek = mockStream.Seek(offset, origin);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Seek(offset, origin), Times.Once());
         }
 
@@ -189,7 +189,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Read(buffer, offset, count);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Read(buffer, offset, count), Times.Once());
         }
 
@@ -209,7 +209,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.BeginRead(buffer, offset, count, callback, state);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.BeginRead(buffer, offset, count, callback, state), Times.Once());
         }
 
@@ -224,7 +224,7 @@ namespace System.Net.Http.Internal
             // Act
             int endRead = mockStream.EndRead(mockIAsyncResult.Object);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.EndRead(mockIAsyncResult.Object), Times.Once());
         }
 #endif
@@ -242,7 +242,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.ReadAsync(buffer, offset, count, CancellationToken.None);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.ReadAsync(buffer, offset, count, CancellationToken.None), Times.Once());
         }
 
@@ -256,7 +256,7 @@ namespace System.Net.Http.Internal
             // Act
             int readByte = mockStream.ReadByte();
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.ReadByte(), Times.Once());
         }
 
@@ -270,7 +270,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Flush();
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Flush(), Times.Once());
         }
 
@@ -284,7 +284,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.SetLength(10L);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.SetLength(10L), Times.Once());
         }
 
@@ -301,7 +301,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Write(buffer, offset, count);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.Write(buffer, offset, count), Times.Once());
         }
 
@@ -321,7 +321,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.BeginWrite(buffer, offset, count, callback, state);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.BeginWrite(buffer, offset, count, callback, state), Times.Once());
         }
 
@@ -336,7 +336,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.EndWrite(mockIAsyncResult.Object);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.EndWrite(mockIAsyncResult.Object), Times.Once());
         }
 #endif
@@ -354,7 +354,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.WriteAsync(buffer, offset, count, CancellationToken.None);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.WriteAsync(buffer, offset, count, CancellationToken.None), Times.Once());
         }
 
@@ -369,7 +369,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.WriteByte(data);
 
-            // Assert 
+            // Assert
             mockInnerStream.Verify(s => s.WriteByte(data), Times.Once());
         }
     }

@@ -212,7 +212,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsTrue()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsTrue()
         {
             // Arrange
             Exception expectedException = CreateExceptionWithStackTrace();
@@ -239,9 +239,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -262,7 +261,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsFalse()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceedsAndIncludeErrorDetailIsFalse()
         {
             // Arrange
             Exception exception = CreateExceptionWithStackTrace();
@@ -289,9 +288,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -312,7 +310,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
         {
             // Arrange
             Exception exception = CreateException();
@@ -336,9 +334,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
@@ -359,7 +356,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
         {
             // Arrange
             Exception expectedException = CreateExceptionWithStackTrace();
@@ -397,9 +394,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(task);
-                    task.WaitUntilCompleted();
 
-                    using (HttpResponseMessage response = task.Result)
+                    using (HttpResponseMessage response = await task)
                     {
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);

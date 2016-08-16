@@ -110,7 +110,7 @@ namespace System.Web.Mvc.Test
             int? returned = (int?)vpr.ConvertTo(typeof(int?));
 
             // Assert
-            Assert.Equal(returned, null);
+            Assert.Null(returned);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace System.Web.Mvc.Test
             int? returned = (int?)vpr.ConvertTo(typeof(int?));
 
             // Assert
-            Assert.Equal(returned, null);
+            Assert.Null(returned);
         }
 
         [Fact]

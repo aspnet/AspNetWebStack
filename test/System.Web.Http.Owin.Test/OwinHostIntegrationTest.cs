@@ -4,6 +4,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
@@ -14,23 +15,23 @@ namespace System.Web.Http.Owin
     public class OwinHostIntegrationTest
     {
         [Fact]
-        public void SimpleGet_Works()
+        public async Task SimpleGet_Works()
         {
             using (var port = new PortReserver())
             using (WebApp.Start<OwinHostIntegrationTest>(url: CreateBaseUrl(port)))
             {
                 HttpClient client = new HttpClient();
 
-                var response = client.GetAsync(CreateUrl(port, "HelloWorld")).Result;
+                var response = await client.GetAsync(CreateUrl(port, "HelloWorld"));
 
                 Assert.True(response.IsSuccessStatusCode);
-                Assert.Equal("\"Hello from OWIN\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Equal("\"Hello from OWIN\"", await response.Content.ReadAsStringAsync());
                 Assert.Null(response.Headers.TransferEncodingChunked);
             }
         }
 
         [Fact]
-        public void SimplePost_Works()
+        public async Task SimplePost_Works()
         {
             using (var port = new PortReserver())
             using (WebApp.Start<OwinHostIntegrationTest>(url: CreateBaseUrl(port)))
@@ -38,26 +39,26 @@ namespace System.Web.Http.Owin
                 HttpClient client = new HttpClient();
                 var content = new StringContent("\"Echo this\"", Encoding.UTF8, "application/json");
 
-                var response = client.PostAsync(CreateUrl(port, "Echo"), content).Result;
+                var response = await client.PostAsync(CreateUrl(port, "Echo"), content);
 
                 Assert.True(response.IsSuccessStatusCode);
-                Assert.Equal("\"Echo this\"", response.Content.ReadAsStringAsync().Result);
+                Assert.Equal("\"Echo this\"", await response.Content.ReadAsStringAsync());
                 Assert.Null(response.Headers.TransferEncodingChunked);
             }
         }
 
         [Fact]
-        public void GetThatThrowsDuringSerializations_RespondsWith500()
+        public async Task GetThatThrowsDuringSerializations_RespondsWith500()
         {
             using (var port = new PortReserver())
             using (WebApp.Start<OwinHostIntegrationTest>(url: CreateBaseUrl(port)))
             {
                 HttpClient client = new HttpClient();
 
-                var response = client.GetAsync(CreateUrl(port, "Error")).Result;
+                var response = await client.GetAsync(CreateUrl(port, "Error"));
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                JObject json = Assert.IsType<JObject>(JToken.Parse(response.Content.ReadAsStringAsync().Result));
+                JObject json = Assert.IsType<JObject>(JToken.Parse(await response.Content.ReadAsStringAsync()));
                 JToken exceptionMessage;
                 Assert.True(json.TryGetValue("ExceptionMessage", out exceptionMessage));
                 Assert.Null(response.Headers.TransferEncodingChunked);

@@ -44,11 +44,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsJsonAsync_String_UsesJsonMediaTypeFormatter()
+        public async Task PostAsJsonAsync_String_UsesJsonMediaTypeFormatter()
         {
-            var result = _client.PostAsJsonAsync("http://example.com", new object());
+            var response = await _client.PostAsJsonAsync("http://example.com", new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<JsonMediaTypeFormatter>(content.Formatter);
         }
@@ -69,11 +68,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsXmlAsync_String_UsesXmlMediaTypeFormatter()
+        public async Task PostAsXmlAsync_String_UsesXmlMediaTypeFormatter()
         {
-            var result = _client.PostAsXmlAsync("http://example.com", new object());
+            var response = await _client.PostAsXmlAsync("http://example.com", new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
@@ -94,62 +92,62 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsync_String_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
+        public async Task PostAsync_String_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
         {
             _client.BaseAddress = new Uri("http://example.com/");
 
-            var result = _client.PostAsync("myapi/", new object(), _formatter);
+            var response = await _client.PostAsync("myapi/", new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("http://example.com/myapi/", request.RequestUri.ToString());
         }
 
         [Fact]
-        public void PostAsync_String_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_String_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
         {
-            var result = _client.PostAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PostAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
             Assert.Equal("utf-16", request.Content.Headers.ContentType.CharSet);
         }
 
         [Fact]
-        public void PostAsync_String_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_String_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PostAsync("http://example.com/myapi/", new object(), _formatter, mediaType, CancellationToken.None);
+            var response = await _client.PostAsync("http://example.com/myapi/", new object(), _formatter, mediaType, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PostAsync_String_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_String_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PostAsync("http://example.com/myapi/", new object(), _formatter, mediaType);
+            var response = await _client.PostAsync("http://example.com/myapi/", new object(), _formatter, mediaType);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PostAsync_String_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
+        public async Task PostAsync_String_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
         {
-            var result = _client.PostAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PostAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             var content = Assert.IsType<ObjectContent<object>>(request.Content);
             Assert.Same(_formatter, content.Formatter);
         }
 
         [Fact]
-        public void PostAsync_String_IssuesPostRequest()
+        public async Task PostAsync_String_IssuesPostRequest()
         {
-            var result = _client.PostAsync("http://example.com/myapi/", new object(), _formatter);
+            var response = await _client.PostAsync("http://example.com/myapi/", new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Same(HttpMethod.Post, request.Method);
         }
 
@@ -175,11 +173,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsJsonAsync_String_UsesJsonMediaTypeFormatter()
+        public async Task PutAsJsonAsync_String_UsesJsonMediaTypeFormatter()
         {
-            var result = _client.PutAsJsonAsync("http://example.com", new object());
+            var response = await _client.PutAsJsonAsync("http://example.com", new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<JsonMediaTypeFormatter>(content.Formatter);
         }
@@ -200,11 +197,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsXmlAsync_String_UsesXmlMediaTypeFormatter()
+        public async Task PutAsXmlAsync_String_UsesXmlMediaTypeFormatter()
         {
-            var result = _client.PutAsXmlAsync("http://example.com", new object());
+            var response = await _client.PutAsXmlAsync("http://example.com", new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
@@ -225,62 +221,62 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsync_String_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
+        public async Task PutAsync_String_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
         {
             _client.BaseAddress = new Uri("http://example.com/");
 
-            var result = _client.PutAsync("myapi/", new object(), _formatter);
+            var response = await _client.PutAsync("myapi/", new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("http://example.com/myapi/", request.RequestUri.ToString());
         }
 
         [Fact]
-        public void PutAsync_String_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_String_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
         {
-            var result = _client.PutAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PutAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
             Assert.Equal("utf-16", request.Content.Headers.ContentType.CharSet);
         }
 
         [Fact]
-        public void PutAsync_String_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
+        public async Task PutAsync_String_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
         {
-            var result = _client.PutAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PutAsync("http://example.com/myapi/", new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             var content = Assert.IsType<ObjectContent<object>>(request.Content);
             Assert.Same(_formatter, content.Formatter);
         }
 
         [Fact]
-        public void PutAsync_String_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_String_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PutAsync("http://example.com/myapi/", new object(), _formatter, mediaType, CancellationToken.None);
+            var response = await _client.PutAsync("http://example.com/myapi/", new object(), _formatter, mediaType, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PutAsync_String_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_String_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PutAsync("http://example.com/myapi/", new object(), _formatter, mediaType);
+            var response = await _client.PutAsync("http://example.com/myapi/", new object(), _formatter, mediaType);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PutAsync_String_IssuesPutRequest()
+        public async Task PutAsync_String_IssuesPutRequest()
         {
-            var result = _client.PutAsync("http://example.com/myapi/", new object(), _formatter);
+            var response = await _client.PutAsync("http://example.com/myapi/", new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Same(HttpMethod.Put, request.Method);
         }
 
@@ -306,11 +302,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsJsonAsync_Uri_UsesJsonMediaTypeFormatter()
+        public async Task PostAsJsonAsync_Uri_UsesJsonMediaTypeFormatter()
         {
-            var result = _client.PostAsJsonAsync(new Uri("http://example.com"), new object());
+            var response = await _client.PostAsJsonAsync(new Uri("http://example.com"), new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<JsonMediaTypeFormatter>(content.Formatter);
         }
@@ -331,11 +326,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsXmlAsync_Uri_UsesXmlMediaTypeFormatter()
+        public async Task PostAsXmlAsync_Uri_UsesXmlMediaTypeFormatter()
         {
-            var result = _client.PostAsXmlAsync(new Uri("http://example.com"), new object());
+            var response = await _client.PostAsXmlAsync(new Uri("http://example.com"), new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
@@ -356,62 +350,62 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PostAsync_Uri_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
+        public async Task PostAsync_Uri_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
         {
             _client.BaseAddress = new Uri("http://example.com/");
 
-            var result = _client.PostAsync(new Uri("myapi/", UriKind.Relative), new object(), _formatter);
+            var response = await _client.PostAsync(new Uri("myapi/", UriKind.Relative), new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("http://example.com/myapi/", request.RequestUri.ToString());
         }
 
         [Fact]
-        public void PostAsync_Uri_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_Uri_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
         {
-            var result = _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
             Assert.Equal("utf-16", request.Content.Headers.ContentType.CharSet);
         }
 
         [Fact]
-        public void PostAsync_Uri_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
+        public async Task PostAsync_Uri_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
         {
-            var result = _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             var content = Assert.IsType<ObjectContent<object>>(request.Content);
             Assert.Same(_formatter, content.Formatter);
         }
 
         [Fact]
-        public void PostAsync_Uri_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_Uri_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType, CancellationToken.None);
+            var response = await _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PostAsync_Uri_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
+        public async Task PostAsync_Uri_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType);
+            var response = await _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PostAsync_Uri_IssuesPostRequest()
+        public async Task PostAsync_Uri_IssuesPostRequest()
         {
-            var result = _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter);
+            var response = await _client.PostAsync(new Uri("http://example.com/myapi/"), new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Same(HttpMethod.Post, request.Method);
         }
 
@@ -437,11 +431,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsJsonAsync_Uri_UsesJsonMediaTypeFormatter()
+        public async Task PutAsJsonAsync_Uri_UsesJsonMediaTypeFormatter()
         {
-            var result = _client.PutAsJsonAsync(new Uri("http://example.com"), new object());
+            var response = await _client.PutAsJsonAsync(new Uri("http://example.com"), new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<JsonMediaTypeFormatter>(content.Formatter);
         }
@@ -462,11 +455,10 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsXmlAsync_Uri_UsesXmlMediaTypeFormatter()
+        public async Task PutAsXmlAsync_Uri_UsesXmlMediaTypeFormatter()
         {
-            var result = _client.PutAsXmlAsync(new Uri("http://example.com"), new object());
+            var response = await _client.PutAsXmlAsync(new Uri("http://example.com"), new object());
 
-            var response = result.Result;
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
@@ -487,62 +479,62 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void PutAsync_Uri_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
+        public async Task PutAsync_Uri_WhenRequestUriIsSet_CreatesRequestWithAppropriateUri()
         {
             _client.BaseAddress = new Uri("http://example.com/");
 
-            var result = _client.PutAsync(new Uri("myapi/", UriKind.Relative), new object(), _formatter);
+            var response = await _client.PutAsync(new Uri("myapi/", UriKind.Relative), new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("http://example.com/myapi/", request.RequestUri.ToString());
         }
 
         [Fact]
-        public void PutAsync_Uri_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_Uri_WhenAuthoritativeMediaTypeIsSet_CreatesRequestWithAppropriateContentType()
         {
-            var result = _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
             Assert.Equal("utf-16", request.Content.Headers.ContentType.CharSet);
         }
 
         [Fact]
-        public void PutAsync_Uri_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
+        public async Task PutAsync_Uri_WhenFormatterIsSet_CreatesRequestWithObjectContentAndCorrectFormatter()
         {
-            var result = _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
+            var response = await _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, _mediaTypeHeader, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             var content = Assert.IsType<ObjectContent<object>>(request.Content);
             Assert.Same(_formatter, content.Formatter);
         }
 
         [Fact]
-        public void PutAsync_Uri_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_Uri_WhenAuthoritativeMediaTypeStringIsSet_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType, CancellationToken.None);
+            var response = await _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType, CancellationToken.None);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PutAsync_Uri_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
+        public async Task PutAsync_Uri_WhenAuthoritativeMediaTypeStringIsSetWithoutCT_CreatesRequestWithAppropriateContentType()
         {
             string mediaType = _mediaTypeHeader.MediaType;
-            var result = _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType);
+            var response = await _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter, mediaType);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Equal("foo/bar", request.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
-        public void PutAsync_Uri_IssuesPutRequest()
+        public async Task PutAsync_Uri_IssuesPutRequest()
         {
-            var result = _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter);
+            var response = await _client.PutAsync(new Uri("http://example.com/myapi/"), new object(), _formatter);
 
-            var request = result.Result.RequestMessage;
+            var request = response.RequestMessage;
             Assert.Same(HttpMethod.Put, request.Method);
         }
 

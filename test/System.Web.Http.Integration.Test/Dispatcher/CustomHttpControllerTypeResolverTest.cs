@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Web.Http.Dispatcher
@@ -26,24 +27,24 @@ namespace System.Web.Http.Dispatcher
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            // Set our own assembly resolver where we add the assemblies we need           
+            // Set our own assembly resolver where we add the assemblies we need
             CustomControllerTypeResolver customHttpControllerTypeResolver = new CustomControllerTypeResolver();
             configuration.Services.Replace(typeof(IHttpControllerTypeResolver), customHttpControllerTypeResolver);
         }
 
         [Fact]
-        public void CustomControllerTypeResolver_ReplacesControllerTypeAndNameConvention()
+        public async Task CustomControllerTypeResolver_ReplacesControllerTypeAndNameConvention()
         {
             // Arrange
             string address = BaseAddress + "api/custominternal";
 
             // Act
-            HttpResponseMessage response = Client.GetAsync(address).Result;
-            string expectedContent = response.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage response = await Client.GetAsync(address);
+            string content = await response.Content.ReadAsStringAsync();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(ExpectedContent, expectedContent);
+            Assert.Equal(ExpectedContent, content);
         }
     }
 

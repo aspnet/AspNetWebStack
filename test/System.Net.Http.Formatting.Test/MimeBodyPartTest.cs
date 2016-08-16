@@ -3,7 +3,6 @@
 
 using System.IO;
 using System.Net.Http.Headers;
-using System.Net.Http.Mocks;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -28,7 +27,7 @@ namespace System.Net.Http
 
         [Theory]
         [TestDataSet(typeof(MimeBodyPartTest), "BadMultipartStreamProviders")]
-        public void GetOutputStream_ThrowsOnInvalidStreamProvider(MultipartStreamProvider streamProvider)
+        public async Task GetOutputStream_ThrowsOnInvalidStreamProvider(MultipartStreamProvider streamProvider)
         {
             // Arrange
             HttpContent parent = new StringContent("hello");
@@ -36,11 +35,11 @@ namespace System.Net.Http
             bodypart.Segments.Add(new ArraySegment<byte>(new byte[] { 1 }));
 
             // Act and Assert
-            Assert.Throws<InvalidOperationException>(() => bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None).Wait());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None));
         }
 
         [Fact]
-        public void Dispose_ClosesOutputStreamOnNonMemoryStream()
+        public async Task Dispose_ClosesOutputStreamOnNonMemoryStream()
         {
             // Arrange
             HttpContent parent = new StringContent("hello");
@@ -50,7 +49,7 @@ namespace System.Net.Http
             mockStreamProvider.Setup(sp => sp.GetStream(It.IsAny<HttpContent>(), It.IsAny<HttpContentHeaders>())).Returns(mockStream.Object);
             MimeBodyPart bodypart = new MimeBodyPart(mockStreamProvider.Object, 1024, parent);
             bodypart.Segments.Add(new ArraySegment<byte>(new byte[] { 1 }));
-            bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None).Wait();
+            await bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None);
             bodypart.IsComplete = true;
 
             // Act
@@ -62,7 +61,7 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public void Dispose_SetsPositionToZeroOnMemoryStream()
+        public async Task Dispose_SetsPositionToZeroOnMemoryStream()
         {
             // Arrange
             HttpContent parent = new StringContent("hello");
@@ -71,7 +70,7 @@ namespace System.Net.Http
             mockStreamProvider.Setup(sp => sp.GetStream(It.IsAny<HttpContent>(), It.IsAny<HttpContentHeaders>())).Returns(mockStream.Object);
             MimeBodyPart bodypart = new MimeBodyPart(mockStreamProvider.Object, 1024, parent);
             bodypart.Segments.Add(new ArraySegment<byte>(new byte[] { 1 }));
-            bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None).Wait();
+            await bodypart.WriteSegment(bodypart.Segments[0], CancellationToken.None);
             bodypart.IsComplete = true;
 
             // Act

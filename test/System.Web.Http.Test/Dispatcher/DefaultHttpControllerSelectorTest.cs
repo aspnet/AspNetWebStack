@@ -6,8 +6,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
-using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
@@ -38,7 +38,7 @@ namespace System.Web.Http.Dispatcher
             request.SetRouteData(routeData);
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(new HttpConfiguration());
 
-            // Act 
+            // Act
             string selectedControllerName = selector.GetControllerName(request);
 
             // Assert
@@ -52,7 +52,7 @@ namespace System.Web.Http.Dispatcher
             HttpRequestMessage request = new HttpRequestMessage();
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(new HttpConfiguration());
 
-            // Act 
+            // Act
             string selectedControllerName = selector.GetControllerName(request);
 
             // Assert
@@ -67,7 +67,7 @@ namespace System.Web.Http.Dispatcher
             request.SetRouteData(GetRouteData());
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(new HttpConfiguration());
 
-            // Act 
+            // Act
             string selectedControllerName = selector.GetControllerName(request);
 
             // Assert
@@ -207,7 +207,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var ex = Assert.Throws<HttpResponseException>(
                 () => selector.SelectController(request));
 
@@ -229,7 +229,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var selectedController = selector.SelectController(request);
 
             // Assert
@@ -239,7 +239,7 @@ namespace System.Web.Http.Dispatcher
         [Fact]
         public void SelectController_ThrowsOnDirectRoutesWithDifferentControllers()
         {
-            var action1Descriptor = new ReflectedHttpActionDescriptor() 
+            var action1Descriptor = new ReflectedHttpActionDescriptor()
             {
                 ControllerDescriptor = new HttpControllerDescriptor()
                 {
@@ -247,7 +247,7 @@ namespace System.Web.Http.Dispatcher
                 }
             };
 
-            var action2Descriptor = new ReflectedHttpActionDescriptor() 
+            var action2Descriptor = new ReflectedHttpActionDescriptor()
             {
                 ControllerDescriptor = new HttpControllerDescriptor()
                 {
@@ -284,7 +284,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var ex = Assert.Throws<HttpResponseException>(
                 () => selector.SelectController(request));
 
@@ -321,7 +321,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var controller = selector.SelectController(request);
 
             // Assert
@@ -356,7 +356,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var ex = Assert.Throws<HttpResponseException>(
                 () => selector.SelectController(request));
 
@@ -365,7 +365,7 @@ namespace System.Web.Http.Dispatcher
         }
 
         [Fact]
-        public void SelectController_Throws_NotFound_NoMatchingControllerType()
+        public async Task SelectController_Throws_NotFound_NoMatchingControllerType()
         {
             HttpConfiguration configuration = new HttpConfiguration();
             Mock<IHttpControllerTypeResolver> controllerTypeResolver = new Mock<IHttpControllerTypeResolver>();
@@ -384,13 +384,14 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var ex = Assert.Throws<HttpResponseException>(
                 () => selector.SelectController(request));
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, ex.Response.StatusCode);
-            string response = ex.Response.Content.ReadAsAsync<HttpError>().Result["MessageDetail"] as string;
+            var result = await ex.Response.Content.ReadAsAsync<HttpError>();
+            string response = result["MessageDetail"] as string;
             Assert.Equal("No type was found that matches the controller named 'Sample'.", response);
         }
 
@@ -414,7 +415,7 @@ namespace System.Web.Http.Dispatcher
 
             DefaultHttpControllerSelector selector = new DefaultHttpControllerSelector(configuration);
 
-            // Act 
+            // Act
             var ex = Assert.Throws<InvalidOperationException>(
                 () => selector.SelectController(request));
 

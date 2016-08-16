@@ -173,72 +173,65 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_DoesNotCallActionWhenCancelled()
+        public Task ExecuteAsync_DoesNotCallActionWhenCancelled()
         {
             var cts = new CancellationTokenSource();
             cts.Cancel();
             Action action = () => { throw new NotImplementedException(); };
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = action.Method };
 
-            Task<object> result = actionDescriptor.ExecuteAsync(_context, _arguments, cts.Token);
-
-            result.WaitUntilCompleted();
-            Assert.True(result.IsCanceled);
+            return Assert.ThrowsAsync<TaskCanceledException>(() => actionDescriptor.ExecuteAsync(_context, _arguments, cts.Token));
         }
 
 
         [Fact]
-        public void ExecuteAsync_Returns_TaskOfNull_ForVoidAction()
+        public async Task ExecuteAsync_Returns_TaskOfNull_ForVoidAction()
         {
             Action deleteAllUsersMethod = _controller.DeleteAllUsers;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = deleteAllUsersMethod.Method };
 
-            Task<object> returnValue = actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
+            object returnValue = await actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
 
-            returnValue.WaitUntilCompleted();
-            Assert.Null(returnValue.Result);
+            Assert.Null(returnValue);
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_Results_ForNonVoidAction()
+        public async Task ExecuteAsync_Returns_Results_ForNonVoidAction()
         {
             Func<string, string, User> echoUserMethod = _controller.EchoUser;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = echoUserMethod.Method };
             _arguments["firstName"] = "test";
             _arguments["lastName"] = "unit";
 
-            Task<object> result = actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
+            object result = await actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
 
-            result.WaitUntilCompleted();
-            var returnValue = Assert.IsType<User>(result.Result);
+            var returnValue = Assert.IsType<User>(result);
             Assert.Equal("test", returnValue.FirstName);
             Assert.Equal("unit", returnValue.LastName);
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_TaskOfNull_ForTaskAction()
+        public async Task ExecuteAsync_Returns_TaskOfNull_ForTaskAction()
         {
             Func<Task> deleteAllUsersMethod = _controller.DeleteAllUsersAsync;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = deleteAllUsersMethod.Method };
 
-            Task<object> returnValue = actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
+            object returnValue = await actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
 
-            returnValue.WaitUntilCompleted();
-            Assert.Null(returnValue.Result);
+            Assert.Null(returnValue);
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_Results_ForTaskOfTAction()
+        public async Task ExecuteAsync_Returns_Results_ForTaskOfTAction()
         {
             Func<string, string, Task<User>> echoUserMethod = _controller.EchoUserAsync;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = echoUserMethod.Method };
             _arguments["firstName"] = "test";
             _arguments["lastName"] = "unit";
 
-            Task<object> result = actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
+            object result = await actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None);
 
-            result.WaitUntilCompleted();
-            var returnValue = Assert.IsType<User>(result.Result);
+            var returnValue = Assert.IsType<User>(result);
             Assert.Equal("test", returnValue.FirstName);
             Assert.Equal("unit", returnValue.LastName);
         }
@@ -255,25 +248,26 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_IfArgumentsIsNull()
+        public async Task ExecuteAsync_Throws_IfArgumentsIsNull()
         {
             Func<string, string, User> echoUserMethod = _controller.EchoUser;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = echoUserMethod.Method };
 
-            Assert.ThrowsArgumentNull(
-                () => actionDescriptor.ExecuteAsync(_context, null, CancellationToken.None).RethrowFaultedTaskException(),
-                "arguments");
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => actionDescriptor.ExecuteAsync(_context, null, CancellationToken.None),
+                "arguments",
+                partialMatch: true);
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_IfValueTypeArgumentsIsNull()
+        public async Task ExecuteAsync_Throws_IfValueTypeArgumentsIsNull()
         {
             Func<int, User> retrieveUserMethod = _controller.RetriveUser;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = retrieveUserMethod.Method };
             _arguments["id"] = null;
 
-            var exception = Assert.Throws<HttpResponseException>(
-                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None).RethrowFaultedTaskException());
+            var exception = await Assert.ThrowsAsync<HttpResponseException>(
+                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None));
 
             Assert.Equal(HttpStatusCode.BadRequest, exception.Response.StatusCode);
             var content = Assert.IsType<ObjectContent<HttpError>>(exception.Response.Content);
@@ -284,14 +278,14 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_IfArgumentNameIsWrong()
+        public async Task ExecuteAsync_Throws_IfArgumentNameIsWrong()
         {
             Func<int, User> retrieveUserMethod = _controller.RetriveUser;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = retrieveUserMethod.Method };
             _arguments["otherId"] = 6;
 
-            var exception = Assert.Throws<HttpResponseException>(
-                () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None).RethrowFaultedTaskException());
+            var exception = await Assert.ThrowsAsync<HttpResponseException>(
+                () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None));
 
             Assert.Equal(HttpStatusCode.BadRequest, exception.Response.StatusCode);
             var content = Assert.IsType<ObjectContent<HttpError>>(exception.Response.Content);
@@ -302,14 +296,14 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_IfArgumentTypeIsWrong()
+        public async Task ExecuteAsync_Throws_IfArgumentTypeIsWrong()
         {
             Func<int, User> retrieveUserMethod = _controller.RetriveUser;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = retrieveUserMethod.Method };
             _arguments["id"] = new DateTime();
 
-            var exception = Assert.Throws<HttpResponseException>(
-                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None).RethrowFaultedTaskException());
+            var exception = await Assert.ThrowsAsync<HttpResponseException>(
+                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None));
 
             Assert.Equal(HttpStatusCode.BadRequest, exception.Response.StatusCode);
             var content = Assert.IsType<ObjectContent<HttpError>>(exception.Response.Content);
@@ -321,24 +315,24 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_IfTaskReturningMethod_ReturnsWrappedTaskInstance_Throws()
+        public async Task ExecuteAsync_IfTaskReturningMethod_ReturnsWrappedTaskInstance_Throws()
         {
             Func<Task> method = _controller.WrappedTaskReturningMethod;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = method.Method };
 
-            var exception = Assert.Throws<InvalidOperationException>(
-                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None).RethrowFaultedTaskException(),
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None),
                  "The method 'WrappedTaskReturningMethod' on type 'UsersRpcController' returned an instance of 'System.Threading.Tasks.Task`1[[System.Threading.Tasks.Task, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]'. Make sure to call Unwrap on the returned value to avoid unobserved faulted Task.");
         }
 
         [Fact]
-        public void ExecuteAsync_IfObjectReturningMethod_ReturnsTaskInstance_Throws()
+        public async Task ExecuteAsync_IfObjectReturningMethod_ReturnsTaskInstance_Throws()
         {
             Func<object> method = _controller.TaskAsObjectReturningMethod;
             ReflectedHttpActionDescriptor actionDescriptor = new ReflectedHttpActionDescriptor { MethodInfo = method.Method };
 
-            var exception = Assert.Throws<InvalidOperationException>(
-                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None).RethrowFaultedTaskException(),
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                 () => actionDescriptor.ExecuteAsync(_context, _arguments, CancellationToken.None),
                  "The method 'TaskAsObjectReturningMethod' on type 'UsersRpcController' returned a Task instance even though it is not an asynchronous method.");
         }
 

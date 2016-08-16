@@ -20,7 +20,7 @@ namespace System.Web.Http.Tracing.Tracers
         where TFormatter : MediaTypeFormatter
     {
         [Fact]
-        public void ReadFromStreamAsync_Traces()
+        public async Task ReadFromStreamAsync_Traces()
         {
             // Arrange
             Mock<TFormatter> mockFormatter = new Mock<TFormatter>() { CallBase = true };
@@ -33,15 +33,15 @@ namespace System.Web.Http.Tracing.Tracers
 
             TraceRecord[] expectedTraces = new TraceRecord[]
                 {
-                    new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info) 
+                    new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info)
                         { Kind = TraceKind.Begin, Operation = "ReadFromStreamAsync" },
-                    new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info) 
+                    new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info)
                         { Kind = TraceKind.End, Operation = "ReadFromStreamAsync" }
                 };
 
             // Act
             Task<object> task = tracer.ReadFromStreamAsync(typeof(string), new MemoryStream(), request.Content, null);
-            string result = task.Result as string;
+            string result = (await task) as string;
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -63,9 +63,9 @@ namespace System.Web.Http.Tracing.Tracers
             MediaTypeFormatter tracer = CreateTracer(mockFormatter.Object, request, traceWriter);
             TraceRecord[] expectedTraces = new TraceRecord[]
             {
-                new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info) 
+                new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Info)
                     { Kind = TraceKind.Begin, Operation = "ReadFromStreamAsync" },
-                new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Error) 
+                new TraceRecord(request, TraceCategories.FormattingCategory, TraceLevel.Error)
                     { Kind = TraceKind.End, Operation = "ReadFromStreamAsync" }
             };
 
@@ -79,7 +79,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ReadFromStreamAsync_Traces_And_Faults_When_Inner_Faults()
+        public async Task ReadFromStreamAsync_Traces_And_Faults_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException("test");
@@ -105,14 +105,14 @@ namespace System.Web.Http.Tracing.Tracers
             Task<object> task = tracer.ReadFromStreamAsync(typeof(string), new MemoryStream(), request.Content, null);
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[1].Exception);
         }
 
         [Fact]
-        public void WriteToStreamAsync_Traces()
+        public async Task WriteToStreamAsync_Traces()
         {
             // Arrange
             Mock<TFormatter> mockFormatter = new Mock<TFormatter>() { CallBase = true };
@@ -131,8 +131,7 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Task task = tracer.WriteToStreamAsync(typeof(string), "sampleValue", new MemoryStream(), request.Content, transportContext: null);
-            task.Wait();
+            await tracer.WriteToStreamAsync(typeof(string), "sampleValue", new MemoryStream(), request.Content, transportContext: null);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -170,7 +169,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void WriteToStreamAsync_Traces_And_Faults_When_Inner_Faults()
+        public async Task WriteToStreamAsync_Traces_And_Faults_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException("test");
@@ -197,7 +196,7 @@ namespace System.Web.Http.Tracing.Tracers
             Task task = tracer.WriteToStreamAsync(typeof(string), "sampleValue", new MemoryStream(), request.Content, transportContext: null);
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[1].Exception);

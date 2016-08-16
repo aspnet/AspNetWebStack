@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Web.Routing;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
@@ -994,8 +993,8 @@ namespace System.Web.Mvc.Test
             IHtmlString markupHtml = htmlHelper.Raw(null);
 
             // Assert
-            Assert.Equal(null, markupHtml.ToString());
-            Assert.Equal(null, markupHtml.ToHtmlString());
+            Assert.Null(markupHtml.ToString());
+            Assert.Null(markupHtml.ToHtmlString());
         }
 
         [Fact]
@@ -1010,8 +1009,8 @@ namespace System.Web.Mvc.Test
             IHtmlString markupHtml = htmlHelper.Raw((object)null);
 
             // Assert
-            Assert.Equal(null, markupHtml.ToString());
-            Assert.Equal(null, markupHtml.ToHtmlString());
+            Assert.Null(markupHtml.ToString());
+            Assert.Null(markupHtml.ToHtmlString());
         }
 
         [Fact]

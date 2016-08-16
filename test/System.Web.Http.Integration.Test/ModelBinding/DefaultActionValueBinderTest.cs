@@ -23,7 +23,7 @@ namespace System.Web.Http.ModelBinding
     public class DefaultActionValueBinderTest
     {
         [Fact]
-        public void BindValuesAsync_Uses_DefaultValues()
+        public async Task BindValuesAsync_Uses_DefaultValues()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext(
@@ -33,7 +33,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -44,7 +44,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_WithObjectContentInRequest_Works()
+        public async Task BindValuesAsync_WithObjectContentInRequest_Works()
         {
             // Arrange
             ActionValueItem cust = new ActionValueItem() { FirstName = "FirstName", LastName = "LastName", Id = 1 };
@@ -59,7 +59,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             var result = context.ActionArguments;
@@ -73,7 +73,7 @@ namespace System.Web.Http.ModelBinding
         #region Query Strings
 
         [Fact]
-        public void BindValuesAsync_ConvertEmptyString()
+        public async Task BindValuesAsync_ConvertEmptyString()
         {
             HttpActionContext actionContext = ContextUtil.CreateActionContext(
                 ContextUtil.CreateControllerContext(new HttpRequestMessage()
@@ -86,7 +86,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, CancellationToken.None).Wait();
+            await provider.BindValuesAsync(actionContext, CancellationToken.None);
 
             // Assert
             ConvertEmptyStringContainer arg = (ConvertEmptyStringContainer)actionContext.ActionArguments["x"];
@@ -99,7 +99,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Simple_Types()
+        public async Task BindValuesAsync_Query_String_Values_To_Simple_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -114,7 +114,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -125,7 +125,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Simple_Types_With_FromUriAttribute()
+        public async Task BindValuesAsync_Query_String_Values_To_Simple_Types_With_FromUriAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -140,7 +140,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -151,7 +151,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Complex_Types()
+        public async Task BindValuesAsync_Query_String_Values_To_Complex_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -166,7 +166,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
@@ -178,7 +178,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Post_Complex_Types()
+        public async Task BindValuesAsync_Query_String_Values_To_Post_Complex_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -193,7 +193,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
@@ -205,7 +205,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Post_Enumerable_Complex_Types()
+        public async Task BindValuesAsync_Query_String_Values_To_Post_Enumerable_Complex_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -220,7 +220,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
@@ -233,7 +233,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Post_Enumerable_Complex_Types_No_Index()
+        public async Task BindValuesAsync_Query_String_Values_To_Post_Enumerable_Complex_Types_No_Index()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -248,7 +248,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
@@ -258,7 +258,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_ComplexType_Using_Prefixes()
+        public async Task BindValuesAsync_Query_String_Values_To_ComplexType_Using_Prefixes()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -273,7 +273,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.Equal(1, actionContext.ActionArguments.Count);
@@ -284,7 +284,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_ComplexType_Using_FromUriAttribute()
+        public async Task BindValuesAsync_Query_String_Values_To_ComplexType_Using_FromUriAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -299,7 +299,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.Equal(1, actionContext.ActionArguments.Count);
@@ -310,7 +310,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_Using_Custom_ValueProviderAttribute()
+        public async Task BindValuesAsync_Query_String_Values_Using_Custom_ValueProviderAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -324,7 +324,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -335,7 +335,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_Using_Prefix_To_Rename()
+        public async Task BindValuesAsync_Query_String_Values_Using_Prefix_To_Rename()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -351,7 +351,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -362,7 +362,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Query_String_Values_To_Complex_Types_With_Validation_Error()
+        public async Task BindValuesAsync_Query_String_Values_To_Complex_Types_With_Validation_Error()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -377,7 +377,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.False(actionContext.ModelState.IsValid);
@@ -388,7 +388,7 @@ namespace System.Web.Http.ModelBinding
         #region RouteData
 
         [Fact]
-        public void BindValuesAsync_RouteData_Values_To_Simple_Types()
+        public async Task BindValuesAsync_RouteData_Values_To_Simple_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -408,7 +408,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(controllerContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -419,7 +419,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_RouteData_Values_To_Simple_Types_Using_FromUriAttribute()
+        public async Task BindValuesAsync_RouteData_Values_To_Simple_Types_Using_FromUriAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -439,7 +439,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(controllerContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -450,7 +450,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_RouteData_Values_To_Complex_Types()
+        public async Task BindValuesAsync_RouteData_Values_To_Complex_Types()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -470,7 +470,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(controllerContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
             Assert.Equal(1, controllerContext.ActionArguments.Count);
@@ -481,7 +481,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_RouteData_Values_To_Complex_Types_Using_FromUriAttribute()
+        public async Task BindValuesAsync_RouteData_Values_To_Complex_Types_Using_FromUriAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -501,7 +501,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(controllerContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
             Assert.Equal(1, controllerContext.ActionArguments.Count);
@@ -515,7 +515,7 @@ namespace System.Web.Http.ModelBinding
 
         #region ControllerContext
         [Fact]
-        public void BindValuesAsync_ControllerContext_CancellationToken()
+        public async Task BindValuesAsync_ControllerContext_CancellationToken()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -529,7 +529,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Assert.Equal(1, actionContext.ActionArguments.Count);
@@ -540,7 +540,7 @@ namespace System.Web.Http.ModelBinding
         #region Body
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Json()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Json()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -555,7 +555,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -566,7 +566,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Json_With_Validation_Error()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Json_With_Validation_Error()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -581,14 +581,14 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.False(context.ModelState.IsValid);
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_FormUrlEncoded()
+        public async Task BindValuesAsync_Body_To_Complex_Type_FormUrlEncoded()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -603,7 +603,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -614,7 +614,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_FormUrlEncoded_With_Validation_Error()
+        public async Task BindValuesAsync_Body_To_Complex_Type_FormUrlEncoded_With_Validation_Error()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -629,21 +629,21 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.False(context.ModelState.IsValid);
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Xml()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Xml()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
             MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/xml");
             ActionValueItem item = new ActionValueItem() { Id = 7, FirstName = "testFirstName", LastName = "testLastName" };
             ObjectContent<ActionValueItem> tempContent = new ObjectContent<ActionValueItem>(item, new XmlMediaTypeFormatter());
-            StringContent stringContent = new StringContent(tempContent.ReadAsStringAsync().Result);
+            StringContent stringContent = new StringContent(await tempContent.ReadAsStringAsync());
             stringContent.Headers.ContentType = mediaType;
             HttpRequestMessage request = new HttpRequestMessage() { Content = stringContent };
             HttpActionContext context = ContextUtil.CreateActionContext(
@@ -653,7 +653,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -664,14 +664,14 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Xml_Structural()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Xml_Structural()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
             MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/xml");
 
-            // Test sending from a non .NET type (raw xml).            
-            // The default XML serializer requires that the xml root name matches the C# class name. 
+            // Test sending from a non .NET type (raw xml).
+            // The default XML serializer requires that the xml root name matches the C# class name.
             string xmlSource =
                 @"<ActionValueItem xmlns='http://schemas.datacontract.org/2004/07/System.Web.Http.ModelBinding' xmlns:i='http://www.w3.org/2001/XMLSchema-instance'>
                       <FirstName>testFirstName</FirstName>
@@ -689,7 +689,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -700,14 +700,14 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Xml_With_Validation_Error()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Xml_With_Validation_Error()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
             MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("application/xml");
             ActionValueItem item = new ActionValueItem() { Id = 101, FirstName = "testFirstName", LastName = "testLastName" };
             var tempContent = new ObjectContent<ActionValueItem>(item, new XmlMediaTypeFormatter());
-            StringContent stringContent = new StringContent(tempContent.ReadAsStringAsync().Result);
+            StringContent stringContent = new StringContent(await tempContent.ReadAsStringAsync());
             stringContent.Headers.ContentType = mediaType;
             HttpRequestMessage request = new HttpRequestMessage() { Content = stringContent };
             HttpActionContext context = ContextUtil.CreateActionContext(
@@ -717,16 +717,16 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.False(context.ModelState.IsValid);
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_NullContent()
+        public async Task BindValuesAsync_Body_To_Complex_Type_NullContent()
         {
-            // Arrange            
+            // Arrange
             HttpRequestMessage request = new HttpRequestMessage() { Content = null };
             HttpActionContext context = ContextUtil.CreateActionContext(
                 ContextUtil.CreateControllerContext(request),
@@ -735,7 +735,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, CancellationToken.None).Wait();
+            await provider.BindValuesAsync(context, CancellationToken.None);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -744,7 +744,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_And_Uri_To_Simple()
+        public async Task BindValuesAsync_Body_To_Complex_And_Uri_To_Simple()
         {
             // Arrange
             string jsonString = "{\"Id\":\"7\",\"FirstName\":\"testFirstName\",\"LastName\":\"testLastName\"}";
@@ -763,7 +763,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, CancellationToken.None).Wait();
+            await provider.BindValuesAsync(context, CancellationToken.None);
 
             // Assert
             Assert.Equal(2, context.ActionArguments.Count);
@@ -776,7 +776,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Using_FromBodyAttribute()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Using_FromBodyAttribute()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -792,7 +792,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -803,7 +803,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_Complex_Type_Using_Formatter_To_Deserialize()
+        public async Task BindValuesAsync_Body_To_Complex_Type_Using_Formatter_To_Deserialize()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -817,7 +817,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -829,7 +829,7 @@ namespace System.Web.Http.ModelBinding
 
 
         [Fact]
-        public void BindValuesAsync_Body_To_IEnumerable_Complex_Type_Json()
+        public async Task BindValuesAsync_Body_To_IEnumerable_Complex_Type_Json()
         {
             // ModelBinding will bind T to IEnumerable<T>, but JSON.Net won't. So enclose JSON in [].
             // Arrange
@@ -845,7 +845,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -857,7 +857,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Body_To_JToken()
+        public async Task BindValuesAsync_Body_To_JToken()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -866,7 +866,7 @@ namespace System.Web.Http.ModelBinding
             string json = "{\"a\":123,\"b\":[false,null,12.34]}";
             JToken jt = JToken.Parse(json);
             var tempContent = new ObjectContent<JToken>(jt, new JsonMediaTypeFormatter());
-            StringContent stringContent = new StringContent(tempContent.ReadAsStringAsync().Result);
+            StringContent stringContent = new StringContent(await tempContent.ReadAsStringAsync());
             stringContent.Headers.ContentType = mediaType;
             HttpRequestMessage request = new HttpRequestMessage() { Content = stringContent };
             HttpActionContext context = ContextUtil.CreateActionContext(
@@ -876,7 +876,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, cancellationToken).Wait();
+            await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -888,7 +888,7 @@ namespace System.Web.Http.ModelBinding
         #endregion Body
 
         [Fact]
-        public void BindValuesAsync_FromUriAttribute_DecoratedOn_Type()
+        public async Task BindValuesAsync_FromUriAttribute_DecoratedOn_Type()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -903,7 +903,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -912,7 +912,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_ModelBinderAttribute_WithEmptyName()
+        public async Task BindValuesAsync_ModelBinderAttribute_WithEmptyName()
         {
             // Arrange
             CancellationToken cancellationToken = new CancellationToken();
@@ -927,7 +927,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, cancellationToken).Wait();
+            await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
             Dictionary<string, object> expectedResult = new Dictionary<string, object>();
@@ -936,7 +936,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void BindValuesAsync_Config_BindParameter()
+        public async Task BindValuesAsync_Config_BindParameter()
         {
             // Arrange
             HttpConfiguration config = new HttpConfiguration();
@@ -954,16 +954,16 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(actionContext, CancellationToken.None).Wait();
+            await provider.BindValuesAsync(actionContext, CancellationToken.None);
 
-            // Assert                    
+            // Assert
             Data argData = (Data)actionContext.ActionArguments["data"];
             Assert.NotNull(argData);
             Assert.Equal("testing", argData.Description);
         }
 
         [Fact]
-        public void BindValuesAsync_Config_BindParameter_ShouldNotBeAppliedToUnrelatedTypes()
+        public async Task BindValuesAsync_Config_BindParameter_ShouldNotBeAppliedToUnrelatedTypes()
         {
             // Arrange
             HttpConfiguration config = new HttpConfiguration();
@@ -980,7 +980,7 @@ namespace System.Web.Http.ModelBinding
             DefaultActionValueBinder provider = new DefaultActionValueBinder();
 
             // Act
-            provider.BindValuesAsync(context, CancellationToken.None).Wait();
+            await provider.BindValuesAsync(context, CancellationToken.None);
 
             // Assert
             Assert.Equal(1, context.ActionArguments.Count);
@@ -1014,7 +1014,7 @@ namespace System.Web.Http.ModelBinding
         }
     }
 
-    // Test model binder to bind typeof(Data) 
+    // Test model binder to bind typeof(Data)
     public class CustomModelBinder : IModelBinder
     {
         public bool BindModel(HttpActionContext actionContext, ModelBindingContext bindingContext)
@@ -1136,7 +1136,7 @@ namespace System.Web.Http.ModelBinding
             return jsonValue;
         }
 
-        // Demonstrate what we expect to be the common default scenario. No attributes are required. 
+        // Demonstrate what we expect to be the common default scenario. No attributes are required.
         // A complex object comes from the body, and simple objects come from the URI.
         public ActionValueItem PostFromBodyAndUri(int id, ActionValueItem item)
         {
@@ -1156,9 +1156,9 @@ namespace System.Web.Http.ModelBinding
         }
 
         // Demonstrates binding to ObjectContent<T> from request body
-        public ActionValueItem PostObjectContentOfItem(ObjectContent<ActionValueItem> item)
+        public Task<ActionValueItem> PostObjectContentOfItemAsync(ObjectContent<ActionValueItem> item)
         {
-            return item.ReadAsAsync<ActionValueItem>().Result;
+            return item.ReadAsAsync<ActionValueItem>();
         }
 
         public class ActionValueControllerValueProviderFactory : ValueProviderFactory
@@ -1200,8 +1200,8 @@ namespace System.Web.Http.ModelBinding
         public string LastName { get; set; }
     }
 
-    // Test variants of converting empty string to null. 
-    // Pass each property the empty string. 
+    // Test variants of converting empty string to null.
+    // Pass each property the empty string.
     public class ConvertEmptyStringContainer
     {
         [DisplayFormat(ConvertEmptyStringToNull = false)]

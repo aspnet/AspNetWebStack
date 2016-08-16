@@ -21,7 +21,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Dispose();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
         }
@@ -36,7 +36,7 @@ namespace System.Net.Http.Internal
             // Act
             mockStream.Close();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
         }

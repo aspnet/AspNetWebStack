@@ -16,7 +16,7 @@ namespace System.Web.Http.Tracing.Tracers
     public class AuthorizationFilterTracerTest
     {
         [Fact]
-        public void ExecuteAuthorizationFilterAsync_Traces()
+        public async Task ExecuteAuthorizationFilterAsync_Traces()
         {
             // Arrange
             HttpResponseMessage response = new HttpResponseMessage();
@@ -36,15 +36,15 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Task task = ((IAuthorizationFilter)tracer).ExecuteAuthorizationFilterAsync(actionContext, CancellationToken.None, continuation);
-            task.Wait();
+            var filter = (IAuthorizationFilter)tracer;
+            await filter.ExecuteAuthorizationFilterAsync(actionContext, CancellationToken.None, continuation);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void ExecuteAuthorizationFilterAsync_Faults_And_Traces_When_Inner_Faults()
+        public async Task ExecuteAuthorizationFilterAsync_Faults_And_Traces_When_Inner_Faults()
         {
             // Arrange
             Mock<IAuthorizationFilter> mockAttr = new Mock<IAuthorizationFilter>() { CallBase = true };
@@ -68,7 +68,7 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Act & Assert
             Task task = ((IAuthorizationFilter)tracer).ExecuteAuthorizationFilterAsync(actionContext, CancellationToken.None, continuation);
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
 
             // Assert
             Assert.Same(exception, thrown);

@@ -8,7 +8,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Web.Http.SelfHost;
 using System.Web.Http.Util;
@@ -29,7 +28,7 @@ namespace System.Web.Http.ContentNegotiation
         }
 
         [Fact]
-        public void CustomFormatter_Overrides_SetResponseHeaders_During_Conneg()
+        public async Task CustomFormatter_Overrides_SetResponseHeaders_During_Conneg()
         {
             Order reqOrdr = new Order() { OrderId = "100", OrderValue = 100.00 };
             HttpRequestMessage request = new HttpRequestMessage
@@ -40,7 +39,7 @@ namespace System.Web.Http.ContentNegotiation
             request.Method = HttpMethod.Post;
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plainwithversioninfo"));
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 
@@ -53,7 +52,7 @@ namespace System.Web.Http.ContentNegotiation
         }
 
         [Fact]
-        public void CustomFormatter_Post_Returns_Request_String_Content()
+        public async Task CustomFormatter_Post_Returns_Request_String_Content()
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
@@ -62,17 +61,17 @@ namespace System.Web.Http.ContentNegotiation
             request.RequestUri = new Uri(baseAddress + "/CustomFormatterTests/EchoString");
             request.Method = HttpMethod.Post;
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal<string>("text/plain", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>("Hello World!", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal<string>("Hello World!", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void CustomFormatter_Post_Returns_Request_Integer_Content()
+        public async Task CustomFormatter_Post_Returns_Request_Integer_Content()
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
@@ -82,17 +81,17 @@ namespace System.Web.Http.ContentNegotiation
             request.RequestUri = new Uri(baseAddress + "/CustomFormatterTests/EchoInt");
             request.Method = HttpMethod.Post;
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal<string>("text/plain", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<int>(100, Convert.ToInt32(response.Content.ReadAsStringAsync().Result));
+            Assert.Equal<int>(100, Convert.ToInt32(await response.Content.ReadAsStringAsync()));
         }
 
         [Fact]
-        public void CustomFormatter_Post_Returns_Request_ComplexType_Content()
+        public async Task CustomFormatter_Post_Returns_Request_ComplexType_Content()
         {
             Order reqOrdr = new Order() { OrderId = "100", OrderValue = 100.00 };
             HttpRequestMessage request = new HttpRequestMessage
@@ -102,7 +101,7 @@ namespace System.Web.Http.ContentNegotiation
             request.RequestUri = new Uri(baseAddress + "/CustomFormatterTests/EchoOrder");
             request.Method = HttpMethod.Post;
 
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);

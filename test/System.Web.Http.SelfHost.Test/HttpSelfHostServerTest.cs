@@ -33,14 +33,14 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Streamed)]
-        public void SendAsync_Direct_Returns_OK_For_Successful_ObjectContent_Write(string uri, TransferMode transferMode)
+        public async Task SendAsync_Direct_Returns_OK_For_Successful_ObjectContent_Write(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                server = await CreateServerAsync(port, transferMode);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -51,17 +51,17 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Streamed)]
-        public void SendAsync_ServiceModel_Returns_OK_For_Successful_ObjectContent_Write(string uri, TransferMode transferMode)
+        public async Task SendAsync_ServiceModel_Returns_OK_For_Successful_ObjectContent_Write(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange
-                server = CreateServer(port, transferMode);
+                server = await CreateServerAsync(port, transferMode);
                 bool shouldChunk = transferMode == TransferMode.Streamed;
 
                 // Act
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
                 IEnumerable<string> headerValues = null;
                 bool isChunked = response.Headers.TryGetValues("Transfer-Encoding", out headerValues) && headerValues != null &&
                                  headerValues.Any((v) => String.Equals(v, "chunked", StringComparison.OrdinalIgnoreCase));
@@ -76,14 +76,14 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/SelfHostServerTest/EchoStream", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/EchoStream", TransferMode.Streamed)]
-        public void SendAsync_Direct_Returns_OK_For_Successful_Stream_Write(string uri, TransferMode transferMode)
+        public async Task SendAsync_Direct_Returns_OK_For_Successful_Stream_Write(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode);
-                HttpResponseMessage response = new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                server = await CreateServerAsync(port, transferMode);
+                HttpResponseMessage response = await new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
                 IEnumerable<string> headerValues = null;
                 bool isChunked = response.Headers.TryGetValues("Transfer-Encoding", out headerValues) && headerValues != null &&
                                  headerValues.Any((v) => String.Equals(v, "chunked", StringComparison.OrdinalIgnoreCase));
@@ -97,14 +97,14 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/SelfHostServerTest/EchoStream", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/EchoStream", TransferMode.Streamed)]
-        public void SendAsync_ServiceModel_Returns_OK_For_Successful_Stream_Write(string uri, TransferMode transferMode)
+        public async Task SendAsync_ServiceModel_Returns_OK_For_Successful_Stream_Write(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                server = await CreateServerAsync(port, transferMode);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -119,14 +119,14 @@ namespace System.Web.Http.SelfHost
         [InlineData("/SelfHostServerTest/ThrowBeforeWrite", TransferMode.Streamed)]
         [InlineData("/SelfHostServerTest/ThrowAfterWrite", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/ThrowAfterWrite", TransferMode.Streamed)]
-        public void SendAsync_Direct_Throws_When_ObjectContent_CopyToAsync_Throws(string uri, TransferMode transferMode)
+        public async Task SendAsync_Direct_Throws_When_ObjectContent_CopyToAsync_Throws(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act & Assert
-                server = CreateServer(port, transferMode);
-                Assert.Throws<InvalidOperationException>(
-                    () => new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri).Wait());
+                server = await CreateServerAsync(port, transferMode);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri));
             }
         }
 
@@ -137,16 +137,16 @@ namespace System.Web.Http.SelfHost
         [InlineData("/SelfHostServerTest/ThrowBeforeWrite", TransferMode.Streamed)]
         [InlineData("/SelfHostServerTest/ThrowAfterWrite", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/ThrowAfterWrite", TransferMode.Streamed)]
-        public void SendAsync_ServiceModel_Closes_Connection_When_ObjectContent_CopyToAsync_Throws(string uri, TransferMode transferMode)
+        public async Task SendAsync_ServiceModel_Closes_Connection_When_ObjectContent_CopyToAsync_Throws(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange
-                server = CreateServer(port, transferMode);
+                server = await CreateServerAsync(port, transferMode);
                 Task<HttpResponseMessage> task = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
 
                 // Act & Assert
-                Assert.Throws<HttpRequestException>(() => task.Wait());
+                await Assert.ThrowsAsync<HttpRequestException>(() => task);
             }
         }
 
@@ -155,14 +155,14 @@ namespace System.Web.Http.SelfHost
         [InlineData("/SelfHostServerTest/ThrowBeforeWriteStream", TransferMode.Streamed)]
         [InlineData("/SelfHostServerTest/ThrowAfterWriteStream", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/ThrowAfterWriteStream", TransferMode.Streamed)]
-        public void SendAsync_Direct_Throws_When_StreamContent_Throws(string uri, TransferMode transferMode)
+        public async Task SendAsync_Direct_Throws_When_StreamContent_Throws(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act & Assert
-                server = CreateServer(port, transferMode);
-                Assert.Throws<InvalidOperationException>(
-                    () => new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri).Wait());
+                server = await CreateServerAsync(port, transferMode);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => new HttpClient(server).GetAsync(BaseUri(port, transferMode) + uri));
             }
         }
 
@@ -171,21 +171,21 @@ namespace System.Web.Http.SelfHost
         [InlineData("/SelfHostServerTest/ThrowBeforeWriteStream", TransferMode.Streamed)]
         [InlineData("/SelfHostServerTest/ThrowAfterWriteStream", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/ThrowAfterWriteStream", TransferMode.Streamed)]
-        public void SendAsync_ServiceModel_Throws_When_StreamContent_Throws(string uri, TransferMode transferMode)
+        public async Task SendAsync_ServiceModel_Throws_When_StreamContent_Throws(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange
-                server = CreateServer(port, transferMode);
+                server = await CreateServerAsync(port, transferMode);
                 Task task = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
 
                 // Act & Assert
-                Assert.Throws<HttpRequestException>(() => task.Wait());
+                await Assert.ThrowsAsync<HttpRequestException>(() => task);
             }
         }
 
         [Fact]
-        public void SendAsync_ServiceModel_AddsSelfHostHttpRequestContext()
+        public async Task SendAsync_ServiceModel_AddsSelfHostHttpRequestContext()
         {
             // Arrange
             using (PortReserver port = new PortReserver())
@@ -221,10 +221,10 @@ namespace System.Web.Http.SelfHost
                     using (HttpClient client = new HttpClient())
                     using (HttpRequestMessage expectedRequest = new HttpRequestMessage(HttpMethod.Get, baseUri))
                     {
-                        server.OpenAsync().Wait();
+                        await server.OpenAsync();
 
                         // Act
-                        using (HttpResponseMessage ignore = client.SendAsync(expectedRequest).Result)
+                        using (HttpResponseMessage ignore = await client.SendAsync(expectedRequest))
                         {
                             // Assert
                             SelfHostHttpRequestContext typedContext = (SelfHostHttpRequestContext)context;
@@ -232,7 +232,7 @@ namespace System.Web.Http.SelfHost
                             Assert.Same(expectedConfiguration, context.Configuration);
                             Assert.Equal(expectedRequest.RequestUri, typedContext.Request.RequestUri);
 
-                            server.CloseAsync().Wait();
+                            await server.CloseAsync();
                         }
                     }
                 }
@@ -242,13 +242,13 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Buffered)]
         [InlineData("/SelfHostServerTest/EchoString", TransferMode.Streamed)]
-        public void Get_Returns_Hard404_If_IgnoreRoute(string uri, TransferMode transferMode)
+        public async Task Get_Returns_Hard404_If_IgnoreRoute(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode, ignoreRoute: true);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
+                server = await CreateServerAsync(port, transferMode, ignoreRoute: true);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -259,13 +259,13 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/a/b/c/d/e", TransferMode.Buffered)]
         [InlineData("/EchoString?f=12", TransferMode.Streamed)]
-        public void Get_Returns_Hard404_If_IgnoreRouteDoesNotMatch(string uri, TransferMode transferMode)
+        public async Task Get_Returns_Hard404_If_IgnoreRouteDoesNotMatch(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode, ignoreRoute: true);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
+                server = await CreateServerAsync(port, transferMode, ignoreRoute: true);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -277,13 +277,13 @@ namespace System.Web.Http.SelfHost
         [InlineData("/constraint/values/10", TransferMode.Buffered)]
         [InlineData("/constraint/values/15", TransferMode.Buffered)]
         [InlineData("/constraint/values/20", TransferMode.Buffered)]
-        public void Get_Returns_Hard404_If_IgnoreRoute_WithConstraints_ConstraintsMatched(string uri, TransferMode transferMode)
+        public async Task Get_Returns_Hard404_If_IgnoreRoute_WithConstraints_ConstraintsMatched(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode, ignoreRoute: true);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
+                server = await CreateServerAsync(port, transferMode, ignoreRoute: true);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -295,14 +295,14 @@ namespace System.Web.Http.SelfHost
         [InlineData("/constraint/values/40", TransferMode.Buffered)]
         [InlineData("/constraint/values/50", TransferMode.Buffered)]
         [InlineData("/constraint/values/65", TransferMode.Buffered)]
-        public void Get_Returns_Value_If_IgnoreRoute_WithConstraints_ConstraintsNotMatched(string uri, TransferMode transferMode)
+        public async Task Get_Returns_Value_If_IgnoreRoute_WithConstraints_ConstraintsNotMatched(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode, ignoreRoute: true);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                server = await CreateServerAsync(port, transferMode, ignoreRoute: true);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -313,14 +313,14 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("/other/SelfHostServerTest/EchoString", TransferMode.Buffered)]
         [InlineData("/other/SelfHostServerTest/EchoString", TransferMode.Streamed)]
-        public void Get_Returns_Success_If_OtherRouteMatched(string uri, TransferMode transferMode)
+        public async Task Get_Returns_Success_If_OtherRouteMatched(string uri, TransferMode transferMode)
         {
             using (var port = new PortReserver())
             {
                 // Arrange & Act
-                server = CreateServer(port, transferMode, ignoreRoute: true);
-                HttpResponseMessage response = new HttpClient().GetAsync(BaseUri(port, transferMode) + uri).Result;
-                string responseString = response.Content.ReadAsStringAsync().Result;
+                server = await CreateServerAsync(port, transferMode, ignoreRoute: true);
+                HttpResponseMessage response = await new HttpClient().GetAsync(BaseUri(port, transferMode) + uri);
+                string responseString = await response.Content.ReadAsStringAsync();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -397,14 +397,14 @@ namespace System.Web.Http.SelfHost
             {
             }
 
-            protected override Task SerializeToStreamAsync(Stream stream, TransportContext context)
+            protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
             {
-                base.SerializeToStreamAsync(stream, context).Wait();
+                await base.SerializeToStreamAsync(stream, context);
                 throw new InvalidOperationException("ThrowAfterWriteStream");
             }
         }
 
-        private static HttpSelfHostServer CreateServer(PortReserver port, TransferMode transferMode, bool ignoreRoute = false)
+        private static async Task<HttpSelfHostServer> CreateServerAsync(PortReserver port, TransferMode transferMode, bool ignoreRoute = false)
         {
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(BaseUri(port, transferMode));
             config.HostNameComparisonMode = HostNameComparisonMode.Exact;
@@ -419,7 +419,7 @@ namespace System.Web.Http.SelfHost
             config.MapHttpAttributeRoutes();
 
             HttpSelfHostServer server = new HttpSelfHostServer(config);
-            server.OpenAsync().Wait();
+            await server.OpenAsync();
             return server;
         }
 

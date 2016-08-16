@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
@@ -34,7 +33,7 @@ namespace Microsoft.AspNet.Facebook.Test
             // Assert
             Assert.Equal(result.RedirectUrl.AbsoluteUri, new Uri(expectedRedirectPath).AbsoluteUri);
         }
-        
+
         [Fact]
         public void OnAuthorization_OnlyTriggersCannotCreateCookiesHook()
         {

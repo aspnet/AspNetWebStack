@@ -40,7 +40,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void HandleAsync_DelegatesToInnerHandler()
+        public async Task HandleAsync_DelegatesToInnerHandler()
         {
             Mock<IExceptionHandler> mock = new Mock<IExceptionHandler>(MockBehavior.Strict);
             Task expectedTask = CreateCompletedTask();
@@ -62,7 +62,7 @@ namespace System.Web.Http.ExceptionHandling
 
                 // Assert
                 Assert.Same(expectedTask, task);
-                task.WaitUntilCompleted();
+                await task;
                 mock.Verify(h => h.HandleAsync(expectedContext, expectedCancellationToken), Times.Once());
             }
         }
@@ -70,7 +70,7 @@ namespace System.Web.Http.ExceptionHandling
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void HandleAsync_IfIsTopLevelCatchBlockAndCanCreateExceptionResult_InitializesResult(bool includeDetail)
+        public async Task HandleAsync_IfIsTopLevelCatchBlockAndCanCreateExceptionResult_InitializesResult(bool includeDetail)
         {
             Mock<IExceptionHandler> mock = new Mock<IExceptionHandler>(MockBehavior.Strict);
             IHttpActionResult result = null;
@@ -111,13 +111,9 @@ namespace System.Web.Http.ExceptionHandling
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
                 Assert.IsType<ExceptionResult>(result);
                 ExceptionResult exceptionResult = (ExceptionResult)result;
                 Assert.Same(expectedException, exceptionResult.Exception);
@@ -131,7 +127,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void HandleAsync_IfNotIsTopLevelCatchBlock_LeavesResultNull()
+        public async Task HandleAsync_IfNotIsTopLevelCatchBlock_LeavesResultNull()
         {
             // Arrange
             Exception exception = CreateDummyException();
@@ -151,22 +147,22 @@ namespace System.Web.Http.ExceptionHandling
                     };
 
                 // More Arrange; then Act & Assert
-                TestHandleAsyncLeavesResultNull(context);
+                await TestHandleAsyncLeavesResultNull(context);
             }
         }
 
         [Fact]
-        public void HandleAsync_IfContextIsNull_LeavesResultNull()
+        public Task HandleAsync_IfContextIsNull_LeavesResultNull()
         {
             // Arrange
             ExceptionHandlerContext context = null;
 
             // More Arrange; then Act & Assert
-            TestHandleAsyncLeavesResultNull(context);
+            return TestHandleAsyncLeavesResultNull(context);
         }
 
         [Fact]
-        public void HandleAsync_IfRequestIsNull_LeavesResultNull()
+        public async Task HandleAsync_IfRequestIsNull_LeavesResultNull()
         {
             // Arrange
             Exception exception = CreateDummyException();
@@ -185,12 +181,12 @@ namespace System.Web.Http.ExceptionHandling
                 };
 
                 // More Arrange; then Act & Assert
-                TestHandleAsyncLeavesResultNull(context);
+                await TestHandleAsyncLeavesResultNull(context);
             }
         }
 
         [Fact]
-        public void HandleAsync_IfRequestContextIsNull_LeavesResultNull()
+        public async Task HandleAsync_IfRequestContextIsNull_LeavesResultNull()
         {
             // Arrange
             Exception exception = CreateDummyException();
@@ -206,12 +202,12 @@ namespace System.Web.Http.ExceptionHandling
                 };
 
                 // More Arrange; then Act & Assert
-                TestHandleAsyncLeavesResultNull(context);
+                await TestHandleAsyncLeavesResultNull(context);
             }
         }
 
         [Fact]
-        public void HandleAsync_IfConfigurationIsNull_LeavesResultNull()
+        public async Task HandleAsync_IfConfigurationIsNull_LeavesResultNull()
         {
             // Arrange
             Exception exception = CreateDummyException();
@@ -230,12 +226,12 @@ namespace System.Web.Http.ExceptionHandling
                 };
 
                 // More Arrange; then Act & Assert
-                TestHandleAsyncLeavesResultNull(context);
+                await TestHandleAsyncLeavesResultNull(context);
             }
         }
 
         [Fact]
-        public void HandleAsync_IfContentNegotiatorIsNull_LeavesResultNull()
+        public async Task HandleAsync_IfContentNegotiatorIsNull_LeavesResultNull()
         {
             // Arrange
             Exception exception = CreateDummyException();
@@ -257,16 +253,16 @@ namespace System.Web.Http.ExceptionHandling
                 };
 
                 // More Arrange; then Act & Assert
-                TestHandleAsyncLeavesResultNull(context);
+                await TestHandleAsyncLeavesResultNull(context);
             }
         }
 
-        private static void TestHandleAsyncLeavesResultNull(ExceptionContext context)
+        private static Task TestHandleAsyncLeavesResultNull(ExceptionContext context)
         {
-            TestHandleAsyncLeavesResultNull(new ExceptionHandlerContext(context));
+            return TestHandleAsyncLeavesResultNull(new ExceptionHandlerContext(context));
         }
 
-        private static void TestHandleAsyncLeavesResultNull(ExceptionHandlerContext context)
+        private static async Task TestHandleAsyncLeavesResultNull(ExceptionHandlerContext context)
         {
             Mock<IExceptionHandler> mock = new Mock<IExceptionHandler>(MockBehavior.Strict);
             IHttpActionResult result = null;
@@ -284,13 +280,9 @@ namespace System.Web.Http.ExceptionHandling
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Act
-            Task task = product.HandleAsync(context, cancellationToken);
+            await product.HandleAsync(context, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
             Assert.Null(result);
         }
 

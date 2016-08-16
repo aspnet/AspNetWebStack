@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
@@ -247,7 +248,7 @@ namespace System.Web.Http.WebHost.Routing
             collection.Add("domainRoute", route);
             HttpRequestMessage request = CreateHttpRequestMessageWithContext();
             IHttpRouteData httpRouteData = collection.GetRouteData(request);
-            
+
             // Act
             RouteData routeData = httpRouteData.ToRouteData();
 
@@ -275,7 +276,7 @@ namespace System.Web.Http.WebHost.Routing
                 };
 
             request.SetRouteData(new HttpRouteData(route, routeValues));
-            
+
             // Act
             IHttpVirtualPathData httpvPathData = collection.GetVirtualPath(request, "domainRoute", routeValues);
 
@@ -300,7 +301,7 @@ namespace System.Web.Http.WebHost.Routing
                 };
 
             request.SetRouteData(new HttpRouteData(route, routeValues));
-            
+
             // Act
             IHttpVirtualPathData httpvPathData = collection.GetVirtualPath(request, "domainRoute", routeValues);
 
@@ -315,11 +316,11 @@ namespace System.Web.Http.WebHost.Routing
         [InlineData("people/1")]
         [InlineData("people/literal")]
         [InlineData("people/name?id=20")]
-        public void IgnoreRoute_GetSoft404IfRouteIgnored(string requestPath)
+        public async Task IgnoreRoute_GetSoft404IfRouteIgnored(string requestPath)
         {
             var request = CreateHttpRequestMessageWithContext(requestPath);
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.Equal(response.StatusCode, Net.HttpStatusCode.NotFound);
             Assert.True(response.RequestMessage.Properties.ContainsKey(HttpPropertyKeys.NoRouteMatched));
@@ -402,13 +403,13 @@ namespace System.Web.Http.WebHost.Routing
         [InlineData("values/10")]
         [InlineData("values/15")]
         [InlineData("values/20")]
-        public void IgnoreRoute_WithConstraints_GetSoft404IfRouteIgnored(string requestPath)
+        public async Task IgnoreRoute_WithConstraints_GetSoft404IfRouteIgnored(string requestPath)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/constraint/" + requestPath);
             request.SetConfiguration(new HttpConfiguration());
             request.SetHttpContext(CreateHttpContext("~/constraint"));
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.Equal(response.StatusCode, Net.HttpStatusCode.NotFound);
             Assert.True(response.RequestMessage.Properties.ContainsKey(HttpPropertyKeys.NoRouteMatched));
@@ -418,16 +419,16 @@ namespace System.Web.Http.WebHost.Routing
         [InlineData("values/1")]
         [InlineData("values/25")]
         [InlineData("values/40")]
-        public void IgnoreRoute_WithConstraints_GetValueIfNotIgnored(string requestPath)
+        public async Task IgnoreRoute_WithConstraints_GetValueIfNotIgnored(string requestPath)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/constraint/" + requestPath);
             request.SetConfiguration(new HttpConfiguration());
             request.SetHttpContext(CreateHttpContext("~/constraint"));
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.Equal(response.StatusCode, Net.HttpStatusCode.OK);
-            Assert.Equal(String.Concat("values/", response.Content.ReadAsStringAsync().Result), requestPath);
+            Assert.Equal(String.Concat("values/", await response.Content.ReadAsStringAsync()), requestPath);
         }
 
         public class CustomIgnoreRouteConstraint : IHttpRouteConstraint
@@ -447,7 +448,7 @@ namespace System.Web.Http.WebHost.Routing
             }
         }
 
-        private static HttpResponseMessage SubmitRequest(HttpRequestMessage request)
+        private static async Task<HttpResponseMessage> SubmitRequestAsync(HttpRequestMessage request)
         {
             HttpConfiguration config = new HttpConfiguration(new HostedHttpRouteCollection(new RouteCollection()));
             config.Routes.IgnoreRoute("Bar", "api/{*pathInfo}");
@@ -455,11 +456,14 @@ namespace System.Web.Http.WebHost.Routing
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{action}");
             config.MapHttpAttributeRoutes();
 
+            HttpResponseMessage response;
             HttpServer server = new HttpServer(config);
             using (HttpMessageInvoker client = new HttpMessageInvoker(server))
             {
-                return client.SendAsync(request, CancellationToken.None).Result;
+                response = await client.SendAsync(request, CancellationToken.None);
             }
+
+            return response;
         }
 
         [RoutePrefix("constraint")]
@@ -511,7 +515,7 @@ namespace System.Web.Http.WebHost.Routing
                 mockContext.Setup(c => c.Response.ApplyAppPathModifier(It.IsAny<string>()))
                              .Returns(appPathModifierReturnValue);
             }
-            
+
             return mockContext.Object;
         }
 

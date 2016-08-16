@@ -547,7 +547,7 @@ namespace System.Web.Mvc.Async.Test
             }
         }
 
-        // Controller is async, so derive from ControllerBase to get sync behavior. 
+        // Controller is async, so derive from ControllerBase to get sync behavior.
         private class RegularSyncController : ControllerBase
         {
             protected override void ExecuteCore()

@@ -68,7 +68,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteAsync_RemovesInnerControllerFromReleaseListAndAddsItselfInstead()
+        public async Task ExecuteAsync_RemovesInnerControllerFromReleaseListAndAddsItselfInstead()
         {
             // Arrange
             var request = new HttpRequestMessage();
@@ -85,7 +85,8 @@ namespace System.Web.Http.Tracing.Tracers
             var tracer = new HttpControllerTracer(request, mockController.Object, traceWriter);
 
             // Act
-            ((IHttpController)tracer).ExecuteAsync(context, CancellationToken.None).WaitUntilCompleted();
+            var controller = (IHttpController)tracer;
+            await controller.ExecuteAsync(context, CancellationToken.None);
 
             // Assert
             IEnumerable<IDisposable> disposables = (IEnumerable<IDisposable>)request.Properties[HttpPropertyKeys.DisposableRequestResourcesKey];
@@ -94,7 +95,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteAsync_Invokes_Inner_And_Traces()
+        public async Task ExecuteAsync_Invokes_Inner_And_Traces()
         {
             // Arrange
             HttpResponseMessage response = new HttpResponseMessage();
@@ -118,7 +119,8 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            HttpResponseMessage actualResponse = ((IHttpController)tracer).ExecuteAsync(controllerContext, CancellationToken.None).Result;
+            var task = ((IHttpController)tracer).ExecuteAsync(controllerContext, CancellationToken.None);
+            HttpResponseMessage actualResponse = await task;
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -126,7 +128,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteAsync_Faults_And_Traces_When_Inner_Faults()
+        public async Task ExecuteAsync_Faults_And_Traces_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException();
@@ -152,7 +154,7 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => ((IHttpController)tracer).ExecuteAsync(controllerContext, CancellationToken.None).Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => ((IHttpController)tracer).ExecuteAsync(controllerContext, CancellationToken.None));
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -161,7 +163,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteAsync_IsCancelled_And_Traces_When_Inner_IsCancelled()
+        public async Task ExecuteAsync_IsCancelled_And_Traces_When_Inner_IsCancelled()
         {
             // Arrange
             Mock<ApiController> mockController = new Mock<ApiController>() { CallBase = true };
@@ -185,7 +187,7 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Act
             Task task = ((IHttpController)tracer).ExecuteAsync(controllerContext, CancellationToken.None);
-            Exception thrown = Assert.Throws<TaskCanceledException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<TaskCanceledException>(() => task);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());

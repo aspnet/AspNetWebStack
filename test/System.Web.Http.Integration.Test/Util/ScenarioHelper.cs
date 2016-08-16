@@ -3,14 +3,19 @@
 
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.Web.Http
 {
     public static class ScenarioHelper
     {
         public static string BaseAddress = "http://localhost";
-        public static void RunTest(string controllerName, string routeSuffix, HttpRequestMessage request,
-            Action<HttpResponseMessage> assert, Action<HttpConfiguration> configurer = null)
+        public static async Task RunTestAsync(
+            string controllerName,
+            string routeSuffix,
+            HttpRequestMessage request,
+            Func<HttpResponseMessage, Task> assert,
+            Action<HttpConfiguration> configurer = null)
         {
             // Arrange
             HttpConfiguration config = new HttpConfiguration() { IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always };
@@ -26,10 +31,10 @@ namespace System.Web.Http
             try
             {
                 // Act
-                response = invoker.SendAsync(request, CancellationToken.None).Result;
+                response = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
-                assert(response);
+                await assert(response);
             }
             finally
             {

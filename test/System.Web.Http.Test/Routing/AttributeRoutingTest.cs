@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http.Controllers;
-using System.Web.UI;
 using Microsoft.TestCommon;
 
 namespace System.Web.Http.Routing
@@ -97,18 +96,18 @@ namespace System.Web.Http.Routing
         [InlineData("GET", "routeprecedence/literal", "GetLiteral")]
         [InlineData("GET", "routeprecedence/name?id=20", "GetByNameAndId:name20")]
         [InlineData("GET", "constraint", "pass")]
-        public void AttributeRouting_RoutesToAction(string httpMethod, string uri, string responseBody)
+        public async Task AttributeRouting_RoutesToAction(string httpMethod, string uri, string responseBody)
         {
             var request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + uri);
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.True(response.IsSuccessStatusCode);
             Assert.Equal(responseBody, GetContentValue<string>(response));
         }
 
         [Theory]
-        // default controllerRouteFactories 
+        // default controllerRouteFactories
         [InlineData("GET", "prefix2/defaultroute/name", HttpStatusCode.NotFound)] // miss route constraint
         [InlineData("PUT", "prefix2/defaultroute/12", HttpStatusCode.MethodNotAllowed)] // override, different url
         [InlineData("POST", "prefix", HttpStatusCode.MethodNotAllowed)]
@@ -135,22 +134,22 @@ namespace System.Web.Http.Routing
         [InlineData("GET", "apibadcontrollerx/int", HttpStatusCode.NotFound)]
         [InlineData("GET", "apibadcontrollerx/nullableint", HttpStatusCode.NotFound)]
         [InlineData("GET", "apibadcontrollerx/string", HttpStatusCode.NotFound)]
-        public void AttributeRouting_Failures(string httpMethod, string uri, HttpStatusCode failureCode)
+        public async Task AttributeRouting_Failures(string httpMethod, string uri, HttpStatusCode failureCode)
         {
             var request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + uri);
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.False(response.IsSuccessStatusCode);
             Assert.Equal(failureCode, response.StatusCode);
         }
 
         [Fact]
-        public void AttributeRouting_MultipleControllerMatches()
+        public async Task AttributeRouting_MultipleControllerMatches()
         {
             var request = new HttpRequestMessage(new HttpMethod("GET"), "http://localhost/ambiguousmatch");
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.False(response.IsSuccessStatusCode);
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -165,25 +164,25 @@ namespace System.Web.Http.Routing
 
             Assert.Equal(AttributeTargets.Class, usage.ValidOn);
             Assert.False(usage.AllowMultiple); // only 1 per class
-            Assert.True(usage.Inherited); // RoutePrefix is not inherited. 
+            Assert.True(usage.Inherited); // RoutePrefix is not inherited.
         }
 
         [Theory]
         [InlineData("GET", "NS1Home/Introduction", "Home.Index()")]
         [InlineData("GET", "NS2Account/PeopleList", "Account.Index()")]
         [InlineData("GET", "CustomizedDefaultPrefix/Unknown", "Default.Index()")]
-        public void AttributeRouting_RoutesToAction_WithCustomizedRoutePrefix(string httpMethod, string uri, string responseBody)
+        public async Task AttributeRouting_RoutesToAction_WithCustomizedRoutePrefix(string httpMethod, string uri, string responseBody)
         {
             var request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + uri);
 
-            var response = SubmitRequest(request);
+            var response = await SubmitRequestAsync(request);
 
             Assert.True(response.IsSuccessStatusCode);
             Assert.Equal(responseBody, GetContentValue<string>(response));
         }
 
         [Fact]
-        public void AttributeRouting_DirectRouteProvider_ControllerRoute()
+        public async Task AttributeRouting_DirectRouteProvider_ControllerRoute()
         {
             var controllerRoutes = new Dictionary<Type, IEnumerable<IDirectRouteFactory>>()
             {
@@ -195,14 +194,14 @@ namespace System.Web.Http.Routing
 
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/CoolRouteBro");
 
-            var response = SubmitRequest(request, routeProvider);
+            var response = await SubmitRequestAsync(request, routeProvider);
 
             Assert.True(response.IsSuccessStatusCode);
             Assert.Equal("DirectRouteProviderController.Get239303030()", GetContentValue<string>(response));
         }
 
         [Fact]
-        public void AttributeRouting_DirectRouteProvider_ControllerRoute_TraditionalRouteDoesntMatch()
+        public async Task AttributeRouting_DirectRouteProvider_ControllerRoute_TraditionalRouteDoesntMatch()
         {
             var controllerRoutes = new Dictionary<Type, IEnumerable<IDirectRouteFactory>>()
             {
@@ -214,14 +213,14 @@ namespace System.Web.Http.Routing
 
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/DirectRouteProvider");
 
-            var response = SubmitRequest(request, routeProvider);
+            var response = await SubmitRequestAsync(request, routeProvider);
 
             Assert.False(response.IsSuccessStatusCode);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
-        public void AttributeRouting_DirectRouteProvider_ActionRoute()
+        public async Task AttributeRouting_DirectRouteProvider_ActionRoute()
         {
             var actionRoutes = new Dictionary<string, IEnumerable<IDirectRouteFactory>>()
             {
@@ -233,13 +232,13 @@ namespace System.Web.Http.Routing
 
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/CoolRouteBro");
 
-            var response = SubmitRequest(request, routeProvider);
+            var response = await SubmitRequestAsync(request, routeProvider);
 
             Assert.True(response.IsSuccessStatusCode);
             Assert.Equal("DirectRouteProviderController.Get239303030()", GetContentValue<string>(response));
         }
 
-        private static HttpResponseMessage SubmitRequest(HttpRequestMessage request, IDirectRouteProvider routeProvider = null)
+        private static async Task<HttpResponseMessage> SubmitRequestAsync(HttpRequestMessage request, IDirectRouteProvider routeProvider = null)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}");
@@ -252,11 +251,14 @@ namespace System.Web.Http.Routing
                 config.MapHttpAttributeRoutes(routeProvider);
             }
 
+            HttpResponseMessage response;
             HttpServer server = new HttpServer(config);
             using (HttpMessageInvoker client = new HttpMessageInvoker(server))
             {
-                return client.SendAsync(request, CancellationToken.None).Result;
+                response = await client.SendAsync(request, CancellationToken.None);
             }
+
+            return response;
         }
 
         private static T GetContentValue<T>(HttpResponseMessage response)
@@ -329,7 +331,7 @@ namespace System.Web.Http.Routing
             return "Put" + id + name;
         }
 
-        // Optional route parameters still require a default value in the signature. 
+        // Optional route parameters still require a default value in the signature.
         [HttpGet]
         [Route("optional/{opt1?}/{opt2?}")]
         public string Optional(int opt1 = 8, string opt2 = "opt")
@@ -373,7 +375,7 @@ namespace System.Web.Http.Routing
             return Request.Method.ToString();
         }
 
-        [HttpDelete] // Pick a unique verb 
+        [HttpDelete] // Pick a unique verb
         [Route("multi1")]
         [Route("multi2")]
         public string MultiRoute()
@@ -383,11 +385,11 @@ namespace System.Web.Http.Routing
 
     }
 
-    // Routes have optional parameters, but signature says it's required. 
-    // Try with value-type, reference type, and nullable. 
+    // Routes have optional parameters, but signature says it's required.
+    // Try with value-type, reference type, and nullable.
     public class OptionalParameterController : ApiController
     {
-        // Optional in route, required in signature. 
+        // Optional in route, required in signature.
         [Route("apibadcontrollerx/int/{id?}")]
         public string Get(int id)
         {
@@ -410,7 +412,7 @@ namespace System.Web.Http.Routing
     [RoutePrefix("prefix")]
     public class PrefixedController : ApiController
     {
-        // Should not be reachable be our routes since there's no route attribute. 
+        // Should not be reachable be our routes since there's no route attribute.
         public void Post()
         {
         }
@@ -497,7 +499,7 @@ namespace System.Web.Http.Routing
     [Route("partial/{action}")]
     public class PartlyResourcePartlyRpcController : ApiController
     {
-        // Normal RPC methods        
+        // Normal RPC methods
         [HttpGet]
         public string DoOp1()
         {
@@ -550,9 +552,9 @@ namespace System.Web.Http.Routing
         }
     }
 
-    // Stress test for action selection. This stresses that the union route really keeps the various 
-    // sub routes separate and properly elevates the correct one. 
-    // Uses query string parameters to disambiguate. 
+    // Stress test for action selection. This stresses that the union route really keeps the various
+    // sub routes separate and properly elevates the correct one.
+    // Uses query string parameters to disambiguate.
     [RoutePrefix("apiactionstress")]
     [Route("{x}/{action}")]
     [Route("{action}/{y}")]

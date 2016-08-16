@@ -115,7 +115,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteExceptionFilterAsync_Traces()
+        public async Task ExecuteExceptionFilterAsync_Traces()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -134,15 +134,15 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Task task = ((IExceptionFilter)tracer).ExecuteExceptionFilterAsync(actionExecutedContext, CancellationToken.None);
-            task.Wait();
+            var filter = (IExceptionFilter)tracer;
+            await filter.ExecuteExceptionFilterAsync(actionExecutedContext, CancellationToken.None);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void ExecuteExceptionFilterAsync_Throws_And_Traces_When_Inner_OnException_Throws()
+        public async Task ExecuteExceptionFilterAsync_Throws_And_Traces_When_Inner_OnException_Throws()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -163,22 +163,10 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Exception thrown = null;
-
             // We separate the task creation and the wait, to verify we don't throw at task creation
             // and that the exception flows inside the task (even if an Aggregate Exception was thrown).
             var task = tracer.ExecuteExceptionFilterAsync(actionExecutedContext, CancellationToken.None);
-
-            try
-            {
-                task.Wait();
-            }
-            catch (AggregateException ex)
-            {
-                Assert.Equal(1, ex.InnerExceptions.Count);
-
-                thrown = ex.InnerException;
-            }
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
 
             // Assert
             Assert.Same(exception, thrown);

@@ -254,7 +254,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         // This test verifies only one kind of filter is wrapped, proving
-        // the static FilterTracer.CreateFilterTracer was called from GetFilterPipeline.  
+        // the static FilterTracer.CreateFilterTracer was called from GetFilterPipeline.
         // Deeper testing of FilterTracer.CreateFilterTracer is in FilterTracerTest.
         [Fact]
         public void GetFilterPipeline_Returns_Wrapped_Filters()
@@ -278,7 +278,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         // This test verifies only one kind of filter is wrapped, proving
-        // the static FilterTracer.CreateFilterTracer was called from GetFilterPipeline.  
+        // the static FilterTracer.CreateFilterTracer was called from GetFilterPipeline.
         // Deeper testing of FilterTracer.CreateFilterTracer is in FilterTracerTest.
         [Fact]
         public void GetFilters_Returns_Wrapped_IFilters()
@@ -320,7 +320,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteAsync_Traces()
+        public async Task ExecuteAsync_Traces()
         {
             // Arrange
             Mock<HttpActionDescriptor> mockActionDescriptor = new Mock<HttpActionDescriptor>() { CallBase = true };
@@ -339,10 +339,9 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            var result = tracer.ExecuteAsync(controllerContext, arguments, CancellationToken.None);
+            await tracer.ExecuteAsync(controllerContext, arguments, CancellationToken.None);
 
             // Assert
-            result.WaitUntilCompleted();
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 

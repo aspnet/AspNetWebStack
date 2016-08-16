@@ -89,7 +89,7 @@ namespace System.Web.Http.ValueProviders.Providers
             Assert.Equal(2, result.Count);
             Assert.Equal("value1", result["key1"]);
             Assert.Equal("", result["key2"]);
-            Assert.Equal(null, result[""]);
+            Assert.Null(result[""]);
         }
 
         [Fact]

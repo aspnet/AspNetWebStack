@@ -3,7 +3,6 @@
 
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -154,7 +153,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse()
+        public async Task ExecuteAsync_Returns_CorrectResponse()
         {
             // Arrange
             string[] content = new string[] { "Content" };
@@ -171,9 +170,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -194,7 +192,7 @@ namespace System.Web.Http.Results
                         }
                     }
                     byte[] expectedContents = encoding.GetBytes(expectedBuilder.ToString());
-                    byte[] contents = response.Content.ReadAsByteArrayAsync().Result;
+                    byte[] contents = await response.Content.ReadAsByteArrayAsync();
                     Assert.Equal(expectedContents, contents);
                     Assert.True(response.Content.Headers.ContentLength.HasValue);
                     Assert.Equal((long)expectedContents.Length, response.Content.Headers.ContentLength.Value);
@@ -220,7 +218,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse()
         {
             // Arrange
             string[] content = new string[] { "Content" };
@@ -238,9 +236,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -261,7 +258,7 @@ namespace System.Web.Http.Results
                         }
                     }
                     byte[] expectedContents = encoding.GetBytes(expectedBuilder.ToString());
-                    byte[] contents = response.Content.ReadAsByteArrayAsync().Result;
+                    byte[] contents = await response.Content.ReadAsByteArrayAsync();
                     Assert.Equal(expectedContents, contents);
                     Assert.True(response.Content.Headers.ContentLength.HasValue);
                     Assert.Equal((long)expectedContents.Length, response.Content.Headers.ContentLength.Value);

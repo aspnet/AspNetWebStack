@@ -32,7 +32,7 @@ namespace System.Web.Http.ExceptionHandling
         [InlineData("ContentNegotiatorNegotiate")]
         [InlineData("ActionMethodAndExceptionFilter")]
         [InlineData("MediaTypeFormatterReadFromStreamAsync")]
-        public void HttpResponseExceptionWithExplicitStatusCode(string throwAt)
+        public async Task HttpResponseExceptionWithExplicitStatusCode(string throwAt)
         {
             HttpRequestMessage request = new HttpRequestMessage();
             request.RequestUri = new Uri(ScenarioHelper.BaseAddress + "/ExceptionTests/ReturnString");
@@ -40,11 +40,11 @@ namespace System.Web.Http.ExceptionHandling
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Content = new StringContent("\"" + throwAt + "\"", Encoding.UTF8, "application/json");
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 "ExceptionTests",
                 "/{action}",
                 request,
-                response =>
+                async response =>
                 {
                     Assert.NotNull(response.Content);
                     Assert.NotNull(response.Content.Headers.ContentType);
@@ -53,13 +53,14 @@ namespace System.Web.Http.ExceptionHandling
                     if (throwAt == "DoNotThrow")
                     {
                         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                        Assert.Equal("Hello World!", response.Content.ReadAsAsync<string>(new List<MediaTypeFormatter>() { new JsonMediaTypeFormatter() }).Result);
+                        Assert.Equal("Hello World!",
+                            await response.Content.ReadAsAsync<string>(new List<MediaTypeFormatter>() { new JsonMediaTypeFormatter() }));
                     }
                     else
                     {
                         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
                         Assert.Equal(String.Format("Error at {0}", throwAt),
-                                        response.Content.ReadAsAsync<string>(new List<MediaTypeFormatter>() { new JsonMediaTypeFormatter() }).Result);
+                            await response.Content.ReadAsAsync<string>(new List<MediaTypeFormatter>() { new JsonMediaTypeFormatter() }));
                     }
                 },
                 config =>
@@ -87,18 +88,14 @@ namespace System.Web.Http.ExceptionHandling
             _throwAt = throwAt;
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             ExceptionTestsUtility.CheckForThrow(_throwAt, "RequestMessageHandler");
 
-            return base.SendAsync(request, cancellationToken).ContinueWith<HttpResponseMessage>((tsk) =>
-            {
-                ExceptionTestsUtility.CheckForThrow(_throwAt, "ResponseMessageHandler");
+            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+            ExceptionTestsUtility.CheckForThrow(_throwAt, "ResponseMessageHandler");
 
-                HttpResponseMessage response = tsk.Result;
-
-                return response;
-            });
+            return response;
         }
     }
 

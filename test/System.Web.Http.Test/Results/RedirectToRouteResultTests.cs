@@ -151,7 +151,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse()
+        public async Task ExecuteAsync_Returns_CorrectResponse()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -171,9 +171,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -184,7 +183,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_WhenUrlHelperLinkReturnsNull()
+        public async Task ExecuteAsync_Throws_WhenUrlHelperLinkReturnsNull()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -199,10 +198,8 @@ namespace System.Web.Http.Results
                     expectedRequest);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                    {
-                        HttpResponseMessage ignore = result.ExecuteAsync(CancellationToken.None).Result;
-                    });
+                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => result.ExecuteAsync(CancellationToken.None));
                 Assert.Equal("UrlHelper.Link must not return null.", exception.Message);
             }
         }
@@ -223,7 +220,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -246,9 +243,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
@@ -399,7 +395,7 @@ namespace System.Web.Http.Results
                 Assert.Same(expectedRequest, result.Request);
             }
         }
-        
+
         [Fact]
         public void ApiControllerRedirectToRoute_WithStringAndObject_CreatesCorrectResult()
         {

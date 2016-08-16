@@ -5,11 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.TestUtil;
-using System.Web.UI;
 using System.Web.WebPages;
 using Microsoft.TestCommon;
 using Moq;
@@ -1100,7 +1098,7 @@ namespace System.Web.Helpers.Test
             });
             Assert.False(grid.HasSelection);
             Assert.Equal(-1, grid.SelectedIndex);
-            Assert.Equal(null, grid.SelectedRow);
+            Assert.Null(grid.SelectedRow);
         }
 
         [Fact]
@@ -1115,7 +1113,7 @@ namespace System.Web.Helpers.Test
             });
             Assert.False(grid.HasSelection);
             Assert.Equal(-1, grid.SelectedIndex);
-            Assert.Equal(null, grid.SelectedRow);
+            Assert.Null(grid.SelectedRow);
         }
 
         [Fact]
@@ -1143,7 +1141,7 @@ namespace System.Web.Helpers.Test
             });
             Assert.False(grid.HasSelection);
             Assert.Equal(-1, grid.SelectedIndex);
-            Assert.Equal(null, grid.SelectedRow);
+            Assert.Null(grid.SelectedRow);
         }
 
         [Fact]
@@ -1158,7 +1156,7 @@ namespace System.Web.Helpers.Test
             });
             Assert.False(grid.HasSelection);
             Assert.Equal(-1, grid.SelectedIndex);
-            Assert.Equal(null, grid.SelectedRow);
+            Assert.Null(grid.SelectedRow);
         }
 
         [Fact]
@@ -1911,7 +1909,7 @@ namespace System.Web.Helpers.Test
                 "</tbody></table>", html.ToString());
             XhtmlAssert.Validate1_1(html);
         }
-        
+
         [Fact]
         public void TableRenderingWithStyles()
         {
@@ -2308,7 +2306,7 @@ namespace System.Web.Helpers.Test
             // Act
             var htmlString = grid.GetHtml(htmlAttributes: attributes).ToHtmlString();
 
-            // Assert            
+            // Assert
             Assert.DoesNotContain(unexpected, htmlString);
             Assert.Contains(expected, htmlString);
         }

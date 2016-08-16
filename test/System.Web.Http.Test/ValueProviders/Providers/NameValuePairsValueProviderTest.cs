@@ -210,8 +210,8 @@ namespace System.Web.Http.ValueProviders.Providers
 
             // Assert
             Assert.NotNull(vpResult);
-            Assert.Equal(null, vpResult.RawValue);
-            Assert.Equal(null, vpResult.AttemptedValue);
+            Assert.Null(vpResult.RawValue);
+            Assert.Null(vpResult.AttemptedValue);
             Assert.Equal(culture, vpResult.Culture);
         }
 
@@ -219,8 +219,8 @@ namespace System.Web.Http.ValueProviders.Providers
         public void GetValue_NullMultipleValue()
         {
             // Arrange
-            var backingStore = new KeyValuePair<string, string>[] 
-            { 
+            var backingStore = new KeyValuePair<string, string>[]
+            {
                 new KeyValuePair<string, string>("key", null),
                 new KeyValuePair<string, string>("key", null),
                 new KeyValuePair<string, string>("key", "value")
