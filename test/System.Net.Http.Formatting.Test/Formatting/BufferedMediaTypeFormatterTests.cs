@@ -90,14 +90,14 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void BufferedWrite()
+        public async Task BufferedWrite()
         {
             // Arrange. Specifically use the base class with async signatures. 
             MediaTypeFormatter formatter = new MockBufferedMediaTypeFormatter();
             MemoryStream output = new MemoryStream();
 
             // Act. Call the async signature.
-            formatter.WriteToStreamAsync(TestData.GetType(), TestData, output, null, null).Wait();
+            await formatter.WriteToStreamAsync(TestData.GetType(), TestData, output, null, null);
 
             // Assert
             byte[] expectedBytes = ExpectedSupportedEncodings.ElementAt(0).GetBytes(TestData);
@@ -106,7 +106,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void BufferedRead()
+        public async Task BufferedRead()
         {
             // Arrange. Specifically use the base class with async signatures. 
             MediaTypeFormatter formatter = new MockBufferedMediaTypeFormatter();
@@ -114,7 +114,7 @@ namespace System.Net.Http.Formatting
             MemoryStream input = new MemoryStream(expectedBytes);
 
             // Act. Call the async signature.
-            object result = formatter.ReadFromStreamAsync(TestData.GetType(), input, null, null).Result;
+            object result = await formatter.ReadFromStreamAsync(TestData.GetType(), input, null, null);
 
             // Assert
             Assert.Equal(TestData, result);

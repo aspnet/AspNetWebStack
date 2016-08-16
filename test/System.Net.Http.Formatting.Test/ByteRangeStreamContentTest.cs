@@ -4,6 +4,7 @@
 using System.IO;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Moq;
 
@@ -207,7 +208,7 @@ namespace System.Net.Http
 
         [Theory]
         [PropertyData("MultiRanges")]
-        public void MultipleRangesGeneratesMultipartByteRangesContent(string ranges, int innerStreamLength, int expectedBodyparts, string[] contentRanges)
+        public async Task MultipleRangesGeneratesMultipartByteRangesContent(string ranges, int innerStreamLength, int expectedBodyparts, string[] contentRanges)
         {
             // Arrange
             string data = new String('a', innerStreamLength);
@@ -218,8 +219,8 @@ namespace System.Net.Http
             // Act
             ByteRangeStreamContent content = new ByteRangeStreamContent(memStream, range, _expectedMediatype);
             MemoryStream result = new MemoryStream();
-            content.CopyToAsync(result).Wait();
-            MultipartMemoryStreamProvider multipart = content.ReadAsMultipartAsync().Result;
+            await content.CopyToAsync(result);
+            MultipartMemoryStreamProvider multipart = await content.ReadAsMultipartAsync();
 
             // Assert
             Assert.Equal(expectedBodyparts, multipart.Contents.Count);

@@ -47,22 +47,20 @@ namespace System.Net.Http
             return httpResponse;
         }
 
-        private static string ReadContentAsync(HttpContent content)
+        private static async Task<string> ReadContentAsync(HttpContent content)
         {
-            Task task = content.LoadIntoBufferAsync();
-            task.Wait(TimeoutConstant.DefaultTimeout);
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-            return content.ReadAsStringAsync().Result;
+            await content.LoadIntoBufferAsync();
+
+            return await content.ReadAsStringAsync();
         }
 
-        private static void ValidateRequest(HttpContent content, bool containsEntity)
+        private static async Task ValidateRequest(HttpContent content, bool containsEntity)
         {
             Assert.Equal(ParserData.HttpRequestMediaType, content.Headers.ContentType);
             long? length = content.Headers.ContentLength;
             Assert.NotNull(length);
 
-            string message = ReadContentAsync(content);
-
+            string message = await ReadContentAsync(content);
             if (containsEntity)
             {
                 Assert.Equal(ParserData.HttpRequestWithEntity.Length, length);
@@ -75,14 +73,13 @@ namespace System.Net.Http
             }
         }
 
-        private static void ValidateResponse(HttpContent content, bool containsEntity)
+        private static async Task ValidateResponse(HttpContent content, bool containsEntity)
         {
             Assert.Equal(ParserData.HttpResponseMediaType, content.Headers.ContentType);
             long? length = content.Headers.ContentLength;
             Assert.NotNull(length);
 
-            string message = ReadContentAsync(content);
-
+            string message = await ReadContentAsync(content);
             if (containsEntity)
             {
                 Assert.Equal(ParserData.HttpResponseWithEntity.Length, length);
@@ -135,157 +132,157 @@ namespace System.Net.Http
 
 
         [Fact]
-        public void SerializeRequest()
+        public async Task SerializeRequest()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, false);
                 HttpMessageContent instance = new HttpMessageContent(request);
-                ValidateRequest(instance, false);
+                await ValidateRequest(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeRequestWithExistingHostHeader()
+        public async Task SerializeRequestWithExistingHostHeader()
         {
             HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, false);
             string host = ParserData.HttpHostName;
             request.Headers.Host = host;
             HttpMessageContent instance = new HttpMessageContent(request);
-            string message = ReadContentAsync(instance);
+            string message = await ReadContentAsync(instance);
             Assert.Equal(ParserData.HttpRequestWithHost, message);
         }
 
         [Fact]
-        public void SerializeRequestMultipleTimes()
+        public async Task SerializeRequestMultipleTimes()
         {
             HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, false);
             HttpMessageContent instance = new HttpMessageContent(request);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                ValidateRequest(instance, false);
+                await ValidateRequest(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeResponse()
+        public async Task SerializeResponse()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpResponseMessage response = CreateResponse(false);
                 HttpMessageContent instance = new HttpMessageContent(response);
-                ValidateResponse(instance, false);
+                await ValidateResponse(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeResponseMultipleTimes()
+        public async Task SerializeResponseMultipleTimes()
         {
             HttpResponseMessage response = CreateResponse(false);
             HttpMessageContent instance = new HttpMessageContent(response);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                ValidateResponse(instance, false);
+                await ValidateResponse(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeRequestWithEntity()
+        public async Task SerializeRequestWithEntity()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, true);
                 HttpMessageContent instance = new HttpMessageContent(request);
-                ValidateRequest(instance, true);
+                await ValidateRequest(instance, true);
             }
         }
 
         [Fact]
-        public void SerializeRequestWithEntityMultipleTimes()
+        public async Task SerializeRequestWithEntityMultipleTimes()
         {
             HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, true);
             HttpMessageContent instance = new HttpMessageContent(request);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                ValidateRequest(instance, true);
+                await ValidateRequest(instance, true);
             }
         }
 
         [Fact]
-        public void SerializeResponseWithEntity()
+        public async Task SerializeResponseWithEntity()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpResponseMessage response = CreateResponse(true);
                 HttpMessageContent instance = new HttpMessageContent(response);
-                ValidateResponse(instance, true);
+                await ValidateResponse(instance, true);
             }
         }
 
         [Fact]
-        public void SerializeResponseWithEntityMultipleTimes()
+        public async Task SerializeResponseWithEntityMultipleTimes()
         {
             HttpResponseMessage response = CreateResponse(true);
             HttpMessageContent instance = new HttpMessageContent(response);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                ValidateResponse(instance, true);
+                await ValidateResponse(instance, true);
             }
         }
 
         [Fact]
-        public void SerializeRequestAsync()
+        public async Task SerializeRequestAsync()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, false);
                 HttpMessageContent instance = new HttpMessageContent(request);
-                ValidateRequest(instance, false);
+                await ValidateRequest(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeResponseAsync()
+        public async Task SerializeResponseAsync()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpResponseMessage response = CreateResponse(false);
                 HttpMessageContent instance = new HttpMessageContent(response);
-                ValidateResponse(instance, false);
+                await ValidateResponse(instance, false);
             }
         }
 
         [Fact]
-        public void SerializeRequestWithPortAndQueryAsync()
+        public async Task SerializeRequestWithPortAndQueryAsync()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUriWithPortAndQuery, false);
                 HttpMessageContent instance = new HttpMessageContent(request);
-                string message = ReadContentAsync(instance);
+                string message = await ReadContentAsync(instance);
                 Assert.Equal(ParserData.HttpRequestWithPortAndQuery, message);
             }
         }
 
         [Fact]
-        public void SerializeRequestWithEntityAsync()
+        public async Task SerializeRequestWithEntityAsync()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, true);
                 HttpMessageContent instance = new HttpMessageContent(request);
-                ValidateRequest(instance, true);
+                await ValidateRequest(instance, true);
             }
         }
 
         [Fact]
-        public void SerializeResponseWithEntityAsync()
+        public async Task SerializeResponseWithEntityAsync()
         {
             for (int cnt = 0; cnt < iterations; cnt++)
             {
                 HttpResponseMessage response = CreateResponse(true);
                 HttpMessageContent instance = new HttpMessageContent(response);
-                ValidateResponse(instance, true);
+                await ValidateResponse(instance, true);
             }
         }
 

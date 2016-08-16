@@ -11,7 +11,7 @@ namespace System.Web.Http.ExceptionHandling
     public class ExceptionLoggerExtensionsTests
     {
         [Fact]
-        public void LogAsync_DelegatesToInterfaceLogAsync()
+        public async Task LogAsync_DelegatesToInterfaceLogAsync()
         {
             // Arrange
             Task expectedTask = CreateCompletedTask();
@@ -32,7 +32,7 @@ namespace System.Web.Http.ExceptionHandling
 
                 // Assert
                 Assert.Same(expectedTask, task);
-                task.WaitUntilCompleted();
+                await task;
 
                 mock.Verify(h => h.LogAsync(It.Is<ExceptionLoggerContext>(c => c.ExceptionContext == expectedContext),
                     expectedCancellationToken), Times.Once());

@@ -103,7 +103,7 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public async void PostProcessing_ProcessesFormData()
+        public async Task PostProcessing_ProcessesFormData()
         {
             // Arrange
             int maxContents = 16;
@@ -140,11 +140,9 @@ namespace System.Net.Http
             }
 
             // Act
-            Task processingTask = provider.ExecutePostProcessingAsync();
-            await processingTask;
+            await provider.ExecutePostProcessingAsync();
 
             // Assert
-            Assert.Equal(TaskStatus.RanToCompletion, processingTask.Status);
             Assert.Equal(maxContents/2, provider.FormData.Count);
 
             // half contents for form data

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -60,7 +58,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void AuthenticateAsync_SetsClaimsPrincipal_WhenOwinAuthenticateReturnsIdentity()
+        public async Task AuthenticateAsync_SetsClaimsPrincipal_WhenOwinAuthenticateReturnsIdentity()
         {
             // Arrange
             string authenticationType = "AuthenticationType";
@@ -89,7 +87,7 @@ namespace System.Web.Http.Owin
                 context = CreateAuthenticationContext(request);
 
                 // Act
-                filter.AuthenticateAsync(context, CancellationToken.None).Wait();
+                await filter.AuthenticateAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -102,7 +100,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void AuthenticateAsync_SetsNoPrincipalOrError_WhenOwinAuthenticateReturnsNullResult()
+        public async Task AuthenticateAsync_SetsNoPrincipalOrError_WhenOwinAuthenticateReturnsNullResult()
         {
             // Arrange
             string authenticationType = "AuthenticationType";
@@ -120,7 +118,7 @@ namespace System.Web.Http.Owin
                 context = CreateAuthenticationContext(request, expectedPrincipal);
 
                 // Act
-                filter.AuthenticateAsync(context, CancellationToken.None).Wait();
+                await filter.AuthenticateAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -129,7 +127,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void AuthenticateAsync_SetsNoPrincipalOrError_WhenOwinAuthenticateReturnsNullIdentity()
+        public async Task AuthenticateAsync_SetsNoPrincipalOrError_WhenOwinAuthenticateReturnsNullIdentity()
         {
             // Arrange
             string authenticationType = "AuthenticationType";
@@ -147,7 +145,7 @@ namespace System.Web.Http.Owin
                 context = CreateAuthenticationContext(request, expectedPrincipal);
 
                 // Act
-                filter.AuthenticateAsync(context, CancellationToken.None).Wait();
+                await filter.AuthenticateAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -156,20 +154,19 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void AuthenticateAsync_Throws_WhenContextIsNull()
+        public Task AuthenticateAsync_Throws_WhenContextIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
 
             // Act & Assert
-            Assert.ThrowsArgumentNull(() =>
-            {
-                filter.AuthenticateAsync(null, CancellationToken.None).ThrowIfFaulted();
-            }, "context");
+            return Assert.ThrowsArgumentNullAsync(
+                () => filter.AuthenticateAsync(null, CancellationToken.None),
+                "context");
         }
 
         [Fact]
-        public void AuthenticateAsync_Throws_WhenRequestIsNull()
+        public Task AuthenticateAsync_Throws_WhenRequestIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -177,15 +174,13 @@ namespace System.Web.Http.Owin
             Assert.Null(context.Request);
 
             // Act & Assert
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                filter.AuthenticateAsync(context, CancellationToken.None).ThrowIfFaulted();
-            });
-            Assert.Equal("HttpAuthenticationContext.Request must not be null.", exception.Message);
+            return Assert.ThrowsAsync<InvalidOperationException>(
+                () => filter.AuthenticateAsync(context, CancellationToken.None),
+                "HttpAuthenticationContext.Request must not be null.");
         }
 
         [Fact]
-        public void AuthenticateAsync_Throws_WhenOwinContextIsNull()
+        public Task AuthenticateAsync_Throws_WhenOwinContextIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -195,16 +190,14 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationContext context = CreateAuthenticationContext(request);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    filter.AuthenticateAsync(context, CancellationToken.None).ThrowIfFaulted();
-                });
-                Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
+                return Assert.ThrowsAsync<InvalidOperationException>(
+                    () => filter.AuthenticateAsync(context, CancellationToken.None),
+                    "No OWIN authentication manager is associated with the request.");
             }
         }
 
         [Fact]
-        public void AuthenticateAsync_Throws_WhenAuthenticationManagerIsNull()
+        public async Task AuthenticateAsync_Throws_WhenAuthenticationManagerIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -215,40 +208,31 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationContext context = CreateAuthenticationContext(request);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    filter.AuthenticateAsync(context, CancellationToken.None).ThrowIfFaulted();
-                });
-                Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
+                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => filter.AuthenticateAsync(context, CancellationToken.None),
+                    "No OWIN authentication manager is associated with the request.");
             }
         }
 
         [Fact]
-        public void AuthenticateAsync_ReturnsCanceledTask_WhenCancellationIsRequested()
+        public async Task AuthenticateAsync_ReturnsCanceledTask_WhenCancellationIsRequested()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
             IOwinContext owinContext = CreateOwinContext();
-
-            Task task;
 
             using (HttpRequestMessage request = CreateRequest(owinContext))
             {
                 HttpAuthenticationContext context = CreateAuthenticationContext(request);
                 CancellationToken cancellationToken = new CancellationToken(true);
 
-                // Act
-                task = filter.AuthenticateAsync(context, cancellationToken);
-
-                // Assert
-                task.WaitUntilCompleted();
+                // Act & Assert
+                await Assert.ThrowsAsync<OperationCanceledException>(() => filter.AuthenticateAsync(context, cancellationToken));
             }
-
-            Assert.Equal(TaskStatus.Canceled, task.Status);
         }
 
         [Fact]
-        public void ChallengeAsync_AddsAuthenticationType_WhenOwinChallengeAlreadyExists()
+        public async Task ChallengeAsync_AddsAuthenticationType_WhenOwinChallengeAlreadyExists()
         {
             // Arrange
             string expectedAuthenticationType = "AuthenticationType";
@@ -266,7 +250,7 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(request, result);
 
                 // Act
-                filter.ChallengeAsync(context, CancellationToken.None).Wait();
+                await filter.ChallengeAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -282,7 +266,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void ChallengeAsync_CreatesAuthenticationTypes_WhenOwinChallengeWithNullTypesAlreadyExists()
+        public async Task ChallengeAsync_CreatesAuthenticationTypes_WhenOwinChallengeWithNullTypesAlreadyExists()
         {
             // Arrange
             string expectedAuthenticationType = "AuthenticationType";
@@ -299,7 +283,7 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(request, result);
 
                 // Act
-                filter.ChallengeAsync(context, CancellationToken.None).Wait();
+                await filter.ChallengeAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -314,7 +298,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void ChallengeAsync_CreatesOwinChallengeWithAuthenticationType_WhenNoChallengeExists()
+        public async Task ChallengeAsync_CreatesOwinChallengeWithAuthenticationType_WhenNoChallengeExists()
         {
             // Arrange
             string expectedAuthenticationType = "AuthenticationType";
@@ -329,7 +313,7 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(request, result);
 
                 // Act
-                filter.ChallengeAsync(context, CancellationToken.None).Wait();
+                await filter.ChallengeAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -344,20 +328,17 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void ChallengeAsync_Throws_WhenContextIsNull()
+        public Task ChallengeAsync_Throws_WhenContextIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
 
             // Act & Assert
-            Assert.ThrowsArgumentNull(() =>
-            {
-                filter.ChallengeAsync(null, CancellationToken.None).ThrowIfFaulted();
-            }, "context");
+            return Assert.ThrowsArgumentNullAsync(() => filter.ChallengeAsync(null, CancellationToken.None), "context");
         }
 
         [Fact]
-        public void ChallengeAsync_Throws_WhenRequestIsNull()
+        public Task ChallengeAsync_Throws_WhenRequestIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -367,15 +348,13 @@ namespace System.Web.Http.Owin
             Assert.Null(context.Request);
 
             // Act & Assert
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                filter.ChallengeAsync(context, CancellationToken.None).ThrowIfFaulted();
-            });
-            Assert.Equal("HttpAuthenticationChallengeContext.Request must not be null.", exception.Message);
+            return Assert.ThrowsAsync<InvalidOperationException>(
+                () => filter.ChallengeAsync(context, CancellationToken.None),
+                "HttpAuthenticationChallengeContext.Request must not be null.");
         }
 
         [Fact]
-        public void ChallengeAsync_Throws_WhenOwinContextIsNull()
+        public async Task ChallengeAsync_Throws_WhenOwinContextIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -386,16 +365,14 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(request, result);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    filter.ChallengeAsync(context, CancellationToken.None).ThrowIfFaulted();
-                });
-                Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => filter.ChallengeAsync(context, CancellationToken.None),
+                    "No OWIN authentication manager is associated with the request.");
             }
         }
 
         [Fact]
-        public void ChallengeAsync_Throws_WhenAuthenticationManagerIsNull()
+        public async Task ChallengeAsync_Throws_WhenAuthenticationManagerIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -407,11 +384,9 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(request, result);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    filter.ChallengeAsync(context, CancellationToken.None).ThrowIfFaulted();
-                });
-                Assert.Equal("No OWIN authentication manager is associated with the request.", exception.Message);
+                await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => filter.ChallengeAsync(context, CancellationToken.None),
+                    "No OWIN authentication manager is associated with the request.");
             }
         }
 

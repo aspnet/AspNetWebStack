@@ -273,10 +273,10 @@ namespace System.Web.Routing
         public void AttributeRouting_WithSameControllerName(string path, string expectedAction)
         {
             // Arrange
-            var controllerTypes = new[] 
-            { 
-                typeof(ControllersWithTheSameName.NS1.HomeController), 
-                typeof(ControllersWithTheSameName.NS2.HomeController), 
+            var controllerTypes = new[]
+            {
+                typeof(ControllersWithTheSameName.NS1.HomeController),
+                typeof(ControllersWithTheSameName.NS2.HomeController),
             };
 
             var routes = new RouteCollection();
@@ -303,11 +303,11 @@ namespace System.Web.Routing
         public void AttributeRouting_WithCustomizedRoutePrefixAttribute(string path, string expectedAction)
         {
             // Arrange
-            var controllerTypes = new[] 
-            { 
-                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS1.HomeController), 
-                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS2.AccountController), 
-                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS3.OtherController), 
+            var controllerTypes = new[]
+            {
+                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS1.HomeController),
+                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS2.AccountController),
+                typeof(ControllersWithCustomizedRoutePrefixAttribute.NS3.OtherController),
             };
 
             var routes = new RouteCollection();
@@ -331,8 +331,8 @@ namespace System.Web.Routing
         public void AttributeRouting_WithMultipleCustomizedRoutePrefixAttribute_ThrowsInvalidOperationException()
         {
             // Arrange
-            var controllerTypes = new[] 
-            { 
+            var controllerTypes = new[]
+            {
                 typeof(ControllersWithCustomizedRoutePrefixAttribute.Invalid.HomeController)
             };
 
@@ -347,8 +347,8 @@ namespace System.Web.Routing
         public void AttributeRouting_WithNullPrefix_ThrowsInvalidOperationException()
         {
             // Arrange
-            var controllerTypes = new[] 
-            { 
+            var controllerTypes = new[]
+            {
                 typeof(ControllersWithCustomizedRoutePrefixAttribute.Invalid.AccountController)
             };
 

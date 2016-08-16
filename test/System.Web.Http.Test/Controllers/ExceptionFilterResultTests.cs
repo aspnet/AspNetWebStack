@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace System.Web.Http.Controllers
     public class ExceptionFilterResultTests
     {
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsSuccessful_ReturnsSuccessTask()
+        public async Task ExecuteAsync_IfInnerResultTaskIsSuccessful_ReturnsSuccessTask()
         {
             // Arrange
             List<string> log = new List<string>();
@@ -30,25 +29,22 @@ namespace System.Web.Http.Controllers
             var filters = new IExceptionFilter[] { exceptionFilter };
             IExceptionLogger exceptionLogger = CreateDummyExceptionLogger();
             IExceptionHandler exceptionHandler = CreateDummyExceptionHandler();
-            var response = new HttpResponseMessage();
-            var actionResult = CreateStubActionResult(Task.FromResult(response));
+            var expectedResponse = new HttpResponseMessage();
+            var actionResult = CreateStubActionResult(Task.FromResult(expectedResponse));
 
             IHttpActionResult product = CreateProductUnderTest(actionContext, filters, exceptionLogger,
                 exceptionHandler, actionResult);
 
             // Act
-            var result = product.ExecuteAsync(CancellationToken.None);
+            var response = await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(result);
-            result.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, result.Status);
-            Assert.Same(response, result.Result);
+            Assert.Same(expectedResponse, response);
             Assert.Equal(new string[] { }, log.ToArray());
         }
 
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsCanceled_ReturnsCanceledTask()
+        public async Task ExecuteAsync_IfInnerResultTaskIsCanceled_ReturnsCanceledTask()
         {
             // Arrange
             List<string> log = new List<string>();
@@ -70,18 +66,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(actionContext, filters, exceptionLogger,
                 exceptionHandler, actionResult);
 
-            // Act
-            var result = product.ExecuteAsync(CancellationToken.None);
+            // Act & Assert
+            await Assert.ThrowsAsync<TaskCanceledException>(() => product.ExecuteAsync(CancellationToken.None));
 
-            // Assert
-            Assert.NotNull(result);
-            result.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.Canceled, result.Status);
             Assert.Equal(new string[] { "exceptionFilter" }, log.ToArray());
         }
 
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsFaulted_ExecutesFiltersAndReturnsFaultedTaskIfNotHandled()
+        public async Task ExecuteAsync_IfInnerResultTaskIsFaulted_ExecutesFiltersAndReturnsFaultedTaskIfNotHandled()
         {
             // Arrange
             List<string> log = new List<string>();
@@ -100,26 +92,22 @@ namespace System.Web.Http.Controllers
                 return Task.FromResult(0);
             });
             IExceptionHandler exceptionHandler = CreateStubExceptionHandler();
-            var exception = new Exception();
-            var actionResult = CreateStubActionResult(TaskHelpers.FromError<HttpResponseMessage>(exception));
+            var expectedException = new Exception();
+            var actionResult = CreateStubActionResult(TaskHelpers.FromError<HttpResponseMessage>(expectedException));
 
             IHttpActionResult product = CreateProductUnderTest(actionContext, filters, exceptionLogger,
                 exceptionHandler, actionResult);
 
-            // Act
-            var result = product.ExecuteAsync(CancellationToken.None);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<Exception>(() => product.ExecuteAsync(CancellationToken.None));
 
-            // Assert
-            Assert.NotNull(result);
-            result.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.Faulted, result.Status);
-            Assert.Same(exception, result.Exception.InnerException);
-            Assert.Same(exception, exceptionSeenByFilter);
+            Assert.Same(expectedException, exception);
+            Assert.Same(expectedException, exceptionSeenByFilter);
             Assert.Equal(new string[] { "exceptionLogger", "exceptionFilter" }, log.ToArray());
         }
 
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsFaulted_CallsExceptionLogger()
+        public async Task ExecuteAsync_IfInnerResultTaskIsFaulted_CallsExceptionLogger()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -141,10 +129,8 @@ namespace System.Web.Http.Controllers
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.ExecuteAsync(cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                await Assert.ThrowsAsync<InvalidOperationException>(() => product.ExecuteAsync(cancellationToken));
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -160,7 +146,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsFaulted_ExecutesFiltersAndReturnsResultIfHandled()
+        public async Task ExecuteAsync_IfInnerResultTaskIsFaulted_ExecutesFiltersAndReturnsResultIfHandled()
         {
             // Arrange
             List<string> log = new List<string>();
@@ -191,19 +177,16 @@ namespace System.Web.Http.Controllers
                 exceptionHandler, actionResult);
 
             // Act
-            var result = product.ExecuteAsync(CancellationToken.None);
+            var response = await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(result);
-            result.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, result.Status);
-            Assert.Same(globalFilterResponse, result.Result);
+            Assert.Same(globalFilterResponse, response);
             Assert.Same(actionFilterResponse, resultSeenByGlobalFilter);
             Assert.Equal(new string[] { "actionFilter", "globalFilter" }, log.ToArray());
         }
 
         [Fact]
-        public void ExecuteAsync_IfInnerResultTaskIsFaulted_AndNoFilterHandles_RunsHandlerAndReturnsResultIfHandled()
+        public async Task ExecuteAsync_IfInnerResultTaskIsFaulted_AndNoFilterHandles_RunsHandlerAndReturnsResultIfHandled()
         {
             // Arrange
             List<string> log = new List<string>();
@@ -243,11 +226,8 @@ namespace System.Web.Http.Controllers
 
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.ExecuteAsync(cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
-                HttpResponseMessage response = task.Result;
+                HttpResponseMessage response = await product.ExecuteAsync(cancellationToken);
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -265,7 +245,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_IfFilterChangesException_ThrowsUpdatedException()
+        public async Task ExecuteAsync_IfFilterChangesException_ThrowsUpdatedException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
@@ -295,21 +275,15 @@ namespace System.Web.Http.Controllers
                 IHttpActionResult product = CreateProductUnderTest(context, filters, exceptionLogger, exceptionHandler,
                     innerResult);
 
-                // Act
-                Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
-
-                // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception);
-                Exception exception = task.Exception.GetBaseException();
+                // Act & Assert
+                var exception = await Assert.ThrowsAsync<NotImplementedException>(
+                    () => product.ExecuteAsync(CancellationToken.None));
                 Assert.Same(expectedException, exception);
             }
         }
 
         [Fact]
-        public void ExecuteAsync_IfFaultedTaskExceptionIsUnhandled_PreservesExceptionStackTrace()
+        public async Task ExecuteAsync_IfFaultedTaskExceptionIsUnhandled_PreservesExceptionStackTrace()
         {
             // Arrange
             Exception originalException = CreateExceptionWithStackTrace();
@@ -329,15 +303,10 @@ namespace System.Web.Http.Controllers
                 IHttpActionResult product = CreateProductUnderTest(context, filters, exceptionLogger, exceptionHandler,
                     innerResult);
 
-                // Act
-                Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+                // Act & Assert
+                var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => product.ExecuteAsync(CancellationToken.None));
 
-                // Assert
-                Assert.NotNull(task);
-                task.WaitUntilCompleted();
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception);
-                Exception exception = task.Exception.GetBaseException();
                 Assert.NotNull(expectedStackTrace);
                 Assert.NotNull(exception);
                 Assert.NotNull(exception.StackTrace);

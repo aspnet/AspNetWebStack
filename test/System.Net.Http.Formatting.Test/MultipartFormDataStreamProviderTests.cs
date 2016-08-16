@@ -91,7 +91,7 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public Task PostProcessing_ProcessesFormData()
+        public async Task PostProcessing_ProcessesFormData()
         {
             // Arrange
             int maxContents = 16;
@@ -115,24 +115,21 @@ namespace System.Net.Http
             }
 
             // Act
-            return provider.ExecutePostProcessingAsync().ContinueWith(
-                processingTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, processingTask.Status);
-                    Assert.Equal(maxContents, provider.FormData.Count);
+            await provider.ExecutePostProcessingAsync();
 
-                    for (int index = 0; index < maxContents; index++)
-                    {
-                        string content = String.Format(contentFormat, index);
-                        string formName = String.Format(formNameFormat, index);
-                        Assert.Equal(content, provider.FormData[formName]);
-                    }
-                });
+            // Assert
+            Assert.Equal(maxContents, provider.FormData.Count);
+
+            for (int index = 0; index < maxContents; index++)
+            {
+                string content = String.Format(contentFormat, index);
+                string formName = String.Format(formNameFormat, index);
+                Assert.Equal(content, provider.FormData[formName]);
+            }
         }
 
         [Fact]
-        public async void PostProcessing_ProcessesFormData_WithCustomMultipartFormDataStreamProvider()
+        public async Task PostProcessing_ProcessesFormData_WithCustomMultipartFormDataStreamProvider()
         {
             // Arrange
             string tempPath = Path.GetTempPath();
@@ -159,7 +156,7 @@ namespace System.Net.Http
                 }
             }
 
-            CustomMultipartFormDataStreamProvider provider = 
+            CustomMultipartFormDataStreamProvider provider =
                 new CustomMultipartFormDataStreamProvider(tempPath);
             foreach (HttpContent content in multipartContent)
             {
@@ -168,11 +165,9 @@ namespace System.Net.Http
             }
 
             // Act
-            Task processingTask = provider.ExecutePostProcessingAsync();
-            await processingTask;
+            await provider.ExecutePostProcessingAsync();
 
             // Assert
-            Assert.Equal(TaskStatus.RanToCompletion, processingTask.Status);
             Assert.Equal(maxContents / 2, provider.FormData.Count);
 
             // half contents for form data
@@ -231,7 +226,7 @@ namespace System.Net.Http
                     {
                         FileData.Add(new MultipartFileData(headers, contentDisposition.FileName));
                         // Can be replaced with any stream the user want. e.g. Azure Blob Storage Stream.
-                        stream = new MemoryStream(); 
+                        stream = new MemoryStream();
                     }
                     else
                     {

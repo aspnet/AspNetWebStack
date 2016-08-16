@@ -16,7 +16,7 @@ namespace System.Web.Http.Tracing.Tracers
     public class ActionFilterTracerTest
     {
         [Fact]
-        public void ExecuteActionAsync_Traces_ExecuteActionFilterAsync()
+        public async Task ExecuteActionAsync_Traces_ExecuteActionFilterAsync()
         {
             // Arrange
             HttpResponseMessage response = new HttpResponseMessage();
@@ -41,15 +41,15 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Task<HttpResponseMessage> task = ((IActionFilter)tracer).ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation);
-            task.Wait();
+            var filter = (IActionFilter)tracer;
+            await filter.ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void ExecuteActionAsync_Faults_And_Traces_When_Inner_Faults()
+        public async Task ExecuteActionAsync_Faults_And_Traces_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException("test");
@@ -77,7 +77,7 @@ namespace System.Web.Http.Tracing.Tracers
 
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Same(exception, traceWriter.Traces[1].Exception);
         }

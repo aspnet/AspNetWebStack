@@ -94,7 +94,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public Task ReadFromStreamAsync_WhenContentLengthIsZero_DoesNotReadStream()
+        public async Task ReadFromStreamAsync_WhenContentLengthIsZero_DoesNotReadStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -104,21 +104,17 @@ namespace System.Net.Http.Formatting
             HttpContentHeaders contentHeaders = content.Headers;
             contentHeaders.ContentLength = 0;
 
-            // Act 
-            return formatter.ReadFromStreamAsync(typeof(SampleType), mockStream.Object, content, mockFormatterLogger)
-                .ContinueWith(
-                    readTask =>
-                    {
-                        // Assert
-                        Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                        mockStream.Verify(s => s.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-                        mockStream.Verify(s => s.ReadByte(), Times.Never());
-                        mockStream.Verify(s => s.BeginRead(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<AsyncCallback>(), It.IsAny<object>()), Times.Never());
-                    });
+            // Act
+            await formatter.ReadFromStreamAsync(typeof(SampleType), mockStream.Object, content, mockFormatterLogger);
+
+            // Assert
+            mockStream.Verify(s => s.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never());
+            mockStream.Verify(s => s.ReadByte(), Times.Never());
+            mockStream.Verify(s => s.BeginRead(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<AsyncCallback>(), It.IsAny<object>()), Times.Never());
         }
 
         [Fact]
-        public Task ReadFromStreamAsync_WhenContentLengthIsZero_DoesNotCloseStream()
+        public async Task ReadFromStreamAsync_WhenContentLengthIsZero_DoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -128,38 +124,33 @@ namespace System.Net.Http.Formatting
             HttpContentHeaders contentHeaders = content.Headers;
             contentHeaders.ContentLength = 0;
 
-            // Act 
-            return formatter.ReadFromStreamAsync(typeof(SampleType), mockStream.Object, content, mockFormatterLogger)
-                .ContinueWith(
-                    readTask =>
-                    {
-                        // Assert
-                        Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                        mockStream.Verify(s => s.Close(), Times.Never());
-                    });
+            // Act
+            await formatter.ReadFromStreamAsync(typeof(SampleType), mockStream.Object, content, mockFormatterLogger);
+
+            // Assert
+            mockStream.Verify(s => s.Close(), Times.Never());
         }
 
         [Theory]
         [InlineData(false)]
         [InlineData(0)]
         [InlineData("")]
-        public void ReadFromStreamAsync_WhenContentLengthIsZero_ReturnsDefaultTypeValue<T>(T value)
+        public async Task ReadFromStreamAsync_WhenContentLengthIsZero_ReturnsDefaultTypeValue<T>(T value)
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
             HttpContent content = new StringContent("");
 
             // Act
-            var result = formatter.ReadFromStreamAsync(typeof(T), content.ReadAsStreamAsync().Result,
-                content, null);
-            result.WaitUntilCompleted();
+            var contentStream = await content.ReadAsStreamAsync();
+            var result = await formatter.ReadFromStreamAsync(typeof(T), contentStream, content, null);
 
             // Assert
-            Assert.Equal(default(T), (T)result.Result);
+            Assert.Equal(default(T), (T)result);
         }
 
         [Fact]
-        public Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
+        public async Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -170,20 +161,17 @@ namespace System.Net.Http.Formatting
             contentHeaders.ContentType = CreateSupportedMediaType();
 
             // Act
-            return formatter.ReadFromStreamAsync(typeof(SampleType), memStream, content, null).ContinueWith(
-                readTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.True(memStream.CanRead);
+            var result = await formatter.ReadFromStreamAsync(typeof(SampleType), memStream, content, null);
 
-                    var value = Assert.IsType<SampleType>(readTask.Result);
-                    Assert.Equal(42, value.Number);
-                });
+            // Assert
+            Assert.True(memStream.CanRead);
+
+            var value = Assert.IsType<SampleType>(result);
+            Assert.Equal(42, value.Number);
         }
 
         [Fact]
-        public Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
+        public async Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -194,16 +182,13 @@ namespace System.Net.Http.Formatting
             contentHeaders.ContentType = CreateSupportedMediaType();
 
             // Act
-            return formatter.ReadFromStreamAsync(typeof(SampleType), memStream, content, null).ContinueWith(
-                readTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.True(memStream.CanRead);
+            var result = await formatter.ReadFromStreamAsync(typeof(SampleType), memStream, content, null);
 
-                    var value = Assert.IsType<SampleType>(readTask.Result);
-                    Assert.Equal(42, value.Number);
-                });
+            // Assert
+            Assert.True(memStream.CanRead);
+
+            var value = Assert.IsType<SampleType>(result);
+            Assert.Equal(42, value.Number);
         }
 
         [Fact]
@@ -215,7 +200,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public virtual Task WriteToStreamAsync_WhenObjectIsNull_WritesDataButDoesNotCloseStream()
+        public virtual async Task WriteToStreamAsync_WhenObjectIsNull_WritesDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -223,19 +208,16 @@ namespace System.Net.Http.Formatting
             mockStream.Setup(s => s.CanWrite).Returns(true);
             HttpContent content = new StringContent(String.Empty);
 
-            // Act 
-            return formatter.WriteToStreamAsync(typeof(SampleType), null, mockStream.Object, content, null).ContinueWith(
-                writeTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, writeTask.Status);
-                    mockStream.Verify(s => s.Close(), Times.Never());
-                    mockStream.Verify(s => s.BeginWrite(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<AsyncCallback>(), It.IsAny<object>()), Times.Never());
-                });
+            // Act
+            await formatter.WriteToStreamAsync(typeof(SampleType), null, mockStream.Object, content, null);
+
+            // Assert
+            mockStream.Verify(s => s.Close(), Times.Never());
+            mockStream.Verify(s => s.BeginWrite(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<AsyncCallback>(), It.IsAny<object>()), Times.Never());
         }
 
         [Fact]
-        public Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
+        public async Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -245,16 +227,13 @@ namespace System.Net.Http.Formatting
             content.Headers.ContentType = CreateSupportedMediaType();
 
             // Act
-            return formatter.WriteToStreamAsync(typeof(SampleType), sampleType, memStream, content, null).ContinueWith(
-                writeTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, writeTask.Status);
-                    Assert.True(memStream.CanRead);
+            await formatter.WriteToStreamAsync(typeof(SampleType), sampleType, memStream, content, null);
 
-                    byte[] actualSampleTypeByteRepresentation = memStream.ToArray();
-                    Assert.NotEmpty(actualSampleTypeByteRepresentation);
-                });
+            // Assert
+            Assert.True(memStream.CanRead);
+
+            byte[] actualSampleTypeByteRepresentation = memStream.ToArray();
+            Assert.NotEmpty(actualSampleTypeByteRepresentation);
         }
 
         [Fact]
@@ -361,7 +340,7 @@ namespace System.Net.Http.Formatting
             return ExpectedSupportedMediaTypes.First();
         }
 
-        public object ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(MediaTypeFormatter formatter, Type variationType, object testData)
+        public async Task<object> ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(MediaTypeFormatter formatter, Type variationType, object testData)
         {
             // Arrange
             HttpContent content = new StringContent(String.Empty);
@@ -369,18 +348,18 @@ namespace System.Net.Http.Formatting
             object readObj = null;
 
             // Act & Assert
-            Assert.Stream.WriteAndRead(
-                stream =>
+            await Assert.Stream.WriteAndReadAsync(
+                async stream =>
                 {
-                    Assert.Task.Succeeds(formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null));
+                    await Assert.Task.SucceedsAsync(formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null));
                     contentHeaders.ContentLength = stream.Length;
                 },
-                stream => readObj = Assert.Task.SucceedsWithResult(formatter.ReadFromStreamAsync(variationType, stream, content, formatterLogger: null)));
+                async stream => readObj = await Assert.Task.SucceedsWithResultAsync(formatter.ReadFromStreamAsync(variationType, stream, content, formatterLogger: null)));
 
             return readObj;
         }
 
-        public Task ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        public async Task ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = null;
@@ -406,18 +385,13 @@ namespace System.Net.Http.Formatting
             IFormatterLogger mockFormatterLogger = new Mock<IFormatterLogger>().Object;
 
             // Act
-            return formatter.ReadFromStreamAsync(typeof(string), memStream, dummyContent, mockFormatterLogger).ContinueWith(
-                (readTask) =>
-                {
-                    string result = readTask.Result as string;
+            string result = (await formatter.ReadFromStreamAsync(typeof(string), memStream, dummyContent, mockFormatterLogger)) as string;
 
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.Equal(content, result);
-                });
+            // Assert
+            Assert.Equal(content, result);
         }
 
-        public Task WriteToStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        public async Task WriteToStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = null;
@@ -448,14 +422,11 @@ namespace System.Net.Http.Formatting
             IFormatterLogger mockFormatterLogger = new Mock<IFormatterLogger>().Object;
 
             // Act
-            return formatter.WriteToStreamAsync(typeof(string), content, memStream, httpContent, null).ContinueWith(
-                (writeTask) =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, writeTask.Status);
-                    byte[] actualData = memStream.ToArray();
-                    Assert.Equal(expectedData, actualData);
-                });
+            await formatter.WriteToStreamAsync(typeof(string), content, memStream, httpContent, null);
+
+            // Assert
+            byte[] actualData = memStream.ToArray();
+            Assert.Equal(expectedData, actualData);
         }
 
         public static Encoding CreateOrGetSupportedEncoding(MediaTypeFormatter formatter, string encoding, bool isDefaultEncoding)
@@ -474,17 +445,17 @@ namespace System.Net.Http.Formatting
             return enc;
         }
 
-        public static Task ReadContentUsingCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        public static Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = CreateOrGetSupportedEncoding(formatter, encoding, isDefaultEncoding);
             byte[] sourceData = enc.GetBytes(formattedContent);
 
             // Further Arrange, Act & Assert
-            return ReadContentUsingCorrectCharacterEncodingHelper(formatter, content, sourceData, mediaType);
+            return ReadContentUsingCorrectCharacterEncodingHelperAsync(formatter, content, sourceData, mediaType);
         }
 
-        public static Task ReadContentUsingCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, byte[] sourceData, string mediaType)
+        public static async Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] sourceData, string mediaType)
         {
             // Arrange
             MemoryStream memStream = new MemoryStream(sourceData);
@@ -497,19 +468,14 @@ namespace System.Net.Http.Formatting
 
             IFormatterLogger mockFormatterLogger = new Mock<IFormatterLogger>().Object;
 
-            // Act & Assert
-            return formatter.ReadFromStreamAsync(typeof(string), memStream, dummyContent, mockFormatterLogger).ContinueWith(
-                (readTask) =>
-                {
-                    string result = readTask.Result as string;
+            // Act
+            var result = (await formatter.ReadFromStreamAsync(typeof(string), memStream, dummyContent, mockFormatterLogger)) as string;
 
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, readTask.Status);
-                    Assert.Equal(content, result);
-                });
+            // Assert
+            Assert.Equal(content, result);
         }
 
-        public static Task WriteContentUsingCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        public static Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = CreateOrGetSupportedEncoding(formatter, encoding, isDefaultEncoding);
@@ -521,11 +487,11 @@ namespace System.Net.Http.Formatting
             Buffer.BlockCopy(data, 0, expectedData, preamble.Length, data.Length);
 
             // Further Arrange, Act & Assert
-            return WriteContentUsingCorrectCharacterEncodingHelper(formatter, content, expectedData, mediaType);
+            return WriteContentUsingCorrectCharacterEncodingHelperAsync(formatter, content, expectedData, mediaType);
         }
 
 
-        public static Task WriteContentUsingCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, byte[] expectedData, string mediaType)
+        public static async Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] expectedData, string mediaType)
         {
             // Arrange
             MemoryStream memStream = new MemoryStream();
@@ -538,16 +504,13 @@ namespace System.Net.Http.Formatting
 
             IFormatterLogger mockFormatterLogger = new Mock<IFormatterLogger>().Object;
 
-            // Act & Assert
-            return formatter.WriteToStreamAsync(typeof(string), content, memStream, dummyContent, null).ContinueWith(
-                (writeTask) =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, writeTask.Status);
-                    byte[] actualData = memStream.ToArray();
+            // Act
+            await formatter.WriteToStreamAsync(typeof(string), content, memStream, dummyContent, null);
 
-                    Assert.Equal(expectedData, actualData);
-                });
+            // Assert
+            byte[] actualData = memStream.ToArray();
+
+            Assert.Equal(expectedData, actualData);
         }
     }
 

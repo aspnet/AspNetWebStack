@@ -168,6 +168,23 @@ namespace Microsoft.TestCommon
         }
 
         /// <summary>
+        /// Verifies the given <paramref name="testCode"/> throws an <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception.</param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static async Task<ArgumentException> ThrowsArgumentAsync(Func<Task> testCode, string paramName)
+        {
+            var ex = await ThrowsAsync<ArgumentException>(testCode);
+            if (paramName != null)
+            {
+                Equal(paramName, ex.ParamName);
+            }
+
+            return ex;
+        }
+
+        /// <summary>
         /// Verifies that the code throws an <see cref="ArgumentException"/> (or optionally any exception which derives from it).
         /// </summary>
         /// <param name="testCode">A delegate to the code to be tested</param>
@@ -185,6 +202,21 @@ namespace Microsoft.TestCommon
                 Equal(paramName, ex.ParamName);
             }
 
+            VerifyExceptionMessage(ex, exceptionMessage, partialMatch: true);
+
+            return ex;
+        }
+
+        /// <summary>
+        /// Verifies that the <paramref name="testCode"/> throws an <see cref="ArgumentException"/>.
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception.</param>
+        /// <param name="exceptionMessage">The exception message to verify (or a portion of the expected message).</param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static async Task<ArgumentException> ThrowsArgumentAsync(Func<Task> testCode, string paramName, string exceptionMessage)
+        {
+            var ex = await ThrowsArgumentAsync(testCode, paramName);
             VerifyExceptionMessage(ex, exceptionMessage, partialMatch: true);
 
             return ex;
@@ -221,6 +253,23 @@ namespace Microsoft.TestCommon
         {
             var ex = Throws<ArgumentNullException>(testCode, allowDerivedExceptions: false);
 
+            if (paramName != null)
+            {
+                Equal(paramName, ex.ParamName);
+            }
+
+            return ex;
+        }
+
+        /// <summary>
+        /// Verifies that the <paramref name="testCode"/> throws an <see cref="ArgumentNullException"/>.
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception.</param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static async Task<ArgumentNullException> ThrowsArgumentNullAsync(Func<Task> testCode, string paramName)
+        {
+            var ex = await ThrowsAsync<ArgumentNullException>(testCode);
             if (paramName != null)
             {
                 Equal(paramName, ex.ParamName);
@@ -287,6 +336,38 @@ namespace Microsoft.TestCommon
         }
 
         /// <summary>
+        /// Verifies that the <paramref name="testCode"/> throws an <see cref="ArgumentOutOfRangeException"/>.
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception.</param>
+        /// <param name="exceptionMessage">The exception message to verify (or a portion of the expected message).</param>
+        /// <param name="actualValue">The actual value passed in for <paramref name="paramName"/>.</param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static async Task<ArgumentOutOfRangeException> ThrowsArgumentOutOfRangeAsync(
+            Func<Task> testCode,
+            string paramName,
+            string exceptionMessage,
+            object actualValue = null)
+        {
+            if (exceptionMessage != null)
+            {
+                exceptionMessage = exceptionMessage + "\r\nParameter name: " + paramName;
+                if (actualValue != null)
+                {
+                    exceptionMessage += String.Format(CultureReplacer.DefaultCulture, "\r\nActual value was {0}.", actualValue);
+                }
+            }
+
+            var ex = await ThrowsAsync<ArgumentOutOfRangeException>(testCode, exceptionMessage, partialMatch: true);
+            if (paramName != null)
+            {
+                Equal(paramName, ex.ParamName);
+            }
+
+            return ex;
+        }
+
+        /// <summary>
         /// Verifies that the code throws an <see cref="ArgumentOutOfRangeException"/> with the expected message that indicates that
         /// the value must be greater than the given <paramref name="value"/>.
         /// </summary>
@@ -320,6 +401,28 @@ namespace Microsoft.TestCommon
                         paramName,
                         String.Format(CultureReplacer.DefaultCulture, "Value must be greater than or equal to {0}.", value), false, actualValue);
         }
+
+        /// <summary>
+        /// Verifies that the <paramref name="testCode"/> throws an <see cref="ArgumentOutOfRangeException"/>.
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception.</param>
+        /// <param name="value">The minimum allowed value for <paramref name="paramName"/>.</param>
+        /// <param name="actualValue">The actual value passed in for <paramref name="paramName"/>.</param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static Task<ArgumentOutOfRangeException> ThrowsArgumentGreaterThanOrEqualToAsync(
+            Func<Task> testCode,
+            string paramName,
+            string value,
+            object actualValue = null)
+        {
+            return ThrowsArgumentOutOfRangeAsync(
+                testCode,
+                paramName,
+                String.Format(CultureReplacer.DefaultCulture, "Value must be greater than or equal to {0}.", value),
+                actualValue);
+        }
+
 
         /// <summary>
         /// Verifies that the code throws an <see cref="ArgumentOutOfRangeException"/> with the expected message that indicates that
@@ -440,7 +543,30 @@ namespace Microsoft.TestCommon
             return (TException)exception;
         }
 
-        // We've re-implemented all the xUnit.net Throws code so that we can get this 
+        /// <summary>
+        /// Verifies that the <paramref name="testCode"/> throws a <typeparamref name="TException"/>.
+        /// </summary>
+        /// <typeparam name="TException">The type of <see cref="Exception"/> expected to be thrown.</typeparam>
+        /// <param name="testCode">A delegate to the code to be tested.</param>
+        /// <param name="exceptionMessage">The exception message to verify (or a portion of the expected message).</param>
+        /// <param name="partialMatch">
+        /// If <paramref name="exceptionMessage"/> is <c>null</c>, ignores this parameter. Otherwise if this parameter
+        /// is <c>true</c>, verifies the exception message contains <paramref name="exceptionMessage"/>. Otherwise,
+        /// verifies the exception message exactly matches <paramref name="exceptionMessage"/>.
+        /// </param>
+        /// <returns>A <see cref="Task"/> that on completion returns the exception that was thrown.</returns>
+        public static async Task<TException> ThrowsAsync<TException>(
+            Func<Task> testCode,
+            string exceptionMessage,
+            bool partialMatch = false) where TException : Exception
+        {
+            var ex = await ThrowsAsync<TException>(testCode);
+            VerifyExceptionMessage(ex, exceptionMessage, partialMatch);
+            return ex;
+        }
+
+
+        // We've re-implemented all the xUnit.net Throws code so that we can get this
         // updated implementation of RecordException which silently unwraps any instances
         // of AggregateException. In addition to unwrapping exceptions, this method ensures 
         // that tests are executed in with a known set of Culture and UICulture. This prevents

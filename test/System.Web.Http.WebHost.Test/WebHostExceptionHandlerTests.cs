@@ -75,7 +75,7 @@ namespace System.Web.Http.WebHost
         }
 
         [Fact]
-        public void HandleAsync_IfCatchBlockIsWebHostBufferedContent_HandlesWithCustomException()
+        public async Task HandleAsync_IfCatchBlockIsWebHostBufferedContent_HandlesWithCustomException()
         {
             IExceptionHandler innerHandler = CreateDummyHandler();
             IExceptionHandler product = CreateProductUnderTest(innerHandler);
@@ -93,11 +93,9 @@ namespace System.Web.Http.WebHost
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
-                task.WaitUntilCompleted();
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
                 IHttpActionResult result = context.Result;
                 Assert.IsType(typeof(ResponseMessageResult), result);
                 ResponseMessageResult typedResult = (ResponseMessageResult)result;
@@ -114,7 +112,7 @@ namespace System.Web.Http.WebHost
         }
 
         [Fact]
-        public void HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithoutContentType_HandlesWithCustomException()
+        public async Task HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithoutContentType_HandlesWithCustomException()
         {
             IExceptionHandler innerHandler = CreateDummyHandler();
             IExceptionHandler product = CreateProductUnderTest(innerHandler);
@@ -132,11 +130,9 @@ namespace System.Web.Http.WebHost
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
-                task.WaitUntilCompleted();
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
                 IHttpActionResult result = context.Result;
                 Assert.IsType(typeof(ResponseMessageResult), result);
                 ResponseMessageResult typedResult = (ResponseMessageResult)result;
@@ -153,7 +149,7 @@ namespace System.Web.Http.WebHost
         }
 
         [Fact]
-        public void HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithFailedNegotiation_HandlesWithCustomException()
+        public async Task HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithFailedNegotiation_HandlesWithCustomException()
         {
             IExceptionHandler innerHandler = CreateDummyHandler();
             IExceptionHandler product = CreateProductUnderTest(innerHandler);
@@ -177,11 +173,9 @@ namespace System.Web.Http.WebHost
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
-                task.WaitUntilCompleted();
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
                 IHttpActionResult result = context.Result;
                 Assert.IsType(typeof(ResponseMessageResult), result);
                 ResponseMessageResult typedResult = (ResponseMessageResult)result;
@@ -196,7 +190,7 @@ namespace System.Web.Http.WebHost
         }
 
         [Fact]
-        public void HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithCreateException_HandlesWithCustomException()
+        public async Task HandleAsync_IfCatchBlockIsWebHostBufferedContent_WithCreateException_HandlesWithCustomException()
         {
             IExceptionHandler innerHandler = CreateDummyHandler();
             IExceptionHandler product = CreateProductUnderTest(innerHandler);
@@ -220,11 +214,9 @@ namespace System.Web.Http.WebHost
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
-                task.WaitUntilCompleted();
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
                 IHttpActionResult result = context.Result;
                 Assert.IsType(typeof(ResponseMessageResult), result);
                 ResponseMessageResult typedResult = (ResponseMessageResult)result;

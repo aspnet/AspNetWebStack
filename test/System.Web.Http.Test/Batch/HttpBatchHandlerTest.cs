@@ -116,17 +116,17 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_Throws_WhenRequestIsNull()
+        public Task SendAsync_Throws_WhenRequestIsNull()
         {
+            // Arrange
             MockHttpBatchHandler mockHandler = new MockHttpBatchHandler(new HttpServer());
 
-            Assert.ThrowsArgumentNull(() =>
-                mockHandler.SendAsync(null).Wait(),
-                "request");
+            // Act & Assert
+            return Assert.ThrowsArgumentNullAsync(() => mockHandler.SendAsync(null), "request");
         }
 
         [Fact]
-        public void SendAsync_CallsProcessBatchAsync()
+        public async Task SendAsync_CallsProcessBatchAsync()
         {
             Mock<HttpBatchHandler> handler = new Mock<HttpBatchHandler>(new HttpServer());
             handler.Setup(h => h.ProcessBatchAsync(It.IsAny<HttpRequestMessage>(), CancellationToken.None))
@@ -136,14 +136,14 @@ namespace System.Web.Http
                 }));
             HttpMessageInvoker invoker = new HttpMessageInvoker(handler.Object);
 
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
-            Assert.Equal("ProcessBatchAsync called.", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("ProcessBatchAsync called.", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void SendAsync_ReturnsHttpResponseException()
+        public async Task SendAsync_ReturnsHttpResponseException()
         {
             Mock<HttpBatchHandler> handler = new Mock<HttpBatchHandler>(new HttpServer());
             handler.Setup(h => h.ProcessBatchAsync(It.IsAny<HttpRequestMessage>(), CancellationToken.None))
@@ -156,14 +156,14 @@ namespace System.Web.Http
                 });
             HttpMessageInvoker invoker = new HttpMessageInvoker(handler.Object);
 
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("HttpResponseException Error.", response.Content.ReadAsStringAsync().Result);
+            Assert.Equal("HttpResponseException Error.", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void SendAsync_IfProcessBatchAsyncTaskIsFaulted_CallsExceptionServices()
+        public async Task SendAsync_IfProcessBatchAsyncTaskIsFaulted_CallsExceptionServices()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -182,10 +182,8 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                await Assert.ThrowsAsync<Exception>(() => product.SendAsync(expectedRequest, cancellationToken));
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -205,7 +203,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfProcessBatchAsyncTaskIsCanceled_DoesNotCallExceptionServices()
+        public async Task SendAsync_IfProcessBatchAsyncTaskIsCanceled_DoesNotCallExceptionServices()
         {
             // Arrange
             Exception expectedException = new OperationCanceledException();
@@ -224,18 +222,13 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
-                // Act
-                task.WaitUntilCompleted();
-
-                // Assert
-                Assert.Equal(TaskStatus.Canceled, task.Status);
+                // Act & Assert
+                await Assert.ThrowsAsync<OperationCanceledException>(() => product.SendAsync(expectedRequest, cancellationToken));
             }
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
+        public async Task SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
         {
             // Arrange
             Exception expectedException = CreateExceptionWithCallStack();
@@ -258,15 +251,10 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                var exception = await Assert.ThrowsAsync<Exception>(() => product.SendAsync(request, cancellationToken));
 
                 // Assert
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception);
-                Exception exception = task.Exception.GetBaseException();
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
                 Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
@@ -274,7 +262,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
+        public async Task SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
         {
             // Arrange
             IExceptionLogger exceptionLogger = CreateStubExceptionLogger();
@@ -297,21 +285,17 @@ namespace System.Web.Http
                 {
                     CancellationToken cancellationToken = CreateCancellationToken();
 
-                    Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
-
                     // Act
-                    task.WaitUntilCompleted();
+                    HttpResponseMessage response = await product.SendAsync(request, cancellationToken);
 
                     // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                    HttpResponseMessage response = task.Result;
                     Assert.Same(expectedResponse, response);
                 }
             }
         }
 
         [Fact]
-        public void SendAsync_WithDefaultExceptionHandler_IfProcessBatchAsyncTaskIsFaulted_ReturnsInternalServerError()
+        public async Task SendAsync_WithDefaultExceptionHandler_IfProcessBatchAsyncTaskIsFaulted_ReturnsInternalServerError()
         {
             Mock<HttpBatchHandler> handler = new Mock<HttpBatchHandler>(new HttpServer());
             handler.Setup(h => h.ProcessBatchAsync(It.IsAny<HttpRequestMessage>(), CancellationToken.None))
@@ -321,7 +305,7 @@ namespace System.Web.Http
                 });
             HttpMessageInvoker invoker = new HttpMessageInvoker(handler.Object);
 
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }

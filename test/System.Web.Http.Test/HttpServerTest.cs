@@ -184,7 +184,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public Task<HttpResponseMessage> DisposedReturnsServiceUnavailable()
+        public async Task DisposedReturnsServiceUnavailable()
         {
             // Arrange
             Mock<HttpMessageHandler> mockHandler = new Mock<HttpMessageHandler>();
@@ -194,19 +194,15 @@ namespace System.Web.Http
             HttpRequestMessage request = new HttpRequestMessage();
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None).ContinueWith(
-                (reqTask) =>
-                {
-                    // Assert
-                    mockHandler.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Never(), request, CancellationToken.None);
-                    Assert.Equal(HttpStatusCode.ServiceUnavailable, reqTask.Result.StatusCode);
-                    return reqTask.Result;
-                }
-            );
+            var response = await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            mockHandler.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Never(), request, CancellationToken.None);
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         }
 
         [Fact]
-        public Task<HttpResponseMessage> RequestGetsConfigurationAsParameter()
+        public async Task RequestGetsConfigurationAsParameter()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -220,19 +216,15 @@ namespace System.Web.Http
             HttpMessageInvoker invoker = new HttpMessageInvoker(server);
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None).ContinueWith(
-                (reqTask) =>
-                {
-                    // Assert
-                    dispatcherMock.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Once(), request, CancellationToken.None);
-                    Assert.Same(config, request.GetConfiguration());
-                    return reqTask.Result;
-                }
-            );
+            await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            dispatcherMock.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Once(), request, CancellationToken.None);
+            Assert.Same(config, request.GetConfiguration());
         }
 
         [Fact]
-        public Task<HttpResponseMessage> RequestGetsSyncContextAsParameter()
+        public async Task RequestGetsSyncContextAsParameter()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -249,19 +241,15 @@ namespace System.Web.Http
             SynchronizationContext.SetSynchronizationContext(syncContext);
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None).ContinueWith(
-                (reqTask) =>
-                {
-                    // Assert
-                    dispatcherMock.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Once(), request, CancellationToken.None);
-                    Assert.Same(syncContext, request.GetSynchronizationContext());
-                    return reqTask.Result;
-                }
-            );
+            await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            dispatcherMock.Protected().Verify<Task<HttpResponseMessage>>("SendAsync", Times.Once(), request, CancellationToken.None);
+            Assert.Same(syncContext, request.GetSynchronizationContext());
         }
 
         [Fact, RestoreThreadPrincipal]
-        public Task SendAsync_SetsGenericPrincipalWhenThreadPrincipalIsNullAndCleansUpAfterward()
+        public async Task SendAsync_SetsGenericPrincipalWhenThreadPrincipalIsNullAndCleansUpAfterward()
         {
             // Arrange
             var config = new HttpConfiguration();
@@ -277,19 +265,17 @@ namespace System.Web.Http
                           .Returns(Task.FromResult<HttpResponseMessage>(request.CreateResponse()));
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None)
-                          .ContinueWith(req =>
-                          {
-                              // Assert
-                              Assert.NotNull(callbackPrincipal);
-                              Assert.False(callbackPrincipal.Identity.IsAuthenticated);
-                              Assert.Empty(callbackPrincipal.Identity.Name);
-                              Assert.Null(Thread.CurrentPrincipal);
-                          });
+            await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            Assert.NotNull(callbackPrincipal);
+            Assert.False(callbackPrincipal.Identity.IsAuthenticated);
+            Assert.Empty(callbackPrincipal.Identity.Name);
+            Assert.Null(Thread.CurrentPrincipal);
         }
 
         [Fact, RestoreThreadPrincipal]
-        public Task SendAsync_DoesNotChangeExistingThreadPrincipal()
+        public async Task SendAsync_DoesNotChangeExistingThreadPrincipal()
         {
             // Arrange
             var config = new HttpConfiguration();
@@ -306,17 +292,15 @@ namespace System.Web.Http
                           .Returns(Task.FromResult<HttpResponseMessage>(request.CreateResponse()));
 
             // Act
-            return invoker.SendAsync(request, CancellationToken.None)
-                          .ContinueWith(req =>
-                          {
-                              // Assert
-                              Assert.Same(principal, callbackPrincipal);
-                              Assert.Same(principal, Thread.CurrentPrincipal);
-                          });
+            await invoker.SendAsync(request, CancellationToken.None);
+
+            // Assert
+            Assert.Same(principal, callbackPrincipal);
+            Assert.Same(principal, Thread.CurrentPrincipal);
         }
 
         [Fact]
-        public void SendAsync_Handles_ExceptionsThrownInMessageHandlers()
+        public async Task SendAsync_Handles_ExceptionsThrownInMessageHandlers()
         {
             // Arrange
             var config = new HttpConfiguration();
@@ -325,14 +309,14 @@ namespace System.Web.Http
             var invoker = new HttpMessageInvoker(server);
 
             // Act
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
-        public void SendAsync_Handles_HttpResponseExceptionsThrownInMessageHandlers()
+        public async Task SendAsync_Handles_HttpResponseExceptionsThrownInMessageHandlers()
         {
             // Arrange
             HttpResponseException exception = new HttpResponseException(new HttpResponseMessage(HttpStatusCode.HttpVersionNotSupported));
@@ -343,7 +327,7 @@ namespace System.Web.Http
             var invoker = new HttpMessageInvoker(server);
 
             // Act
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             // Assert
             Assert.Equal(exception.Response.StatusCode, response.StatusCode);
@@ -351,7 +335,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_Handles_ExceptionsThrownInCustomRoutes()
+        public async Task SendAsync_Handles_ExceptionsThrownInCustomRoutes()
         {
             // Arrange
             var config = new HttpConfiguration();
@@ -360,14 +344,14 @@ namespace System.Web.Http
             var invoker = new HttpMessageInvoker(server);
 
             // Act
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
-        public void SendAsync_Handles_HttpResponseExceptionsThrownInCustomRoutes()
+        public async Task SendAsync_Handles_HttpResponseExceptionsThrownInCustomRoutes()
         {
             // Arrange
             HttpResponseException exception = new HttpResponseException(new HttpResponseMessage(HttpStatusCode.HttpVersionNotSupported));
@@ -378,7 +362,7 @@ namespace System.Web.Http
             var invoker = new HttpMessageInvoker(server);
 
             // Act
-            var response = invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            var response = await invoker.SendAsync(new HttpRequestMessage(), CancellationToken.None);
 
             // Assert
             Assert.Equal(exception.Response.StatusCode, response.StatusCode);
@@ -386,7 +370,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfDispatcherTaskIsFaulted_CallsExceptionServices()
+        public async Task SendAsync_IfDispatcherTaskIsFaulted_CallsExceptionServices()
         {
             // Arrange
             Exception expectedException = CreateException();
@@ -406,10 +390,8 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
+                await Assert.ThrowsAsync<Exception>(() => product.SendAsync(expectedRequest, cancellationToken));
 
                 // Assert
                 Func<ExceptionContext, bool> exceptionContextMatches = (c) =>
@@ -429,7 +411,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfRequestCancelled_DoesNotCallExceptionServices()
+        public async Task SendAsync_IfRequestCancelled_DoesNotCallExceptionServices()
         {
             // Arrange
             Exception expectedException = new OperationCanceledException();
@@ -449,13 +431,8 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(expectedRequest, cancellationToken);
-
                 // Act
-                task.WaitUntilCompleted();
-
-                // Assert
-                Assert.Equal(TaskStatus.Canceled, task.Status);
+                await Assert.ThrowsAsync<OperationCanceledException>(() => product.SendAsync(expectedRequest, cancellationToken));
 
                 // The mock handler and logger will throw if they are called, so this test verifies that
                 // they aren't called by construction.
@@ -463,7 +440,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
+        public async Task SendAsync_IfExceptionHandlerSetsNullResult_PropogatesFaultedTaskException()
         {
             // Arrange
             Exception expectedException = CreateExceptionWithCallStack();
@@ -487,15 +464,9 @@ namespace System.Web.Http
             {
                 CancellationToken cancellationToken = CreateCancellationToken();
 
-                Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
+                // Act & Assert
+                var exception = await Assert.ThrowsAsync<Exception>(() => product.SendAsync(request, cancellationToken));
 
-                // Act
-                task.WaitUntilCompleted();
-
-                // Assert
-                Assert.Equal(TaskStatus.Faulted, task.Status);
-                Assert.NotNull(task.Exception);
-                Exception exception = task.Exception.GetBaseException();
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
                 Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
@@ -503,7 +474,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
+        public async Task SendAsync_IfExceptionHandlerHandlesException_ReturnsResponse()
         {
             // Arrange
             HttpMessageHandler dispatcher = CreateFaultingMessageHandler(CreateException());
@@ -527,21 +498,17 @@ namespace System.Web.Http
                 {
                     CancellationToken cancellationToken = CreateCancellationToken();
 
-                    Task<HttpResponseMessage> task = product.SendAsync(request, cancellationToken);
-
                     // Act
-                    task.WaitUntilCompleted();
+                    HttpResponseMessage response = await product.SendAsync(request, cancellationToken);
 
                     // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-                    HttpResponseMessage response = task.Result;
                     Assert.Same(expectedResponse, response);
                 }
             }
         }
 
         [Fact]
-        public void HttpServerAddsDefaultRequestContext()
+        public async Task HttpServerAddsDefaultRequestContext()
         {
             // Arrange
             HttpServer server = new HttpServer();
@@ -556,7 +523,7 @@ namespace System.Web.Http
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/Customers");
 
             // Act
-            var response = invoker.SendAsync(request, CancellationToken.None).Result;
+            var response = await invoker.SendAsync(request, CancellationToken.None);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -564,7 +531,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void HttpServerDoesNotReplaceOriginalRequestContext()
+        public async Task HttpServerDoesNotReplaceOriginalRequestContext()
         {
             // Arrange
             HttpServer server = new HttpServer();
@@ -583,7 +550,7 @@ namespace System.Web.Http
             request.SetRequestContext(context);
 
             // Act
-            var response = invoker.SendAsync(request, CancellationToken.None).Result;
+            var response = await invoker.SendAsync(request, CancellationToken.None);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -701,7 +668,7 @@ namespace System.Web.Http
         {
             public bool ContextFound { get; set; }
 
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
                 HttpRequestContext incomingContext = request.GetRequestContext();
 
@@ -712,9 +679,9 @@ namespace System.Web.Http
 
                 ContextFound = true;
 
-                Task<HttpResponseMessage> result = base.SendAsync(request, cancellationToken);
+                HttpResponseMessage result = await base.SendAsync(request, cancellationToken);
 
-                HttpRequestContext outgoingContext = result.Result.RequestMessage.GetRequestContext();
+                HttpRequestContext outgoingContext = result.RequestMessage.GetRequestContext();
 
                 if (outgoingContext != incomingContext)
                 {

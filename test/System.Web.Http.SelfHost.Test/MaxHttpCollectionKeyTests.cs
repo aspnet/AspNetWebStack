@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
 
@@ -41,7 +42,7 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("PostCustomer")]
         [InlineData("PostFormData")]
-        public void PostManyKeysInFormUrlEncodedThrows(string actionName)
+        public async Task PostManyKeysInFormUrlEncodedThrows(string actionName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -52,18 +53,18 @@ namespace System.Web.Http.SelfHost
             MediaTypeFormatter.MaxHttpCollectionKeys = 99;
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             string expectedResponseValue = @"The number of keys in a NameValueCollection has exceeded the limit of '99'. You can adjust it by modifying the MaxHttpCollectionKeys property on the 'System.Net.Http.Formatting.MediaTypeFormatter' class.";
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
         [InlineData("PostCustomer")]
         [InlineData("PostFormData")]
-        public void PostNotTooManyKeysInFormUrlEncodedWorks(string actionName)
+        public async Task PostNotTooManyKeysInFormUrlEncodedWorks(string actionName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -74,20 +75,20 @@ namespace System.Web.Http.SelfHost
             MediaTypeFormatter.MaxHttpCollectionKeys = 1000;
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">success from " + actionName + "</string>";
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
         [InlineData("PostCustomerFromUri")]
         [InlineData("GetWithQueryable")]
-        public void PostManyKeysInUriThrows(string actionName)
+        public async Task PostManyKeysInUriThrows(string actionName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -107,7 +108,7 @@ namespace System.Web.Http.SelfHost
             MediaTypeFormatter.MaxHttpCollectionKeys = 99;
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -116,7 +117,7 @@ namespace System.Web.Http.SelfHost
         [Theory]
         [InlineData("PostCustomerFromUri")]
         [InlineData("GetWithQueryable")]
-        public void PostNotTooManyKeysInUriWorks(string actionName)
+        public async Task PostNotTooManyKeysInUriWorks(string actionName)
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -136,14 +137,14 @@ namespace System.Web.Http.SelfHost
             MediaTypeFormatter.MaxHttpCollectionKeys = 1000;
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"success from " + actionName;
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.True(response.Content.ReadAsStringAsync().Result.Contains(expectedResponseValue));
+            Assert.True((await response.Content.ReadAsStringAsync()).Contains(expectedResponseValue));
         }
 
         private static string GenerateHttpCollectionKeyInput(int num)

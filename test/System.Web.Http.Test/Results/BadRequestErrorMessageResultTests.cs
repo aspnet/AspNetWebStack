@@ -180,7 +180,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceeds()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationSucceeds()
         {
             // Arrange
             string expectedMessage = CreateMessage();
@@ -206,9 +206,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -227,7 +226,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
+        public async Task ExecuteAsync_ReturnsCorrectResponse_WhenContentNegotiationFails()
         {
             // Arrange
             string message = CreateMessage();
@@ -250,9 +249,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
@@ -273,7 +271,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
         {
             // Arrange
             string expectedMessage = CreateMessage();
@@ -308,9 +306,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(task);
-                    task.WaitUntilCompleted();
 
-                    using (HttpResponseMessage response = task.Result)
+                    using (HttpResponseMessage response = await task)
                     {
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

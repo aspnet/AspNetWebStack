@@ -3,6 +3,7 @@
 
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Cors;
 using Microsoft.TestCommon;
 
@@ -11,10 +12,10 @@ namespace System.Web.Http.Cors.Test
     public class DisableCorsAttributeTest
     {
         [Fact]
-        public void GetCorsPolicyAsync_ReturnsNull()
+        public async Task GetCorsPolicyAsync_ReturnsNull()
         {
             DisableCorsAttribute disableCors = new DisableCorsAttribute();
-            CorsPolicy corsPolicy = disableCors.GetCorsPolicyAsync(new HttpRequestMessage(), CancellationToken.None).Result;
+            CorsPolicy corsPolicy = await disableCors.GetCorsPolicyAsync(new HttpRequestMessage(), CancellationToken.None);
 
             Assert.Null(corsPolicy);
         }

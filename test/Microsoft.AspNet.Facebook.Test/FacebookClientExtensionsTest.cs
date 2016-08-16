@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.AspNet.Facebook.Client;
 using Microsoft.AspNet.Facebook.Test.Helpers;
 using Microsoft.AspNet.Facebook.Test.Types;
@@ -11,112 +12,104 @@ namespace Microsoft.AspNet.Facebook.Test
     public class FacebookClientExtensionsTest
     {
         [Fact]
-        public void GetCurrentUserAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserAsync<SimpleUser>().Wait();
+            await client.GetCurrentUserAsync<SimpleUser>();
 
             Assert.Equal("me?fields=id,name,picture.fields(url)", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserAsync_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserAsync_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserAsync().Wait();
+            await client.GetCurrentUserAsync();
 
             Assert.Equal("me", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserFriendsAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserFriendsAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserFriendsAsync<SimpleUser>().Wait();
+            await client.GetCurrentUserFriendsAsync<SimpleUser>();
 
             Assert.Equal("me/friends?fields=id,name,picture.fields(url)", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserFriendsAsync_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserFriendsAsync_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserFriendsAsync().Wait();
+            await client.GetCurrentUserFriendsAsync();
 
             Assert.Equal("me/friends", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserPermissionsAsync_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserPermissionsAsync_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserPermissionsAsync().Wait();
+            await client.GetCurrentUserPermissionsAsync();
 
             Assert.Equal("me/permissions", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserPhotosAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserPhotosAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserPhotosAsync<UserPhoto>().Wait();
+            await client.GetCurrentUserPhotosAsync<UserPhoto>();
 
             Assert.Equal("me/photos?fields=name,picture,source", client.Path);
         }
 
         [Fact]
-        public void GetCurrentUserStatusesAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetCurrentUserStatusesAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetCurrentUserStatusesAsync<UserStatus>().Wait();
+            await client.GetCurrentUserStatusesAsync<UserStatus>();
 
             Assert.Equal("me/statuses?fields=message,time", client.Path);
         }
 
         [Fact]
-        public void GetFacebookObjectAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetFacebookObjectAsyncOfT_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetFacebookObjectAsync<FacebookConnection<FacebookPicture>>("me/picture").Wait();
+            await client.GetFacebookObjectAsync<FacebookConnection<FacebookPicture>>("me/picture");
 
             Assert.Equal("me/picture?fields=url", client.Path);
         }
 
         [Fact]
-        public void GetFacebookObjectAsync_CallsGetTaskAsyncWithTheExpectedPath()
+        public async Task GetFacebookObjectAsync_CallsGetTaskAsyncWithTheExpectedPath()
         {
             LocalFacebookClient client = new LocalFacebookClient();
-            client.GetFacebookObjectAsync("me/notes").Wait();
+            await client.GetFacebookObjectAsync("me/notes");
 
             Assert.Equal("me/notes", client.Path);
         }
 
         [Fact]
-        public void GetFacebookObjectAsyncOfT_ThrowArgumentNullExceptions()
+        public async Task GetFacebookObjectAsyncOfT_ThrowArgumentNullExceptions()
         {
             LocalFacebookClient client = null;
-            Assert.ThrowsArgumentNull(
-                () => client.GetFacebookObjectAsync<SimpleUser>("me").Wait(),
-                "client");
+            await Assert.ThrowsArgumentNullAsync(() => client.GetFacebookObjectAsync<SimpleUser>("me"), "client");
 
             client = new LocalFacebookClient();
-            Assert.ThrowsArgumentNull(
-                () => client.GetFacebookObjectAsync<SimpleUser>(null).Wait(),
-                "objectPath");
+            await Assert.ThrowsArgumentNullAsync(() => client.GetFacebookObjectAsync<SimpleUser>(null), "objectPath");
         }
 
         [Fact]
-        public void GetFacebookObjectAsync_ThrowArgumentNullExceptions()
+        public async Task GetFacebookObjectAsync_ThrowArgumentNullExceptions()
         {
             LocalFacebookClient client = null;
-            Assert.ThrowsArgumentNull(
-                () => client.GetFacebookObjectAsync("me").Wait(),
-                "client");
+            await Assert.ThrowsArgumentNullAsync(() => client.GetFacebookObjectAsync("me"), "client");
 
             client = new LocalFacebookClient();
-            Assert.ThrowsArgumentNull(
-                () => client.GetFacebookObjectAsync(null).Wait(),
-                "objectPath");
+            await Assert.ThrowsArgumentNullAsync(() => client.GetFacebookObjectAsync(null), "objectPath");
         }
     }
 }

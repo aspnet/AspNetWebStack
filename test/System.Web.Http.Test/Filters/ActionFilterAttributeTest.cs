@@ -41,7 +41,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_InvokesOnActionExecutingBeforeContinuation()
+        public async Task ExecuteActionFilterAsync_InvokesOnActionExecutingBeforeContinuation()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -60,13 +60,13 @@ namespace System.Web.Http.Filters
             var filter = (IActionFilter)filterMock.Object;
 
             // Act
-            filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation).Wait();
+            await filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
             // Assert
             Assert.True(flagWhenContinuationInvoked.Value);
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_OnActionExecutingMethodGetsPassedControllerContext()
+        public async Task ExecuteActionFilterAsync_OnActionExecutingMethodGetsPassedControllerContext()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -74,46 +74,45 @@ namespace System.Web.Http.Filters
             var filter = (IActionFilter)filterMock.Object;
 
             // Act
-            filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
+            await filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
             {
                 return Task.FromResult(new HttpResponseMessage());
-            }).Wait();
+            });
 
             // Assert
             filterMock.Verify(f => f.OnActionExecuting(context));
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfOnActionExecutingThrowsException_ReturnsFaultedTask()
+        public async Task ExecuteActionFilterAsync_IfOnActionExecutingThrowsException_ReturnsFaultedTask()
         {
             // Arrange
-            Exception e = new Exception("{51C81EE9-F8D2-4F63-A1F8-B56052E0F2A4}");
+            Exception expectedException = new Exception("{51C81EE9-F8D2-4F63-A1F8-B56052E0F2A4}");
             HttpActionContext context = ContextUtil.CreateActionContext();
             Mock<ActionFilterAttribute> filterMock = new Mock<ActionFilterAttribute>()
             {
                 CallBase = true,
             };
 
-            filterMock.Setup(f => f.OnActionExecuting(It.IsAny<HttpActionContext>())).Throws(e);
+            filterMock.Setup(f => f.OnActionExecuting(It.IsAny<HttpActionContext>())).Throws(expectedException);
             var filter = (IActionFilter)filterMock.Object;
             bool continuationCalled = false;
 
             // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
-            {
-                continuationCalled = true;
-                return null;
-            });
+            var exception = await Assert.ThrowsAsync<Exception>(
+                () => filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
+                {
+                    continuationCalled = true;
+                    return null;
+                }));
 
             // Assert
-            result.WaitUntilCompleted();
-            Assert.True(result.IsFaulted);
-            Assert.Same(e, result.Exception.InnerException);
+            Assert.Same(expectedException, exception);
             Assert.False(continuationCalled);
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfOnActionExecutingSetsResult_ShortCircuits()
+        public async Task ExecuteActionFilterAsync_IfOnActionExecutingSetsResult_ShortCircuits()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -131,11 +130,11 @@ namespace System.Web.Http.Filters
             var filter = (IActionFilter)filterMock.Object;
 
             // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
+            var result = await filter.ExecuteActionFilterAsync(context, CancellationToken.None, () =>
             {
                 continuationCalled = true;
                 return null;
-            }).Result;
+            });
 
             // Assert
             Assert.False(continuationCalled);
@@ -143,7 +142,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfContinuationTaskWasCanceled_ReturnsCanceledTask()
+        public Task ExecuteActionFilterAsync_IfContinuationTaskWasCanceled_ReturnsCanceledTask()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -154,16 +153,13 @@ namespace System.Web.Http.Filters
 
             var filter = (IActionFilter)filterMock.Object;
 
-            // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => TaskHelpers.Canceled<HttpResponseMessage>());
-
-            // Assert
-            result.WaitUntilCompleted();
-            Assert.True(result.IsCanceled);
+            // Act & Assert
+            return Assert.ThrowsAsync<TaskCanceledException>(
+                () =>filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => TaskHelpers.Canceled<HttpResponseMessage>()));
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfContinuationSucceeded_InvokesOnActionExecutedAsSuccess()
+        public async Task ExecuteActionFilterAsync_IfContinuationSucceeded_InvokesOnActionExecutedAsSuccess()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -176,10 +172,9 @@ namespace System.Web.Http.Filters
             HttpResponseMessage response = new HttpResponseMessage();
 
             // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => Task.FromResult(response));
+            await filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => Task.FromResult(response));
 
             // Assert
-            result.WaitUntilCompleted();
             filterMock.Verify(f => f.OnActionExecuted(It.Is<HttpActionExecutedContext>(ec =>
                     Object.ReferenceEquals(ec.Response, response)
                     && ec.Exception == null
@@ -188,7 +183,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfContinuationFaulted_InvokesOnActionExecutedAsError()
+        public async Task ExecuteActionFilterAsync_IfContinuationFaulted_InvokesOnActionExecutedAsError()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -202,11 +197,11 @@ namespace System.Web.Http.Filters
             Exception exception = new Exception("{ABCC912C-B6D1-4C27-9059-732ABC644A0C}");
             Func<Task<HttpResponseMessage>> continuation = () => TaskHelpers.FromError<HttpResponseMessage>(exception);
 
-            // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(
+                () => filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation));
 
             // Assert
-            result.WaitUntilCompleted();
             filterMock.Verify(f => f.OnActionExecuted(It.Is<HttpActionExecutedContext>(ec =>
                     Object.ReferenceEquals(ec.Exception, exception)
                     && ec.Response == null
@@ -222,7 +217,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_CancellationTokenFlowsThrough()
+        public async Task ExecuteActionFilterAsync_CancellationTokenFlowsThrough()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -240,11 +235,9 @@ namespace System.Web.Http.Filters
                 Func<Task<HttpResponseMessage>> continuation = () => Task.FromResult<HttpResponseMessage>(new HttpResponseMessage());
 
                 // Act
-                var result = filter.ExecuteActionFilterAsync(context, token, continuation);
+                await filter.ExecuteActionFilterAsync(context, token, continuation);
 
                 // Assert
-                result.WaitUntilCompleted();
-
                 filterMock.Verify(f => f.OnActionExecutingAsync(It.IsAny<HttpActionContext>(),
                                                It.Is<CancellationToken>(t => t == token)));
 
@@ -254,7 +247,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_DoesNotInvokeOnActionExecutedWhenOverriden()
+        public async Task ExecuteActionFilterAsync_DoesNotInvokeOnActionExecutedWhenOverriden()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -275,17 +268,15 @@ namespace System.Web.Http.Filters
             var filter = (IActionFilter)filterMock.Object;
 
             // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
+            await filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
 
             // Assert
-            result.Wait();
-
             filterMock.Verify(f => f.OnActionExecutedAsync(It.IsAny<HttpActionExecutedContext>(),
                                                            It.IsAny<CancellationToken>()));
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_DoesNotInvokeOnActionExecutingWhenOverriden()
+        public async Task ExecuteActionFilterAsync_DoesNotInvokeOnActionExecutingWhenOverriden()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -306,11 +297,9 @@ namespace System.Web.Http.Filters
             var filter = (IActionFilter)filterMock.Object;
 
             // Act
-            var result = filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
+            await filter.ExecuteActionFilterAsync(context, CancellationToken.None, continuation);
 
             // Assert
-            result.Wait();
-
             filterMock.Verify(f => f.OnActionExecutedAsync(It.IsAny<HttpActionExecutedContext>(), CancellationToken.None));
         }
 
@@ -359,8 +348,8 @@ namespace System.Web.Http.Filters
 
             // Act
             HttpResponseMessage result = await filter.ExecuteActionFilterAsync(
-                                                        context, 
-                                                        CancellationToken.None, 
+                                                        context,
+                                                        CancellationToken.None,
                                                         () => TaskHelpers.FromError<HttpResponseMessage>(new Exception("{ED525C8E-7165-4207-B3F6-4AB095739017}")));
 
             // Assert
@@ -388,7 +377,7 @@ namespace System.Web.Http.Filters
             Exception actual = await Assert.ThrowsAsync<Exception>(
                 () => filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => Task.FromResult(new HttpResponseMessage()))
             );
-            
+
 
             // Assert
             Assert.Same(exception, actual);
@@ -443,7 +432,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_IfOnActionExecutedRemovesSuccessfulResult_ReturnsFaultedTask()
+        public Task ExecuteActionFilterAsync_IfOnActionExecutedRemovesSuccessfulResult_ReturnsFaultedTask()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
@@ -460,8 +449,8 @@ namespace System.Web.Http.Filters
             });
 
             // Act and Assert
-            Assert.Throws<InvalidOperationException>(
-                () => filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => Task.FromResult(response)).Result,
+            return Assert.ThrowsAsync<InvalidOperationException>(
+                () => filter.ExecuteActionFilterAsync(context, CancellationToken.None, () => Task.FromResult(response)),
                 "After calling ActionFilterAttributeProxy.OnActionExecuted, the HttpActionExecutedContext properties Result and Exception were both null. At least one of these values must be non-null. To provide a new response, please set the Result object; to indicate an error, please throw an exception."
             );
         }

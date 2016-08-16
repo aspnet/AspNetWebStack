@@ -60,7 +60,6 @@ namespace System.Web.Http.ExceptionHandling
         {
             // Arrange
             Mock<ExceptionLogger> mock = new Mock<ExceptionLogger>(MockBehavior.Strict);
-            Task expectedTask = CreateCompletedTask();
             mock.Setup(h => h.ShouldLog(It.IsAny<ExceptionLoggerContext>())).Returns(false);
 
             IExceptionLogger product = mock.Object;
@@ -81,7 +80,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void LogAsyncCore_DelegatesToLogCore_AndReturnsCompletedTask()
+        public async Task LogAsyncCore_DelegatesToLogCore_AndReturnsCompletedTask()
         {
             // Arrange
             Mock<ExceptionLogger> mock = new Mock<ExceptionLogger>();
@@ -92,13 +91,9 @@ namespace System.Web.Http.ExceptionHandling
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Act
-            Task task = product.LogAsync(expectedContext, cancellationToken);
+            await product.LogAsync(expectedContext, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
             mock.Verify(h => h.Log(expectedContext), Times.Once());
         }
 

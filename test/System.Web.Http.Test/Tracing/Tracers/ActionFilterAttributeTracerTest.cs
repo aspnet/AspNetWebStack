@@ -115,7 +115,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_Traces_Executing_And_Executed()
+        public async Task ExecuteActionFilterAsync_Traces_Executing_And_Executed()
         {
             // Arrange
             Mock<ActionFilterAttribute> mockAttr = new Mock<ActionFilterAttribute>() { CallBase = true };
@@ -136,14 +136,14 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            tracer.ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation).Wait();
+            await tracer.ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_Faults_And_Traces_When_OnExecuting_Faults()
+        public async Task ExecuteActionFilterAsync_Faults_And_Traces_When_OnExecuting_Faults()
         {
             // Arrange
             Mock<ActionFilterAttribute> mockAttr = new Mock<ActionFilterAttribute>() { CallBase = true };
@@ -167,14 +167,14 @@ namespace System.Web.Http.Tracing.Tracers
             Task<HttpResponseMessage> task = tracer.ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation);
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[1].Exception);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void ExecuteActionFilterAsync_Faults_And_Traces_When_OnExecuted_Faults()
+        public async Task ExecuteActionFilterAsync_Faults_And_Traces_When_OnExecuted_Faults()
         {
             // Arrange
             Mock<ActionFilterAttribute> mockAttr = new Mock<ActionFilterAttribute>() { CallBase = true };
@@ -201,7 +201,7 @@ namespace System.Web.Http.Tracing.Tracers
             Task<HttpResponseMessage> task = tracer.ExecuteActionFilterAsync(actionContext, CancellationToken.None, continuation);
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[3].Exception);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());

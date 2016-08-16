@@ -15,7 +15,7 @@ namespace System.Web.Http.Batch
     public class BatchLearningTests
     {
         [Fact]
-        public void BatchRequest_SubRequestPropertiesDoNotContainRoutingContext_CopyProperties()
+        public async Task BatchRequest_SubRequestPropertiesDoNotContainRoutingContext_CopyProperties()
         {
             // Arrange
             const string baseAddress = "http://localhost/api/";
@@ -44,13 +44,13 @@ namespace System.Web.Http.Batch
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, baseAddress + "values/newValue"))
                 };
 
-                using (HttpResponseMessage batchResponse = client.SendAsync(batchRequest, CancellationToken.None).Result)
+                using (HttpResponseMessage batchResponse = await client.SendAsync(batchRequest, CancellationToken.None))
                 {
-                    MultipartStreamProvider streamProvider = batchResponse.Content.ReadAsMultipartAsync().Result;
+                    MultipartStreamProvider streamProvider = await batchResponse.Content.ReadAsMultipartAsync();
                     foreach (HttpContent content in streamProvider.Contents)
                     {
-                        HttpResponseMessage response = content.ReadAsHttpResponseMessageAsync().Result;
-                        string result = response.Content.ReadAsStringAsync().Result;
+                        HttpResponseMessage response = await content.ReadAsHttpResponseMessageAsync();
+                        string result = await response.Content.ReadAsStringAsync();
 
                         // Assert
                         Assert.Equal("\"newValue\"", result);

@@ -6,105 +6,106 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Net.Formatting.Tests
 {
-    // Tests for ensuring the serializers behave consistently in various cases. 
-    // This is important for conneg. 
+    // Tests for ensuring the serializers behave consistently in various cases.
+    // This is important for conneg.
     public class SerializerConsistencyTests
     {
         [Fact]
-        public void PartialContract()
+        public Task PartialContract()
         {
             var c = new PartialDataContract { PropertyWithAttribute = "one", PropertyWithoutAttribute = "false" };
-            SerializerConsistencyHepers.Test(c);
+            return SerializerConsistencyHepers.TestAsync(c);
         }
 
         [Fact]
-        public void ClassWithFields()
+        public Task ClassWithFields()
         {
             var c1 = new ClassWithFields { Property = "prop" };
             c1.SetField("field");
-            SerializerConsistencyHepers.Test(c1);
+            return SerializerConsistencyHepers.TestAsync(c1);
         }
 
         [Fact]
-        public void PrivateProperty()
+        public Task PrivateProperty()
         {
             var source2 = new PrivateProperty { FirstName = "John", LastName = "Smith" };
             source2.SetItem("shoes");
-            SerializerConsistencyHepers.Test(source2);
+            return SerializerConsistencyHepers.TestAsync(source2);
         }
 
         [Fact]
-        public void NormalClass()
+        public Task NormalClass()
         {
             var source = new NormalClass { FirstName = "John", LastName = "Smith", Item = "Socks" };
-            SerializerConsistencyHepers.Test(source);
+            return SerializerConsistencyHepers.TestAsync(source);
         }
 
         [Fact]
-        public void InheritedProperties()
+        public Task InheritedProperties()
         {
             // Will we pick up inherited properties from a base object?
             BaseClass source = new DerivedClass { Property = "base", DerivedProperty = "derived" };
             source.SetField("private");
-            SerializerConsistencyHepers.Test(source, typeof(DerivedClass));
+            return SerializerConsistencyHepers.TestAsync(source, typeof(DerivedClass));
         }
 
         [Fact]
-        public void NullEmptyWhitespaceString()
+        public Task NullEmptyWhitespaceString()
         {
             NormalClass source = new NormalClass { FirstName = string.Empty, LastName = null, Item = "   " };
 
-            SerializerConsistencyHepers.Test(source);
+            return SerializerConsistencyHepers.TestAsync(source);
         }
 
         [Fact]
-        public void Dictionary()
+        public Task Dictionary()
         {
             var dict = new Dictionary<string, int>();
             dict["one"] = 1;
             dict["two"] = 2;
 
-            SerializerConsistencyHepers.Test(dict);
+            return SerializerConsistencyHepers.TestAsync(dict);
         }
 
         [Fact]
-        public void Array()
+        public Task Array()
         {
             string[] array = new string[] { "First", "Second", "Last" };
 
-            SerializerConsistencyHepers.Test(array);
+            return SerializerConsistencyHepers.TestAsync(array);
         }
 
         [Fact]
-        public void ArrayInterfaces()
+        public async Task ArrayInterfaces()
         {
             string[] array = new string[] { "First", "Second", "Last" };
 
-            SerializerConsistencyHepers.Test(array, typeof(IList<string>));
-            SerializerConsistencyHepers.Test(array, typeof(ICollection<string>));
-            SerializerConsistencyHepers.Test(array, typeof(IEnumerable<string>));
+            await SerializerConsistencyHepers.TestAsync(array, typeof(IList<string>));
+            await SerializerConsistencyHepers.TestAsync(array, typeof(ICollection<string>));
+            await SerializerConsistencyHepers.TestAsync(array, typeof(IEnumerable<string>));
         }
 
         [Fact]
-        public void Linq()
+        public Task Linq()
         {
             var l = from i in Enumerable.Range(1, 10) where i > 5 select i * i;
 
-            // Runtime type of a linq expression is some derived Linq type which we can't deserialize to. 
+            // Runtime type of a linq expression is some derived Linq type which we can't deserialize to.
             // So explicitly call out IEnumerable<T>
-            SerializerConsistencyHepers.Test(l, typeof(IEnumerable<int>));
+            return SerializerConsistencyHepers.TestAsync(l, typeof(IEnumerable<int>));
         }
 
         [Fact]
-        public void StaticProps()
+        public Task StaticProps()
         {
             ClassWithStaticProperties source = new ClassWithStaticProperties();
 
-            SerializerConsistencyHepers.Test(source);
+            return SerializerConsistencyHepers.TestAsync(source);
         }
     }
 
@@ -187,54 +188,54 @@ namespace System.Net.Formatting.Tests
     class SerializerConsistencyHepers
     {
         // Exercise the various serialization paths to verify that the default serializers behave consistently.
-        public static void Test(object source)
+        public static Task TestAsync(object source)
         {
             Type tSource = source.GetType();
-            Test(source, tSource);
+            return TestAsync(source, tSource);
         }
 
-        // Allow explicitly passing in the type that gets passed to the serializer. 
-        // The expectation is that the type can be read and written with both serializers. 
-        public static void Test(object source, Type tSource)
+        // Allow explicitly passing in the type that gets passed to the serializer.
+        // The expectation is that the type can be read and written with both serializers.
+        public static Task TestAsync(object source, Type tSource)
         {
-            Test(source, tSource, tSource);
+            return TestAsync(source, tSource, tSource);
         }
 
-        // tSourceWrite - the type we use for the initial write.  This can be specific, and a 1-way serializable type (eg, a linq expression). 
+        // tSourceWrite - the type we use for the initial write.  This can be specific, and a 1-way serializable type (eg, a linq expression).
         // tSourceRead - the type that we read back as. This should be more general because we need to instantiate it.
-        public static void Test(object source, Type tSourceWrite, Type tSourceRead)
+        public static async Task TestAsync(object source, Type tSourceWrite, Type tSourceRead)
         {
-            // Apply consistency chceks. This interleaves the results between the formatters. 
+            // Apply consistency chceks. This interleaves the results between the formatters.
             // It doesn't actually matter specifically what the formatter does, it just matters that they're consistent.
-            // This will test various transitions between C#->JSON, JSON->C#, C#->XML, and XML->C#. 
-            // We can't compare C# objects, but we can compare the textual representation from XML and JSON. 
+            // This will test various transitions between C#->JSON, JSON->C#, C#->XML, and XML->C#.
+            // We can't compare C# objects, but we can compare the textual representation from XML and JSON.
             MediaTypeFormatter xmlFormatter = new MediaTypeFormatterCollection().XmlFormatter;
             MediaTypeFormatter jsonFor = new MediaTypeFormatterCollection().JsonFormatter;
 
-            MemoryStream blobJson = Write(source, tSourceWrite, jsonFor); // C# --> JSON
-            MemoryStream blobXml = Write(source, tSourceWrite, xmlFormatter); // C# --> XML
+            MemoryStream blobJson = await WriteAsync(source, tSourceWrite, jsonFor); // C# --> JSON
+            MemoryStream blobXml = await WriteAsync(source, tSourceWrite, xmlFormatter); // C# --> XML
 
-            object obj2 = Read(blobJson, tSourceRead, jsonFor); // C# --> JSON --> C#
-            object obj1 = Read(blobXml, tSourceRead, xmlFormatter); // C# --> XML --> C#            
+            object obj2 = await ReadAsync(blobJson, tSourceRead, jsonFor); // C# --> JSON --> C#
+            object obj1 = await ReadAsync(blobXml, tSourceRead, xmlFormatter); // C# --> XML --> C#
 
             // We were able to round trip the source object through both formatters.
             // Now see if the resulting object is the same.
 
             // Check C# --> XML --> C#
 
-            var blobXml2 = Write(obj1, tSourceRead, xmlFormatter);  // C# --> XML --> C# --> XML
-            var blobJson2 = Write(obj1, tSourceRead, jsonFor); // C# --> XML --> C# --> JSON
+            var blobXml2 = await WriteAsync(obj1, tSourceRead, xmlFormatter);  // C# --> XML --> C# --> XML
+            var blobJson2 = await WriteAsync(obj1, tSourceRead, jsonFor); // C# --> XML --> C# --> JSON
 
             // Ensure that C#->XMl and  C#->XML->C#->XML give us the same result..
             Compare(blobXml, blobXml2);
 
-            // Ensure that C#->Json and C#->XML->C#->Json give us the same result 
+            // Ensure that C#->Json and C#->XML->C#->Json give us the same result
             Compare(blobJson, blobJson2);
 
             // Check C# --> JSON --> C#
 
-            var blobXml3 = Write(obj2, tSourceRead, xmlFormatter);  // C# --> JSON --> C# --> XML
-            var blobJson3 = Write(obj2, tSourceRead, jsonFor); // C# --> JSON --> C# --> JSON
+            var blobXml3 = await WriteAsync(obj2, tSourceRead, xmlFormatter);  // C# --> JSON --> C# --> XML
+            var blobJson3 = await WriteAsync(obj2, tSourceRead, jsonFor); // C# --> JSON --> C# --> JSON
 
             // Ensure that C#->XML and C#->JSON->C#->XML are the same
             Compare(blobXml, blobXml3);
@@ -243,7 +244,7 @@ namespace System.Net.Formatting.Tests
             Compare(blobJson, blobJson3);
         }
 
-        // Compare if 2 streams have the same contents. 
+        // Compare if 2 streams have the same contents.
         private static void Compare(MemoryStream ms1, MemoryStream ms2)
         {
             string s1 = ToString(ms1);
@@ -259,25 +260,25 @@ namespace System.Net.Formatting.Tests
             return System.Text.Encoding.UTF8.GetString(b, 0, (int)ms.Length);
         }
 
-        private static object Read(MemoryStream ms, Type tSource, MediaTypeFormatter formatter)
+        private static async Task<object> ReadAsync(MemoryStream ms, Type tSource, MediaTypeFormatter formatter)
         {
             bool f = formatter.CanReadType(tSource);
             Assert.True(f);
 
-            object o = formatter.ReadFromStreamAsync(tSource, ms, content: null, formatterLogger: null).Result;
+            object o = await formatter.ReadFromStreamAsync(tSource, ms, content: null, formatterLogger: null);
             Assert.True(tSource.IsAssignableFrom(o.GetType()));
 
             return o;
         }
 
-        private static MemoryStream Write(object obj, Type tSource, MediaTypeFormatter formatter)
+        private static async Task<MemoryStream> WriteAsync(object obj, Type tSource, MediaTypeFormatter formatter)
         {
             bool f = formatter.CanWriteType(tSource);
             Assert.True(f);
 
             MemoryStream ms = new MemoryStream();
 
-            formatter.WriteToStreamAsync(tSource, obj, ms, content: null, transportContext: null).Wait();
+            await formatter.WriteToStreamAsync(tSource, obj, ms, content: null, transportContext: null);
 
             ms.Position = 0;
             return ms;

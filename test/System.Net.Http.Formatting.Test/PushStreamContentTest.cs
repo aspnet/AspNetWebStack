@@ -45,7 +45,7 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public Task SerializeToStreamAsync_CallsAction()
+        public async Task SerializeToStreamAsync_CallsAction()
         {
             // Arrange
             MemoryStream outputStream = new MemoryStream();
@@ -53,44 +53,35 @@ namespace System.Net.Http
             PushStreamContent content = new PushStreamContent((Action<Stream, HttpContent, TransportContext>)streamAction.Action);
 
             // Act
-            return content.CopyToAsync(outputStream).ContinueWith(
-                copyTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.RanToCompletion, copyTask.Status);
-                    Assert.True(streamAction.WasInvoked);
-                    Assert.Same(content, streamAction.Content);
-                    Assert.IsType<PushStreamContent.CompleteTaskOnCloseStream>(streamAction.OutputStream);
+            await content.CopyToAsync(outputStream);
 
-                    // We don't close the underlying stream
-                    Assert.True(outputStream.CanRead);
-                });
+            // Assert
+            Assert.True(streamAction.WasInvoked);
+            Assert.Same(content, streamAction.Content);
+            Assert.IsType<PushStreamContent.CompleteTaskOnCloseStream>(streamAction.OutputStream);
+
+            // We don't close the underlying stream
+            Assert.True(outputStream.CanRead);
         }
 
         [Fact]
-        public Task SerializeToStreamAsync_CompletesTaskOnActionException()
+        public async Task SerializeToStreamAsync_CompletesTaskOnActionException()
         {
             // Arrange
             MemoryStream outputStream = new MemoryStream();
             MockStreamAction streamAction = new MockStreamAction(throwException: true);
             PushStreamContent content = new PushStreamContent((Action<Stream, HttpContent, TransportContext>)streamAction.Action);
 
-            // Act
-            return content.CopyToAsync(outputStream).ContinueWith(
-                copyTask =>
-                {
-                    // Assert
-                    Assert.Equal(TaskStatus.Faulted, copyTask.Status);
-                    Assert.IsType<ApplicationException>(copyTask.Exception.GetBaseException());
-                    Assert.True(streamAction.WasInvoked);
-                    Assert.IsType<PushStreamContent.CompleteTaskOnCloseStream>(streamAction.OutputStream);
-                    Assert.True(outputStream.CanRead);
-                });
+            // Act & Assert
+            await Assert.ThrowsAsync<ApplicationException>(() => content.CopyToAsync(outputStream));
+            Assert.True(streamAction.WasInvoked);
+            Assert.IsType<PushStreamContent.CompleteTaskOnCloseStream>(streamAction.OutputStream);
+            Assert.True(outputStream.CanRead);
         }
 
 #if NETFX_CORE
         [Fact]
-        public void CompleteTaskOnCloseStream_Dispose_CompletesTaskButDoNotDisposeInnerStream()
+        public async Task CompleteTaskOnCloseStream_Dispose_CompletesTaskButDoNotDisposeInnerStream()
         {
             // Arrange
             Mock<Stream> mockInnerStream = new Mock<Stream>() { CallBase = true };
@@ -103,11 +94,11 @@ namespace System.Net.Http
             // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
-            Assert.True(serializeToStreamTask.Task.Result);
+            Assert.True(await serializeToStreamTask.Task);
         }
 #else
         [Fact]
-        public void CompleteTaskOnCloseStream_Dispose_CompletesTaskButDoNotCloseInnerStream()
+        public async Task CompleteTaskOnCloseStream_Dispose_CompletesTaskButDoNotCloseInnerStream()
         {
             // Arrange
             Mock<Stream> mockInnerStream = new Mock<Stream>() { CallBase = true };
@@ -117,15 +108,15 @@ namespace System.Net.Http
             // Act
             mockStream.Dispose();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
-            Assert.True(serializeToStreamTask.Task.Result);
+            Assert.True(await serializeToStreamTask.Task);
         }
 
         [Fact]
-        public void NonClosingDelegatingStream_Close_CompletesTaskButDoNotCloseInnerStream()
+        public async Task NonClosingDelegatingStream_Close_CompletesTaskButDoNotCloseInnerStream()
         {
             // Arrange
             Mock<Stream> mockInnerStream = new Mock<Stream>() { CallBase = true };
@@ -135,11 +126,11 @@ namespace System.Net.Http
             // Act
             mockStream.Close();
 
-            // Assert 
+            // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
-            Assert.True(serializeToStreamTask.Task.Result);
+            Assert.True(await serializeToStreamTask.Task);
         }
 #endif
 

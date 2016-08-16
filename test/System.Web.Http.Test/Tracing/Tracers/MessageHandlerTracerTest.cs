@@ -14,7 +14,7 @@ namespace System.Web.Http.Tracing.Tracers
     public class MessageHandlerTracerTest
     {
         [Fact]
-        public void SendAsync_Traces_And_Invokes_Inner()
+        public async Task SendAsync_Traces_And_Invokes_Inner()
         {
             // Arrange
             HttpResponseMessage response = new HttpResponseMessage();
@@ -40,7 +40,7 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Act
             Task<HttpResponseMessage> task = method.Invoke(tracer, new object[] { request, CancellationToken.None }) as Task<HttpResponseMessage>;
-            HttpResponseMessage actualResponse = task.Result;
+            HttpResponseMessage actualResponse = await task;
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -85,7 +85,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void SendAsync_Traces_And_Faults_When_Inner_Faults()
+        public async Task SendAsync_Traces_And_Faults_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException("test");
@@ -117,7 +117,7 @@ namespace System.Web.Http.Tracing.Tracers
                 method.Invoke(tracer, new object[] { request, CancellationToken.None }) as Task<HttpResponseMessage>;
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[1].Exception);

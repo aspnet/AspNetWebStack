@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Net.Http.Formatting.Parsers
@@ -415,7 +416,7 @@ namespace System.Net.Http.Formatting.Parsers
 
         [Theory]
         [TestDataSet(typeof(MimeMultipartParserTests), "Boundaries")]
-        public void MimeMultipartParserTestMultipartContent(string boundary)
+        public async Task MimeMultipartParserTestMultipartContent(string boundary)
         {
             MultipartContent content = new MultipartContent("mixed", boundary);
             content.Add(new StringContent("A"));
@@ -423,7 +424,7 @@ namespace System.Net.Http.Formatting.Parsers
             content.Add(new StringContent("C"));
 
             MemoryStream memStream = new MemoryStream();
-            content.CopyToAsync(memStream).Wait();
+            await content.CopyToAsync(memStream);
             memStream.Position = 0;
             byte[] data = memStream.ToArray();
 

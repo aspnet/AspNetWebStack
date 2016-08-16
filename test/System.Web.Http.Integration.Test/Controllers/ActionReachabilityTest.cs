@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Web.Http
@@ -25,10 +26,10 @@ namespace System.Web.Http
         [InlineData("POST", "Users/Approve", HttpStatusCode.NotFound, "")] // NotFound because it doesn't match the route
         [InlineData("DELETE", "Users/Remove", HttpStatusCode.NotFound, "")] // NotFound because it doesn't match the route
         [InlineData("POST", "Users/DefaultActionWithEmptyActionName", HttpStatusCode.NotFound, "")] // NotFound because it doesn't match the route
-        [InlineData("DELETE", "ParameterTest", HttpStatusCode.MethodNotAllowed, "")] // MethodNotAllowed because url is valid, but not for Delete. 
-        [InlineData("Put", "ParameterTest", HttpStatusCode.MethodNotAllowed, "")] // Put requires 'id' and 'value' as parameters, but url is still valid for other verbs (GET, Delete,Post). 
-        [InlineData("Put", "ParameterTest?id=1", HttpStatusCode.MethodNotAllowed, "")] // Put requires 'id' and 'value' as parameters, but url is still valid for other verbs (GET,Post). 
-        public void ActionReachability_UsingResourceOrientedRoute(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
+        [InlineData("DELETE", "ParameterTest", HttpStatusCode.MethodNotAllowed, "")] // MethodNotAllowed because url is valid, but not for Delete.
+        [InlineData("Put", "ParameterTest", HttpStatusCode.MethodNotAllowed, "")] // Put requires 'id' and 'value' as parameters, but url is still valid for other verbs (GET, Delete,Post).
+        [InlineData("Put", "ParameterTest?id=1", HttpStatusCode.MethodNotAllowed, "")] // Put requires 'id' and 'value' as parameters, but url is still valid for other verbs (GET,Post).
+        public async Task ActionReachability_UsingResourceOrientedRoute(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("REST", "{controller}");
@@ -36,12 +37,12 @@ namespace System.Web.Http
             HttpClient client = new HttpClient(server);
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + requestUrl);
 
-            HttpResponseMessage response = client.SendAsync(request).Result;
+            HttpResponseMessage response = await client.SendAsync(request);
 
             Assert.Equal(expectedStatusCode, response.StatusCode);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                Assert.Equal(expectedActionName, response.Content.ReadAsAsync<string>().Result);
+                Assert.Equal(expectedActionName, await response.Content.ReadAsAsync<string>());
             }
         }
 
@@ -71,7 +72,7 @@ namespace System.Web.Http
         [InlineData("DELETE", "ParameterTest/Delete", HttpStatusCode.NotFound, "")] // NotFound because Delete requires 'id' as parameter
         [InlineData("Put", "ParameterTest/put", HttpStatusCode.NotFound, "")] // NotFound because Put requires 'id' and 'value' as parameters
         [InlineData("Put", "ParameterTest/put?id=1", HttpStatusCode.NotFound, "")] // NotFound because Put requires 'id' and 'value' as parameters
-        public void ActionReachability_UsingRpcStyleRoute(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
+        public async Task ActionReachability_UsingRpcStyleRoute(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("RPC", "{controller}/{action}");
@@ -79,12 +80,12 @@ namespace System.Web.Http
             HttpClient client = new HttpClient(server);
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + requestUrl);
 
-            HttpResponseMessage response = client.SendAsync(request).Result;
+            HttpResponseMessage response = await client.SendAsync(request);
 
             Assert.Equal(expectedStatusCode, response.StatusCode);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                Assert.Equal(expectedActionName, response.Content.ReadAsAsync<string>().Result);
+                Assert.Equal(expectedActionName, await response.Content.ReadAsAsync<string>());
             }
         }
 
@@ -109,7 +110,7 @@ namespace System.Web.Http
         [InlineData("GET", "Users/Approve", HttpStatusCode.MethodNotAllowed, "")] // MethodNotAllowed because only POST is allowed by default for action that has no HttpMethd declared or implied
         [InlineData("POST", "Users/Remove", HttpStatusCode.MethodNotAllowed, "")] // MethodNotAllowed because the action has the attribute HttpDelete
         [InlineData("POST", "Users/DefaultActionWithEmptyActionName", HttpStatusCode.NotFound, "")] // NotFound because the ActionName="" and no HttpMethd is declared or implied
-        public void ActionReachability_UsingResourceAndRpcStyleRoutes(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
+        public async Task ActionReachability_UsingResourceAndRpcStyleRoutes(string httpMethod, string requestUrl, HttpStatusCode expectedStatusCode, string expectedActionName)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("Hybrid", "{controller}/{action}", new { action = "" });
@@ -117,12 +118,12 @@ namespace System.Web.Http
             HttpClient client = new HttpClient(server);
             HttpRequestMessage request = new HttpRequestMessage(new HttpMethod(httpMethod), "http://localhost/" + requestUrl);
 
-            HttpResponseMessage response = client.SendAsync(request).Result;
+            HttpResponseMessage response = await client.SendAsync(request);
 
             Assert.Equal(expectedStatusCode, response.StatusCode);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                Assert.Equal(expectedActionName, response.Content.ReadAsAsync<string>().Result);
+                Assert.Equal(expectedActionName, await response.Content.ReadAsAsync<string>());
             }
         }
     }

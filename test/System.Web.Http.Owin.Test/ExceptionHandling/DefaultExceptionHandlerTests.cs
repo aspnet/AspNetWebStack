@@ -1,18 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
 using Microsoft.TestCommon;
-using Moq;
 
 namespace System.Web.Http.Owin.ExceptionHandling
 {
@@ -46,7 +42,7 @@ namespace System.Web.Http.Owin.ExceptionHandling
         }
 
         [Fact]
-        public void HandleAsync_HandlesExceptionViaCreateErrorResponse()
+        public async Task HandleAsync_HandlesExceptionViaCreateErrorResponse()
         {
             IExceptionHandler product = CreateProductUnderTest();
 
@@ -58,11 +54,9 @@ namespace System.Web.Http.Owin.ExceptionHandling
                 CancellationToken cancellationToken = CancellationToken.None;
 
                 // Act
-                Task task = product.HandleAsync(context, cancellationToken);
-                task.WaitUntilCompleted();
+                await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.Equal(TaskStatus.RanToCompletion, task.Status);
                 IHttpActionResult result = context.Result;
                 Assert.IsType(typeof(ResponseMessageResult), result);
                 ResponseMessageResult typedResult = (ResponseMessageResult)result;

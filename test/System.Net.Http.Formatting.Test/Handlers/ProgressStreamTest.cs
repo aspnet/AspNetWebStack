@@ -4,6 +4,7 @@
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Moq;
 
@@ -12,11 +13,11 @@ namespace System.Net.Http.Handlers
     public class ProgressStreamTest
     {
         [Fact]
-        public void Read_ReportsBytesRead()
+        public async Task Read_ReportsBytesRead()
         {
             // Arrange
             HttpResponseMessage response = CreateResponse();
-            Stream innerStream = response.Content.ReadAsStreamAsync().Result;
+            Stream innerStream = await response.Content.ReadAsStreamAsync();
             long? expectedLength = response.Content.Headers.ContentLength;
             MockProgressEventHandler mockProgressEventHandler;
             ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: false);
@@ -41,11 +42,11 @@ namespace System.Net.Http.Handlers
         }
 
         [Fact]
-        public void ReadByte_ReportsBytesRead()
+        public async Task ReadByte_ReportsBytesRead()
         {
             // Arrange
             HttpResponseMessage response = CreateResponse();
-            Stream innerStream = response.Content.ReadAsStreamAsync().Result;
+            Stream innerStream = await response.Content.ReadAsStreamAsync();
             long? expectedLength = response.Content.Headers.ContentLength;
             MockProgressEventHandler mockProgressEventHandler;
             ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: false);
@@ -67,11 +68,11 @@ namespace System.Net.Http.Handlers
 
 #if !NETFX_CORE // BeginX and EndX not supported on Streams in portable libraries
         [Fact]
-        public void BeginEndRead_ReportsBytesRead()
+        public async Task BeginEndRead_ReportsBytesRead()
         {
             // Arrange
             HttpResponseMessage response = CreateResponse();
-            Stream innerStream = response.Content.ReadAsStreamAsync().Result;
+            Stream innerStream = await response.Content.ReadAsStreamAsync();
             long? expectedLength = response.Content.Headers.ContentLength;
             MockProgressEventHandler mockProgressEventHandler;
             ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: false);
@@ -100,11 +101,11 @@ namespace System.Net.Http.Handlers
 #endif
 
         [Fact]
-        public void ReadAsync_ReportsBytesRead()
+        public async Task ReadAsync_ReportsBytesRead()
         {
             // Arrange
             HttpResponseMessage response = CreateResponse();
-            Stream innerStream = response.Content.ReadAsStreamAsync().Result;
+            Stream innerStream = await response.Content.ReadAsStreamAsync();
             long? expectedLength = response.Content.Headers.ContentLength;
             MockProgressEventHandler mockProgressEventHandler;
             ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: false);
@@ -117,7 +118,7 @@ namespace System.Net.Http.Handlers
             do
             {
                 byte[] buffer = new byte[8];
-                bytesRead = progressStream.ReadAsync(buffer, 0, buffer.Length).Result;
+                bytesRead = await progressStream.ReadAsync(buffer, 0, buffer.Length);
                 totalBytesRead += bytesRead;
 
                 Assert.Equal(totalBytesRead, mockProgressEventHandler.EventArgs.BytesTransferred);
@@ -229,7 +230,7 @@ namespace System.Net.Http.Handlers
 #endif
 
         [Fact]
-        public void WriteAsync_ReportsBytesWritten()
+        public async Task WriteAsync_ReportsBytesWritten()
         {
             // Arrange
             ManualResetEvent writeComplete = new ManualResetEvent(false);
@@ -248,7 +249,7 @@ namespace System.Net.Http.Handlers
             while (totalBytesWritten < expectedLength)
             {
                 bytesWritten = Math.Min(8, (int)expectedLength - totalBytesWritten);
-                progressStream.WriteAsync(buffer, totalBytesWritten, bytesWritten).Wait();
+                await progressStream.WriteAsync(buffer, totalBytesWritten, bytesWritten);
 
                 totalBytesWritten += bytesWritten;
 

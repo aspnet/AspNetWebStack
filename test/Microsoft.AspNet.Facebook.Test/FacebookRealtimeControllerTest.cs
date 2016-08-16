@@ -36,7 +36,7 @@ namespace Microsoft.AspNet.Facebook.Test
         [Theory]
         [InlineData("123456", "foo")]
         [InlineData("654321", "bar")]
-        public void Get_ReturnsOk_WithValidParameters(string challenge, string verifyToken)
+        public async Task Get_ReturnsOk_WithValidParameters(string challenge, string verifyToken)
         {
             var userRealTimeController = new UserRealtimeCallbackController(null, verifyToken);
             userRealTimeController.Request = new HttpRequestMessage();
@@ -46,7 +46,7 @@ namespace Microsoft.AspNet.Facebook.Test
                 Mode = "subscribe",
                 Verify_Token = verifyToken
             };
-            Assert.Equal(challenge, userRealTimeController.Get(subscriptionVerification).Content.ReadAsStringAsync().Result);
+            Assert.Equal(challenge, await userRealTimeController.Get(subscriptionVerification).Content.ReadAsStringAsync());
         }
 
         [Theory]
@@ -71,7 +71,7 @@ namespace Microsoft.AspNet.Facebook.Test
         [Theory]
         [InlineData(ContentString, AppSignatureHeader1, AppSecret1)]
         [InlineData(ContentString, AppSignatureHeader2, AppSecret2)]
-        public void Post_ReturnsOk_WithValidParameters(string contentString, string headerValue, string appSecret)
+        public async Task Post_ReturnsOk_WithValidParameters(string contentString, string headerValue, string appSecret)
         {
             var userRealTimeController = new UserRealtimeCallbackController(appSecret, null);
             userRealTimeController.Request = new HttpRequestMessage
@@ -80,7 +80,7 @@ namespace Microsoft.AspNet.Facebook.Test
             };
             var request = userRealTimeController.Request;
             request.Headers.Add("X-Hub-Signature", headerValue);
-            Assert.Equal(HttpStatusCode.OK, userRealTimeController.Post().Result.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await userRealTimeController.Post()).StatusCode);
         }
 
         [Theory]
@@ -88,7 +88,7 @@ namespace Microsoft.AspNet.Facebook.Test
         [InlineData(ContentString, AppSignatureHeader2, AppSecret1)]
         [InlineData(ContentString, null, AppSecret2)]
         [InlineData(ContentString, AppSignatureHeader1, null)]
-        public void Post_ReturnsBadRequest_WithInValidParameters(string contentString, string headerValue, string AppSecret)
+        public async Task Post_ReturnsBadRequest_WithInValidParameters(string contentString, string headerValue, string AppSecret)
         {
             var userRealTimeController = new UserRealtimeCallbackController(AppSecret, null);
             userRealTimeController.Request = new HttpRequestMessage
@@ -100,7 +100,7 @@ namespace Microsoft.AspNet.Facebook.Test
             {
                 request.Headers.Add("X-Hub-Signature", headerValue);
             }
-            Assert.Equal(HttpStatusCode.BadRequest, userRealTimeController.Post().Result.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await userRealTimeController.Post()).StatusCode);
         }
 
         private sealed class UserRealtimeCallbackController : FacebookRealtimeUpdateController

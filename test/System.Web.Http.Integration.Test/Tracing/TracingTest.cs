@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http.Tracing;
 using Microsoft.TestCommon;
 using Moq;
@@ -16,7 +17,7 @@ namespace System.Web.Http.ModelBinding
     /// Verifies ValuesController from standard WebApi project template
     /// behaves the same whether tracing is on or off.  Also verifies
     /// silent and verbose trace writers do not affect the responses.
-    /// 
+    ///
     /// </summary>
     public class TracingTest
     {
@@ -34,7 +35,7 @@ namespace System.Web.Http.ModelBinding
             {
                 return new TheoryDataSet<ITestTraceWriter>
                 {
-                    // Null means tracing is disabled 
+                    // Null means tracing is disabled
                     null,
 
                     // This trace writer enables tracing, and the tracer
@@ -61,7 +62,7 @@ namespace System.Web.Http.ModelBinding
             new ExpectedTraceRecord("System.Web.Http.Controllers",  "ValuesController",               "ExecuteAsync"),
             new ExpectedTraceRecord("System.Web.Http.Action",       "ApiControllerActionSelector",    "SelectAction"),
             new ExpectedTraceRecord("System.Web.Http.Action",       "ApiControllerActionInvoker",     "InvokeActionAsync"),
-            new ExpectedTraceRecord("System.Web.Http.Action",       "ReflectedHttpActionDescriptor",  "ExecuteAsync"),            
+            new ExpectedTraceRecord("System.Web.Http.Action",       "ReflectedHttpActionDescriptor",  "ExecuteAsync"),
             new ExpectedTraceRecord("System.Web.Http.ModelBinding", "HttpActionBinding",              "ExecuteBindingAsync"),
             new ExpectedTraceRecord("System.Web.Http.ModelBinding", "ModelBinderParameterBinding",    "ExecuteBindingAsync"),
             new ExpectedTraceRecord("System.Net.Http.Formatting",   "DefaultContentNegotiator",       "Negotiate"),
@@ -89,7 +90,7 @@ namespace System.Web.Http.ModelBinding
             new ExpectedTraceRecord(TraceKind.End,      "System.Web.Http.ModelBinding", "ModelBinderParameterBinding",    "ExecuteBindingAsync"),
             new ExpectedTraceRecord(TraceKind.End,      "System.Web.Http.ModelBinding", "HttpActionBinding",              "ExecuteBindingAsync"),
             new ExpectedTraceRecord(TraceKind.Begin,    "System.Web.Http.Action",       "ApiControllerActionInvoker",     "InvokeActionAsync"),
-            new ExpectedTraceRecord(TraceKind.Begin,    "System.Web.Http.Action",       "ReflectedHttpActionDescriptor",  "ExecuteAsync"),     
+            new ExpectedTraceRecord(TraceKind.Begin,    "System.Web.Http.Action",       "ReflectedHttpActionDescriptor",  "ExecuteAsync"),
             new ExpectedTraceRecord(TraceKind.End,      "System.Web.Http.Action",       "ReflectedHttpActionDescriptor",  "ExecuteAsync"),
             new ExpectedTraceRecord(TraceKind.Begin,    "System.Net.Http.Formatting",   "DefaultContentNegotiator",       "Negotiate"),
             new ExpectedTraceRecord(TraceKind.Begin,    "System.Net.Http.Formatting",   "JsonMediaTypeFormatter",         "GetPerRequestFormatterInstance"),
@@ -105,7 +106,7 @@ namespace System.Web.Http.ModelBinding
 
         [Theory]
         [PropertyData("TestTraceWriters")]
-        public void ValuesController_Behavior_Unchanged_By_Tracing(ITestTraceWriter traceWriter)
+        public async Task ValuesController_Behavior_Unchanged_By_Tracing(ITestTraceWriter traceWriter)
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
@@ -132,10 +133,10 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Get()
                     string uri = _baseAddress + "/api/Values";
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    HttpResponseMessage response = client.SendAsync(request).Result;
+                    HttpResponseMessage response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     string[] expectedGetResponse = valuesController.Get().ToArray();
-                    string[] actualGetResponse = response.Content.ReadAsAsync<string[]>().Result;
+                    string[] actualGetResponse = await response.Content.ReadAsAsync<string[]>();
                     Assert.Equal(expectedGetResponse, actualGetResponse);
                     if (traceWriter != null)
                     {
@@ -147,10 +148,10 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Get(id) using query string
                     uri = _baseAddress + "/api/Values?id=5";
                     request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     string expectedGetQueryStringResponse = valuesController.Get(5);
-                    string actualGetQueryStringResponse = response.Content.ReadAsAsync<string>().Result;
+                    string actualGetQueryStringResponse = await response.Content.ReadAsAsync<string>();
                     Assert.Equal(expectedGetQueryStringResponse, actualGetQueryStringResponse);
                     if (traceWriter != null)
                     {
@@ -162,10 +163,10 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Get(id) using route
                     uri = _baseAddress + "/api/Values/5";
                     request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     string expectedGetRouteResponse = valuesController.Get(5);
-                    string actualGetRouteResponse = response.Content.ReadAsAsync<string>().Result;
+                    string actualGetRouteResponse = await response.Content.ReadAsAsync<string>();
                     Assert.Equal(expectedGetQueryStringResponse, actualGetRouteResponse);
                     if (traceWriter != null)
                     {
@@ -177,7 +178,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Get(id) using query string that causes model binding error
                     uri = _baseAddress + "/api/Values?id=x";
                     request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -189,7 +190,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Post(value) with no parameters
                     uri = _baseAddress + "/api/Values";
                     request = new HttpRequestMessage(HttpMethod.Post, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -201,7 +202,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Post(value) using query string
                     uri = _baseAddress + "/api/Values?value=hello";
                     request = new HttpRequestMessage(HttpMethod.Post, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -213,7 +214,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Put(id, value) using query strings
                     uri = _baseAddress + "/api/Values?id=5&value=hello";
                     request = new HttpRequestMessage(HttpMethod.Put, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -225,7 +226,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Put(id, value) using route + query string
                     uri = _baseAddress + "/api/Values/5?value=hello";
                     request = new HttpRequestMessage(HttpMethod.Put, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -237,7 +238,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Delete(id) using query string
                     uri = _baseAddress + "/api/Values?id=5";
                     request = new HttpRequestMessage(HttpMethod.Delete, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -249,7 +250,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValuesController.Delete(id) using route
                     uri = _baseAddress + "/api/Values/5";
                     request = new HttpRequestMessage(HttpMethod.Delete, uri);
-                    response = client.SendAsync(request).Result;
+                    response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
                     if (traceWriter != null)
                     {
@@ -261,7 +262,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ValuesController_Get_Id_Writes_Expected_Traces()
+        public async Task ValuesController_Get_Id_Writes_Expected_Traces()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
@@ -279,7 +280,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValueController.Get(id) using query string
                     string uri = _baseAddress + "/api/Values?id=5";
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    HttpResponseMessage response = client.SendAsync(request).Result;
+                    HttpResponseMessage response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     traceWriter.Finish();
 
@@ -297,7 +298,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ValuesController_Get_Id_Writes_Expected_Traces_InTheCorrectOrder()
+        public async Task ValuesController_Get_Id_Writes_Expected_Traces_InTheCorrectOrder()
         {
             HttpConfiguration config = new HttpConfiguration();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
@@ -315,7 +316,7 @@ namespace System.Web.Http.ModelBinding
                     // Calls ValueController.Get(id) using query string
                     string uri = _baseAddress + "/api/Values?id=5";
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-                    HttpResponseMessage response = client.SendAsync(request).Result;
+                    HttpResponseMessage response = await client.SendAsync(request);
                     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                     traceWriter.Finish();
 
@@ -325,8 +326,8 @@ namespace System.Web.Http.ModelBinding
         }
         // Returns a list of strings describing all of the expected trace records that were not
         // actually traced.
-        // If you experience test failures from this list, it means someone stopped tracing or 
-        // changed the content of what was traced.  
+        // If you experience test failures from this list, it means someone stopped tracing or
+        // changed the content of what was traced.
         // Update the ExpectedTraceRecords property to reflect what is expected.
         private static IList<string> MissingTraces(IList<ExpectedTraceRecord> expectedRecords, IList<TraceRecord> actualRecords)
         {
@@ -366,7 +367,7 @@ namespace System.Web.Http.ModelBinding
 
         // Returns a list of strings of trace records we did not expect.
         // If you experience failures from this list, it means someone added new traces
-        // or changed the contents of the traces.  
+        // or changed the contents of the traces.
         // Update the ExpectedTraceRecords property to reflect what is expected.
         private static IList<string> UnexpectedTraces(IList<ExpectedTraceRecord> expectedRecords, IList<TraceRecord> actualRecords)
         {
@@ -399,7 +400,7 @@ namespace System.Web.Http.ModelBinding
                     String.Equals(r.Category, expectedRecord.Category, StringComparison.OrdinalIgnoreCase) &&
                     String.Equals(r.Operator, expectedRecord.OperatorName, StringComparison.OrdinalIgnoreCase) &&
                     String.Equals(r.Operation, expectedRecord.OperationName, StringComparison.OrdinalIgnoreCase) &&
-                    object.Equals(r.Kind, expectedRecord.TraceKind) 
+                    object.Equals(r.Kind, expectedRecord.TraceKind)
                     );
 
                 if (!object.ReferenceEquals(beginTrace, actualRecords.ElementAt(traceBeginPos)))

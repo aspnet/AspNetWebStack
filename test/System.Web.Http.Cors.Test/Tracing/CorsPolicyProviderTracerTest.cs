@@ -14,7 +14,7 @@ namespace System.Web.Http.Cors.Tracing
     public class CorsPolicyProviderTracerTest
     {
         [Fact]
-        public void GetCorsPolicyAsync_CallsInner()
+        public async Task GetCorsPolicyAsync_CallsInner()
         {
             bool innerIsCalled = false;
             Mock<ITraceWriter> traceWriterMock = new Mock<ITraceWriter>();
@@ -28,13 +28,13 @@ namespace System.Web.Http.Cors.Tracing
                 });
             CorsPolicyProviderTracer tracer = new CorsPolicyProviderTracer(policyProviderMock.Object, traceWriterMock.Object);
 
-            tracer.GetCorsPolicyAsync(new HttpRequestMessage(), CancellationToken.None).Wait();
+            await tracer.GetCorsPolicyAsync(new HttpRequestMessage(), CancellationToken.None);
 
             Assert.True(innerIsCalled);
         }
 
         [Fact]
-        public void GetCorsPolicyAsync_EmitTraces()
+        public async Task GetCorsPolicyAsync_EmitTraces()
         {
             TraceRecord beginTrace = null;
             TraceRecord endTrace = null;
@@ -59,7 +59,7 @@ namespace System.Web.Http.Cors.Tracing
             requestMessage.Method = HttpMethod.Get;
             requestMessage.Headers.Add(CorsConstants.Origin, "http://example.com");
 
-            tracer.GetCorsPolicyAsync(requestMessage, CancellationToken.None).Wait();
+            await tracer.GetCorsPolicyAsync(requestMessage, CancellationToken.None);
 
             Assert.NotNull(beginTrace);
             Assert.Equal(TraceCategories.CorsCategory, beginTrace.Category);

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
 namespace System.Net.Http
@@ -52,7 +53,7 @@ namespace System.Net.Http
 
         [Theory]
         [PropertyData("MultipartRelatedWithStartParameter")]
-        public void RootContent_ReturnsNullIfContentIDIsNotMatched(string mediaType, bool hasStartParameter)
+        public async Task RootContent_ReturnsNullIfContentIDIsNotMatched(string mediaType, bool hasStartParameter)
         {
             // Arrange
             MultipartContent content = new MultipartContent("related", Boundary);
@@ -65,7 +66,7 @@ namespace System.Net.Http
             expectedRootContent.Headers.Add("Content-ID", "NoMatch");
             content.Add(expectedRootContent);
 
-            MultipartRelatedStreamProvider provider = content.ReadAsMultipartAsync(new MultipartRelatedStreamProvider()).Result;
+            MultipartRelatedStreamProvider provider = await content.ReadAsMultipartAsync(new MultipartRelatedStreamProvider());
 
             // Act
             HttpContent actualRootContent = provider.RootContent;
@@ -77,7 +78,7 @@ namespace System.Net.Http
         [Theory]
         [PropertyData("MultipartRelatedWithStartParameter")]
         [PropertyData("MultipartWithMissingOrInvalidStartParameter")]
-        public void RootContent_PicksContent(string mediaType, bool hasStartParameter)
+        public async Task RootContent_PicksContent(string mediaType, bool hasStartParameter)
         {
             // Arrange
             MultipartContent content = new MultipartContent("related", Boundary);
@@ -90,11 +91,11 @@ namespace System.Net.Http
             contentIDContent.Headers.Add("Content-ID", ContentID);
             content.Add(contentIDContent);
 
-            MultipartRelatedStreamProvider provider = content.ReadAsMultipartAsync(new MultipartRelatedStreamProvider()).Result;
+            MultipartRelatedStreamProvider provider = await content.ReadAsMultipartAsync(new MultipartRelatedStreamProvider());
 
             // Act
             HttpContent actualRootContent = provider.RootContent;
-            string result = actualRootContent.ReadAsStringAsync().Result;
+            string result = await actualRootContent.ReadAsStringAsync();
 
             // Assert
             if (hasStartParameter)

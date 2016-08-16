@@ -14,7 +14,7 @@ namespace System.Web.Http.Controllers
     public class AuthenticationFilterResultTests
     {
         [Fact]
-        public void ExecuteAsync_DelegatesToInnerResult_WhenFiltersIsEmpty()
+        public async Task ExecuteAsync_DelegatesToInnerResult_WhenFiltersIsEmpty()
         {
             // Arrange
             using (HttpResponseMessage expectedResponse = CreateResponse())
@@ -34,11 +34,9 @@ namespace System.Web.Http.Controllers
                 CancellationToken expectedCancellationToken = CreateCancellationToken();
 
                 // Act
-                Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+                HttpResponseMessage response = await product.ExecuteAsync(expectedCancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                HttpResponseMessage response = task.Result;
                 Assert.Equal(1, calls);
                 Assert.Equal(expectedCancellationToken, cancellationToken);
                 Assert.Same(expectedResponse, response);
@@ -46,7 +44,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_CallsRequestContextPrincipalGet()
+        public async Task ExecuteAsync_CallsRequestContextPrincipalGet()
         {
             // Arrange
             HttpActionContext context = CreateContext();
@@ -65,16 +63,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(context, controller, filters, innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+            HttpResponseMessage response = await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(1, calls);
         }
 
         [Fact]
-        public void ExecuteAsync_CallsFilterAuthenticateAsync()
+        public async Task ExecuteAsync_CallsFilterAuthenticateAsync()
         {
             // Arrange
             HttpActionContext expectedActionContext = CreateContext();
@@ -100,11 +96,9 @@ namespace System.Web.Http.Controllers
                 innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+            await product.ExecuteAsync(expectedCancellationToken);
 
             // Assert
-            HttpResponseMessage ignore = task.Result;
-
             Assert.Equal(1, calls);
             Assert.NotNull(authenticationContext);
             HttpActionContext actionContext = authenticationContext.ActionContext;
@@ -115,7 +109,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_DelegatesToErrorResult_WhenFilterReturnsFailure()
+        public async Task ExecuteAsync_DelegatesToErrorResult_WhenFilterReturnsFailure()
         {
             // Arrange
             using (HttpResponseMessage expectedResponse = CreateResponse())
@@ -140,11 +134,9 @@ namespace System.Web.Http.Controllers
                 CancellationToken expectedCancellationToken = CreateCancellationToken();
 
                 // Act
-                Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+                HttpResponseMessage response = await product.ExecuteAsync(expectedCancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                HttpResponseMessage response = task.Result;
                 Assert.Equal(1, calls);
                 Assert.Equal(expectedCancellationToken, cancellationToken);
                 Assert.Same(expectedResponse, response);
@@ -152,7 +144,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_DoesNotCallSecondFilterAuthenticateOrInnerResult_WhenFirstFilterReturnsFailure()
+        public async Task ExecuteAsync_DoesNotCallSecondFilterAuthenticateOrInnerResult_WhenFirstFilterReturnsFailure()
         {
             // Arrange
             using (HttpResponseMessage expectedResponse = CreateResponse())
@@ -175,17 +167,15 @@ namespace System.Web.Http.Controllers
                 CancellationToken expectedCancellationToken = CreateCancellationToken();
 
                 // Act
-                Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+                await product.ExecuteAsync(expectedCancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                HttpResponseMessage response = task.Result;
                 Assert.Equal(0, calls);
             }
         }
 
         [Fact]
-        public void ExecuteAsync_UpdatesRequestContextPrincipal_WhenFilterReturnsSuccess()
+        public async Task ExecuteAsync_UpdatesRequestContextPrincipal_WhenFilterReturnsSuccess()
         {
             // Arrange
             HttpActionContext context = CreateContext();
@@ -206,16 +196,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(context, controller, filters, innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+            await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Same(expectedPrincipal, principal);
         }
 
         [Fact]
-        public void ExecuteAsync_PassesPrincipalFromFirstFilterSuccessToSecondFilter()
+        public async Task ExecuteAsync_PassesPrincipalFromFirstFilterSuccessToSecondFilter()
         {
             // Arrange
             HttpActionContext context = CreateContext();
@@ -239,16 +227,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(context, controller, filters, innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+            await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Same(expectedPrincipal, principal);
         }
 
         [Fact]
-        public void ExecuteAsync_OnlySetsPrincipalOnce_WhenMultipleFiltersReturnSuccess()
+        public async Task ExecuteAsync_OnlySetsPrincipalOnce_WhenMultipleFiltersReturnSuccess()
         {
             // Arrange
             HttpActionContext context = CreateContext();
@@ -270,16 +256,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(context, controller, filters, innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+            await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(1, calls);
         }
 
         [Fact]
-        public void ExecuteAsync_DoesNotSetPrincipal_WhenNoFilterReturnsSuccess()
+        public async Task ExecuteAsync_DoesNotSetPrincipal_WhenNoFilterReturnsSuccess()
         {
             // Arrange
             HttpActionContext context = CreateContext();
@@ -298,16 +282,14 @@ namespace System.Web.Http.Controllers
             IHttpActionResult product = CreateProductUnderTest(context, controller, filters, innerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(CancellationToken.None);
+            await product.ExecuteAsync(CancellationToken.None);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(0, calls);
         }
 
         [Fact]
-        public void ExecuteAsync_CallsFilterChallengeAsync_WithInnerResult_WhenNoFilterReturnsFailure()
+        public async Task ExecuteAsync_CallsFilterChallengeAsync_WithInnerResult_WhenNoFilterReturnsFailure()
         {
             // Arrange
             HttpActionContext expectedContext = CreateContext();
@@ -331,11 +313,9 @@ namespace System.Web.Http.Controllers
                 expectedInnerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+            await product.ExecuteAsync(expectedCancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(1, calls);
             Assert.Same(expectedContext, context);
             Assert.Same(expectedInnerResult, innerResult);
@@ -343,7 +323,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_CallsFilterChallengeAsync_WithErrorResult_WhenFilterReturnsFailure()
+        public async Task ExecuteAsync_CallsFilterChallengeAsync_WithErrorResult_WhenFilterReturnsFailure()
         {
             // Arrange
             HttpActionContext expectedContext = CreateContext();
@@ -375,11 +355,9 @@ namespace System.Web.Http.Controllers
                 originalInnerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+            await product.ExecuteAsync(expectedCancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(1, calls);
             Assert.Same(expectedContext, context);
             Assert.Same(expectedErrorResult, innerResult);
@@ -387,7 +365,7 @@ namespace System.Web.Http.Controllers
         }
 
         [Fact]
-        public void ExecuteAsync_CallsSecondFilterChallengeAsync_WithFirstChallengeResult()
+        public async Task ExecuteAsync_CallsSecondFilterChallengeAsync_WithFirstChallengeResult()
         {
             // Arrange
             HttpActionContext expectedContext = CreateContext();
@@ -418,11 +396,9 @@ namespace System.Web.Http.Controllers
                 originalInnerResult);
 
             // Act
-            Task<HttpResponseMessage> task = product.ExecuteAsync(expectedCancellationToken);
+            await product.ExecuteAsync(expectedCancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            HttpResponseMessage response = task.Result;
             Assert.Equal(1, calls);
             Assert.Same(expectedContext, context);
             Assert.Same(expectedInnerResult, result);

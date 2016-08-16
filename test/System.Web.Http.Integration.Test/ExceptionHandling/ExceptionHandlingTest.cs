@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http.Properties;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
@@ -15,18 +16,19 @@ namespace System.Web.Http
         [InlineData("Unavailable")]
         [InlineData("AsyncUnavailable")]
         [InlineData("AsyncUnavailableDelegate")]
-        public void ThrowingHttpResponseException_FromAction_GetsReturnedToClient(string actionName)
+        public async Task ThrowingHttpResponseException_FromAction_GetsReturnedToClient(string actionName)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
                 (response) =>
                 {
                     Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+                    return Task.FromResult(0);
                 }
             );
         }
@@ -34,19 +36,19 @@ namespace System.Web.Http
         [Theory]
         [InlineData("ArgumentNull")]
         [InlineData("AsyncArgumentNull")]
-        public void ThrowingArgumentNullException_FromAction_GetsReturnedToClient(string actionName)
+        public async Task ThrowingArgumentNullException_FromAction_GetsReturnedToClient(string actionName)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                    HttpError exception = response.Content.ReadAsAsync<HttpError>().Result;
+                    HttpError exception = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Equal(typeof(ArgumentNullException).FullName, exception["ExceptionType"].ToString());
                 }
             );
@@ -55,19 +57,19 @@ namespace System.Web.Http
         [Theory]
         [InlineData("ArgumentNull")]
         [InlineData("AsyncArgumentNull")]
-        public void ThrowingArgumentNullException_FromAction_GetsReturnedToClientParsedAsJson(string actionName)
+        public async Task ThrowingArgumentNullException_FromAction_GetsReturnedToClientParsedAsJson(string actionName)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                    dynamic json = JToken.Parse(response.Content.ReadAsStringAsync().Result);
+                    dynamic json = JToken.Parse(await response.Content.ReadAsStringAsync());
                     string result = json.ExceptionType;
                     Assert.Equal(typeof(ArgumentNullException).FullName, result);
                 }
@@ -82,19 +84,19 @@ namespace System.Web.Http
         [InlineData("AuthorizationFilter")]
         [InlineData("ActionFilter")]
         [InlineData("ExceptionFilter")]
-        public void ThrowingArgumentException_FromFilter_GetsReturnedToClient(string actionName)
+        public async Task ThrowingArgumentException_FromFilter_GetsReturnedToClient(string actionName)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                    HttpError exception = response.Content.ReadAsAsync<HttpError>().Result;
+                    HttpError exception = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Equal(typeof(ArgumentException).FullName, exception["ExceptionType"].ToString());
                 }
             );
@@ -108,21 +110,21 @@ namespace System.Web.Http
         [InlineData("AuthorizationFilter", HttpStatusCode.Forbidden)]
         [InlineData("ActionFilter", HttpStatusCode.NotAcceptable)]
         [InlineData("ExceptionFilter", HttpStatusCode.NotImplemented)]
-        public void ThrowingHttpResponseException_FromFilter_GetsReturnedToClient(string actionName, HttpStatusCode responseExceptionStatusCode)
+        public async Task ThrowingHttpResponseException_FromFilter_GetsReturnedToClient(string actionName, HttpStatusCode responseExceptionStatusCode)
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
             request.Headers.Add(ExceptionController.ResponseExceptionHeaderKey, responseExceptionStatusCode.ToString());
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 request,
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(responseExceptionStatusCode, response.StatusCode);
-                    Assert.Equal("HttpResponseExceptionMessage", response.Content.ReadAsAsync<string>().Result);
+                    Assert.Equal("HttpResponseExceptionMessage", await response.Content.ReadAsAsync<string>());
                 }
             );
         }
@@ -130,127 +132,132 @@ namespace System.Web.Http
         // TODO: add tests that throws from custom model binders
 
         [Fact]
-        public void Service_ReturnsNotFound_WhenControllerNameDoesNotExist()
+        public async Task Service_ReturnsNotFound_WhenControllerNameDoesNotExist()
         {
             string controllerName = "randomControllerThatCannotBeFound";
             string requestUrl = String.Format("{0}/{1}", ScenarioHelper.BaseAddress, controllerName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                    var result = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Equal(
                         String.Format(SRResources.DefaultControllerFactory_ControllerNameNotFound, controllerName),
-                        response.Content.ReadAsAsync<HttpError>().Result["MessageDetail"]);
+                        result["MessageDetail"]);
                 }
             );
         }
 
         [Fact]
-        public void Service_ReturnsNotFound_WhenActionNameDoesNotExist()
+        public async Task Service_ReturnsNotFound_WhenActionNameDoesNotExist()
         {
             string controllerName = "Exception";
             string actionName = "actionNotFound";
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                    var result = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Equal(
                         String.Format(SRResources.ApiControllerActionSelector_ActionNameNotFound, controllerName, actionName),
-                        response.Content.ReadAsAsync<HttpError>().Result["MessageDetail"]);
+                        result["MessageDetail"]);
                 }
             );
         }
 
         [Fact]
-        public void Service_ReturnsMethodNotAllowed_WhenActionsDoesNotSupportTheRequestHttpMethod()
+        public async Task Service_ReturnsMethodNotAllowed_WhenActionsDoesNotSupportTheRequestHttpMethod()
         {
             string controllerName = "Exception";
             string actionName = "GetString";
             HttpMethod requestMethod = HttpMethod.Post;
             string requestUrl = String.Format("{0}/{1}/{2}", ScenarioHelper.BaseAddress, controllerName, actionName);
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "/{action}",
                 new HttpRequestMessage(requestMethod, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+                    var result = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Equal(
                         String.Format(SRResources.ApiControllerActionSelector_HttpMethodNotSupported, requestMethod.Method),
-                        response.Content.ReadAsAsync<HttpError>().Result.Message);
+                        result.Message);
                 }
             );
         }
 
         [Fact]
-        public void Service_ReturnsInternalServerError_WhenMultipleActionsAreFound()
+        public async Task Service_ReturnsInternalServerError_WhenMultipleActionsAreFound()
         {
             string controllerName = "Exception";
             string requestUrl = String.Format("{0}/{1}", ScenarioHelper.BaseAddress, controllerName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+                    var result = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Contains(
                         String.Format(SRResources.ApiControllerActionSelector_AmbiguousMatch, String.Empty),
-                        response.Content.ReadAsAsync<HttpError>().Result["ExceptionMessage"] as string);
+                        result["ExceptionMessage"] as string);
                 }
             );
         }
 
         [Fact]
-        public void Service_ReturnsInternalServerError_WhenMultipleControllersAreFound()
+        public async Task Service_ReturnsInternalServerError_WhenMultipleControllersAreFound()
         {
             string controllerName = "Duplicate";
             string requestUrl = String.Format("{0}/{1}", ScenarioHelper.BaseAddress, controllerName);
 
-            ScenarioHelper.RunTest(
+            await ScenarioHelper.RunTestAsync(
                 controllerName,
                 "",
                 new HttpRequestMessage(HttpMethod.Post, requestUrl),
-                (response) =>
+                async (response) =>
                 {
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+                    var result = await response.Content.ReadAsAsync<HttpError>();
                     Assert.Contains(
                         String.Format(SRResources.DefaultControllerFactory_ControllerNameAmbiguous_WithRouteTemplate, controllerName, "{controller}", String.Empty, Environment.NewLine),
-                        response.Content.ReadAsAsync<HttpError>().Result["ExceptionMessage"] as string);
+                        result["ExceptionMessage"] as string);
                 }
             );
         }
 
         [Fact]
-        public void GenericMethod_Throws_InvalidOperationException()
+        public async Task GenericMethod_Throws_InvalidOperationException()
         {
             HttpConfiguration config = new HttpConfiguration() { IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always };
             config.Routes.MapHttpRoute("Default", "Exception/{action}", new { controller = "Exception" });
             HttpServer server = new HttpServer(config);
             HttpClient client = new HttpClient(server);
 
-            // Ensure that the behavior is repeatable and other action is still callable after the error 
+            // Ensure that the behavior is repeatable and other action is still callable after the error
             for (int i = 0; i < 10; i++)
             {
                 // Make sure other action can be called
-                HttpResponseMessage response = client.GetAsync("http://localhost/Exception/GetString").Result;
+                HttpResponseMessage response = await client.GetAsync("http://localhost/Exception/GetString");
                 Assert.True(response.IsSuccessStatusCode,
-                    String.Format("Successful status code was expected but got '{0}' instead. Error: {1}", response.StatusCode, response.Content.ReadAsStringAsync().Result));
+                    String.Format("Successful status code was expected but got '{0}' instead. Error: {1}", response.StatusCode, await response.Content.ReadAsStringAsync()));
 
                 // Make a request to generic method and verify the exception
-                response = client.PostAsync("http://localhost/Exception/GenericAction", null).Result;
+                response = await client.PostAsync("http://localhost/Exception/GenericAction", null);
                 Type controllerType = typeof(ExceptionController);
-                HttpError exception = response.Content.ReadAsAsync<HttpError>().Result;
+                HttpError exception = await response.Content.ReadAsAsync<HttpError>();
                 Assert.Equal(typeof(InvalidOperationException).FullName, exception["ExceptionType"]);
                 Assert.Equal(
                     String.Format(

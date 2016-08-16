@@ -63,7 +63,7 @@ namespace System.Web.Http.ModelBinding
         }
 
         [Fact]
-        public void ExecuteBindingAsync_PassesCancellationTokenTo_ReadContentAsync()
+        public async Task ExecuteBindingAsync_PassesCancellationTokenTo_ReadContentAsync()
         {
             // Arrange
             var parameter = new Mock<HttpParameterDescriptor>();
@@ -83,14 +83,14 @@ namespace System.Web.Http.ModelBinding
                 .Verifiable();
 
             // Act
-            binding.Object.ExecuteBindingAsync(metadataProvider, actionContext, cts.Token).Wait();
+            await binding.Object.ExecuteBindingAsync(metadataProvider, actionContext, cts.Token);
 
             // Assert
             binding.Verify();
         }
 
         [Fact]
-        public void ReadContentAsync_PassesCancellationToken_Further()
+        public async Task ReadContentAsync_PassesCancellationToken_Further()
         {
             // Arrange
             var parameter = new Mock<HttpParameterDescriptor>();
@@ -113,7 +113,7 @@ namespace System.Web.Http.ModelBinding
             FormatterParameterBinding binding = new FormatterParameterBinding(parameter.Object, formatters, validator);
 
             // Act
-            binding.ReadContentAsync(request, typeof(int), formatters, logger, cts.Token).Wait();
+            await binding.ReadContentAsync(request, typeof(int), formatters, logger, cts.Token);
 
             // Assert
             formatter.Verify();

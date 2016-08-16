@@ -83,7 +83,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void UseWebApi_UsesAdapterAndConfigServices()
+        public async Task UseWebApi_UsesAdapterAndConfigServices()
         {
             using (CancellationTokenSource tokenSource = CreateCancellationTokenSource())
             {
@@ -122,8 +122,8 @@ namespace System.Web.Http.Owin
 
                 Assert.Equal(appBuilder.Object, returnedAppBuilder);
                 appBuilder.Verify();
-                AssertDelegatesTo(loggerMock, exceptionLogger);
-                AssertDelegatesTo(handlerMock, exceptionHandler);
+                await AssertDelegatesToAsync(loggerMock, exceptionLogger);
+                await AssertDelegatesToAsync(handlerMock, exceptionHandler);
             }
         }
 
@@ -149,7 +149,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public void UseWebApiWithHttpServer_UsesAdapterAndConfigServices()
+        public async Task UseWebApiWithHttpServer_UsesAdapterAndConfigServices()
         {
             // Arrange
             using (CancellationTokenSource tokenSource = CreateCancellationTokenSource())
@@ -192,8 +192,8 @@ namespace System.Web.Http.Owin
                 // Assert
                 Assert.Equal(appBuilderMock.Object, returnedAppBuilder);
                 appBuilderMock.Verify();
-                AssertDelegatesTo(loggerMock, exceptionLogger);
-                AssertDelegatesTo(handlerMock, exceptionHandler);
+                await AssertDelegatesToAsync(loggerMock, exceptionLogger);
+                await AssertDelegatesToAsync(handlerMock, exceptionHandler);
             }
         }
 
@@ -258,7 +258,7 @@ namespace System.Web.Http.Owin
             Assert.Equal(CancellationToken.None, onAppDisposing);
         }
 
-        private static void AssertDelegatesTo(Mock<IExceptionHandler> expected, IExceptionHandler actual)
+        private static async Task AssertDelegatesToAsync(Mock<IExceptionHandler> expected, IExceptionHandler actual)
         {
             Assert.NotNull(actual);
 
@@ -269,16 +269,12 @@ namespace System.Web.Http.Owin
                 .Setup((l) => l.HandleAsync(It.IsAny<ExceptionHandlerContext>(), It.IsAny<CancellationToken>()))
                 .Returns(CreateCanceledTask());
 
-            Task task = actual.HandleAsync(context, cancellationToken);
-
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.Canceled, task.Status);
+            await Assert.ThrowsAsync<TaskCanceledException>(() => actual.HandleAsync(context, cancellationToken));
 
             expected.Verify((l) => l.HandleAsync(context, cancellationToken), Times.Once());
         }
 
-        private static void AssertDelegatesTo(Mock<IExceptionLogger> expected, IExceptionLogger actual)
+        private static async Task AssertDelegatesToAsync(Mock<IExceptionLogger> expected, IExceptionLogger actual)
         {
             Assert.NotNull(actual);
 
@@ -289,11 +285,7 @@ namespace System.Web.Http.Owin
                 .Setup((l) => l.LogAsync(It.IsAny<ExceptionLoggerContext>(), It.IsAny<CancellationToken>()))
                 .Returns(CreateCanceledTask());
 
-            Task task = actual.LogAsync(context, cancellationToken);
-
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.Canceled, task.Status);
+            await Assert.ThrowsAsync<TaskCanceledException>(() => actual.LogAsync(context, cancellationToken));
 
             expected.Verify((l) => l.LogAsync(context, cancellationToken), Times.Once());
         }

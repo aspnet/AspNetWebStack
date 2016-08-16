@@ -57,8 +57,7 @@ namespace System.Web.Http.ExceptionHandling
         public void HandleAsync_IfShouldHandleReturnsFalse_ReturnsCompletedTask()
         {
             // Arrange
-            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler>(MockBehavior.Strict);
-            Task expectedTask = CreateCompletedTask();
+            Mock<ExceptionHandler> mock = new Mock<ExceptionHandler> { CallBase = true };
             mock.Setup(h => h.ShouldHandle(It.IsAny<ExceptionHandlerContext>())).Returns(false);
 
             IExceptionHandler product = mock.Object;
@@ -79,7 +78,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void HandleAsyncCore_DelegatesToHandleCore_AndReturnsCompletedTask()
+        public async Task HandleAsyncCore_DelegatesToHandleCore_AndReturnsCompletedTask()
         {
             // Arrange
             Mock<ExceptionHandler> mock = new Mock<ExceptionHandler>();
@@ -90,13 +89,9 @@ namespace System.Web.Http.ExceptionHandling
             CancellationToken cancellationToken = CancellationToken.None;
 
             // Act
-            Task task = product.HandleAsync(expectedContext, cancellationToken);
+            await product.HandleAsync(expectedContext, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-
             mock.Verify(h => h.Handle(expectedContext), Times.Once());
         }
 

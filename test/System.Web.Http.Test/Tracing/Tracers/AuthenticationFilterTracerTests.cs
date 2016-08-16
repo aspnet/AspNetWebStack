@@ -30,7 +30,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void AuthenticateAsync_DelegatesToInnerFilter()
+        public async Task AuthenticateAsync_DelegatesToInnerFilter()
         {
             // Arrange
             HttpAuthenticationContext expectedAuthenticationContext = CreateAuthenticationContext();
@@ -44,11 +44,9 @@ namespace System.Web.Http.Tracing.Tracers
             IAuthenticationFilter product = CreateProductUnderTest(filter, tracer);
 
             // Act
-            Task task = product.AuthenticateAsync(expectedAuthenticationContext, expectedCancellationToken);
+            await product.AuthenticateAsync(expectedAuthenticationContext, expectedCancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.Wait();
             Assert.Equal(1, calls);
         }
 
@@ -58,7 +56,7 @@ namespace System.Web.Http.Tracing.Tracers
                         + "to a known identity. Identity.Name='User'. "
                         + "Identity.AuthenticationType='Basic'.")]
         [InlineData(false, "The authentication filter set a principal to an unknown identity.")]
-        public void AuthenticateAsync_Traces(bool withIdentity, string expectedMessage)
+        public async Task AuthenticateAsync_Traces(bool withIdentity, string expectedMessage)
         {
             // Arrange
             CancellationToken cancellationToken = CreateCancellationToken();
@@ -79,11 +77,9 @@ namespace System.Web.Http.Tracing.Tracers
                                                                                               isPrincipalSet: false);
 
                 // Act
-                Task task = product.AuthenticateAsync(authenticationContext, cancellationToken);
+                await product.AuthenticateAsync(authenticationContext, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.Wait();
                 Assert.NotNull(record);
                 Assert.Same(expectedRequest, record.Request);
                 Assert.Same(TraceCategories.FiltersCategory, record.Category);
@@ -98,7 +94,7 @@ namespace System.Web.Http.Tracing.Tracers
 
         [Fact]
         [ReplaceCulture]
-        public void AuthenticateAsync_Traces_ErrorResult()
+        public async Task AuthenticateAsync_Traces_ErrorResult()
         {
             // Arrange
             IHttpActionResult result = new AuthenticationFailureResult();
@@ -120,11 +116,9 @@ namespace System.Web.Http.Tracing.Tracers
                 HttpAuthenticationContext authenticationContext = CreateAuthenticationContext(expectedRequest);
 
                 // Act
-                Task task = product.AuthenticateAsync(authenticationContext, cancellationToken);
+                await product.AuthenticateAsync(authenticationContext, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.Wait();
                 Assert.NotNull(record);
                 Assert.Same(expectedRequest, record.Request);
                 Assert.Same(TraceCategories.FiltersCategory, record.Category);
@@ -139,7 +133,7 @@ namespace System.Web.Http.Tracing.Tracers
 
         [Fact]
         [ReplaceCulture]
-        public void AuthenticateAsync_Traces_DidNothing()
+        public async Task AuthenticateAsync_Traces_DidNothing()
         {
             // Arrange
             CancellationToken cancellationToken = CreateCancellationToken();
@@ -154,11 +148,9 @@ namespace System.Web.Http.Tracing.Tracers
                 HttpAuthenticationContext authenticationContext = CreateAuthenticationContext(expectedRequest);
 
                 // Act
-                Task task = product.AuthenticateAsync(authenticationContext, cancellationToken);
+                await product.AuthenticateAsync(authenticationContext, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.Wait();
                 Assert.NotNull(record);
                 Assert.Same(expectedRequest, record.Request);
                 Assert.Same(TraceCategories.FiltersCategory, record.Category);
@@ -172,7 +164,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void AuthenticateAsync_Traces_WhenContextIsNull()
+        public async Task AuthenticateAsync_Traces_WhenContextIsNull()
         {
             // Arrange
             CancellationToken cancellationToken = CreateCancellationToken();
@@ -183,17 +175,15 @@ namespace System.Web.Http.Tracing.Tracers
             HttpAuthenticationContext authenticationContext = null;
 
             // Act
-            Task task = product.AuthenticateAsync(authenticationContext, cancellationToken);
+            await product.AuthenticateAsync(authenticationContext, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.Wait();
             Assert.NotNull(record);
             Assert.Null(record.Request);
         }
 
         [Fact]
-        public void ChallengeAsync_DelegatesToInnerFilter()
+        public async Task ChallengeAsync_DelegatesToInnerFilter()
         {
             // Arrange
             HttpAuthenticationChallengeContext expectedChallengeContext = CreateChallengeContext();
@@ -210,16 +200,14 @@ namespace System.Web.Http.Tracing.Tracers
             IAuthenticationFilter product = CreateProductUnderTest(filter, tracer);
 
             // Act
-            Task task = product.ChallengeAsync(expectedChallengeContext, expectedCancellationToken);
+            await product.ChallengeAsync(expectedChallengeContext, expectedCancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.Wait();
             Assert.Equal(1, calls);
         }
 
         [Fact]
-        public void ChallengeAsync_Traces()
+        public async Task ChallengeAsync_Traces()
         {
             // Arrange
             CancellationToken cancellationToken = CreateCancellationToken();
@@ -234,11 +222,9 @@ namespace System.Web.Http.Tracing.Tracers
                 HttpAuthenticationChallengeContext context = CreateChallengeContext(expectedRequest, innerResult);
 
                 // Act
-                Task task = product.ChallengeAsync(context, cancellationToken);
+                await product.ChallengeAsync(context, cancellationToken);
 
                 // Assert
-                Assert.NotNull(task);
-                task.Wait();
                 Assert.NotNull(record);
                 Assert.Same(expectedRequest, record.Request);
                 Assert.Same(TraceCategories.FiltersCategory, record.Category);
@@ -252,7 +238,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ChallengeAsync_Traces_WhenContextIsNull()
+        public async Task ChallengeAsync_Traces_WhenContextIsNull()
         {
             // Arrange
             CancellationToken cancellationToken = CreateCancellationToken();
@@ -263,11 +249,9 @@ namespace System.Web.Http.Tracing.Tracers
             HttpAuthenticationChallengeContext context = null;
 
             // Act
-            Task task = product.ChallengeAsync(context, cancellationToken);
+            await product.ChallengeAsync(context, cancellationToken);
 
             // Assert
-            Assert.NotNull(task);
-            task.Wait();
             Assert.NotNull(record);
             Assert.Null(record.Request);
         }

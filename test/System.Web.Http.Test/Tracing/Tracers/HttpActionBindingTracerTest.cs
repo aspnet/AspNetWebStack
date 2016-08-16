@@ -67,7 +67,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void BindValuesAsync_Invokes_Inner_And_Traces()
+        public async Task BindValuesAsync_Invokes_Inner_And_Traces()
         {
             // Arrange
             bool wasInvoked = false;
@@ -85,7 +85,7 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            tracer.ExecuteBindingAsync(_actionContext, CancellationToken.None).Wait();
+            await tracer.ExecuteBindingAsync(_actionContext, CancellationToken.None);
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
@@ -93,7 +93,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void ExecuteBindingAsync_Faults_And_Traces_When_Inner_Faults()
+        public async Task ExecuteBindingAsync_Faults_And_Traces_When_Inner_Faults()
         {
             // Arrange
             InvalidOperationException exception = new InvalidOperationException();
@@ -116,12 +116,12 @@ namespace System.Web.Http.Tracing.Tracers
             Task task = tracer.ExecuteBindingAsync(_actionContext, CancellationToken.None);
 
             // Assert
-            Exception thrown = Assert.Throws<InvalidOperationException>(() => task.Wait());
+            Exception thrown = await Assert.ThrowsAsync<InvalidOperationException>(() => task);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Same(exception, thrown);
             Assert.Same(exception, traceWriter.Traces[1].Exception);
         }
-        
+
         [Fact]
         public void Inner_Property_On_HttpActionBindingTracer_Returns_HttpActionBinding()
         {

@@ -32,7 +32,7 @@ namespace System.Web.Http.Filters
         }
 
         [Fact]
-        public void ExecuteExceptionFilterAsync_IfOnExceptionThrowsException_RethrowsTheSameException()
+        public async Task ExecuteExceptionFilterAsync_IfOnExceptionThrowsException_RethrowsTheSameException()
         {
             // Arrange
             var mockFilter = new Mock<ExceptionFilterAttribute>() { CallBase = true };
@@ -42,15 +42,13 @@ namespace System.Web.Http.Filters
             IExceptionFilter filter = mockFilter.Object;
 
             // Act & Assert
-            var thrownException = Assert.Throws<Exception>(() =>
-            {
-                filter.ExecuteExceptionFilterAsync(_context, CancellationToken.None).Wait();
-            });
+            var thrownException = await Assert.ThrowsAsync<Exception>(() =>
+                filter.ExecuteExceptionFilterAsync(_context, CancellationToken.None));
             Assert.Same(exception, thrownException);
         }
 
         [Fact]
-        public void ExecuteExceptionFilterAsync_InvokesOnExceptionMethod()
+        public async Task ExecuteExceptionFilterAsync_InvokesOnExceptionMethod()
         {
             // Arrange
             var mockFilter = new Mock<ExceptionFilterAttribute>()
@@ -61,7 +59,7 @@ namespace System.Web.Http.Filters
             IExceptionFilter filter = mockFilter.Object;
 
             // Act
-            filter.ExecuteExceptionFilterAsync(_context, CancellationToken.None);
+            await filter.ExecuteExceptionFilterAsync(_context, CancellationToken.None);
 
             // Assert
             mockFilter.Verify(f => f.OnException(_context));

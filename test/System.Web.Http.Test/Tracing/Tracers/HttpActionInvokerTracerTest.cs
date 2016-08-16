@@ -45,7 +45,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void InvokeActionAsync_Traces_Begin_And_End_Info()
+        public async Task InvokeActionAsync_Traces_Begin_And_End_Info()
         {
             // Arrange
             TestTraceWriter traceWriter = new TestTraceWriter();
@@ -57,8 +57,8 @@ namespace System.Web.Http.Tracing.Tracers
             };
 
             // Act
-            Task task = ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, CancellationToken.None);
-            task.Wait();
+            var actionInvoker = (IHttpActionInvoker)tracer;
+            await actionInvoker.InvokeActionAsync(_actionContext, CancellationToken.None);
 
             // Assert
             Assert.Equal(2, traceWriter.Traces.Count);
@@ -66,7 +66,7 @@ namespace System.Web.Http.Tracing.Tracers
         }
 
         [Fact]
-        public void InvokeActionAsync_Returns_Cancelled_Inner_Task()
+        public async Task InvokeActionAsync_Returns_Cancelled_Inner_Task()
         {
             // Arrange
             CancellationTokenSource cancellationSource = new CancellationTokenSource();
@@ -78,12 +78,11 @@ namespace System.Web.Http.Tracing.Tracers
             var response = ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, cancellationSource.Token);
 
             // Assert
-            Assert.Throws<TaskCanceledException>(() => { response.Wait(); });
-            Assert.Equal<TaskStatus>(TaskStatus.Canceled, response.Status);
+            await Assert.ThrowsAsync<TaskCanceledException>(() => response);
         }
 
         [Fact]
-        public void InvokeActionAsync_Traces_Cancelled_Inner_Task()
+        public async Task InvokeActionAsync_Traces_Cancelled_Inner_Task()
         {
             // Arrange
             TestTraceWriter traceWriter = new TestTraceWriter();
@@ -101,12 +100,12 @@ namespace System.Web.Http.Tracing.Tracers
             var response = ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, cancellationSource.Token);
 
             // Assert
-            Assert.Throws<TaskCanceledException>(() => { response.Wait(); });
+            await Assert.ThrowsAsync<TaskCanceledException>(() => response);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
         }
 
         [Fact]
-        public void InvokeActionAsync_Returns_Faulted_Inner_Task()
+        public async Task InvokeActionAsync_Returns_Faulted_Inner_Task()
         {
             // Arrange
             Mock<ApiControllerActionInvoker> mockActionInvoker = new Mock<ApiControllerActionInvoker>() { CallBase = true };
@@ -117,17 +116,15 @@ namespace System.Web.Http.Tracing.Tracers
                 a => a.InvokeActionAsync(It.IsAny<HttpActionContext>(), It.IsAny<CancellationToken>())).Returns(tcs.Task);
             HttpActionInvokerTracer tracer = new HttpActionInvokerTracer(mockActionInvoker.Object, new TestTraceWriter());
 
-            // Act
-            var response = ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, CancellationToken.None);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, CancellationToken.None));
 
-            // Assert
-            Assert.Throws<InvalidOperationException>(() => response.Wait());
-            Assert.Equal<TaskStatus>(TaskStatus.Faulted, response.Status);
-            Assert.Equal(expectedException.Message, response.Exception.GetBaseException().Message);
+            Assert.Equal(expectedException.Message, exception.Message);
         }
 
         [Fact]
-        public void InvokeActionAsync_Traces_Faulted_Inner_Task()
+        public async Task InvokeActionAsync_Traces_Faulted_Inner_Task()
         {
             // Arrange
             Mock<ApiControllerActionInvoker> mockActionInvoker = new Mock<ApiControllerActionInvoker>() { CallBase = true };
@@ -148,7 +145,7 @@ namespace System.Web.Http.Tracing.Tracers
             var response = ((IHttpActionInvoker)tracer).InvokeActionAsync(_actionContext, CancellationToken.None);
 
             // Assert
-            Assert.Throws<InvalidOperationException>(() => response.Wait());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => response);
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
             Assert.Equal(expectedException, traceWriter.Traces[1].Exception);
         }

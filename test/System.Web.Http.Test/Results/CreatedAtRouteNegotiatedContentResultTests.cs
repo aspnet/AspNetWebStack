@@ -11,7 +11,6 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
-using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
@@ -308,7 +307,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationSucceeds()
+        public async Task ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationSucceeds()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -340,9 +339,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -360,7 +358,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationFails()
+        public async Task ExecuteAsync_Returns_CorrectResponse_WhenContentNegotiationFails()
         {
             // Arrange
             string routeName = CreateRouteName();
@@ -386,9 +384,8 @@ namespace System.Web.Http.Results
 
                 // Assert
                 Assert.NotNull(task);
-                task.WaitUntilCompleted();
 
-                using (HttpResponseMessage response = task.Result)
+                using (HttpResponseMessage response = await task)
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
@@ -399,7 +396,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_Throws_WhenUrlHelperLinkReturnsNull_AfterContentNegotiationSucceeds()
+        public async Task ExecuteAsync_Throws_WhenUrlHelperLinkReturnsNull_AfterContentNegotiationSucceeds()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -426,10 +423,8 @@ namespace System.Web.Http.Results
                     expectedContent, urlFactory, contentNegotiator, expectedRequest, expectedFormatters);
 
                 // Act & Assert
-                InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-                    {
-                        HttpResponseMessage ignore = result.ExecuteAsync(CancellationToken.None).Result;
-                    });
+                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                    () => result.ExecuteAsync(CancellationToken.None));
                 Assert.Equal("UrlHelper.Link must not return null.", exception.Message);
             }
         }
@@ -451,7 +446,7 @@ namespace System.Web.Http.Results
         }
 
         [Fact]
-        public void ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
+        public async Task ExecuteAsync_ForApiController_ReturnsCorrectResponse_WhenContentNegotationSucceeds()
         {
             // Arrange
             string expectedRouteName = CreateRouteName();
@@ -493,9 +488,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(task);
-                    task.WaitUntilCompleted();
 
-                    using (HttpResponseMessage response = task.Result)
+                    using (HttpResponseMessage response = await task)
                     {
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.Created, response.StatusCode);

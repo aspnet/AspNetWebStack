@@ -35,7 +35,7 @@ namespace System.Web.Http
         private readonly HttpActionDescriptor _actionDescriptorInstance = new Mock<HttpActionDescriptor>() { CallBase = true }.Object;
 
         [Fact]
-        public void Setting_CustomActionInvoker()
+        public async Task Setting_CustomActionInvoker()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -57,16 +57,16 @@ namespace System.Web.Http
             controllerDescriptor.Configuration.Services.Replace(typeof(IHttpActionInvoker), mockInvoker.Object);
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal(responseText, message.Content.ReadAsStringAsync().Result);
+            Assert.Equal(responseText, await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Setting_CustomActionSelector()
+        public async Task Setting_CustomActionSelector()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -92,16 +92,16 @@ namespace System.Web.Http
             controllerDescriptor.Configuration.Services.Replace(typeof(IHttpActionSelector), mockSelector.Object);
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal("This is a test", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("This is a test", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Default_Get()
+        public async Task Default_Get()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -109,16 +109,16 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal("Default User", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("Default User", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Default_Post()
+        public async Task Default_Post()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -126,16 +126,16 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal("User Posted", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("User Posted", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Default_Put()
+        public async Task Default_Put()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -143,16 +143,16 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal("User Updated", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("User Updated", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Default_Delete()
+        public async Task Default_Delete()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -160,16 +160,16 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
+                CancellationToken.None);
 
             // Assert
-            Assert.Equal("User Deleted", message.Content.ReadAsStringAsync().Result);
+            Assert.Equal("User Deleted", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void Route_ActionName()
+        public async Task Route_ActionName()
         {
             // Arrange
             ApiController api = new UsersRpcController();
@@ -179,8 +179,8 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersRpcController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(controllerContext, CancellationToken.None).Result;
-            User user = message.Content.ReadAsAsync<User>().Result;
+            HttpResponseMessage message = await api.ExecuteAsync(controllerContext, CancellationToken.None);
+            User user = await message.Content.ReadAsAsync<User>();
 
             // Assert
             Assert.Equal("Yao", user.FirstName);
@@ -188,7 +188,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void Route_Get_Action_With_Route_Parameters()
+        public async Task Route_Get_Action_With_Route_Parameters()
         {
             // Arrange
             ApiController api = new UsersRpcController();
@@ -200,8 +200,8 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersRpcController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(controllerContext, CancellationToken.None).Result;
-            User user = message.Content.ReadAsAsync<User>().Result;
+            HttpResponseMessage message = await api.ExecuteAsync(controllerContext, CancellationToken.None);
+            User user = await message.Content.ReadAsAsync<User>();
 
             // Assert
             Assert.Equal("RouteFirstName", user.FirstName);
@@ -209,7 +209,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void Route_Get_Action_With_Query_Parameters()
+        public async Task Route_Get_Action_With_Query_Parameters()
         {
             // Arrange
             ApiController api = new UsersRpcController();
@@ -225,8 +225,8 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersRpcController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(controllerContext, CancellationToken.None).Result;
-            User user = message.Content.ReadAsAsync<User>().Result;
+            HttpResponseMessage message = await api.ExecuteAsync(controllerContext, CancellationToken.None);
+            User user = await message.Content.ReadAsAsync<User>();
 
             // Assert
             Assert.Equal("QueryFirstName", user.FirstName);
@@ -234,7 +234,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void Route_Post_Action_With_Content_Parameter()
+        public async Task Route_Post_Action_With_Content_Parameter()
         {
             // Arrange
             ApiController api = new UsersRpcController();
@@ -253,7 +253,7 @@ namespace System.Web.Http
             string serializedUserAsString = null;
             using (HttpRequestMessage tempRequest = new HttpRequestMessage() { Content = new ObjectContent<User>(postedUser, new XmlMediaTypeFormatter()) })
             {
-                serializedUserAsString = tempRequest.Content.ReadAsStringAsync().Result;
+                serializedUserAsString = await tempRequest.Content.ReadAsStringAsync();
             }
 
             StringContent stringContent = new StringContent(serializedUserAsString);
@@ -264,10 +264,10 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(UsersRpcController));
 
             // Act
-            HttpResponseMessage message = api.ExecuteAsync(
+            HttpResponseMessage message = await api.ExecuteAsync(
                 controllerContext,
-                CancellationToken.None).Result;
-            User user = message.Content.ReadAsAsync<User>().Result;
+                CancellationToken.None);
+            User user = await message.Content.ReadAsAsync<User>();
 
             // Assert
             Assert.Equal(postedUser.FirstName, user.FirstName);
@@ -275,7 +275,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void Invalid_Action_In_Route()
+        public async Task Invalid_Action_In_Route()
         {
             // Arrange
             ApiController api = new UsersController();
@@ -288,10 +288,8 @@ namespace System.Web.Http
             controllerContext.Configuration.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
 
             // Act & Assert
-            var exception = Assert.Throws<HttpResponseException>(() =>
-             {
-                 HttpResponseMessage message = api.ExecuteAsync(controllerContext, CancellationToken.None).Result;
-             });
+            var exception = await Assert.ThrowsAsync<HttpResponseException>(
+                () => api.ExecuteAsync(controllerContext, CancellationToken.None));
 
             Assert.Equal(HttpStatusCode.NotFound, exception.Response.StatusCode);
             var content = Assert.IsType<ObjectContent<HttpError>>(exception.Response.Content);
@@ -300,7 +298,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_InvokesAuthenticationFilters_ThenInvokesAuthorizationFilters_ThenInvokesModelBinding_ThenInvokesActionFilters_ThenInvokesAction()
+        public async Task ExecuteAsync_InvokesAuthenticationFilters_ThenInvokesAuthorizationFilters_ThenInvokesModelBinding_ThenInvokesActionFilters_ThenInvokesAction()
         {
             List<string> log = new List<string>();
             Mock<ApiController> controllerMock = new Mock<ApiController>() { CallBase = true };
@@ -369,10 +367,8 @@ namespace System.Web.Http
             controllerContext.Configuration.Services.Replace(typeof(IHttpActionSelector), selectorMock.Object);
             controllerContext.Configuration.Services.Replace(typeof(IActionValueBinder), binderMock.Object);
 
-            var task = controller.ExecuteAsync(controllerContext, CancellationToken.None);
+            await controller.ExecuteAsync(controllerContext, CancellationToken.None);
 
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
             Assert.Equal(new string[] { "authN filters authenticate", "authZ filters", "model binding", "action filters", "action", "authN filters challenge" }, log.ToArray());
         }
 
@@ -491,18 +487,18 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_RunsExceptionFilter_WhenActionThrowsException()
+        public Task ExecuteAsync_RunsExceptionFilter_WhenActionThrowsException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
             ApiController controller = new ExceptionController(expectedException);
 
             // Act & Assert
-            TestExceptionFilter(controller, expectedException, configure: null);
+            return TestExceptionFilterAsync(controller, expectedException, configure: null);
         }
 
         [Fact]
-        public void ExecuteAsync_RunsExceptionFilter_WhenActionFilterThrowsException()
+        public Task ExecuteAsync_RunsExceptionFilter_WhenActionFilterThrowsException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
@@ -516,12 +512,12 @@ namespace System.Web.Http
             IActionFilter filter = filterMock.Object;
 
             // Act & Assert
-            TestExceptionFilter(controller, expectedException, (configuration) =>
+            return TestExceptionFilterAsync(controller, expectedException, (configuration) =>
                 { configuration.Filters.Add(filter); });
         }
 
         [Fact]
-        public void ExecuteAsync_RunsExceptionFilter_WhenAuthorizationFilterThrowsException()
+        public Task ExecuteAsync_RunsExceptionFilter_WhenAuthorizationFilterThrowsException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
@@ -535,12 +531,12 @@ namespace System.Web.Http
             IAuthorizationFilter filter = filterMock.Object;
 
             // Act & Assert
-            TestExceptionFilter(controller, expectedException, (configuration) =>
+            return TestExceptionFilterAsync(controller, expectedException, (configuration) =>
                 { configuration.Filters.Add(filter); });
         }
 
         [Fact]
-        public void ExecuteAsync_RunsExceptionFilter_WhenAuthenticationFilterAuthenticateThrowsException()
+        public Task ExecuteAsync_RunsExceptionFilter_WhenAuthenticationFilterAuthenticateThrowsException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
@@ -554,12 +550,12 @@ namespace System.Web.Http
             IAuthenticationFilter filter = filterMock.Object;
 
             // Act & Assert
-            TestExceptionFilter(controller, expectedException, (configuration) =>
-            { configuration.Filters.Add(filter); });
+            return TestExceptionFilterAsync(controller, expectedException, (configuration) =>
+                { configuration.Filters.Add(filter); });
         }
 
         [Fact]
-        public void ExecuteAsync_RunsExceptionFilter_WhenAuthenticationFilterChallengeThrowsException()
+        public Task ExecuteAsync_RunsExceptionFilter_WhenAuthenticationFilterChallengeThrowsException()
         {
             // Arrange
             Exception expectedException = new NotImplementedException();
@@ -575,11 +571,11 @@ namespace System.Web.Http
             IAuthenticationFilter filter = filterMock.Object;
 
             // Act & Assert
-            TestExceptionFilter(controller, expectedException, (configuration) =>
-            { configuration.Filters.Add(filter); });
+            return TestExceptionFilterAsync(controller, expectedException, (configuration) =>
+                { configuration.Filters.Add(filter); });
         }
 
-        private static void TestExceptionFilter(ApiController controller, Exception expectedException,
+        private static async Task TestExceptionFilterAsync(ApiController controller, Exception expectedException,
             Action<HttpConfiguration> configure)
         {
             // Arrange
@@ -614,7 +610,7 @@ namespace System.Web.Http
                 configuration.Filters.Add(spy.Object);
 
                 // Act
-                HttpResponseMessage ignore = controller.ExecuteAsync(context, CancellationToken.None).Result;
+                HttpResponseMessage ignore = await controller.ExecuteAsync(context, CancellationToken.None);
             }
 
             // Assert
@@ -622,7 +618,7 @@ namespace System.Web.Http
         }
 
         [Fact]
-        public void ExecuteAsync_IfActionThrows_CallsExceptionServicesFromConfiguration()
+        public async Task ExecuteAsync_IfActionThrows_CallsExceptionServicesFromConfiguration()
         {
             List<string> log = new List<string>();
             Exception expectedException = new Exception();
@@ -658,24 +654,20 @@ namespace System.Web.Http
             controllerContext.Configuration.Services.Replace(typeof(IExceptionHandler), exceptionHandler);
             controllerContext.Configuration.Filters.Add(CreateStubExceptionFilter());
 
-            // Act
-            Task<HttpResponseMessage> task = controller.ExecuteAsync(controllerContext, CancellationToken.None);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<Exception>(() => controller.ExecuteAsync(controllerContext, CancellationToken.None));
 
-            // Assert
-            Assert.NotNull(task);
-            Assert.Equal(TaskStatus.Faulted, task.Status);
-            Assert.NotNull(task.Exception);
-            Assert.Same(expectedException, task.Exception.GetBaseException());
+            Assert.Same(expectedException, exception);
             Assert.Equal(new string[] { "logger", "handler" }, log.ToArray());
         }
 
         [Fact]
-        public void ApiControllerCannotBeReused()
+        public async Task ApiControllerCannotBeReused()
         {
             // Arrange
             var config = new HttpConfiguration() { IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always };
             var singletonController = new Mock<ApiController> { CallBase = true }.Object;
-            var mockDescriptor = new Mock<HttpControllerDescriptor>(config, "MyMock", singletonController.GetType()) { CallBase = true };
+            var mockDescriptor = new Mock<HttpControllerDescriptor>(config, "MyMock", typeof(ApiController)) { CallBase = true };
             mockDescriptor.Setup(d => d.CreateController(It.IsAny<HttpRequestMessage>())).Returns(singletonController);
             var mockSelector = new Mock<DefaultHttpControllerSelector>(config) { CallBase = true };
             mockSelector.Setup(s => s.SelectController(It.IsAny<HttpRequestMessage>())).Returns(mockDescriptor.Object);
@@ -685,17 +677,17 @@ namespace System.Web.Http
             var invoker = new HttpMessageInvoker(server);
 
             // Act
-            HttpResponseMessage response1 = invoker.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/"), CancellationToken.None).Result;
-            HttpResponseMessage response2 = invoker.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/"), CancellationToken.None).Result;
+            HttpResponseMessage response1 = await invoker.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/"), CancellationToken.None);
+            HttpResponseMessage response2 = await invoker.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/"), CancellationToken.None);
 
             // Assert
             Assert.NotEqual(HttpStatusCode.InternalServerError, response1.StatusCode);
             Assert.Equal(HttpStatusCode.InternalServerError, response2.StatusCode);
-            Assert.Contains("Cannot reuse an 'ApiController' instance. 'ApiController' has to be constructed per incoming message.", response2.Content.ReadAsStringAsync().Result);
+            Assert.Contains("Cannot reuse an 'ApiController' instance. 'ApiController' has to be constructed per incoming message.", await response2.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void ApiControllerPutsSelfInRequestResourcesToBeDisposed()
+        public async Task ApiControllerPutsSelfInRequestResourcesToBeDisposed()
         {
             // Arrange
             var config = new HttpConfiguration();
@@ -703,7 +695,7 @@ namespace System.Web.Http
             var server = new HttpServer(config);
             var invoker = new HttpMessageInvoker(server);
             var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/");
-            invoker.SendAsync(request, CancellationToken.None).WaitUntilCompleted();
+            await invoker.SendAsync(request, CancellationToken.None);
 
             // Act
             request.DisposeRequestResources();

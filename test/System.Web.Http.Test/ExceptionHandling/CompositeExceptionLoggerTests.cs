@@ -77,7 +77,7 @@ namespace System.Web.Http.ExceptionHandling
         }
 
         [Fact]
-        public void LogAsync_DelegatesToLoggers()
+        public async Task LogAsync_DelegatesToLoggers()
         {
             // Arrange
             Mock<IExceptionLogger> exceptionLogger1Mock = new Mock<IExceptionLogger>(MockBehavior.Strict);
@@ -99,12 +99,9 @@ namespace System.Web.Http.ExceptionHandling
             CancellationToken expectedCancellationToken = CreateCancellationToken();
 
             // Act
-            Task task = product.LogAsync(expectedContext, expectedCancellationToken);
-            Assert.NotNull(task);
-            task.WaitUntilCompleted();
+            await product.LogAsync(expectedContext, expectedCancellationToken);
 
             // Assert
-            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
             exceptionLogger1Mock.Verify(l => l.LogAsync(expectedContext, expectedCancellationToken), Times.Once());
             exceptionLogger2Mock.Verify(l => l.LogAsync(expectedContext, expectedCancellationToken), Times.Once());
         }

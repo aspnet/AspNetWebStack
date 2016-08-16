@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.ServiceModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
@@ -38,7 +39,7 @@ namespace System.Web.Http.SelfHost
         }
 
         [Fact]
-        public void PostDeeplyNestedTypeInXmlThrows()
+        public async Task PostDeeplyNestedTypeInXmlThrows()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -48,14 +49,14 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetNestedObjectInXml(8000), UTF8Encoding.UTF8, "application/xml");
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
-        public void PostNotTooDeeplyNestedTypeInXmlWorks()
+        public async Task PostNotTooDeeplyNestedTypeInXmlWorks()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -65,18 +66,18 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetNestedObjectInXml(20), UTF8Encoding.UTF8, "application/xml");
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">success from PostNest</string>";
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void PostDeeplyNestedTypeInFormUrlEncodedThrows()
+        public async Task PostDeeplyNestedTypeInFormUrlEncodedThrows()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -86,14 +87,14 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetNestedObjectInFormUrl(5000), UTF8Encoding.UTF8, "application/x-www-form-urlencoded");
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
-        public void PostNotTooDeeplyNestedTypeInFormUrlEncodedWorks()
+        public async Task PostNotTooDeeplyNestedTypeInFormUrlEncodedWorks()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -103,18 +104,18 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetNestedObjectInFormUrl(20), UTF8Encoding.UTF8, "application/x-www-form-urlencoded");
 
             // Action
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">success from PostJToken</string>";
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void PostNestedListInFormUrlEncodedWorks()
+        public async Task PostNestedListInFormUrlEncodedWorks()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -124,18 +125,18 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetBigListInFormUrl(70000), Encoding.UTF8, "application/x-www-form-urlencoded");
 
             // Act
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">success from PostNestedList</string>";
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
-        public void PostBigArrayWorks()
+        public async Task PostBigArrayWorks()
         {
             // Arrange
             HttpRequestMessage request = new HttpRequestMessage();
@@ -146,14 +147,14 @@ namespace System.Web.Http.SelfHost
             request.Content = new StringContent(GetBigArray(5000), Encoding.UTF8, "application/xml");
 
             // Act
-            HttpResponseMessage response = httpClient.SendAsync(request).Result;
+            HttpResponseMessage response = await httpClient.SendAsync(request);
 
             // Assert
             string expectedResponseValue = @"<string xmlns=""http://schemas.microsoft.com/2003/10/Serialization/"">success from PostXElement</string>";
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal(expectedResponseValue, response.Content.ReadAsStringAsync().Result);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         /*
@@ -171,11 +172,11 @@ namespace System.Web.Http.SelfHost
                 {
                     sb.Append("<string/>");
                 }
-            
+
                 sb.Insert(0, "<ArrayOfString>");
                 sb.Append("</ArrayOfString>");
                 sb.Insert(0, "<?xml version=\"1.0\"?>");
-            
+
                 return sb.ToString();
             }
 

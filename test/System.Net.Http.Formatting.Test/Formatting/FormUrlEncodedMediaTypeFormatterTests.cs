@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http.Formatting.DataSets;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Newtonsoft.Json.Linq;
 
@@ -109,20 +110,20 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public void ReadDeeplyNestedObjectThrows()
+        public async Task ReadDeeplyNestedObjectThrows()
         {
             FormUrlEncodedMediaTypeFormatter formatter = new FormUrlEncodedMediaTypeFormatter() { MaxDepth = 100 };
 
             StringContent content = new StringContent(GetDeeplyNestedObject(125));
 
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-            Assert.ThrowsArgument(
-                () => formatter.ReadFromStreamAsync(typeof(JToken), content.ReadAsStreamAsync().Result, content, null).Result,
-                null);
+            var contentStream = await content.ReadAsStreamAsync();
+            await Assert.ThrowsAsync<ArgumentException>(
+                () => formatter.ReadFromStreamAsync(typeof(JToken), contentStream, content, null));
         }
 
         [Fact]
-        public void ReadDeeplyNestedObjectWithBigDepthQuotaWorks()
+        public async Task ReadDeeplyNestedObjectWithBigDepthQuotaWorks()
         {
             FormUrlEncodedMediaTypeFormatter formatter = new FormUrlEncodedMediaTypeFormatter() { MaxDepth = 150 };
 
@@ -130,7 +131,8 @@ namespace System.Net.Http.Formatting
 
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
-            JToken result = (JToken)formatter.ReadFromStreamAsync(typeof(JToken), content.ReadAsStreamAsync().Result, content, null).Result;
+            var contentStream = await content.ReadAsStreamAsync();
+            JToken result = (JToken)(await formatter.ReadFromStreamAsync(typeof(JToken), contentStream, content, null));
             Assert.NotNull(result);
         }
 
