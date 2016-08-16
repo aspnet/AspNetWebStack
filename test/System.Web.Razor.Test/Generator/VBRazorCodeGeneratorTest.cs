@@ -59,7 +59,6 @@ namespace System.Web.Razor.Test.Generator
 
         [Theory]
         [InlineData("NestedCodeBlocks")]
-        [InlineData("NestedCodeBlocks")]
         [InlineData("CodeBlock")]
         [InlineData("ExplicitExpression")]
         [InlineData("MarkupInCodeBlock")]

@@ -64,7 +64,6 @@ namespace System.Net.Http.Formatting
 
                     { "text/*", "*/*", (int)MediaTypeHeaderValueRange.AllMediaRange },
                     { "text/*", "*/*; charset=utf-8", (int)MediaTypeHeaderValueRange.AllMediaRange },
-                    { "text/*", "*/*; charset=utf-8", (int)MediaTypeHeaderValueRange.AllMediaRange },
                     { "text/*", "*/*; parameter=value", (int)MediaTypeHeaderValueRange.AllMediaRange },
                     { "text/*; charset=utf-8", "*/*; parameter=value; charset=utf-8", (int)MediaTypeHeaderValueRange.AllMediaRange },
 

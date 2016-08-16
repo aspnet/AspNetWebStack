@@ -77,13 +77,11 @@ namespace System.Web.WebPages.Test
         [Theory]
         [InlineData(1)]
         [InlineData(1023/7)]
-        [InlineData(1024/7)]
-        [InlineData(1025/7)]
         [InlineData(20000/7)]
         [InlineData(100000/7)]
         public void ProperlyCopiesLargeSetsOfText(int count)
         {
-            // The char א turns into a two byte sequence so we end up with a 
+            // The char א turns into a two byte sequence so we end up with a
             // 7 byte sequence that is not a divider or 1024.
             string text = string.Join(string.Empty, Enumerable.Repeat("abcdeא", count));
 
