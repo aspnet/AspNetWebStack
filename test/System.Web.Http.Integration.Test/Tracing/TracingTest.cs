@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http.Tracing;
 using Microsoft.TestCommon;
@@ -375,6 +376,13 @@ namespace System.Web.Http.ModelBinding
 
             foreach (TraceRecord actualRecord in actualRecords)
             {
+                // Ignore record of a ReflectionTypeLoadException because that happens when attempting to load all
+                // types from e.g. xunit.runner.visualstudio.testadapter. That is, the record is a test-only artifact.
+                if (actualRecord.Operation == null && actualRecord.Exception is ReflectionTypeLoadException)
+                {
+                    continue;
+                }
+
                 ExpectedTraceRecord expectedTrace = expectedRecords.FirstOrDefault(r =>
                     String.Equals(r.Category, actualRecord.Category, StringComparison.OrdinalIgnoreCase) &&
                     String.Equals(r.OperatorName, actualRecord.Operator, StringComparison.OrdinalIgnoreCase) &&
@@ -403,10 +411,22 @@ namespace System.Web.Http.ModelBinding
                     object.Equals(r.Kind, expectedRecord.TraceKind)
                     );
 
-                if (!object.ReferenceEquals(beginTrace, actualRecords.ElementAt(traceBeginPos)))
+                // Ignore record of a ReflectionTypeLoadException because that happens when attempting to load all
+                // types from e.g. xunit.runner.visualstudio.testadapter. That is, the record is a test-only artifacts.
+                var actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);
+                if (actualRecord != null &&
+                    actualRecord.Operation == null &&
+                    actualRecord.Exception is ReflectionTypeLoadException)
+                {
+                    traceBeginPos++;
+                    actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);
+                }
+
+                if (!object.ReferenceEquals(beginTrace, actualRecord))
                 {
                     return false;
                 }
+
                 traceBeginPos++;
             }
             return true;
