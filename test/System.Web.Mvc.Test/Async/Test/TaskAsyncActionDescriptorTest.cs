@@ -439,15 +439,17 @@ namespace System.Web.Mvc.Async.Test
 
         public static object ExecuteHelper(TaskAsyncActionDescriptor actionDescriptor, Dictionary<string, object> parameters, ControllerContext controllerContext = null)
         {
-            SignalContainer<object> resultContainer = new SignalContainer<object>();
-            AsyncCallback callback = ar =>
+            using (SignalContainer<object> resultContainer = new SignalContainer<object>())
             {
-                object o = actionDescriptor.EndExecute(ar);
-                resultContainer.Signal(o);
-            };
+                AsyncCallback callback = ar =>
+                {
+                    object o = actionDescriptor.EndExecute(ar);
+                    resultContainer.Signal(o);
+                };
 
-            actionDescriptor.BeginExecute(controllerContext ?? GetControllerContext(), parameters, callback, state: null);
-            return resultContainer.Wait();
+                actionDescriptor.BeginExecute(controllerContext ?? GetControllerContext(), parameters, callback, state: null);
+                return resultContainer.Wait();
+            }
         }
 
         private static TaskAsyncActionDescriptor GetActionDescriptor(MethodInfo taskMethod)

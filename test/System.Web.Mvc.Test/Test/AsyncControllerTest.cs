@@ -67,98 +67,102 @@ namespace System.Web.Mvc.Test
         public void ExecuteCore_Asynchronous_ActionFound()
         {
             // Arrange
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-
-            Mock<IAsyncActionInvoker> mockActionInvoker = new Mock<IAsyncActionInvoker>();
-            mockActionInvoker.Setup(o => o.BeginInvokeAction(It.IsAny<ControllerContext>(), "SomeAction", It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
-            mockActionInvoker.Setup(o => o.EndInvokeAction(innerAsyncResult)).Returns(true);
-
-            RequestContext requestContext = GetRequestContext("SomeAction");
-            EmptyController controller = new EmptyController()
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
             {
-                ActionInvoker = mockActionInvoker.Object
-            };
+                Mock<IAsyncActionInvoker> mockActionInvoker = new Mock<IAsyncActionInvoker>();
+                mockActionInvoker.Setup(o => o.BeginInvokeAction(It.IsAny<ControllerContext>(), "SomeAction", It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
+                mockActionInvoker.Setup(o => o.EndInvokeAction(innerAsyncResult)).Returns(true);
 
-            // Act & assert
-            IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
-            Assert.False(controller.TempDataSaved);
+                RequestContext requestContext = GetRequestContext("SomeAction");
+                EmptyController controller = new EmptyController()
+                {
+                    ActionInvoker = mockActionInvoker.Object
+                };
 
-            ((IAsyncController)controller).EndExecute(outerAsyncResult);
-            Assert.True(controller.TempDataSaved);
-            Assert.False(controller.HandleUnknownActionCalled);
+                // Act & assert
+                IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
+                Assert.False(controller.TempDataSaved);
+
+                ((IAsyncController)controller).EndExecute(outerAsyncResult);
+                Assert.True(controller.TempDataSaved);
+                Assert.False(controller.HandleUnknownActionCalled);
+            }
         }
 
         [Fact]
         public void ExecuteCore_Asynchronous_ActionNotFound()
         {
             // Arrange
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-
-            Mock<IAsyncActionInvoker> mockActionInvoker = new Mock<IAsyncActionInvoker>();
-            mockActionInvoker.Setup(o => o.BeginInvokeAction(It.IsAny<ControllerContext>(), "SomeAction", It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
-            mockActionInvoker.Setup(o => o.EndInvokeAction(innerAsyncResult)).Returns(false);
-
-            RequestContext requestContext = GetRequestContext("SomeAction");
-            EmptyController controller = new EmptyController()
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
             {
-                ActionInvoker = mockActionInvoker.Object
-            };
+                Mock<IAsyncActionInvoker> mockActionInvoker = new Mock<IAsyncActionInvoker>();
+                mockActionInvoker.Setup(o => o.BeginInvokeAction(It.IsAny<ControllerContext>(), "SomeAction", It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
+                mockActionInvoker.Setup(o => o.EndInvokeAction(innerAsyncResult)).Returns(false);
 
-            // Act & assert
-            IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
-            Assert.False(controller.TempDataSaved);
+                RequestContext requestContext = GetRequestContext("SomeAction");
+                EmptyController controller = new EmptyController()
+                {
+                    ActionInvoker = mockActionInvoker.Object
+                };
 
-            ((IAsyncController)controller).EndExecute(outerAsyncResult);
-            Assert.True(controller.TempDataSaved);
-            Assert.True(controller.HandleUnknownActionCalled);
+                // Act & assert
+                IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
+                Assert.False(controller.TempDataSaved);
+
+                ((IAsyncController)controller).EndExecute(outerAsyncResult);
+                Assert.True(controller.TempDataSaved);
+                Assert.True(controller.HandleUnknownActionCalled);
+            }
         }
 
         [Fact]
         public void ExecuteCore_Synchronous_ActionFound()
         {
             // Arrange
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-
-            Mock<IActionInvoker> mockActionInvoker = new Mock<IActionInvoker>();
-            mockActionInvoker.Setup(o => o.InvokeAction(It.IsAny<ControllerContext>(), "SomeAction")).Returns(true);
-
-            RequestContext requestContext = GetRequestContext("SomeAction");
-            EmptyController controller = new EmptyController()
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
             {
-                ActionInvoker = mockActionInvoker.Object
-            };
+                Mock<IActionInvoker> mockActionInvoker = new Mock<IActionInvoker>();
+                mockActionInvoker.Setup(o => o.InvokeAction(It.IsAny<ControllerContext>(), "SomeAction")).Returns(true);
 
-            // Act & assert
-            IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
-            Assert.False(controller.TempDataSaved);
+                RequestContext requestContext = GetRequestContext("SomeAction");
+                EmptyController controller = new EmptyController()
+                {
+                    ActionInvoker = mockActionInvoker.Object
+                };
 
-            ((IAsyncController)controller).EndExecute(outerAsyncResult);
-            Assert.True(controller.TempDataSaved);
-            Assert.False(controller.HandleUnknownActionCalled);
+                // Act & assert
+                IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
+                Assert.False(controller.TempDataSaved);
+
+                ((IAsyncController)controller).EndExecute(outerAsyncResult);
+                Assert.True(controller.TempDataSaved);
+                Assert.False(controller.HandleUnknownActionCalled);
+            }
         }
 
         [Fact]
         public void ExecuteCore_Synchronous_ActionNotFound()
         {
             // Arrange
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-
-            Mock<IActionInvoker> mockActionInvoker = new Mock<IActionInvoker>();
-            mockActionInvoker.Setup(o => o.InvokeAction(It.IsAny<ControllerContext>(), "SomeAction")).Returns(false);
-
-            RequestContext requestContext = GetRequestContext("SomeAction");
-            EmptyController controller = new EmptyController()
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
             {
-                ActionInvoker = mockActionInvoker.Object
-            };
+                Mock<IActionInvoker> mockActionInvoker = new Mock<IActionInvoker>();
+                mockActionInvoker.Setup(o => o.InvokeAction(It.IsAny<ControllerContext>(), "SomeAction")).Returns(false);
 
-            // Act & assert
-            IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
-            Assert.False(controller.TempDataSaved);
+                RequestContext requestContext = GetRequestContext("SomeAction");
+                EmptyController controller = new EmptyController()
+                {
+                    ActionInvoker = mockActionInvoker.Object
+                };
 
-            ((IAsyncController)controller).EndExecute(outerAsyncResult);
-            Assert.True(controller.TempDataSaved);
-            Assert.True(controller.HandleUnknownActionCalled);
+                // Act & assert
+                IAsyncResult outerAsyncResult = ((IAsyncController)controller).BeginExecute(requestContext, null, null);
+                Assert.False(controller.TempDataSaved);
+
+                ((IAsyncController)controller).EndExecute(outerAsyncResult);
+                Assert.True(controller.TempDataSaved);
+                Assert.True(controller.HandleUnknownActionCalled);
+            }
         }
 
         [Fact]
@@ -202,7 +206,7 @@ namespace System.Web.Mvc.Test
         [Fact]
         public void CreateActionInvokerCallsIntoResolverInstanceAndCreatesANewOneIfNecessary()
         {
-            // If IDependencyResolver is set, but empty, falls back and still creates. 
+            // If IDependencyResolver is set, but empty, falls back and still creates.
             var controller = new EmptyController();
             Mock<IDependencyResolver> resolverMock = new Mock<IDependencyResolver>();
             resolverMock.Setup(r => r.GetService(typeof(IAsyncActionInvoker))).Returns(null);
@@ -241,7 +245,7 @@ namespace System.Web.Mvc.Test
                 HandleUnknownActionCalled = true;
             }
 
-            // Test can expose protected method as public. 
+            // Test can expose protected method as public.
             public new IActionInvoker CreateActionInvoker()
             {
                 return base.CreateActionInvoker();

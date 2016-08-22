@@ -127,19 +127,21 @@ namespace System.Web.Mvc.Async.Test
 
             ReflectedAsyncActionDescriptor ad = GetActionDescriptor(_asyncMethod, _completedMethod);
 
-            SignalContainer<object> resultContainer = new SignalContainer<object>();
-            AsyncCallback callback = ar =>
+            using (SignalContainer<object> resultContainer = new SignalContainer<object>())
             {
-                object o = ad.EndExecute(ar);
-                resultContainer.Signal(o);
-            };
+                AsyncCallback callback = ar =>
+                {
+                    object o = ad.EndExecute(ar);
+                    resultContainer.Signal(o);
+                };
 
-            // Act
-            ad.BeginExecute(controllerContext, parameters, callback, null);
-            object retVal = resultContainer.Wait();
+                // Act
+                ad.BeginExecute(controllerContext, parameters, callback, null);
+                object retVal = resultContainer.Wait();
 
-            // Assert
-            Assert.Equal("Hello world: 42", retVal);
+                // Assert
+                Assert.Equal("Hello world: 42", retVal);
+            }
         }
 
         [Fact]

@@ -224,22 +224,24 @@ namespace System.Web.Mvc.Test
         public void ProcessRequestAsync_AsyncController_NormalExecution()
         {
             // Arrange
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-            bool disposeWasCalled = false;
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
+            {
+                bool disposeWasCalled = false;
 
-            Mock<IAsyncController> mockController = new Mock<IAsyncController>();
-            mockController.Setup(o => o.BeginExecute(It.IsAny<RequestContext>(), It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
-            mockController.As<IDisposable>().Setup(o => o.Dispose()).Callback(delegate { disposeWasCalled = true; });
+                Mock<IAsyncController> mockController = new Mock<IAsyncController>();
+                mockController.Setup(o => o.BeginExecute(It.IsAny<RequestContext>(), It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
+                mockController.As<IDisposable>().Setup(o => o.Dispose()).Callback(delegate { disposeWasCalled = true; });
 
-            MvcHandler handler = GetMvcHandler(mockController.Object);
+                MvcHandler handler = GetMvcHandler(mockController.Object);
 
-            // Act & assert
-            IAsyncResult outerAsyncResult = handler.BeginProcessRequest(handler.RequestContext.HttpContext, null, null);
-            Assert.False(disposeWasCalled);
+                // Act & assert
+                IAsyncResult outerAsyncResult = handler.BeginProcessRequest(handler.RequestContext.HttpContext, null, null);
+                Assert.False(disposeWasCalled);
 
-            handler.EndProcessRequest(outerAsyncResult);
-            Assert.True(disposeWasCalled);
-            mockController.Verify(o => o.EndExecute(innerAsyncResult), Times.AtMostOnce());
+                handler.EndProcessRequest(outerAsyncResult);
+                Assert.True(disposeWasCalled);
+                mockController.Verify(o => o.EndExecute(innerAsyncResult), Times.AtMostOnce());
+            }
         }
 
         [Fact]
