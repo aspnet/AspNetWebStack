@@ -20,30 +20,34 @@ namespace System.Web.Razor.Test.Parser.PartialParsing
         protected static void RunFullReparseTest(TextChange change, PartialParseResult additionalFlags = (PartialParseResult)0)
         {
             // Arrange
-            TestParserManager manager = CreateParserManager();
-            manager.InitializeWithDocument(change.OldBuffer);
+            using (TestParserManager manager = CreateParserManager())
+            {
+                manager.InitializeWithDocument(change.OldBuffer);
 
-            // Act
-            PartialParseResult result = manager.CheckForStructureChangesAndWait(change);
+                // Act
+                PartialParseResult result = manager.CheckForStructureChangesAndWait(change);
 
-            // Assert
-            Assert.Equal(PartialParseResult.Rejected | additionalFlags, result);
-            Assert.Equal(2, manager.ParseCount);
+                // Assert
+                Assert.Equal(PartialParseResult.Rejected | additionalFlags, result);
+                Assert.Equal(2, manager.ParseCount);
+            }
         }
 
         protected static void RunPartialParseTest(TextChange change, Block newTreeRoot, PartialParseResult additionalFlags = (PartialParseResult)0)
         {
             // Arrange
-            TestParserManager manager = CreateParserManager();
-            manager.InitializeWithDocument(change.OldBuffer);
+            using (TestParserManager manager = CreateParserManager())
+            {
+                manager.InitializeWithDocument(change.OldBuffer);
 
-            // Act
-            PartialParseResult result = manager.CheckForStructureChangesAndWait(change);
+                // Act
+                PartialParseResult result = manager.CheckForStructureChangesAndWait(change);
 
-            // Assert
-            Assert.Equal(PartialParseResult.Accepted | additionalFlags, result);
-            Assert.Equal(1, manager.ParseCount);
-            ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree, newTreeRoot);
+                // Assert
+                Assert.Equal(PartialParseResult.Accepted | additionalFlags, result);
+                Assert.Equal(1, manager.ParseCount);
+                ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree, newTreeRoot);
+            }
         }
 
         protected static TestParserManager CreateParserManager()
@@ -71,7 +75,7 @@ namespace System.Web.Razor.Test.Parser.PartialParsing
             RunFullReparseTest(new TextChange(keyword.Length, 0, old, 1, changed), additionalFlags: PartialParseResult.SpanContextChanged);
         }
 
-        protected class TestParserManager
+        protected class TestParserManager : IDisposable
         {
             public RazorEditorParser Parser;
             public ManualResetEventSlim ParserComplete;
@@ -108,6 +112,12 @@ namespace System.Web.Razor.Test.Parser.PartialParsing
             {
                 MiscUtils.DoWithTimeoutIfNotDebugging(ParserComplete.Wait); // Wait for the parse to finish
                 ParserComplete.Reset();
+            }
+
+            public void Dispose()
+            {
+                Parser.Dispose();
+                ParserComplete.Dispose();
             }
         }
     }

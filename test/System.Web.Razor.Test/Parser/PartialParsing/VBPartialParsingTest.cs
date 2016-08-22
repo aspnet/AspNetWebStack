@@ -90,33 +90,35 @@ namespace System.Web.Razor.Test.Parser.PartialParsing
             // Arrange
             TextChange dotTyped = new TextChange(8, 0, new StringTextBuffer("foo @foo @bar"), 1, new StringTextBuffer("foo @foo. @bar"));
             TextChange charTyped = new TextChange(14, 0, new StringTextBuffer("foo @foo. @barb"), 1, new StringTextBuffer("foo @foo. @barb"));
-            TestParserManager manager = CreateParserManager();
-            manager.InitializeWithDocument(dotTyped.OldBuffer);
+            using (TestParserManager manager = CreateParserManager())
+            {
+                manager.InitializeWithDocument(dotTyped.OldBuffer);
 
-            // Apply the dot change
-            Assert.Equal(PartialParseResult.Provisional | PartialParseResult.Accepted, manager.CheckForStructureChangesAndWait(dotTyped));
+                // Apply the dot change
+                Assert.Equal(PartialParseResult.Provisional | PartialParseResult.Accepted, manager.CheckForStructureChangesAndWait(dotTyped));
 
-            // Act (apply the identifier start char change)
-            PartialParseResult result = manager.CheckForStructureChangesAndWait(charTyped);
+                // Act (apply the identifier start char change)
+                PartialParseResult result = manager.CheckForStructureChangesAndWait(charTyped);
 
-            // Assert
-            Assert.Equal(PartialParseResult.Rejected, result);
-            Assert.False(manager.Parser.LastResultProvisional, "LastResultProvisional flag should have been cleared but it was not");
-            ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree,
-                new MarkupBlock(
-                    factory.Markup("foo "),
-                    new ExpressionBlock(
-                        factory.CodeTransition(),
-                        factory.Code("foo")
-                               .AsImplicitExpression(VBCodeParser.DefaultKeywords)
-                               .Accepts(AcceptedCharacters.NonWhiteSpace)),
-                    factory.Markup(". "),
-                    new ExpressionBlock(
-                        factory.CodeTransition(),
-                        factory.Code("barb")
-                               .AsImplicitExpression(VBCodeParser.DefaultKeywords)
-                               .Accepts(AcceptedCharacters.NonWhiteSpace)),
-                    factory.EmptyHtml()));
+                // Assert
+                Assert.Equal(PartialParseResult.Rejected, result);
+                Assert.False(manager.Parser.LastResultProvisional, "LastResultProvisional flag should have been cleared but it was not");
+                ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree,
+                    new MarkupBlock(
+                        factory.Markup("foo "),
+                        new ExpressionBlock(
+                            factory.CodeTransition(),
+                            factory.Code("foo")
+                                   .AsImplicitExpression(VBCodeParser.DefaultKeywords)
+                                   .Accepts(AcceptedCharacters.NonWhiteSpace)),
+                        factory.Markup(". "),
+                        new ExpressionBlock(
+                            factory.CodeTransition(),
+                            factory.Code("barb")
+                                   .AsImplicitExpression(VBCodeParser.DefaultKeywords)
+                                   .Accepts(AcceptedCharacters.NonWhiteSpace)),
+                        factory.EmptyHtml()));
+            }
         }
 
         [Fact]
@@ -127,27 +129,29 @@ namespace System.Web.Razor.Test.Parser.PartialParsing
             // Arrange
             TextChange dotTyped = new TextChange(8, 0, new StringTextBuffer("foo @foo bar"), 1, new StringTextBuffer("foo @foo. bar"));
             TextChange charTyped = new TextChange(9, 0, new StringTextBuffer("foo @foo. bar"), 1, new StringTextBuffer("foo @foo.b bar"));
-            TestParserManager manager = CreateParserManager();
-            manager.InitializeWithDocument(dotTyped.OldBuffer);
+            using (TestParserManager manager = CreateParserManager())
+            {
+                manager.InitializeWithDocument(dotTyped.OldBuffer);
 
-            // Apply the dot change
-            Assert.Equal(PartialParseResult.Provisional | PartialParseResult.Accepted, manager.CheckForStructureChangesAndWait(dotTyped));
+                // Apply the dot change
+                Assert.Equal(PartialParseResult.Provisional | PartialParseResult.Accepted, manager.CheckForStructureChangesAndWait(dotTyped));
 
-            // Act (apply the identifier start char change)
-            PartialParseResult result = manager.CheckForStructureChangesAndWait(charTyped);
+                // Act (apply the identifier start char change)
+                PartialParseResult result = manager.CheckForStructureChangesAndWait(charTyped);
 
-            // Assert
-            Assert.Equal(PartialParseResult.Accepted, result);
-            Assert.False(manager.Parser.LastResultProvisional, "LastResultProvisional flag should have been cleared but it was not");
-            ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree,
-                new MarkupBlock(
-                    factory.Markup("foo "),
-                    new ExpressionBlock(
-                        factory.CodeTransition(),
-                        factory.Code("foo.b")
-                               .AsImplicitExpression(VBCodeParser.DefaultKeywords)
-                               .Accepts(AcceptedCharacters.NonWhiteSpace)),
-                    factory.Markup(" bar")));
+                // Assert
+                Assert.Equal(PartialParseResult.Accepted, result);
+                Assert.False(manager.Parser.LastResultProvisional, "LastResultProvisional flag should have been cleared but it was not");
+                ParserTestBase.EvaluateParseTree(manager.Parser.CurrentParseTree,
+                    new MarkupBlock(
+                        factory.Markup("foo "),
+                        new ExpressionBlock(
+                            factory.CodeTransition(),
+                            factory.Code("foo.b")
+                                   .AsImplicitExpression(VBCodeParser.DefaultKeywords)
+                                   .Accepts(AcceptedCharacters.NonWhiteSpace)),
+                        factory.Markup(" bar")));
+            }
         }
         [Fact]
         public void ImplicitExpressionAcceptsIdentifierExpansionAtEndOfNonWhitespaceCharacters()
