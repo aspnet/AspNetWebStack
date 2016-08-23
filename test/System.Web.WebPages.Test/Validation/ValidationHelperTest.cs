@@ -12,7 +12,8 @@ using Moq;
 
 namespace System.Web.WebPages.Validation.Test
 {
-    public class ValidationHelperTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class ValidationHelperTest : IDisposable
     {
         [Fact]
         public void FormFieldKeyIsCommonToModelStateAndValidationHelper()
@@ -830,6 +831,13 @@ namespace System.Web.WebPages.Validation.Test
             {
                 get { throw new NotImplementedException(); }
             }
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ValidationHelper.InvalidCssClass) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

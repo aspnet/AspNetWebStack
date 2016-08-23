@@ -145,7 +145,7 @@ namespace Microsoft.Web.Helpers.Test
             var scope = new ScopeStorageDictionary();
             var themesImpl = new ThemesImplementation(GetVirtualPathProvider(themeDirectory, new Dir(defaultTheme), new Dir("custom-theme-dir")), scope);
 
-            // Act 
+            // Act
             themesImpl.Initialize(themeDirectory, defaultTheme);
             themesImpl.CurrentTheme = currentThemeDir;
 

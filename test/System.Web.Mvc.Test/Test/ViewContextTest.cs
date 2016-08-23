@@ -11,6 +11,7 @@ using Moq;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
     public class ViewContextTest
     {
         [Fact]

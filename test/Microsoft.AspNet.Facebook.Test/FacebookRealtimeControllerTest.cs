@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Facebook.Models;
+using Microsoft.AspNet.Facebook.Providers;
 using Microsoft.AspNet.Facebook.Realtime;
 using Microsoft.TestCommon;
 
@@ -111,7 +112,13 @@ namespace Microsoft.AspNet.Facebook.Test
 
             public UserRealtimeCallbackController(string appSecret, string verifyToken)
             {
-                FacebookConfiguration.AppSecret = appSecret;
+                // Avoid base class's fallback to static GlobalFacebookConfiguration.
+                var config = new FacebookConfiguration();
+                config.ClientProvider = new DefaultFacebookClientProvider(config);
+                config.PermissionService = new DefaultFacebookPermissionService(config);
+                config.AppSecret = appSecret;
+
+                FacebookConfiguration = config;
                 _verifyToken = verifyToken;
             }
 

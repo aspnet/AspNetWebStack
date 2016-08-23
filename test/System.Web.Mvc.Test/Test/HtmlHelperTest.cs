@@ -7,13 +7,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 using Moq;
 
 namespace System.Web.Mvc.Test
 {
-    public class HtmlHelperTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class HtmlHelperTest : IDisposable
     {
         public static readonly RouteValueDictionary AttributesDictionary = new RouteValueDictionary(new { baz = "BazValue" });
         public static readonly object AttributesObjectDictionary = new { baz = "BazObjValue" };
@@ -1192,6 +1194,13 @@ namespace System.Web.Mvc.Test
             {
                 base.RenderPartialInternal(partialViewName, viewData, model, writer, new ViewEngineCollection(engines));
             }
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. htmlHelper.SetValidationSummaryMessageElement()) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

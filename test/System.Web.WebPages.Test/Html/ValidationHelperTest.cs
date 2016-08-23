@@ -3,11 +3,13 @@
 
 using System.Collections.Generic;
 using System.Web.WebPages.Html;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 
 namespace System.Web.WebPages.Test
 {
-    public class ValidationHelperTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class ValidationHelperTest : IDisposable
     {
         [Fact]
         public void ValidationMessageAllowsEmptyModelName()
@@ -17,7 +19,7 @@ namespace System.Web.WebPages.Test
             dictionary.AddError("test", "some error text");
             HtmlHelper htmlHelper = HtmlHelperFactory.Create(dictionary);
 
-            // Act 
+            // Act
             var html = htmlHelper.ValidationMessage("test");
 
             // Assert
@@ -30,7 +32,7 @@ namespace System.Web.WebPages.Test
             // Arrange
             HtmlHelper htmlHelper = HtmlHelperFactory.Create(GetModelStateWithErrors());
 
-            // Act 
+            // Act
             var html = htmlHelper.ValidationMessage("foo");
 
             // Assert
@@ -254,8 +256,7 @@ namespace System.Web.WebPages.Test
                 html.ToHtmlString());
         }
 
-        //[Fact]
-        // Cant test this, as it sets a static property 
+        [Fact]
         public void ValidationSummaryWithCustomValidationSummaryClass()
         {
             // Arrange
@@ -267,7 +268,7 @@ namespace System.Web.WebPages.Test
 
             // Assert
             Assert.Equal(
-                "<div attr=\"attr-value\" class=\"my-val-class my-class\"><span>This is a message.</span>" + Environment.NewLine
+                "<div attr=\"attr-value\" class=\"my-val-class my-class\" data-valmsg-summary=\"true\"><span>This is a message.</span>" + Environment.NewLine
               + "<ul>" + Environment.NewLine
               + "<li>foo error &lt;1&gt;</li>" + Environment.NewLine
               + "<li>foo error &lt;2&gt;</li>" + Environment.NewLine
@@ -363,7 +364,7 @@ namespace System.Web.WebPages.Test
             HtmlHelperTest.AssertHelperTransformsAttributesUnderscoresToDashs((helper, attributes) =>
                 htmlHelper.ValidationSummary("foo", true, attributes));
         }
-        
+
         private static ModelStateDictionary GetModelStateWithErrors()
         {
             ModelStateDictionary modelState = new ModelStateDictionary();
@@ -380,6 +381,13 @@ namespace System.Web.WebPages.Test
             modelState.AddFormError("some form error <1>");
             modelState.AddFormError("some form error <2>");
             return modelState;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. HtmlHelper.ValidationSummaryClass) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

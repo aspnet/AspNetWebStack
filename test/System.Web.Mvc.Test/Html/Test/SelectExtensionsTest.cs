@@ -6,15 +6,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Web.Mvc.Test;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class SelectExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class SelectExtensionsTest : IDisposable
     {
         private static readonly ViewDataDictionary<FooModel> _listBoxViewData = new ViewDataDictionary<FooModel> { { "foo", new[] { "Bravo" } } };
         private static readonly ViewDataDictionary<FooModel> _dropDownListViewData = new ViewDataDictionary<FooModel> { { "foo", "Bravo" } };
@@ -30,9 +31,9 @@ namespace System.Web.Mvc.Html.Test
             {
                 new { Text = "UFO", Value = "ufo", Category = "" }, /* Empty Group */
                 new { Text = "Volvo", Value = "volvo", Category = "Swedish Cars" },
-                new { Text = "Mercedes-Benz", Value = "mercedes-benz", Category = "German Cars" }, 
+                new { Text = "Mercedes-Benz", Value = "mercedes-benz", Category = "German Cars" },
                 new { Text = "Saab", Value = "saab", Category = "Swedish Cars" },
-                new { Text = "Audi", Value = "audi", Category = "German Cars" }, 
+                new { Text = "Audi", Value = "audi", Category = "German Cars" },
                 new { Text = "Other", Value = "other", Category = (string) null }, /* Another Empty Group */
                 new { Text = "Unknown", Value = "unknown", Category = " " } /* Unnamed Group */
             }, "Value", "Text", "Category", (object) "audi");
@@ -41,9 +42,9 @@ namespace System.Web.Mvc.Html.Test
             {
                 new { Text = "UFO", Value = "ufo", Category = "" }, /* Empty Group */
                 new { Text = "Volvo", Value = "volvo", Category = "Swedish Cars" },
-                new { Text = "Mercedes-Benz", Value = "mercedes-benz", Category = "German Cars" }, 
+                new { Text = "Mercedes-Benz", Value = "mercedes-benz", Category = "German Cars" },
                 new { Text = "Saab", Value = "saab", Category = "Swedish Cars" },
-                new { Text = "Audi", Value = "audi", Category = "German Cars" }, 
+                new { Text = "Audi", Value = "audi", Category = "German Cars" },
                 new { Text = "Other", Value = "other", Category = (string) null }, /* Another Empty Group */
                 new { Text = "Unknown", Value = "unknown", Category = " " } /* Unnamed Group */
             }, "Value", "Text", "Category", new[] { "audi", "volvo" });
@@ -3424,6 +3425,13 @@ namespace System.Web.Mvc.Html.Test
             Second = 2,
             Third = 4,
             Fourth = 8,
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.ClientValidationEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

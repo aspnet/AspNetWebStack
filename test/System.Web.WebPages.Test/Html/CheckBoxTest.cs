@@ -3,12 +3,14 @@
 
 using System.Collections.Generic;
 using System.Web.WebPages.Html;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Moq;
 
 namespace System.Web.WebPages.Test
 {
-    public class CheckBoxTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class CheckBoxTest : IDisposable
     {
         [Fact]
         public void CheckboxWithEmptyNameThrows()
@@ -218,9 +220,7 @@ namespace System.Web.WebPages.Test
                          html.ToHtmlString());
         }
 
-        //[Fact]
-        // Can't test as it sets a static property
-        // Review: Need to redo test once we fix set once property
+        [Fact]
         public void CheckBoxUsesCustomErrorClass()
         {
             // Arrange
@@ -278,6 +278,13 @@ namespace System.Web.WebPages.Test
 
             HtmlHelperTest.AssertHelperTransformsAttributesUnderscoresToDashs((helper, attributes) =>
                 helper.CheckBox("foo", true, attributes));
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. HtmlHelper.ValidationInputCssClassName) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

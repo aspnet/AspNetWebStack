@@ -11,7 +11,8 @@ using Microsoft.TestCommon;
 
 namespace Microsoft.Web.Helpers.Test
 {
-    public class LinkShareTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class LinkShareTest : IDisposable
     {
         private static LinkShareSite[] _allLinkShareSites = new[]
         {
@@ -193,6 +194,13 @@ namespace Microsoft.Web.Helpers.Test
                             "\n </div> </body> \n </html>";
             HtmlString htmlResult = new HtmlString(result);
             XhtmlAssert.Validate1_0(htmlResult);
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. LinkShare.BitlyApiKey) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }
