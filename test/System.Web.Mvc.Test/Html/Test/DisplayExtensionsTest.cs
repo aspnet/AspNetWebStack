@@ -8,6 +8,7 @@ using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
     public class DisplayExtensionsTest
     {
         [Fact]
@@ -272,7 +273,7 @@ namespace System.Web.Mvc.Html.Test
             {
                 // Act
                 result = html.DisplayFor(m => m.Property1);
-            }                           
+            }
 
             // Assert
             Assert.Equal("Model string", result.ToString());

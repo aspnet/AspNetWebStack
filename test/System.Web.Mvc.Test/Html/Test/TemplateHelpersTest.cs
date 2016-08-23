@@ -16,6 +16,7 @@ using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
     public class TemplateHelpersTest
     {
         // ExecuteTemplate

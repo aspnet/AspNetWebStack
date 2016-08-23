@@ -8,13 +8,15 @@ using System.IO;
 using System.Threading;
 using System.Web.Mvc.Html;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 using Moq;
 
 namespace System.Web.Mvc.Ajax.Test
 {
-    public class AjaxExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class AjaxExtensionsTest : IDisposable
     {
         // Guards
 
@@ -1972,6 +1974,13 @@ namespace System.Web.Mvc.Ajax.Test
             };
 
             return new AjaxHelper(viewContext, new Mock<IViewDataContainer>().Object, routes);
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.UnobtrusiveJavaScriptEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

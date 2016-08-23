@@ -5,13 +5,15 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class FormExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class FormExtensionsTest : IDisposable
     {
         private static void BeginFormHelper(Func<HtmlHelper, MvcForm> beginForm, string expectedFormTag)
         {
@@ -474,6 +476,13 @@ window.mvcClientValidationMetadata.push({""Fields"":[],""FormId"":""form_id"",""
             HtmlHelper helper = new HtmlHelper(mockViewContext.Object, new Mock<IViewDataContainer>().Object, rt);
             helper.ViewContext.FormIdGenerator = () => "form_id";
             return helper;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.ClientValidationEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

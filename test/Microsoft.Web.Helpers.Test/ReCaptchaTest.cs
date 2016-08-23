@@ -14,7 +14,8 @@ using Moq;
 
 namespace Microsoft.Web.Helpers.Test
 {
-    public class ReCaptchaTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class ReCaptchaTest : IDisposable
     {
         [Fact]
         public void ReCaptchaOptionsMissingWhenNoOptionsAndDefaultRendering()
@@ -248,6 +249,13 @@ namespace Microsoft.Web.Helpers.Test
             virtualPathUtility.Setup(c => c.ToAbsolute(It.IsAny<string>())).Returns<string>(_ => _);
 
             return virtualPathUtility.Object;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ReCaptcha.PrivateKey) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

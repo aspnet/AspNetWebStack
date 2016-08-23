@@ -11,7 +11,8 @@ using Microsoft.TestCommon;
 
 namespace System.Web.Helpers.Test
 {
-    public class WebMailTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class WebMailTest : IDisposable
     {
         const string FromAddress = "abc@123.com";
         const string Server = "myserver.com";
@@ -149,7 +150,7 @@ namespace System.Web.Helpers.Test
             // Arrange
             string header = "foo: bar";
 
-            // Act 
+            // Act
             string key, value;
 
             // Assert
@@ -164,7 +165,7 @@ namespace System.Web.Helpers.Test
             // Arrange
             string header = "foo bar";
 
-            // Act 
+            // Act
             string key, value;
 
             // Assert
@@ -375,6 +376,13 @@ namespace System.Web.Helpers.Test
             Assert.Equal("header-cc@test.com", message.CC.First().Address);
             Assert.Equal("direct-cc@test.com", message.CC.Last().Address);
             Assert.Equal(MailPriority.High, message.Priority);
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. WebMail.SmtpServer) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

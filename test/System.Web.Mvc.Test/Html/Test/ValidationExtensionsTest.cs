@@ -4,13 +4,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class ValidationExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class ValidationExtensionsTest : IDisposable
     {
         // Validate
 
@@ -70,7 +72,7 @@ namespace System.Web.Mvc.Html.Test
             htmlHelper.ViewContext.FormContext = new FormContext();
             htmlHelper.ViewContext.ClientValidationEnabled = false;
 
-            // Act 
+            // Act
             htmlHelper.Validate("foo");
 
             // Assert
@@ -86,7 +88,7 @@ namespace System.Web.Mvc.Html.Test
             htmlHelper.ViewContext.ClientValidationEnabled = true;
             htmlHelper.ViewContext.UnobtrusiveJavaScriptEnabled = true;
 
-            // Act 
+            // Act
             htmlHelper.Validate("foo");
 
             // Assert
@@ -162,7 +164,7 @@ namespace System.Web.Mvc.Html.Test
             vdd.ModelState.AddModelError("", "some error text");
             HtmlHelper htmlHelper = MvcHelper.GetHtmlHelper(vdd);
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessage("");
 
             // Assert
@@ -188,7 +190,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelErrors());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessage("foo");
 
             // Assert
@@ -201,7 +203,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelErrors());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessage("quux");
 
             // Assert
@@ -987,7 +989,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper<ValidationModel> htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithNullModelState());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessageFor(m => m.foo);
 
             // Assert
@@ -1000,7 +1002,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper<ValidationModel> htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelErrors());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessageFor(m => m.foo);
 
             // Assert
@@ -1013,7 +1015,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper<ValidationModel> htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelErrors());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessageFor(m => m.quux);
 
             // Assert
@@ -1894,7 +1896,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelErrors("MyPrefix"));
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationMessage("foo");
 
             // Assert
@@ -1907,7 +1909,7 @@ namespace System.Web.Mvc.Html.Test
             // Arrange
             HtmlHelper htmlHelper = MvcHelper.GetHtmlHelper(GetViewDataWithModelWithDisplayOrderErrors());
 
-            // Act 
+            // Act
             MvcHtmlString html = htmlHelper.ValidationSummary();
 
             // Assert
@@ -2145,13 +2147,20 @@ namespace System.Web.Mvc.Html.Test
 
             var model = new ModelWithOrdering();
 
-            // Error names for each property on ModelWithOrdering. 
+            // Error names for each property on ModelWithOrdering.
             viewData.ModelState.AddModelError("First", "Error 1");
             viewData.ModelState.AddModelError("Second", "Error 2");
             viewData.ModelState.AddModelError("Third", "Error 3");
             viewData.ModelState.AddModelError("Fourth", "Error 4");
 
             return viewData;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.ClientValidationEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

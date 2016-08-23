@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.TestUtil;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Moq;
 
 namespace Microsoft.Web.Helpers.Test
 {
-    public class FacebookTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class FacebookTest : IDisposable
     {
         public FacebookTest()
         {
@@ -266,6 +268,13 @@ namespace Microsoft.Web.Helpers.Test
             }
 
             return context.Object;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. Facebook.AppId) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

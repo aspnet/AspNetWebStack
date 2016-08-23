@@ -3,12 +3,14 @@
 
 using System.Web.Mvc.Test;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class TextAreaExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class TextAreaExtensionsTest : IDisposable
     {
         private static readonly RouteValueDictionary _textAreaAttributesDictionary = new RouteValueDictionary(new { rows = "15", cols = "12" });
         private static readonly object _textAreaAttributesObjectDictionary = new { rows = "15", cols = "12" };
@@ -887,6 +889,13 @@ namespace System.Web.Mvc.Html.Test
 
             // Assert
             Assert.Equal("<textarea id=\"testEncoding\" name=\"testEncoding\"><prefix>&lt;model&gt;</textarea>", html.ToHtmlString());
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.ClientValidationEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

@@ -16,7 +16,8 @@ using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class DefaultEditorTemplatesTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class DefaultEditorTemplatesTest : IDisposable
     {
         // BooleanTemplate
 
@@ -92,7 +93,7 @@ namespace System.Web.Mvc.Html.Test
 
         [Theory]
         [PropertyData("BooleanTemplateHtmlAttributeData")]
-        public void BooleanTemplate_AddsHtmlAttributesDictionary(object htmlAttributes, string expectedHtml) 
+        public void BooleanTemplate_AddsHtmlAttributesDictionary(object htmlAttributes, string expectedHtml)
         {
             var htmlHelper = MakeHtmlHelper<bool>(true);
             htmlHelper.ViewContext.ViewBag.htmlAttributes = HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
@@ -1532,6 +1533,13 @@ namespace System.Web.Mvc.Html.Test
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ScopeStorage.CurrentProvider.CurrentScope) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

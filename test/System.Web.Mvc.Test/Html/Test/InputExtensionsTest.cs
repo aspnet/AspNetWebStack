@@ -5,12 +5,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Linq;
 using System.Web.Mvc.Test;
 using System.Web.Routing;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Microsoft.Web.UnitTestUtil;
 
 namespace System.Web.Mvc.Html.Test
 {
-    public class InputExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class InputExtensionsTest : IDisposable
     {
         // CheckBox
 
@@ -3078,6 +3080,13 @@ namespace System.Web.Mvc.Html.Test
             modelStateFoo.Value = HtmlHelperTest.GetValueProviderResult(new string[] { "AttemptedValueFoo" }, "AttemptedValueFoo");
 
             return viewData;
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. ViewContext.ClientValidationEnabled) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }

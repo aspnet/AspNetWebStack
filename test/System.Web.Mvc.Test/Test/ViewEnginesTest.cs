@@ -5,6 +5,7 @@ using Microsoft.TestCommon;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
     public class ViewEnginesTest
     {
         [Fact]

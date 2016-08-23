@@ -3,12 +3,14 @@
 
 using System.Collections.Generic;
 using System.Web.WebPages.Html;
+using System.Web.WebPages.Scope;
 using Microsoft.TestCommon;
 using Moq;
 
 namespace System.Web.WebPages.Test
 {
-    public class TextAreaExtensionsTest
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")]
+    public class TextAreaExtensionsTest : IDisposable
     {
         [Fact]
         public void TextAreaWithEmptyNameThrows()
@@ -171,8 +173,7 @@ namespace System.Web.WebPages.Test
                          html.ToHtmlString());
         }
 
-        // [Fact]
-        // Cant test this in multi-threaded
+        [Fact]
         public void TextAreaWithCustomErrorClass()
         {
             // Arrange
@@ -219,6 +220,13 @@ namespace System.Web.WebPages.Test
 
             HtmlHelperTest.AssertHelperTransformsAttributesUnderscoresToDashs((helper, attributes) =>
                 helper.TextArea("foo", "value", 1, 1, attributes));
+        }
+
+        public void Dispose()
+        {
+            // Reset ScopeStorage (written via e.g. HtmlHelper.ValidationInputCssClassName) between tests to avoid unexpected interactions.
+            ScopeStorage.CurrentProvider = new StaticScopeStorageProvider();
+            ScopeStorage.GlobalScope.Clear();
         }
     }
 }
