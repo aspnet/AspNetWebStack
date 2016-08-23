@@ -131,6 +131,9 @@ namespace System.Net.Http
             var content = new StringContent("");
             _formatterMock.Setup(f => f.CanReadType(typeof(string))).Returns(true);
             _formatterMock.Object.SupportedMediaTypes.Add(content.Headers.ContentType);
+            _formatterMock
+                .Setup(f => f.ReadFromStreamAsync(It.IsAny<Type>(), It.IsAny<Stream>(), It.IsAny<HttpContent>(), It.IsAny<IFormatterLogger>()))
+                .Returns(Task.FromResult<object>(result: null));
 
             await content.ReadAsAsync<string>(_formatters);
 

@@ -345,10 +345,16 @@ namespace System.Web.Http.WebHost.Routing
                 request.RegisterForDispose(spy);
 
                 ExceptionDispatchInfo exceptionInfo = CreateExceptionInfo(CreateException());
-                IExceptionLogger logger = CreateDummyLogger();
-                IExceptionHandler handler = CreateDummyHandler();
+                Mock<IExceptionLogger> loggerMock = new Mock<IExceptionLogger>(MockBehavior.Strict);
+                loggerMock
+                    .Setup(l => l.LogAsync(It.IsAny<ExceptionLoggerContext>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(0));
+                Mock<IExceptionHandler> handlerMock = new Mock<IExceptionHandler>(MockBehavior.Strict);
+                handlerMock
+                    .Setup(h => h.HandleAsync(It.IsAny<ExceptionHandlerContext>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(0));
 
-                HttpRouteExceptionHandler product = CreateProductUnderTest(exceptionInfo, logger, handler);
+                HttpRouteExceptionHandler product = CreateProductUnderTest(exceptionInfo, loggerMock.Object, handlerMock.Object);
 
                 Mock<HttpResponseBase> responseBaseMock = new Mock<HttpResponseBase>();
                 responseBaseMock.SetupGet(r => r.Cache).Returns(() => new Mock<HttpCachePolicyBase>().Object);

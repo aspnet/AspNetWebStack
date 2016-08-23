@@ -43,6 +43,9 @@ namespace System.Web.Http
         public async Task InvokeActionAsync_InvokesActionDescriptorExecuteAsync()
         {
             var cts = new CancellationTokenSource();
+            _actionDescriptorMock.Setup(
+                ad => ad.ExecuteAsync(It.IsAny<HttpControllerContext>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult((object)null));
 
             await _actionInvoker.InvokeActionAsync(_actionContext, cts.Token);
 
