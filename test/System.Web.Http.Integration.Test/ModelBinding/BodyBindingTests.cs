@@ -108,7 +108,7 @@ namespace System.Web.Http.ModelBinding
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
-            Assert.Equal(null, actualItem);
+            Assert.Null(actualItem);
         }
 
         [Theory]

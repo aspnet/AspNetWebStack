@@ -16,7 +16,7 @@ namespace System.Web.WebPages.Test
     {
         // The page ~/_pagestart.cshtml does the following:
         // this is the init page
-        // 
+        //
         // The page ~/index.cshtml does the following:
         // hello world
         // Expected result:
@@ -37,7 +37,7 @@ namespace System.Web.WebPages.Test
 
         // The page ~/_pagestart.cshtml does the following:
         // this is the init page
-        // 
+        //
         // The page ~/folder1/index.cshtml does the following:
         // hello world
         // Expected result:
@@ -60,7 +60,7 @@ namespace System.Web.WebPages.Test
         // PageData["Title"] = "InitPage";
         // Layout = "Layout.cshtml";
         // this is the init page
-        // 
+        //
         // The page ~/index.cshtml does the following:
         // PageData["Title"] = "IndexCshtmlPage"
         // hello world
@@ -190,7 +190,7 @@ namespace System.Web.WebPages.Test
         // init page start
         // @RunPage()
         // init page end
-        // 
+        //
         // The page ~/index.cshtml does the following:
         // hello world
         //
@@ -219,12 +219,12 @@ namespace System.Web.WebPages.Test
         // <init1>
         // @RunPage()
         // </init1>
-        // 
+        //
         // The page ~/folder1/_pagestart.cshtml does the following:
         // <init2>
         // @RunPage()
         // </init2>
-        // 
+        //
         // The page ~/folder1/index.cshtml does the following:
         // hello world
         //
@@ -260,10 +260,10 @@ namespace System.Web.WebPages.Test
 
         // The page ~/_pagestart.cshtml does the following:
         // PageData["key1"] = "value1";
-        // 
+        //
         // The page ~/folder1/_pagestart.cshtml does the following:
         // PageData["key2"] = "value2";
-        // 
+        //
         // The page ~/folder1/index.cshtml does the following:
         // @PageData["key1"] @PageData["key2"] @PageData["key3"]
         //
@@ -333,7 +333,7 @@ namespace System.Web.WebPages.Test
         [Fact]
         // The page ~/_pagestart.cshtml does the following:
         // <init>
-        // @{ 
+        // @{
         //     try {
         //         RunPage();
         //     } catch (Exception e) {
@@ -459,7 +459,7 @@ namespace System.Web.WebPages.Test
             Assert.Equal("/website1/", initPage.GetDirectory("/website1/default.cshtml"));
             Assert.Equal("~/", initPage.GetDirectory("~/default.cshtml"));
             Assert.Equal("/", initPage.GetDirectory("/website1/"));
-            Assert.Equal(null, initPage.GetDirectory("/"));
+            Assert.Null(initPage.GetDirectory("/"));
         }
 
         [Fact]

@@ -113,7 +113,7 @@ namespace System.Web.Mvc.Test
             var obj = new { Foo = new { Biz = "Baz" } };
             ViewDataDictionary vdd = new ViewDataDictionary(obj);
 
-            Assert.Equal(null, vdd.Eval("Foo.Bar"));
+            Assert.Null(vdd.Eval("Foo.Bar"));
         }
 
         [Fact]

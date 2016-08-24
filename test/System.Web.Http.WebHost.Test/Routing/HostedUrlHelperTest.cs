@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Web.Http.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.TestCommon;
@@ -53,7 +52,7 @@ namespace System.Web.Http.WebHost.Routing
 
             string generatedUrl = url.Route("webroute1", new { foo = "bar" });
 
-            Assert.Equal(null, generatedUrl);
+            Assert.Null(generatedUrl);
         }
 
         [Theory]

@@ -48,7 +48,7 @@ namespace System.Web.Helpers.AntiXsrf.Test
             Assert.Equal(cookieToken.SecurityToken, fieldToken.SecurityToken);
             Assert.False(fieldToken.IsSessionToken);
             Assert.Equal("", fieldToken.Username);
-            Assert.Equal(null, fieldToken.ClaimUid);
+            Assert.Null(fieldToken.ClaimUid);
             Assert.Equal("", fieldToken.AdditionalData);
         }
 
@@ -101,7 +101,7 @@ namespace System.Web.Helpers.AntiXsrf.Test
             Assert.Equal(cookieToken.SecurityToken, fieldToken.SecurityToken);
             Assert.False(fieldToken.IsSessionToken);
             Assert.Equal("", fieldToken.Username);
-            Assert.Equal(null, fieldToken.ClaimUid);
+            Assert.Null(fieldToken.ClaimUid);
             Assert.Equal("", fieldToken.AdditionalData);
         }
 
@@ -134,7 +134,7 @@ namespace System.Web.Helpers.AntiXsrf.Test
             Assert.Equal(cookieToken.SecurityToken, fieldToken.SecurityToken);
             Assert.False(fieldToken.IsSessionToken);
             Assert.Equal("", fieldToken.Username);
-            Assert.Equal(null, fieldToken.ClaimUid);
+            Assert.Null(fieldToken.ClaimUid);
             Assert.Equal("additional-data", fieldToken.AdditionalData);
         }
 
@@ -197,7 +197,7 @@ namespace System.Web.Helpers.AntiXsrf.Test
             Assert.Equal(cookieToken.SecurityToken, fieldToken.SecurityToken);
             Assert.False(fieldToken.IsSessionToken);
             Assert.Equal("my-username", fieldToken.Username);
-            Assert.Equal(null, fieldToken.ClaimUid);
+            Assert.Null(fieldToken.ClaimUid);
             Assert.Equal("", fieldToken.AdditionalData);
         }
 

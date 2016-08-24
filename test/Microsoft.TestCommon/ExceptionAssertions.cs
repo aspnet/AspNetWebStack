@@ -531,7 +531,7 @@ namespace Microsoft.TestCommon
             try
             {
                 // The 'testCode' Task might execute asynchronously in a different thread making it hard to enforce the thread culture.
-                // The correct way to verify exception messages in such a scenario would be to run the task synchronously inside of a 
+                // The correct way to verify exception messages in such a scenario would be to run the task synchronously inside of a
                 // culture enforced block.
                 await testCode();
             }
@@ -565,12 +565,11 @@ namespace Microsoft.TestCommon
             return ex;
         }
 
-
         // We've re-implemented all the xUnit.net Throws code so that we can get this
         // updated implementation of RecordException which silently unwraps any instances
-        // of AggregateException. In addition to unwrapping exceptions, this method ensures 
+        // of AggregateException. In addition to unwrapping exceptions, this method ensures
         // that tests are executed in with a known set of Culture and UICulture. This prevents
-        // tests from failing when executed on a non-English machine. 
+        // tests from failing when executed on a non-English machine.
         private static Exception RecordException(Action testCode)
         {
             try

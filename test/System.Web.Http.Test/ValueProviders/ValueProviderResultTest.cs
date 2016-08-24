@@ -17,7 +17,7 @@ namespace System.Web.Http.ValueProviders
 
             var convertedValue = valueProviderResult.ConvertTo(typeof(string));
 
-            Assert.Equal(null, convertedValue);
+            Assert.Null(convertedValue);
         }
 
         [Fact]

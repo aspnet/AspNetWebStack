@@ -20,18 +20,18 @@ namespace Microsoft.TestCommon
 
         /// <summary>
         /// Creates a <see cref="MemoryStream"/>, invokes <paramref name="codeThatWrites"/> to write to it,
-        /// rewinds the stream to the beginning and invokes <paramref name="codeThatReads"/>.
+        /// rewinds the stream to the beginning and invokes <paramref name="codeThatReadsAsync"/>.
         /// </summary>
-        /// <param name="codeThatWrites">Code to write to the stream.  It cannot be <c>null</c>.</param>
-        /// <param name="codeThatReads">Code that reads from the stream.  It cannot be <c>null</c>.</param>
-        public async Task WriteAndReadAsync(Func<MemoryStream, Task> codeThatWrites, Func<MemoryStream, Task> codeThatReads)
+        /// <param name="codeThatWrites">Code to write to the stream. It cannot be <c>null</c>.</param>
+        /// <param name="codeThatReadsAsync">Code that reads from the stream. It cannot be <c>null</c>.</param>
+        public async Task WriteAndReadAsync(Func<MemoryStream, Task> codeThatWrites, Func<MemoryStream, Task> codeThatReadsAsync)
         {
             if (codeThatWrites == null)
             {
                 throw new ArgumentNullException("codeThatWrites");
             }
 
-            if (codeThatReads == null)
+            if (codeThatReadsAsync == null)
             {
                 throw new ArgumentNullException("codeThatReads");
             }
@@ -43,7 +43,7 @@ namespace Microsoft.TestCommon
                 stream.Flush();
                 stream.Seek(0L, SeekOrigin.Begin);
 
-                await codeThatReads(stream);
+                await codeThatReadsAsync(stream);
             }
         }
 

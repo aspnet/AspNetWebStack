@@ -79,7 +79,7 @@ namespace System.Threading.Tasks
 
             // Assert
             Assert.Equal(TaskStatus.RanToCompletion, task.Status);
-            Assert.Equal(null, result);
+            Assert.Null(result);
         }
 
         [Fact, ForceGC]

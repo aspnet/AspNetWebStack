@@ -69,7 +69,7 @@ namespace System.Web.Mvc.Test
             DefaultViewLocationCache.Null.InsertViewLocation(null /* httpContext */, "foo", "fooPath");
 
             // Assert
-            Assert.Equal(null, DefaultViewLocationCache.Null.GetViewLocation(null /* httpContext */, "foo"));
+            Assert.Null(DefaultViewLocationCache.Null.GetViewLocation(null /* httpContext */, "foo"));
         }
     }
 }

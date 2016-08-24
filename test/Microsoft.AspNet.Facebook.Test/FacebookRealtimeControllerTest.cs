@@ -24,7 +24,7 @@ namespace Microsoft.AspNet.Facebook.Test
         public void Overriding_VerificationToken()
         {
             var userRealTimeController = new UserRealtimeCallbackController();
-            Assert.Equal(null, userRealTimeController.VerifyToken);
+            Assert.Null(userRealTimeController.VerifyToken);
 
             userRealTimeController = new UserRealtimeCallbackController(null, "foo");
             Assert.Equal("foo", userRealTimeController.VerifyToken);

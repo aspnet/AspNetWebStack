@@ -1297,7 +1297,7 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Throws<InvalidOperationException>(
                 delegate { ((IController)controller).Execute(controller.ControllerContext.RequestContext); });
-            Assert.NotEqual(mockContext.Object.Session[SessionStateTempDataProvider.TempDataSessionStateKey], null);
+            Assert.NotNull(mockContext.Object.Session[SessionStateTempDataProvider.TempDataSessionStateKey]);
             TempDataDictionary tempData = new TempDataDictionary();
             tempData.Load(controller.ControllerContext, controller.TempDataProvider);
             Assert.Equal(tempData["Key1"], "Value1");
@@ -1872,7 +1872,7 @@ namespace System.Web.Mvc.Test
         [Fact]
         public void CreateActionInvokerCallsIntoResolverInstanceAndCreatesANewOneIfNecessary()
         {
-            // If IDependencyResolver is set, but empty, falls back and still creates. 
+            // If IDependencyResolver is set, but empty, falls back and still creates.
             var controller = new EmptyController();
             Mock<IDependencyResolver> resolverMock = new Mock<IDependencyResolver>();
             resolverMock.Setup(r => r.GetService(typeof(IAsyncActionInvoker))).Returns(null);
@@ -2053,7 +2053,7 @@ namespace System.Web.Mvc.Test
                 base.Initialize(requestContext);
             }
 
-            // Test can expose protected method as public. 
+            // Test can expose protected method as public.
             public new IActionInvoker CreateActionInvoker()
             {
                 return base.CreateActionInvoker();

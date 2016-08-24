@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Web.Routing;
 using System.Web.WebPages.Html;
@@ -91,8 +90,8 @@ namespace System.Web.WebPages.Test
             IHtmlString markupHtml = htmlHelper.Raw(null);
 
             // Assert
-            Assert.Equal(null, markupHtml.ToString());
-            Assert.Equal(null, markupHtml.ToHtmlString());
+            Assert.Null(markupHtml.ToString());
+            Assert.Null(markupHtml.ToHtmlString());
         }
 
         [Fact]
@@ -105,8 +104,8 @@ namespace System.Web.WebPages.Test
             IHtmlString markupHtml = htmlHelper.Raw((object)null);
 
             // Assert
-            Assert.Equal(null, markupHtml.ToString());
-            Assert.Equal(null, markupHtml.ToHtmlString());
+            Assert.Null(markupHtml.ToString());
+            Assert.Null(markupHtml.ToHtmlString());
         }
 
         [Fact]
@@ -213,7 +212,7 @@ namespace System.Web.WebPages.Test
             // Act
             var htmlString = helperInvocation(helper, attributes).ToHtmlString();
 
-            // Assert            
+            // Assert
             Assert.DoesNotContain(unexpected, htmlString);
             Assert.Contains(expected, htmlString);
         }

@@ -180,7 +180,7 @@ namespace System.Web.Http.Owin
         }
 
         [Fact]
-        public Task AuthenticateAsync_Throws_WhenOwinContextIsNull()
+        public async Task AuthenticateAsync_Throws_WhenOwinContextIsNull()
         {
             // Arrange
             IAuthenticationFilter filter = CreateProductUnderTest();
@@ -190,7 +190,7 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationContext context = CreateAuthenticationContext(request);
 
                 // Act & Assert
-                return Assert.ThrowsAsync<InvalidOperationException>(
+                await Assert.ThrowsAsync<InvalidOperationException>(
                     () => filter.AuthenticateAsync(context, CancellationToken.None),
                     "No OWIN authentication manager is associated with the request.");
             }
@@ -208,7 +208,7 @@ namespace System.Web.Http.Owin
                 HttpAuthenticationContext context = CreateAuthenticationContext(request);
 
                 // Act & Assert
-                InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(
+                await Assert.ThrowsAsync<InvalidOperationException>(
                     () => filter.AuthenticateAsync(context, CancellationToken.None),
                     "No OWIN authentication manager is associated with the request.");
             }
