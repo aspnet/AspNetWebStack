@@ -96,7 +96,7 @@ namespace System.Web.Http
                 CancellationToken.None);
 
             // Assert
-            Assert.Equal("User deleted", await message.Content.ReadAsStringAsync());
+            Assert.Equal("User Deleted", await message.Content.ReadAsStringAsync());
         }
 
         [Fact]
