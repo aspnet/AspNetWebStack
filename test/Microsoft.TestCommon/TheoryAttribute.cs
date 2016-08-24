@@ -2,28 +2,24 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Xunit.Sdk;
 
 namespace Microsoft.TestCommon
 {
+    /// <summary>
+    /// An override of <see cref="Xunit.TheoryAttribute"/> that provides extended capabilities.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class TheoryAttribute : Xunit.Extensions.TheoryAttribute
+    [XunitTestCaseDiscoverer("Microsoft.TestCommon.TheoryDiscoverer", "Microsoft.TestCommon")]
+    public class TheoryAttribute : Xunit.TheoryAttribute
     {
+        /// <summary>
+        /// Instantiates a new instance of <see cref="TheoryAttribute"/>.
+        /// </summary>
         public TheoryAttribute()
         {
-            Timeout = Debugger.IsAttached ? Int32.MaxValue : TimeoutConstant.DefaultTimeout;
             Platforms = Platform.All;
             PlatformJustification = "Unsupported platform (test runs on {0}, current platform is {1})";
-        }
-
-        /// <summary>
-        /// Gets the platform that the unit test is currently running on.
-        /// </summary>
-        protected Platform Platform
-        {
-            get { return PlatformInfo.Platform; }
         }
 
         /// <summary>
@@ -37,22 +33,5 @@ namespace Microsoft.TestCommon
         /// the supported platforms as {0}, and the current platform as {1}.
         /// </summary>
         public string PlatformJustification { get; set; }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<ITestCommand> EnumerateTestCommands(IMethodInfo method)
-        {
-            if ((Platforms & Platform) == 0)
-            {
-                return new[] {
-                    new SkipCommand(
-                        method,
-                        DisplayName,
-                        String.Format(PlatformJustification, Platforms.ToString().Replace(", ", " | "), Platform)
-                    )
-                };
-            }
-
-            return base.EnumerateTestCommands(method);
-        }
     }
 }

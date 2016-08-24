@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Microsoft.TestCommon
 {
-    public class RestoreThreadPrincipalAttribute : Xunit.BeforeAfterTestAttribute
+    public class RestoreThreadPrincipalAttribute : Xunit.Sdk.BeforeAfterTestAttribute
     {
         private IPrincipal _originalPrincipal;
 

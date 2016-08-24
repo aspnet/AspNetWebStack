@@ -9,8 +9,8 @@
     <UsingTask TaskName="Xunit.Runner.MSBuild.xunit" AssemblyFile="@(XunitMsBuildRunner)"/>
 
     <Target Name="Xunit">
-        <xunit Assembly="$(TestAssembly)" Xml="$(XmlPath)"/>
-        <!-- Replace potentially illegal escaped characters -->
+        <xunit Assemblies="$(TestAssembly)" XmlV1="$(XmlPath)"/>
+        <!-- Replace potentially illegal escaped characters (if they get through validations done during Save) -->
         <RegexReplace
             Files="$(XmlPath)"
             Find="&amp;#x(?&lt;char&gt;[0-9A-Fa-f]+);"

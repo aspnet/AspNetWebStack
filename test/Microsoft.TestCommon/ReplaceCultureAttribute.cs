@@ -12,7 +12,7 @@ namespace Microsoft.TestCommon
     /// Replaces the current culture and UI culture for the test.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ReplaceCultureAttribute : Xunit.BeforeAfterTestAttribute
+    public class ReplaceCultureAttribute : Xunit.Sdk.BeforeAfterTestAttribute
     {
         private CultureInfo _originalCulture;
         private CultureInfo _originalUICulture;

@@ -27,5 +27,11 @@ namespace Microsoft.TestCommon
         public static readonly TaskAssert Task = new TaskAssert();
 
         public static readonly XmlAssert Xml = new XmlAssert();
+
+        // Method has been marked [Obsolete] in xUnit.net v2.0.0+.
+        public static new void ReferenceEquals(object a, object b)
+        {
+            Same(a, b);
+        }
     }
 }
