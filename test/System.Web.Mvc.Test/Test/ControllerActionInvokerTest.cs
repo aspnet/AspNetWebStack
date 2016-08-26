@@ -2463,7 +2463,8 @@ namespace System.Web.Mvc.Test
                 }
             }
 
-            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>() { DefaultValue = DefaultValue.Mock };
+            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
+            mockControllerContext.SetupGet(c => c.RouteData).Returns(new RouteData());
 
             mockControllerContext.Setup(c => c.HttpContext.Request.ValidateInput()).Callback(() =>
             {

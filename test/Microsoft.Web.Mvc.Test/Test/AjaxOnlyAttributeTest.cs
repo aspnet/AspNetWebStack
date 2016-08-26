@@ -51,7 +51,7 @@ namespace Microsoft.Web.Mvc.Test
 
         private static ControllerContext GetControllerContext(bool containsHeader)
         {
-            Mock<ControllerContext> mockContext = new Mock<ControllerContext> { DefaultValue = DefaultValue.Mock };
+            Mock<ControllerContext> mockContext = new Mock<ControllerContext>();
 
             NameValueCollection nvc = new NameValueCollection();
             if (containsHeader)

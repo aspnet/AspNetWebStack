@@ -6,9 +6,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Policy;
-using System.IdentityModel.Selectors;
-using System.IdentityModel.Tokens;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -21,7 +18,6 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
-using Moq.Protected;
 
 namespace System.Web.Http.SelfHost
 {
@@ -705,7 +701,7 @@ namespace System.Web.Http.SelfHost
         private static Mock<RequestContext> CreateServiceModelContextMock()
         {
             Mock<RequestContext> mock = new Mock<RequestContext>(MockBehavior.Strict);
-            mock.Protected().Setup("Dispose", true);
+            mock.As<IDisposable>().Setup(c => c.Dispose());
             return mock;
         }
 

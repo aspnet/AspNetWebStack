@@ -49,11 +49,14 @@ namespace System.Web.Mvc.Test
             Mock<IDependencyResolver> resolver = new Mock<IDependencyResolver>(MockBehavior.Strict);
 
             // Act & Assert
-            Assert.Throws<MockException>(
-                () => MultiServiceResolver.GetCombined<TestProvider>(null, resolver.Object),
-                "IDependencyResolver.GetServices(System.Web.Mvc.Test.MultiServiceResolverTest+TestProvider) invocation failed with mock behavior Strict." + Environment.NewLine
-              + "All invocations on the mock must have a corresponding setup."
-                );
+            var ex = Assert.Throws<MockException>(
+                () => MultiServiceResolver.GetCombined<TestProvider>(null, resolver.Object));
+            Assert.Equal(
+                "IDependencyResolver.GetServices(System.Web.Mvc.Test.MultiServiceResolverTest+TestProvider) invocation failed with mock behavior Strict." +
+                Environment.NewLine +
+                "All invocations on the mock must have a corresponding setup.",
+                ex.Message,
+                ignoreLineEndingDifferences: true);
         }
 
         private class TestProvider
