@@ -272,21 +272,23 @@ namespace System.Web.Mvc.Async.Test
             // Arrange
             ControllerContext controllerContext = new ControllerContext();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            IAsyncResult innerAsyncResult = new MockAsyncResult();
-            ActionResult expectedResult = new ViewResult();
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
+            {
+                ActionResult expectedResult = new ViewResult();
 
-            Mock<AsyncActionDescriptor> mockActionDescriptor = new Mock<AsyncActionDescriptor>();
-            mockActionDescriptor.Setup(d => d.BeginExecute(controllerContext, parameters, It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
-            mockActionDescriptor.Setup(d => d.EndExecute(innerAsyncResult)).Returns(expectedResult);
+                Mock<AsyncActionDescriptor> mockActionDescriptor = new Mock<AsyncActionDescriptor>();
+                mockActionDescriptor.Setup(d => d.BeginExecute(controllerContext, parameters, It.IsAny<AsyncCallback>(), It.IsAny<object>())).Returns(innerAsyncResult);
+                mockActionDescriptor.Setup(d => d.EndExecute(innerAsyncResult)).Returns(expectedResult);
 
-            AsyncControllerActionInvoker invoker = new AsyncControllerActionInvoker();
+                AsyncControllerActionInvoker invoker = new AsyncControllerActionInvoker();
 
-            // Act
-            IAsyncResult asyncResult = invoker.BeginInvokeActionMethod(controllerContext, mockActionDescriptor.Object, parameters, null, null);
-            ActionResult returnedResult = invoker.EndInvokeActionMethod(asyncResult);
+                // Act
+                IAsyncResult asyncResult = invoker.BeginInvokeActionMethod(controllerContext, mockActionDescriptor.Object, parameters, null, null);
+                ActionResult returnedResult = invoker.EndInvokeActionMethod(asyncResult);
 
-            // Assert
-            Assert.Equal(expectedResult, returnedResult);
+                // Assert
+                Assert.Equal(expectedResult, returnedResult);
+            }
         }
 
         [Fact]
@@ -335,7 +337,7 @@ namespace System.Web.Mvc.Async.Test
             };
 
             // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
+            ActionResult result = BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
 
             // Assert
             Assert.True(onActionExecutingWasCalled);
@@ -373,7 +375,7 @@ namespace System.Web.Mvc.Async.Test
             };
 
             // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, filter1, filter2);
+            ActionResult result = BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, filter1, filter2);
 
             // Assert
             Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "BeginExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
@@ -410,7 +412,7 @@ namespace System.Web.Mvc.Async.Test
             };
 
             // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, filter1, filter2);
+            ActionResult result = BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, filter1, filter2);
 
             // Assert
             Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "BeginExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
@@ -439,7 +441,7 @@ namespace System.Web.Mvc.Async.Test
             Assert.Throws<Exception>(
                 delegate
                 {
-                    BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
+                    BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
                 },
                 expectedExceptionText);
 
@@ -473,7 +475,7 @@ namespace System.Web.Mvc.Async.Test
             Assert.Throws<ThreadAbortException>(
                 delegate
                 {
-                    BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
+                    BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
                 });
 
             // Assert
@@ -505,13 +507,16 @@ namespace System.Web.Mvc.Async.Test
                 throw exepctedException;
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersEndTester(action, actionFilter);
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersEndTester(mockResult, action, actionFilter);
 
-            // Assert
-            Assert.True(actionCalled);
-            Assert.True(onActionExecutedCalled);
-            Assert.Equal(expectedResult, result);
+                // Assert
+                Assert.True(actionCalled);
+                Assert.True(onActionExecutedCalled);
+                Assert.Equal(expectedResult, result);
+            }
         }
 
         [Fact]
@@ -544,12 +549,15 @@ namespace System.Web.Mvc.Async.Test
                 OnActionExecutedImpl = delegate(ActionExecutedContext filterContext) { actionLog.Add("OnActionExecuted2"); }
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersEndTester(action, filter1, filter2);
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersEndTester(mockResult, action, filter1, filter2);
 
-            // Assert
-            Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "EndExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
-            Assert.Equal(expectedResult, result);
+                // Assert
+                Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "EndExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
+                Assert.Equal(expectedResult, result);
+            }
         }
 
         [Fact]
@@ -582,12 +590,15 @@ namespace System.Web.Mvc.Async.Test
                 }
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersEndTester(action, filter1, filter2);
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersEndTester(mockResult, action, filter1, filter2);
 
-            // Assert
-            Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "EndExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
-            Assert.Equal(expectedResult, result);
+                // Assert
+                Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "EndExecute", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
+                Assert.Equal(expectedResult, result);
+            }
         }
 
         [Fact]
@@ -605,13 +616,16 @@ namespace System.Web.Mvc.Async.Test
                 throw new Exception(expectedExceptionText);
             };
 
-            // Act & assert
-            Assert.Throws<Exception>(
-                () => { BeingInvokeActionMethodWithFiltersEndTester(action, actionFilter); },
-                expectedExceptionText);
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act & assert
+                Assert.Throws<Exception>(
+                    () => BeginInvokeActionMethodWithFiltersEndTester(mockResult, action, actionFilter),
+                    expectedExceptionText);
 
-            // Assert
-            Assert.True(onActionExecutedWasCalled);
+                // Assert
+                Assert.True(onActionExecutedWasCalled);
+            }
         }
 
         [Fact]
@@ -633,12 +647,15 @@ namespace System.Web.Mvc.Async.Test
                 return null;
             };
 
-            // Act & assert
-            Assert.Throws<ThreadAbortException>(
-                delegate { BeingInvokeActionMethodWithFiltersEndTester(action, actionFilter); });
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act & assert
+                Assert.Throws<ThreadAbortException>(
+                    () => BeginInvokeActionMethodWithFiltersEndTester(mockResult, action, actionFilter));
 
-            // Assert
-            Assert.True(onActionExecutedWasCalled);
+                // Assert
+                Assert.True(onActionExecutedWasCalled);
+            }
         }
 
         [Fact]
@@ -647,23 +664,25 @@ namespace System.Web.Mvc.Async.Test
             // Arrange
             bool onActionExecutingWasCalled = false;
             bool onActionExecutedWasCalled = false;
-            MockAsyncResult innerAsyncResult = new MockAsyncResult();
-            ActionFilterImpl actionFilter = new ActionFilterImpl()
+            using (MockAsyncResult innerAsyncResult = new MockAsyncResult())
             {
-                OnActionExecutingImpl = _ => { onActionExecutingWasCalled = true; },
-                OnActionExecutedImpl = _ => { onActionExecutedWasCalled = true; }
-            };
-            Func<IAsyncResult> beginExecute = delegate
-            {
-                return innerAsyncResult;
-            };
+                ActionFilterImpl actionFilter = new ActionFilterImpl()
+                {
+                    OnActionExecutingImpl = _ => { onActionExecutingWasCalled = true; },
+                    OnActionExecutedImpl = _ => { onActionExecutedWasCalled = true; }
+                };
+                Func<IAsyncResult> beginExecute = delegate
+                {
+                    return innerAsyncResult;
+                };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersBeginTester(beginExecute, actionFilter);
 
-            // Assert
-            Assert.True(onActionExecutingWasCalled);
-            Assert.True(onActionExecutedWasCalled);
+                // Assert
+                Assert.True(onActionExecutingWasCalled);
+                Assert.True(onActionExecutedWasCalled);
+            }
         }
 
         [Fact]
@@ -688,13 +707,16 @@ namespace System.Web.Mvc.Async.Test
                 return overriddenResult;
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersTester(() => new MockAsyncResult(), endExecute, checkBegin: false, checkEnd: false, filters: new IActionFilter[] { actionFilter } );
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersTester(() => mockResult, endExecute, checkBegin: false, checkEnd: false, filters: new IActionFilter[] { actionFilter });
 
-            // Assert
-            Assert.True(onActionExecutingWasCalled);
-            Assert.False(onActionExecutedWasCalled);
-            Assert.Equal(expectedResult, result);
+                // Assert
+                Assert.True(onActionExecutingWasCalled);
+                Assert.False(onActionExecutedWasCalled);
+                Assert.Equal(expectedResult, result);
+            }
         }
 
         [Fact]
@@ -720,12 +742,15 @@ namespace System.Web.Mvc.Async.Test
                 OnActionExecutedImpl = delegate(ActionExecutedContext filterContext) { actionLog.Add("OnActionExecuted2"); }
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersEndTester(continuation, filter1, filter2);
+            using (var mockResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersEndTester(mockResult, continuation, filter1, filter2);
 
-            // Assert
-            Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "Continuation", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
-            Assert.Equal(actionResult, result);
+                // Assert
+                Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "Continuation", "OnActionExecuted2", "OnActionExecuted1" }, actionLog.ToArray());
+                Assert.Equal(actionResult, result);
+            }
         }
 
         [Fact]
@@ -755,25 +780,28 @@ namespace System.Web.Mvc.Async.Test
                 return executeResult;
             };
 
-            // Act
-            ActionResult result = BeingInvokeActionMethodWithFiltersTester(() => new MockAsyncResult(), endExecute, checkBegin: false, checkEnd: false, filters: new IActionFilter[] { filter1, filter2 });
+            using (var asyncResult = new MockAsyncResult())
+            {
+                // Act
+                ActionResult result = BeginInvokeActionMethodWithFiltersTester(() => asyncResult, endExecute, checkBegin: false, checkEnd: false, filters: new IActionFilter[] { filter1, filter2 });
 
-            // Assert
-            Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "OnActionExecuted1" }, actionLog.ToArray());
-            Assert.Equal(shortCircuitResult, result);
+                // Assert
+                Assert.Equal(new[] { "OnActionExecuting1", "OnActionExecuting2", "OnActionExecuted1" }, actionLog.ToArray());
+                Assert.Equal(shortCircuitResult, result);
+            }
         }
 
-        private ActionResult BeingInvokeActionMethodWithFiltersBeginTester(Func<IAsyncResult> beginFunction, params IActionFilter[] filters)
+        private ActionResult BeginInvokeActionMethodWithFiltersBeginTester(Func<IAsyncResult> beginFunction, params IActionFilter[] filters)
         {
-            return BeingInvokeActionMethodWithFiltersTester(beginFunction, () => new Mock<ActionResult>().Object, checkBegin: true, checkEnd: false, filters: filters);
+            return BeginInvokeActionMethodWithFiltersTester(beginFunction, () => new Mock<ActionResult>().Object, checkBegin: true, checkEnd: false, filters: filters);
         }
 
-        private ActionResult BeingInvokeActionMethodWithFiltersEndTester(Func<ActionResult> endFunction, params IActionFilter[] filters)
+        private ActionResult BeginInvokeActionMethodWithFiltersEndTester(IAsyncResult asyncResult, Func<ActionResult> endFunction, params IActionFilter[] filters)
         {
-            return BeingInvokeActionMethodWithFiltersTester(() => new MockAsyncResult(), endFunction, checkBegin: true, checkEnd: true, filters: filters);
+            return BeginInvokeActionMethodWithFiltersTester(() => asyncResult, endFunction, checkBegin: true, checkEnd: true, filters: filters);
         }
 
-        private ActionResult BeingInvokeActionMethodWithFiltersTester(Func<IAsyncResult> beginFunction, Func<ActionResult> endFunction, bool checkBegin, bool checkEnd, IActionFilter[] filters)
+        private ActionResult BeginInvokeActionMethodWithFiltersTester(Func<IAsyncResult> beginFunction, Func<ActionResult> endFunction, bool checkBegin, bool checkEnd, IActionFilter[] filters)
         {
             AsyncControllerActionInvoker invoker = new AsyncControllerActionInvoker();
             ControllerContext controllerContext = new ControllerContext();

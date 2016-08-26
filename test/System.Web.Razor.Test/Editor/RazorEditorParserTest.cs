@@ -123,25 +123,26 @@ namespace System.Web.Razor.Test.Editor
                 StringTextBuffer input = new StringTextBuffer(SimpleCSHTMLDocument.ReadAllText());
 
                 DocumentParseCompleteEventArgs capturedArgs = null;
-                ManualResetEventSlim parseComplete = new ManualResetEventSlim(false);
-
-                parser.DocumentParseComplete += (sender, args) =>
+                using (ManualResetEventSlim parseComplete = new ManualResetEventSlim(false))
                 {
-                    capturedArgs = args;
-                    parseComplete.Set();
-                };
+                    parser.DocumentParseComplete += (sender, args) =>
+                    {
+                        capturedArgs = args;
+                        parseComplete.Set();
+                    };
 
-                // Act
-                parser.CheckForStructureChanges(new TextChange(0, 0, new StringTextBuffer(String.Empty), input.Length, input));
+                    // Act
+                    parser.CheckForStructureChanges(new TextChange(0, 0, new StringTextBuffer(String.Empty), input.Length, input));
 
-                // Assert
-                MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait);
+                    // Assert
+                    MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait);
 
-                string generatedCode = capturedArgs.GeneratorResults.GeneratedCode.GenerateCode<CSharpCodeProvider>();
+                    string generatedCode = capturedArgs.GeneratorResults.GeneratedCode.GenerateCode<CSharpCodeProvider>();
 
-                Assert.Equal(
-                    SimpleCSHTMLDocumentGenerated.ReadAllText(),
-                    MiscUtils.StripRuntimeVersion(generatedCode));
+                    Assert.Equal(
+                        SimpleCSHTMLDocumentGenerated.ReadAllText(),
+                        MiscUtils.StripRuntimeVersion(generatedCode));
+                }
             }
         }
 
@@ -155,25 +156,27 @@ namespace System.Web.Razor.Test.Editor
                 ITextBuffer changed = new StringTextBuffer("Foo @bap Daz");
                 TextChange change = new TextChange(7, 3, original, 3, changed);
 
-                ManualResetEventSlim parseComplete = new ManualResetEventSlim();
-                int parseCount = 0;
-                parser.DocumentParseComplete += (sender, args) =>
+                using (ManualResetEventSlim parseComplete = new ManualResetEventSlim())
                 {
-                    Interlocked.Increment(ref parseCount);
-                    parseComplete.Set();
-                };
+                    int parseCount = 0;
+                    parser.DocumentParseComplete += (sender, args) =>
+                    {
+                        Interlocked.Increment(ref parseCount);
+                        parseComplete.Set();
+                    };
 
-                Assert.Equal(PartialParseResult.Rejected, parser.CheckForStructureChanges(new TextChange(0, 0, new StringTextBuffer(String.Empty), 12, original)));
-                MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait); // Wait for the parse to finish
-                parseComplete.Reset();
+                    Assert.Equal(PartialParseResult.Rejected, parser.CheckForStructureChanges(new TextChange(0, 0, new StringTextBuffer(String.Empty), 12, original)));
+                    MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait); // Wait for the parse to finish
+                    parseComplete.Reset();
 
-                // Act
-                PartialParseResult result = parser.CheckForStructureChanges(change);
+                    // Act
+                    PartialParseResult result = parser.CheckForStructureChanges(change);
 
-                // Assert
-                Assert.Equal(PartialParseResult.Rejected, result);
-                MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait);
-                Assert.Equal(2, parseCount);
+                    // Assert
+                    Assert.Equal(PartialParseResult.Rejected, result);
+                    MiscUtils.DoWithTimeoutIfNotDebugging(parseComplete.Wait);
+                    Assert.Equal(2, parseCount);
+                }
             }
         }
 

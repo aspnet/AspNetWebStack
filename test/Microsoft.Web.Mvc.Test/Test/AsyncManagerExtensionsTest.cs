@@ -18,30 +18,31 @@ namespace Microsoft.Web.Mvc.Test
             AsyncManager asyncManager = new AsyncManager(syncContext);
             bool endDelegateWasCalled = false;
 
-            ManualResetEvent waitHandle = new ManualResetEvent(false /* initialState */);
-
-            Func<AsyncCallback, IAsyncResult> beginDelegate = callback =>
+            using (ManualResetEvent waitHandle = new ManualResetEvent(false /* initialState */))
             {
-                Assert.Equal(1, asyncManager.OutstandingOperations.Count);
-                MockAsyncResult asyncResult = new MockAsyncResult(false /* completedSynchronously */);
-                ThreadPool.QueueUserWorkItem(_ =>
+                Func<AsyncCallback, IAsyncResult> beginDelegate = callback =>
                 {
                     Assert.Equal(1, asyncManager.OutstandingOperations.Count);
-                    callback(asyncResult);
-                    waitHandle.Set();
-                });
-                return asyncResult;
-            };
-            Action<IAsyncResult> endDelegate = delegate { endDelegateWasCalled = true; };
+                    MockAsyncResult asyncResult = new MockAsyncResult(false /* completedSynchronously */);
+                    ThreadPool.QueueUserWorkItem(_ =>
+                    {
+                        Assert.Equal(1, asyncManager.OutstandingOperations.Count);
+                        callback(asyncResult);
+                        waitHandle.Set();
+                    });
+                    return asyncResult;
+                };
+                Action<IAsyncResult> endDelegate = delegate { endDelegateWasCalled = true; };
 
-            // Act
-            asyncManager.RegisterTask(beginDelegate, endDelegate);
-            waitHandle.WaitOne();
+                // Act
+                asyncManager.RegisterTask(beginDelegate, endDelegate);
+                waitHandle.WaitOne();
 
-            // Assert
-            Assert.True(endDelegateWasCalled);
-            Assert.True(syncContext.SendWasCalled);
-            Assert.Equal(0, asyncManager.OutstandingOperations.Count);
+                // Assert
+                Assert.True(endDelegateWasCalled);
+                Assert.True(syncContext.SendWasCalled);
+                Assert.Equal(0, asyncManager.OutstandingOperations.Count);
+            }
         }
 
         [Fact]
@@ -52,31 +53,32 @@ namespace Microsoft.Web.Mvc.Test
             AsyncManager asyncManager = new AsyncManager(syncContext);
             bool endDelegateWasCalled = false;
 
-            ManualResetEvent waitHandle = new ManualResetEvent(false /* initialState */);
-
-            Func<AsyncCallback, IAsyncResult> beginDelegate = callback =>
+            using (ManualResetEvent waitHandle = new ManualResetEvent(false /* initialState */))
             {
-                MockAsyncResult asyncResult = new MockAsyncResult(false /* completedSynchronously */);
-                ThreadPool.QueueUserWorkItem(_ =>
+                Func<AsyncCallback, IAsyncResult> beginDelegate = callback =>
                 {
-                    callback(asyncResult);
-                    waitHandle.Set();
-                });
-                return asyncResult;
-            };
-            Action<IAsyncResult> endDelegate = delegate
-            {
-                endDelegateWasCalled = true;
-                throw new Exception("This is a sample exception.");
-            };
+                    MockAsyncResult asyncResult = new MockAsyncResult(false /* completedSynchronously */);
+                    ThreadPool.QueueUserWorkItem(_ =>
+                    {
+                        callback(asyncResult);
+                        waitHandle.Set();
+                    });
+                    return asyncResult;
+                };
+                Action<IAsyncResult> endDelegate = delegate
+                {
+                    endDelegateWasCalled = true;
+                    throw new Exception("This is a sample exception.");
+                };
 
-            // Act
-            asyncManager.RegisterTask(beginDelegate, endDelegate);
-            waitHandle.WaitOne();
+                // Act
+                asyncManager.RegisterTask(beginDelegate, endDelegate);
+                waitHandle.WaitOne();
 
-            // Assert
-            Assert.True(endDelegateWasCalled);
-            Assert.Equal(0, asyncManager.OutstandingOperations.Count);
+                // Assert
+                Assert.True(endDelegateWasCalled);
+                Assert.Equal(0, asyncManager.OutstandingOperations.Count);
+            }
         }
 
         [Fact]

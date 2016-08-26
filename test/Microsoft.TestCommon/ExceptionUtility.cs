@@ -26,7 +26,7 @@ namespace Microsoft.TestCommon
                 }
             }
 
-            return string.Join(Environment.NewLine, results.ToArray());
+            return string.Join(Environment.NewLine, results);
         }
 
         private static IEnumerable<string> SplitLines(string input)

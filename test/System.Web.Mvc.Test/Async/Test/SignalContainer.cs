@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace System.Web.Mvc.Async.Test
 {
-    public sealed class SignalContainer<T>
+    public sealed class SignalContainer<T>: IDisposable
     {
         private volatile object _item;
         private readonly AutoResetEvent _waitHandle = new AutoResetEvent(false /* initialState */);
@@ -20,6 +20,11 @@ namespace System.Web.Mvc.Async.Test
         {
             _waitHandle.WaitOne();
             return (T)_item;
+        }
+
+        public void Dispose()
+        {
+            _waitHandle.Dispose();
         }
     }
 }

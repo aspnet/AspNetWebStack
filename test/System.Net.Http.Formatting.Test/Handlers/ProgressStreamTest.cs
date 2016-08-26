@@ -191,41 +191,43 @@ namespace System.Net.Http.Handlers
         public void BeginEndWrite_ReportsBytesWritten()
         {
             // Arrange
-            ManualResetEvent writeComplete = new ManualResetEvent(false);
-            HttpRequestMessage request = CreateRequest();
-            Stream innerStream = new MemoryStream();
-            byte[] buffer = CreateBufferContent();
-            long? expectedLength = request.Content.Headers.ContentLength;
-            MockProgressEventHandler mockProgressEventHandler;
-            ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: true);
-            ProgressStream progressStream = CreateProgressStream(innerStream: innerStream, progressMessageHandler: progressMessageHandler, request: request);
-            object userState = new object();
-
-            // Act/Assert
-            int totalBytesWritten = 0;
-            int bytesWritten = 0;
-            while (totalBytesWritten < expectedLength)
+            using (ManualResetEvent writeComplete = new ManualResetEvent(false))
             {
-                bytesWritten = Math.Min(8, (int)expectedLength - totalBytesWritten);
-                IAsyncResult result = progressStream.BeginWrite(buffer, totalBytesWritten, bytesWritten,
-                    ia =>
-                    {
-                        progressStream.EndWrite(ia);
-                        writeComplete.Set();
-                    },
-                    userState);
+                HttpRequestMessage request = CreateRequest();
+                Stream innerStream = new MemoryStream();
+                byte[] buffer = CreateBufferContent();
+                long? expectedLength = request.Content.Headers.ContentLength;
+                MockProgressEventHandler mockProgressEventHandler;
+                ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: true);
+                ProgressStream progressStream = CreateProgressStream(innerStream: innerStream, progressMessageHandler: progressMessageHandler, request: request);
+                object userState = new object();
 
-                writeComplete.WaitOne();
-                writeComplete.Reset();
-                totalBytesWritten += bytesWritten;
+                // Act/Assert
+                int totalBytesWritten = 0;
+                int bytesWritten = 0;
+                while (totalBytesWritten < expectedLength)
+                {
+                    bytesWritten = Math.Min(8, (int)expectedLength - totalBytesWritten);
+                    IAsyncResult result = progressStream.BeginWrite(buffer, totalBytesWritten, bytesWritten,
+                        ia =>
+                        {
+                            progressStream.EndWrite(ia);
+                            writeComplete.Set();
+                        },
+                        userState);
 
-                Assert.Same(userState, mockProgressEventHandler.EventArgs.UserState);
-                Assert.Equal(totalBytesWritten, mockProgressEventHandler.EventArgs.BytesTransferred);
-                Assert.Equal((100L * totalBytesWritten) / expectedLength, mockProgressEventHandler.EventArgs.ProgressPercentage);
+                    writeComplete.WaitOne();
+                    writeComplete.Reset();
+                    totalBytesWritten += bytesWritten;
+
+                    Assert.Same(userState, mockProgressEventHandler.EventArgs.UserState);
+                    Assert.Equal(totalBytesWritten, mockProgressEventHandler.EventArgs.BytesTransferred);
+                    Assert.Equal((100L * totalBytesWritten) / expectedLength, mockProgressEventHandler.EventArgs.ProgressPercentage);
+                }
+
+                Assert.Equal(expectedLength, mockProgressEventHandler.EventArgs.TotalBytes);
+                Assert.Equal(100, mockProgressEventHandler.EventArgs.ProgressPercentage);
             }
-
-            Assert.Equal(expectedLength, mockProgressEventHandler.EventArgs.TotalBytes);
-            Assert.Equal(100, mockProgressEventHandler.EventArgs.ProgressPercentage);
         }
 #endif
 
@@ -233,32 +235,34 @@ namespace System.Net.Http.Handlers
         public async Task WriteAsync_ReportsBytesWritten()
         {
             // Arrange
-            ManualResetEvent writeComplete = new ManualResetEvent(false);
-            HttpRequestMessage request = CreateRequest();
-            Stream innerStream = new MemoryStream();
-            byte[] buffer = CreateBufferContent();
-            long? expectedLength = request.Content.Headers.ContentLength;
-            MockProgressEventHandler mockProgressEventHandler;
-            ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: true);
-            ProgressStream progressStream = CreateProgressStream(innerStream: innerStream, progressMessageHandler: progressMessageHandler, request: request);
-            object userState = new object();
-
-            // Act/Assert
-            int totalBytesWritten = 0;
-            int bytesWritten = 0;
-            while (totalBytesWritten < expectedLength)
+            using (ManualResetEvent writeComplete = new ManualResetEvent(false))
             {
-                bytesWritten = Math.Min(8, (int)expectedLength - totalBytesWritten);
-                await progressStream.WriteAsync(buffer, totalBytesWritten, bytesWritten);
+                HttpRequestMessage request = CreateRequest();
+                Stream innerStream = new MemoryStream();
+                byte[] buffer = CreateBufferContent();
+                long? expectedLength = request.Content.Headers.ContentLength;
+                MockProgressEventHandler mockProgressEventHandler;
+                ProgressMessageHandler progressMessageHandler = MockProgressEventHandler.CreateProgressMessageHandler(out mockProgressEventHandler, sendProgress: true);
+                ProgressStream progressStream = CreateProgressStream(innerStream: innerStream, progressMessageHandler: progressMessageHandler, request: request);
+                object userState = new object();
 
-                totalBytesWritten += bytesWritten;
+                // Act/Assert
+                int totalBytesWritten = 0;
+                int bytesWritten = 0;
+                while (totalBytesWritten < expectedLength)
+                {
+                    bytesWritten = Math.Min(8, (int)expectedLength - totalBytesWritten);
+                    await progressStream.WriteAsync(buffer, totalBytesWritten, bytesWritten);
 
-                Assert.Equal(totalBytesWritten, mockProgressEventHandler.EventArgs.BytesTransferred);
-                Assert.Equal((100L * totalBytesWritten) / expectedLength, mockProgressEventHandler.EventArgs.ProgressPercentage);
+                    totalBytesWritten += bytesWritten;
+
+                    Assert.Equal(totalBytesWritten, mockProgressEventHandler.EventArgs.BytesTransferred);
+                    Assert.Equal((100L * totalBytesWritten) / expectedLength, mockProgressEventHandler.EventArgs.ProgressPercentage);
+                }
+
+                Assert.Equal(expectedLength, mockProgressEventHandler.EventArgs.TotalBytes);
+                Assert.Equal(100, mockProgressEventHandler.EventArgs.ProgressPercentage);
             }
-
-            Assert.Equal(expectedLength, mockProgressEventHandler.EventArgs.TotalBytes);
-            Assert.Equal(100, mockProgressEventHandler.EventArgs.ProgressPercentage);
         }
 
         internal static ProgressStream CreateProgressStream(

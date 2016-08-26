@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace System.Web.Mvc.Async.Test
 {
-    public class MockAsyncResult : IAsyncResult
+    public class MockAsyncResult : IAsyncResult, IDisposable
     {
         private volatile object _asyncState;
         private volatile ManualResetEvent _asyncWaitHandle = new ManualResetEvent(false);
@@ -34,6 +34,11 @@ namespace System.Web.Mvc.Async.Test
         {
             get { return _isCompleted; }
             set { _isCompleted = value; }
+        }
+
+        public void Dispose()
+        {
+            _asyncWaitHandle.Dispose();
         }
 
         #region IAsyncResult Members
