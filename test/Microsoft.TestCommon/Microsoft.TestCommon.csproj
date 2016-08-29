@@ -107,6 +107,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties xunit_1runner_1json__JSONSchema="https://xunit.github.io/schema/v2.1-rc1/xunit.runner.schema.json" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
