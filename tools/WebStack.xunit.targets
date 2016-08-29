@@ -9,7 +9,8 @@
     <UsingTask TaskName="Xunit.Runner.MSBuild.xunit" AssemblyFile="@(XunitMsBuildRunner)"/>
 
     <Target Name="Xunit">
-        <xunit Assemblies="$(TestAssembly)" XmlV1="$(XmlPath)"/>
+        <!-- Override AppDomains default (set in xunit.runner.json). Need them with this runner. -->
+        <xunit AppDomains="true" Assemblies="$(TestAssembly)" XmlV1="$(XmlPath)"/>
         <!-- Replace potentially illegal escaped characters (if they get through validations done during Save) -->
         <RegexReplace
             Files="$(XmlPath)"
