@@ -42,13 +42,13 @@ namespace Microsoft.TestCommon
             IAttributeInfo factAttribute)
         {
             var baseCases = base.Discover(discoveryOptions, testMethod, factAttribute);
-            if (!String.IsNullOrEmpty(factAttribute.GetNamedArgument<string>(nameof(FactAttribute.Skip))))
+            if (!String.IsNullOrEmpty(factAttribute.GetNamedArgument<string>("Skip")))
             {
                 // No need to change skipped tests.
                 return baseCases;
             }
 
-            var platforms = factAttribute.GetNamedArgument<Platform>(nameof(FactAttribute.Platforms));
+            var platforms = factAttribute.GetNamedArgument<Platform>("Platforms");
             if ((platforms & Platform) != 0)
             {
                 // No need to change tests that should run on the current platform.
@@ -71,7 +71,7 @@ namespace Microsoft.TestCommon
             }
 
             // Replace test with its skipped equivalent.
-            var platformJustification = factAttribute.GetNamedArgument<string>(nameof(FactAttribute.PlatformJustification));
+            var platformJustification = factAttribute.GetNamedArgument<string>("PlatformJustification");
             var skipReason = String.Format(platformJustification, platforms.ToString().Replace(", ", " | "), Platform);
             var testCase = new SkippedXunitTestCase(
                 _diagnosticMessageSink,

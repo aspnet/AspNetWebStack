@@ -40,13 +40,13 @@ namespace Microsoft.TestCommon
             IAttributeInfo theoryAttribute)
         {
             var baseCases = base.Discover(discoveryOptions, testMethod, theoryAttribute);
-            if (!String.IsNullOrEmpty(theoryAttribute.GetNamedArgument<string>(nameof(TheoryAttribute.Skip))))
+            if (!String.IsNullOrEmpty(theoryAttribute.GetNamedArgument<string>("Skip")))
             {
                 // No need to change skipped tests.
                 return baseCases;
             }
 
-            var platforms = theoryAttribute.GetNamedArgument<Platform>(nameof(TheoryAttribute.Platforms));
+            var platforms = theoryAttribute.GetNamedArgument<Platform>("Platforms");
             if ((platforms & Platform) != 0)
             {
                 // No need to change tests that should run on the current platform.
@@ -55,7 +55,7 @@ namespace Microsoft.TestCommon
 
             // Update the individual test cases as needed: Skip test cases that would otherwise run.
             var testCases = new List<IXunitTestCase>();
-            var platformJustification = theoryAttribute.GetNamedArgument<string>(nameof(TheoryAttribute.PlatformJustification));
+            var platformJustification = theoryAttribute.GetNamedArgument<string>("PlatformJustification");
             var skipReason = String.Format(platformJustification, platforms.ToString().Replace(", ", " | "), Platform);
             foreach (var baseCase in baseCases)
             {

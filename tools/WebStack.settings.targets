@@ -36,6 +36,9 @@
     <!-- Target 4.5 by default -->
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
 
+    <!-- Disable C# 6.0 features in Visual Studio since those features are not always available in command-line builds. -->
+    <LangVersion Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">5</LangVersion>
+
     <!-- Everything is delay signed by default -->
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>

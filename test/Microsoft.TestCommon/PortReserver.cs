@@ -143,7 +143,8 @@ namespace Microsoft.TestCommon
             Mutex mutex = new Mutex(initiallyOwned: false, name: "WebStack-RandomPortAcquisition");
             if (!mutex.WaitOne(TimeSpan.FromSeconds(timeoutInSeconds)))
             {
-                throw new InvalidOperationException($"Unable to reserve global Mutex within {timeoutInSeconds} seconds.");
+                throw new InvalidOperationException(
+                    String.Format("Unable to reserve global Mutex within {0} seconds.", timeoutInSeconds));
             }
 
             return mutex;
