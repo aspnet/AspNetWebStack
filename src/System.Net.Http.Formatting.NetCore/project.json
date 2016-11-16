@@ -1,0 +1,108 @@
+{
+  "buildOptions": {
+    "compile": [
+      "../Common/CollectionExtensions.cs",
+      "../Common/CommonWebApiResources.Designer.cs",
+      "../Common/Error.cs",
+      "../Common/ListWrapperCollection.cs",
+      "../Common/TaskHelpers.cs",
+      "../Common/TaskHelpersExtensions.cs",
+      "../Common/UriQueryUtility.cs",
+      "../CommonAssemblyInfo.cs",
+      "../System.Net.Http.Formatting/Formatting/BaseJsonMediaTypeFormatter.cs",
+      "../System.Net.Http.Formatting/Formatting/BsonMediaTypeFormatter.cs",
+      "../System.Net.Http.Formatting/Formatting/DelegatingEnumerable.cs",
+      "../System.Net.Http.Formatting/Formatting/FormDataCollection.cs",
+      "../System.Net.Http.Formatting/Formatting/FormUrlEncodedJson.cs",
+      "../System.Net.Http.Formatting/Formatting/IFormatterLogger.cs",
+      "../System.Net.Http.Formatting/Formatting/JsonMediaTypeFormatter.cs",
+      "../System.Net.Http.Formatting/Formatting/MediaTypeConstants.cs",
+      "../System.Net.Http.Formatting/Formatting/MediaTypeFormatter.cs",
+      "../System.Net.Http.Formatting/Formatting/MediaTypeFormatterCollection.cs",
+      "../System.Net.Http.Formatting/Formatting/MediaTypeHeaderValueExtensions.cs",
+      "../System.Net.Http.Formatting/Formatting/MediaTypeHeaderValueRange.cs",
+      "../System.Net.Http.Formatting/Formatting/ParsedMediaTypeHeaderValue.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/FormUrlEncodedParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/HttpRequestHeaderParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/HttpRequestLineParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/HttpResponseHeaderParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/HttpStatusLineParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/InternetMessageFormatHeaderParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/MimeMultipartBodyPartParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/MimeMultipartParser.cs",
+      "../System.Net.Http.Formatting/Formatting/Parsers/ParserState.cs",
+      "../System.Net.Http.Formatting/Formatting/StringComparisonHelper.cs",
+      "../System.Net.Http.Formatting/Formatting/XmlMediaTypeFormatter.cs",
+      "../System.Net.Http.Formatting/FormattingUtilities.cs",
+      "../System.Net.Http.Formatting/Handlers/HttpProgressEventArgs.cs",
+      "../System.Net.Http.Formatting/Handlers/ProgressContent.cs",
+      "../System.Net.Http.Formatting/Handlers/ProgressMessageHandler.cs",
+      "../System.Net.Http.Formatting/Handlers/ProgressStream.cs",
+      "../System.Net.Http.Formatting/HttpClientExtensions.cs",
+      "../System.Net.Http.Formatting/HttpClientFactory.cs",
+      "../System.Net.Http.Formatting/HttpContentExtensions.cs",
+      "../System.Net.Http.Formatting/HttpContentMessageExtensions.cs",
+      "../System.Net.Http.Formatting/HttpContentMultipartExtensions.cs",
+      "../System.Net.Http.Formatting/HttpHeaderExtensions.cs",
+      "../System.Net.Http.Formatting/HttpMessageContent.cs",
+      "../System.Net.Http.Formatting/HttpUnsortedHeaders.cs",
+      "../System.Net.Http.Formatting/HttpUnsortedRequest.cs",
+      "../System.Net.Http.Formatting/HttpUnsortedResponse.cs",
+      "../System.Net.Http.Formatting/Internal/AsyncResult.cs",
+      "../System.Net.Http.Formatting/Internal/DelegatingStream.cs",
+      "../System.Net.Http.Formatting/Internal/HttpValueCollection.cs",
+      "../System.Net.Http.Formatting/Internal/ReadOnlyStreamWithEncodingPreamble.cs",
+      "../System.Net.Http.Formatting/Internal/TypeExtensions.cs",
+      "../System.Net.Http.Formatting/MimeBodyPart.cs",
+      "../System.Net.Http.Formatting/MultipartFileData.cs",
+      "../System.Net.Http.Formatting/MultipartMemoryStreamProvider.cs",
+      "../System.Net.Http.Formatting/MultipartRelatedStreamProvider.cs",
+      "../System.Net.Http.Formatting/MultipartStreamProvider.cs",
+      "../System.Net.Http.Formatting/ObjectContent.cs",
+      "../System.Net.Http.Formatting/ObjectContentOfT.cs",
+      "../System.Net.Http.Formatting/Properties/AssemblyInfo.cs",
+      "../System.Net.Http.Formatting/Properties/Resources.Designer.cs",
+      "../System.Net.Http.Formatting/PushStreamContent.cs",
+      "../System.Net.Http.Formatting/UnsupportedMediaTypeException.cs",
+      "../System.Net.Http.Formatting/UriExtensions.cs",
+      "GlobalSuppressions.cs",
+      "Internal/ConcurrentDictionary.cs",
+      "MediaTypeHeaderValueExtensions.cs"
+    ],
+    "define": [
+      "ASPNETMVC",
+      "NETFX_CORE",
+      "NOT_CLS_COMPLIANT"
+    ],
+    "embed": [
+      "../Common/CommonWebApiResources.resx",
+      "../System.Net.Http.Formatting/Properties/Resources.resx"
+    ],
+    "warningsAsErrors": true
+  },
+  "dependencies": {
+    "Microsoft.Bcl.Build": "1.0.14",
+    "Microsoft.Net.Http": "2.2.13",
+    "NETStandard.Library": "1.6.0",
+    "Newtonsoft.Json": "6.0.4",
+    "System.ComponentModel.EventBasedAsync": "4.3.0",
+    "System.Diagnostics.Contracts": "4.3.0",
+    "System.Dynamic.Runtime": "4.3.0",
+    "System.Runtime.Serialization.Xml": "4.3.0-*",
+    "System.Xml.XmlSerializer": "4.3.0-*"
+  },
+  "frameworks": {
+    "netstandard1.1": {
+      "imports": [
+        "portable-net451+win8"
+      ]
+    }
+  },
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/aspnet/aspnetwebstack"
+    }
+  },
+  "version": "5.2.4-*"
+}
