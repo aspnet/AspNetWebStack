@@ -3,18 +3,26 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
+#if !NETFX_CORE || NETSTANDARD1_1
 using System.Runtime.InteropServices;
+#endif
 
-// General Information about an assembly is controlled through the following 
+// General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
 [assembly: AssemblyTitle("System.Net.Http.Formatting")]
 [assembly: AssemblyDescription("")]
-#if !NETFX_CORE // GuidAttibute is not supported in portable libraries
+
+#if !NETFX_CORE || NETSTANDARD1_1 // GuidAttibute is not supported in portable libraries but is in .NET Standard.
 [assembly: Guid("7fa1ae84-36e2-46b6-812c-c985a8e65e9a")]
+#endif
+
+#if NETSTANDARD1_1
+[assembly: InternalsVisibleTo("System.Net.Http.Formatting.NetStandard.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
+#elif NETFX_CORE
+[assembly: InternalsVisibleTo("System.Net.Http.Formatting.NetCore.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
+#else
 [assembly: InternalsVisibleTo("System.Net.Http.Formatting.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo("System.Net.Http.Formatting.Test.Integration, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
-#else
-[assembly: InternalsVisibleTo("System.Net.Http.Formatting.NetCore.Test, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 #endif

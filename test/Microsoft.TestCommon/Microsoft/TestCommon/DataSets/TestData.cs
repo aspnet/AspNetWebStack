@@ -160,19 +160,19 @@ namespace Microsoft.TestCommon
         /// <summary>
         /// Expected permutations of non supported file paths.
         /// </summary>
-        public static readonly TestData<string> NotSupportedFilePaths = new RefTypeTestData<string>(() => new List<string>() { 
+        public static readonly TestData<string> NotSupportedFilePaths = new RefTypeTestData<string>(() => new List<string>() {
             "cc:\\a\\b",
         });
 
         /// <summary>
         /// Expected permutations of invalid file paths.
         /// </summary>
-        public static readonly TestData<string> InvalidNonNullFilePaths = new RefTypeTestData<string>(() => new List<string>() { 
+        public static readonly TestData<string> InvalidNonNullFilePaths = new RefTypeTestData<string>(() => new List<string>() {
             String.Empty,
             "",
-            " ", 
+            " ",
             "  ",
-            "\t\t \n ", 
+            "\t\t \n ",
             "c:\\a<b",
             "c:\\a>b",
             "c:\\a\"b",
@@ -200,7 +200,7 @@ namespace Microsoft.TestCommon
             " ",            // one space
             "  ",           // multiple spaces
             " data ",       // leading and trailing whitespace
-            "\t\t \n ", 
+            "\t\t \n ",
             "Some String!"});
 
         /// <summary>
@@ -213,31 +213,31 @@ namespace Microsoft.TestCommon
         /// A read-only collection of value type test data.
         /// </summary>
         public static readonly ReadOnlyCollection<TestData> ValueTypeTestDataCollection = new ReadOnlyCollection<TestData>(new TestData[] {
-            CharTestData, 
-            IntTestData, 
-            UintTestData, 
-            ShortTestData, 
-            UshortTestData, 
-            LongTestData, 
-            UlongTestData, 
-            ByteTestData, 
-            SByteTestData, 
+            CharTestData,
+            IntTestData,
+            UintTestData,
+            ShortTestData,
+            UshortTestData,
+            LongTestData,
+            UlongTestData,
+            ByteTestData,
+            SByteTestData,
             BoolTestData,
-            DoubleTestData, 
-            FloatTestData, 
-            DecimalTestData, 
-            TimeSpanTestData, 
-            GuidTestData, 
-            DateTimeOffsetTestData, 
-            SimpleEnumTestData, 
+            DoubleTestData,
+            FloatTestData,
+            DecimalTestData,
+            TimeSpanTestData,
+            GuidTestData,
+            DateTimeOffsetTestData,
+            SimpleEnumTestData,
             LongEnumTestData,
             FlagsEnumTestData});
 
         /// <summary>
         /// A read-only collection of reference type test data.
         /// </summary>
-        public static readonly ReadOnlyCollection<TestData> RefTypeTestDataCollection = new ReadOnlyCollection<TestData>(new TestData[] { 
-            StringTestData,  
+        public static readonly ReadOnlyCollection<TestData> RefTypeTestDataCollection = new ReadOnlyCollection<TestData>(new TestData[] {
+            StringTestData,
             ISerializableTypeTestData});
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace Microsoft.TestCommon
             IntTestData,
             BoolTestData,
             SimpleEnumTestData,
-            StringTestData, 
+            StringTestData,
         });
 
         private Dictionary<TestDataVariations, TestDataVariationProvider> registeredTestDataVariations;
@@ -330,7 +330,7 @@ namespace Microsoft.TestCommon
 
 
         /// <summary>
-        /// Allows derived classes to register a <paramref name="testDataProvider "/> <see cref="Func<>"/> that will 
+        /// Allows derived classes to register a <paramref name="testDataProvider "/> <see cref="Func<>"/> that will
         /// provide test data for a given variation.
         /// </summary>
         /// <param name="variation">The variation with which to register the <paramref name="testDataProvider "/>r.</param>
@@ -358,7 +358,7 @@ namespace Microsoft.TestCommon
 
 
     /// <summary>
-    /// A generic base class for test data. 
+    /// A generic base class for test data.
     /// </summary>
     /// <typeparam name="T">The type associated with the test data.</typeparam>
     public abstract class TestData<T> : TestData, IEnumerable<T>
