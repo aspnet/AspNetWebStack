@@ -17,3 +17,4 @@ _[Ss]cripts
 *.orig
 *.sln.ide
 .vs/
+project.lock.json

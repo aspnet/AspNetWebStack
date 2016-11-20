@@ -1,0 +1,14 @@
+﻿{
+  "supports": {},
+  "dependencies": {
+    "NETStandard.Library": "1.6.1",
+    "Newtonsoft.Json": "9.0.1",
+    "System.ComponentModel.EventBasedAsync": "4.3.0",
+    "System.Diagnostics.Contracts": "4.3.0",
+    "System.Runtime.Serialization.Xml": "4.3.0",
+    "System.Xml.XmlSerializer": "4.3.0"
+  },
+  "frameworks": {
+    "netstandard1.1": {}
+  }
+}

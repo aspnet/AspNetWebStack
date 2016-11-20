@@ -22,7 +22,7 @@ if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 
 :BuildDefaults
-%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M /fl /flp:LogFile=bin\msbuild.log;Verbosity=Normal
+%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M /fl /flp:LogFile=bin\msbuild.log;Verbosity=detailed
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 
