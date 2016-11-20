@@ -106,7 +106,8 @@ namespace System.Web.WebPages.Test
         public void SetAutoCultureWithInvalidLanguageDoesNothing()
         {
             // Arrange
-            var context = GetContextForSetCulture(new[] { "aa-AA", "bb-BB", "cc-CC" });
+            // "sans-culture" is an invalid culture name everywhere -- even on Windows 10.
+            var context = GetContextForSetCulture(new[] { "sans-culture", "bb-BB", "cc-CC" });
             Thread thread = GetThread();
             CultureInfo culture = thread.CurrentCulture;
 
@@ -121,7 +122,8 @@ namespace System.Web.WebPages.Test
         public void SetAutoUICultureWithInvalidLanguageDoesNothing()
         {
             // Arrange
-            var context = GetContextForSetCulture(new[] { "aa-AA", "bb-BB", "cc-CC" });
+            // "sans-culture" is an invalid culture name everywhere -- even on Windows 10.
+            var context = GetContextForSetCulture(new[] { "sans-culture", "bb-BB", "cc-CC" });
             Thread thread = GetThread();
             CultureInfo culture = thread.CurrentUICulture;
 

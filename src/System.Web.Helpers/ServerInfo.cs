@@ -117,7 +117,7 @@ namespace System.Web.Helpers
         {
             IDictionary<string, string> info = new Dictionary<string, string>();
 
-            // todo: do we need to localize these strings or would that be confusing 
+            // todo: do we need to localize these strings or would that be confusing
             // (Since we just display API names that are all in English)
 
             info.Add("Current Local Time", DateTime.Now.ToString(CultureInfo.CurrentCulture));
@@ -177,6 +177,12 @@ namespace System.Web.Helpers
                 // These APIs don't check if path is set before setting security demands, which causes exception.
                 // So far this happens only when running from unit tests.
             }
+            catch (NullReferenceException)
+            {
+                // Do nothing for same reasons as above: HttpRuntime is not initialized in some unit tests.
+                // Some versions of HttpRuntime throw an NRE instead of an ArgumentNullException. For .NET 4.6.2, see
+                // https://referencesource.microsoft.com/#mscorlib/system/security/permissions/fileiopermission.cs,576
+            }
 
             info.Add("Asp Install Directory", HttpRuntime.AspInstallDirectory);
             info.Add("Machine Configuration Directory", HttpRuntime.MachineConfigurationDirectory);
@@ -228,7 +234,7 @@ namespace System.Web.Helpers
         /// <remarks>
         /// HTML generated is XHTML 1.0 compliant but not XHTML 1.1 or HTML5 compliant. The reason is that we
         /// generate &lt;style&gt; tag inside &lt;body&gt; tag, which is not allowed. This is by design for now since ServerInfo
-        /// is debugging aid and should not be used as a permanent part of any web page. 
+        /// is debugging aid and should not be used as a permanent part of any web page.
         /// </remarks>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
             Justification = "This could be time consuming operation that does not just retrieve a field.")]
