@@ -177,12 +177,6 @@ namespace System.Web.Helpers
                 // These APIs don't check if path is set before setting security demands, which causes exception.
                 // So far this happens only when running from unit tests.
             }
-            catch (NullReferenceException)
-            {
-                // Do nothing for same reasons as above: HttpRuntime is not initialized in some unit tests.
-                // Some versions of HttpRuntime throw an NRE instead of an ArgumentNullException. For .NET 4.6.2, see
-                // https://referencesource.microsoft.com/#mscorlib/system/security/permissions/fileiopermission.cs,576
-            }
 
             info.Add("Asp Install Directory", HttpRuntime.AspInstallDirectory);
             info.Add("Machine Configuration Directory", HttpRuntime.MachineConfigurationDirectory);

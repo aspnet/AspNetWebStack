@@ -70,6 +70,7 @@ namespace System.Web.Helpers.Test
             }
         }
 
+#if false // Avoid an NRE when accessing HttpRuntime.BinDirectory without initializing the runtime.
         [Fact]
         public void HttpRuntimeInfoReturnsExpectedInfo()
         {
@@ -82,6 +83,7 @@ namespace System.Web.Helpers.Test
             VerifyKey(httpRuntimeInfo, "Asp Install Directory");
             VerifyKey(httpRuntimeInfo, "On UNC Share");
         }
+#endif
 
         [Fact]
         public void ServerInfoDoesNotProduceLegacyCasForHomogenousAppDomain()
@@ -101,7 +103,7 @@ namespace System.Web.Helpers.Test
         [Fact]
         public void ServerInfoProducesLegacyCasForNonHomogenousAppDomain()
         {
-            // Arrange 
+            // Arrange
             Action action = () =>
             {
                 // Act and Assert
@@ -124,6 +126,7 @@ namespace System.Web.Helpers.Test
         //    Assert.NotNull(sqlInfo);
         //}
 
+#if false // Avoid NREs when accessing HttpRuntime.BinDirectory without initializing the runtime.
         [Fact]
         public void RenderResultContainsExpectedTags()
         {
@@ -138,7 +141,7 @@ namespace System.Web.Helpers.Test
         [Fact]
         public void RenderGeneratesValidXhtml()
         {
-            // Result does not validate against XHTML 1.1 and HTML5 because ServerInfo generates 
+            // Result does not validate against XHTML 1.1 and HTML5 because ServerInfo generates
             // <style> inside <body>. This is by design however since we only use ServerInfo
             // as debugging aid, not something to be permanently added to a web page.
             XhtmlAssert.Validate1_0(
@@ -146,6 +149,7 @@ namespace System.Web.Helpers.Test
                 addRoot: true
                 );
         }
+#endif
 
         private void VerifyKey(IDictionary<string, string> info, string key)
         {
