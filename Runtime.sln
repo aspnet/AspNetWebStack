@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}"
 EndProject
@@ -113,7 +113,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.Facebook",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.Facebook.Test", "test\Microsoft.AspNet.Facebook.Test\Microsoft.AspNet.Facebook.Test.csproj", "{C3BEF382-C7C4-454D-B017-1EAC03E9A82C}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.TestCommon.Shared", "test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.shproj", "{967A55CA-350E-453A-8F19-90F91416172C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "System.Net.Http.Formatting.Shared", "test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.shproj", "{4B9A1A48-6B73-415B-981B-AB5F71294010}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.projitems*{4b9a1a48-6b73-415b-981b-ab5f71294010}*SharedItemsImports = 13
+		test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.projitems*{7af77741-9158-4d5f-8782-8f21fadf025f}*SharedItemsImports = 4
+		test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.projitems*{967a55ca-350e-453a-8f19-90f91416172c}*SharedItemsImports = 13
+		test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.projitems*{fccc4cb7-baf7-4a57-9f89-e5766fe536c0}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
 		Debug|Any CPU = Debug|Any CPU
@@ -475,5 +485,7 @@ Global
 		{1E89A3E9-0A7F-418F-B4BE-6E38A6315373} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
 		{821A136C-7C6F-44C6-A9E6-C39B5BFB1483} = {A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}
 		{C3BEF382-C7C4-454D-B017-1EAC03E9A82C} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
+		{967A55CA-350E-453A-8F19-90F91416172C} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
+		{4B9A1A48-6B73-415B-981B-AB5F71294010} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
 	EndGlobalSection
 EndGlobal

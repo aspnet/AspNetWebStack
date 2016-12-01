@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>4b9a1a48-6b73-415b-981b-ab5f71294010</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>System.Net.Http.Formatting.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\HttpTestData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DataContractEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DataContractType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DerivedDataContractType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DerivedJsonMediaTypeFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DerivedWcfPocoType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DerivedXmlMediaTypeFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\DerivedXmlSerializableType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\INotJsonSerializable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\WcfPocoType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataSets\Types\XmlSerializableType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\BsonMediaTypeFormatterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\FormDataCollectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\FormUrlEncodedJsonTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\JsonMediaTypeFormatterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\JsonNetSerializationTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\JsonNetValidationTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\MediaTypeConstantsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\MediaTypeFormatterCollectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\MediaTypeFormatterTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\MediaTypeFormatterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\MediaTypeHeaderValueExtensionsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\ParsedMediaTypeHeaderValueTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\FormUrlEncodedParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\HttpRequestHeaderParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\HttpRequestLineParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\HttpResponseHeaderParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\HttpStatusLineParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\InternetMessageFormatHeaderParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\Parsers\MimeMultipartParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\SerializerConsistencyTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\StringComparisonHelperTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\XmlMediaTypeFormatterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Formatting\XmlSerializerMediaTypeFormatterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FormattingUtilitiesTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\HttpProgressEventArgsTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\ProgressContentTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\ProgressMessageHandlerTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Handlers\ProgressStreamTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClientExtensionsTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClientFactoryTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpContentExtensionsTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpContentMessageExtensionsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpContentMultipartExtensionsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpHeaderExtensionsTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpMessageContentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpUnsortedRequestTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpUnsortedResponseTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\AsyncResultTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\ConcurrentDictionaryTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\DelegatingStreamTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\HttpValueCollectionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\ReadOnlyStreamWithEncodingPreambleTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MimeBodyPartTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockAsyncCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockCompletedAsyncResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockDelegatingHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockDelegatingStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockHttpContent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockMediaTypeFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockProgressEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\TestableHttpMessageHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MultipartFileDataTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MultipartMemoryStreamProviderTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MultipartRelatedStreamProviderTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MultipartStreamProviderTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectContentOfTTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectContentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParserData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PushStreamContentTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UriExtensionsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UriQueryDataSet.cs" />
+  </ItemGroup>
+</Project>

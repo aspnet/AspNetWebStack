@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C40883CD-366D-4534-8B58-3EA0D13136DF}"
@@ -13,9 +15,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.Formatting.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.Formatting.NetStandard", "src\System.Net.Http.Formatting.NetStandard\System.Net.Http.Formatting.NetStandard.csproj", "{636CA76A-C85C-42E2-B4AA-88046279B3CA}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.TestCommon.Shared", "test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.shproj", "{967A55CA-350E-453A-8F19-90F91416172C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "System.Net.Http.Formatting.Shared", "test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.shproj", "{4B9A1A48-6B73-415B-981B-AB5F71294010}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.Formatting.NetStandard.Test", "test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj", "{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.projitems*{4b9a1a48-6b73-415b-981b-ab5f71294010}*SharedItemsImports = 13
+		test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.projitems*{8da61dac-ff7e-4ca1-93a0-6148db66fd08}*SharedItemsImports = 4
+		test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.projitems*{967a55ca-350e-453a-8f19-90f91416172c}*SharedItemsImports = 13
+		test\System.Net.Http.Formatting.Shared\System.Net.Http.Formatting.Shared.projitems*{decb05df-b33a-44a0-b5de-b14a8ce0740f}*SharedItemsImports = 4
+		test\Microsoft.TestCommon.Shared\Microsoft.TestCommon.Shared.projitems*{fccc4cb7-baf7-4a57-9f89-e5766fe536c0}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeAnalysis|Any CPU = CodeAnalysis|Any CPU
 		Debug|Any CPU = Debug|Any CPU
@@ -57,10 +70,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C7060639-719B-4BD2-8A37-2F146B5A0668} = {A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}
 		{FCCC4CB7-BAF7-4A57-9F89-E5766FE536C0} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
+		{C7060639-719B-4BD2-8A37-2F146B5A0668} = {A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}
 		{8DA61DAC-FF7E-4CA1-93A0-6148DB66FD08} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
 		{636CA76A-C85C-42E2-B4AA-88046279B3CA} = {A9836F9E-6DB3-4D9F-ADCA-CF42D8C8BA93}
+		{967A55CA-350E-453A-8F19-90F91416172C} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
+		{4B9A1A48-6B73-415B-981B-AB5F71294010} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
 		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F} = {C40883CD-366D-4534-8B58-3EA0D13136DF}
 	EndGlobalSection
 EndGlobal

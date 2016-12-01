@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>967a55ca-350e-453a-8f19-90f91416172c</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.TestCommon.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Assert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CultureReplacer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DictionaryEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumHelperTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExceptionAssertions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExceptionUtility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FactAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FactDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ForceGCAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InlineDataAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MatrixTheoryDataSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\CommonUnitTestDataSets.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\RefTypeTestData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\TestData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\TestDataHolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\TestDataVariations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\DataSets\ValueTypeTestData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\HttpAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\MediaTypeAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\MediaTypeHeaderValueComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\ParsedMediaTypeHeaderValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\RegexReplacement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\RuntimeEnvironment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\StreamAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\TaskAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\TestDataSetAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\TimeoutConstant.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\TypeAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\ByteEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\FlagsEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\INameAndIdContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\ISerializableType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\LongEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\SByteEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\ShortEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\SimpleEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\UIntEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Microsoft\TestCommon\Types\UShortEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Platform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PlatformInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PreserveSyncContextAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyDataAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReflectionAssert.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkippedXunitTestCase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TheoryAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TheoryDataSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TheoryDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraitAttribute.cs" />
+  </ItemGroup>
+</Project>
