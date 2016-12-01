@@ -18,15 +18,19 @@ namespace Microsoft.TestCommon
 
         public static readonly MediaTypeAssert MediaType = new MediaTypeAssert();
 
+#if !NETSTANDARD1_3
         public static readonly GenericTypeAssert GenericType = new GenericTypeAssert();
 
         public static readonly SerializerAssert Serializer = new SerializerAssert();
+#endif
 
         public static readonly StreamAssert Stream = new StreamAssert();
 
         public static readonly TaskAssert Task = new TaskAssert();
 
+#if !NETSTANDARD1_3
         public static readonly XmlAssert Xml = new XmlAssert();
+#endif
 
         // Method has been marked [Obsolete] in xUnit.net v2.0.0+.
         public static new void ReferenceEquals(object a, object b)

@@ -653,7 +653,9 @@ namespace System.Net.Http.Formatting.DataSets
                     typeof(Collection<object>),
                     typeof(IList<object>),
                     typeof(System.Runtime.Serialization.ISerializable),
+#if !NETSTANDARD1_3
                     typeof(System.Data.DataSet),
+#endif
                     typeof(System.Xml.Serialization.IXmlSerializable),
                     typeof(Nullable),
                     typeof(Nullable<DateTime>),

@@ -20,10 +20,12 @@ namespace System.Web.WebPages.TestUtils
             Assembly = asm;
         }
 
+#if !NETSTANDARD1_3
         public static TestFile Create(string localResourceName)
         {
             return new TestFile(String.Format(ResourceNameFormat, Assembly.GetCallingAssembly().GetName().Name, localResourceName), Assembly.GetCallingAssembly());
         }
+#endif
 
         public Stream OpenRead()
         {

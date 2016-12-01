@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+#if NETSTANDARD1_3
+using System.Reflection;
+#endif
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -154,7 +157,11 @@ namespace Microsoft.TestCommon
                 return true;
             }
 
+#if NETSTANDARD1_3
+            if (type.GetTypeInfo().IsGenericType)
+#else
             if (type.IsGenericType)
+#endif
             {
                 if (typeof(IEnumerable).IsAssignableFrom(type))
                 {
@@ -203,7 +210,11 @@ namespace Microsoft.TestCommon
                 return false;
             }
 
+#if NETSTANDARD1_3
+            if (type.GetTypeInfo().IsGenericType)
+#else
             if (type.IsGenericType)
+#endif
             {
                 foreach (Type genericParameterType in type.GetGenericArguments())
                 {

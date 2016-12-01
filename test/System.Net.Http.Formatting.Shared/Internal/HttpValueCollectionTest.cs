@@ -25,10 +25,12 @@ namespace System.Net.Http.Internal
 #endif
         }
 
+#if !NETSTANDARD1_3
         private static void RunInIsolation(Action action)
         {
             AppDomainUtils.RunInSeparateAppDomain(action);
         }
+#endif
 
         public static TheoryDataSet<IEnumerable<KeyValuePair<string, string>>> KeyValuePairs
         {
@@ -146,6 +148,7 @@ namespace System.Net.Http.Internal
             Assert.Equal(0, nvc.Count);
         }
 
+#if !NETSTANDARD1_3
         // This set of tests requires running on a separate appdomain so we don't
         // touch the static property MediaTypeFormatter.MaxHttpCollectionKeys.
         [Fact]
@@ -153,6 +156,7 @@ namespace System.Net.Http.Internal
         {
             RunInIsolation(Create_CreateTooManyKeysThrowsPrivate);
         }
+#endif
 
         private static void Create_CreateTooManyKeysThrowsPrivate()
         {
@@ -178,11 +182,13 @@ namespace System.Net.Http.Internal
             }
         }
 
+#if !NETSTANDARD1_3
         [Fact]
         public void Create_CreateDoesntThrowTooManyValues()
         {
             RunInIsolation(Create_CreateDoesntThrowTooManyValuesPrivate);
         }
+#endif
 
         private static void Create_CreateDoesntThrowTooManyValuesPrivate()
         {
@@ -199,11 +205,13 @@ namespace System.Net.Http.Internal
             Assert.DoesNotThrow(() => HttpValueCollection.Create(list));
         }
 
+#if !NETSTANDARD1_3
         [Fact]
         public void AddTooManyKeysThrows()
         {
             RunInIsolation(Create_CreateDoesntThrowTooManyValuesPrivate);
         }
+#endif
 
         private void AddTooManyKeysThrowsPrivate()
         {
@@ -227,11 +235,13 @@ namespace System.Net.Http.Internal
             Assert.Equal(1000, i);
         }
 
+#if !NETSTANDARD1_3
         [Fact]
         public void AddDoesntThrowTooManyValues()
         {
             RunInIsolation(AddDoesntThrowTooManyValuesPrivate);
         }
+#endif
 
         private static void AddDoesntThrowTooManyValuesPrivate()
         {

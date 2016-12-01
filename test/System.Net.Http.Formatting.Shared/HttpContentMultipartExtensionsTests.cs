@@ -93,7 +93,7 @@ namespace System.Net.Http
 
         private static async Task AssertContentLengthHeaderValueAsync(HttpContent content)
         {
-            long contentLength = (await content.ReadAsByteArrayAsync()).LongLength;
+            long contentLength = (await content.ReadAsByteArrayAsync()).LongCount();
             long contentLengthHeaderValue = content.Headers.ContentLength.GetValueOrDefault();
             Assert.Equal(contentLength, contentLengthHeaderValue);
         }

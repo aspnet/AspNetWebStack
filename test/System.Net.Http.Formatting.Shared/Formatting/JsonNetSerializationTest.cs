@@ -38,6 +38,13 @@ namespace System.Net.Http.Formatting
 {
     public class JsonNetSerializationTest
     {
+        private static readonly Encoding _encoding =
+#if NETSTANDARD1_3
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+#else
+            Encoding.Default;
+#endif
+
         public static TheoryDataSet<object, string> SerializedJson
         {
             get
@@ -282,7 +289,7 @@ namespace System.Net.Http.Formatting
         {
             formatter = formatter ?? new JsonMediaTypeFormatter();
             MemoryStream ms = new MemoryStream();
-            byte[] bytes = Encoding.Default.GetBytes(json);
+            byte[] bytes = _encoding.GetBytes(json);
             ms.Write(bytes, 0, bytes.Length);
             ms.Flush();
             ms.Position = 0;

@@ -11,7 +11,11 @@ namespace Microsoft.TestCommon
     {
         private const string _defaultCultureName = "en-GB";
         private const string _defaultUICultureName = "en-US";
+#if NETSTANDARD1_3
+        private static readonly CultureInfo _defaultCulture = new CultureInfo(_defaultCultureName);
+#else
         private static readonly CultureInfo _defaultCulture = CultureInfo.GetCultureInfo(_defaultCultureName);
+#endif
         private readonly CultureInfo _originalCulture;
         private readonly CultureInfo _originalUICulture;
         private readonly long _threadId;
@@ -22,12 +26,23 @@ namespace Microsoft.TestCommon
         // UICulture => Language
         public CultureReplacer(string culture = _defaultCultureName, string uiCulture = _defaultUICultureName)
         {
+#if NETSTANDARD1_3
+            _originalCulture = CultureInfo.CurrentCulture;
+            _originalUICulture = CultureInfo.CurrentUICulture;
+#else
             _originalCulture = Thread.CurrentThread.CurrentCulture;
             _originalUICulture = Thread.CurrentThread.CurrentUICulture;
+#endif
+
             _threadId = Thread.CurrentThread.ManagedThreadId;
 
+#if NETSTANDARD1_3
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+            CultureInfo.CurrentUICulture = new CultureInfo(uiCulture);
+#else
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(culture);
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(uiCulture);
+#endif
         }
 
         /// <summary>
@@ -65,8 +80,13 @@ namespace Microsoft.TestCommon
             if (disposing)
             {
                 Assert.True(Thread.CurrentThread.ManagedThreadId == _threadId, "The current thread is not the same as the thread invoking the constructor. This should never happen.");
+#if NETSTANDARD1_3
+                CultureInfo.CurrentCulture = _originalCulture;
+                CultureInfo.CurrentUICulture = _originalUICulture;
+#else
                 Thread.CurrentThread.CurrentCulture = _originalCulture;
                 Thread.CurrentThread.CurrentUICulture = _originalUICulture;
+#endif
             }
         }
     }

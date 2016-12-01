@@ -23,8 +23,15 @@ namespace System.Net.Http.Formatting
 
         protected override bool ValueExistsForFramework(StringComparison value)
         {
+#if NETSTANDARD1_3
+            return value == StringComparison.CurrentCulture ||
+                value == StringComparison.CurrentCultureIgnoreCase ||
+                value == StringComparison.Ordinal ||
+                value == StringComparison.OrdinalIgnoreCase;
+#else
             return !(value == StringComparison.InvariantCulture || value == StringComparison.InvariantCultureIgnoreCase);
+#endif
         }
 #endif
-    }
+        }
 }

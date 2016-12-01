@@ -2,10 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+#if !NETSTANDARD1_3
 using System.ComponentModel;
+#endif
 using System.Reflection;
 using System.Threading.Tasks;
+#if !NETSTANDARD1_3
 using System.Web;
+#endif
 
 namespace Microsoft.TestCommon
 {
@@ -466,6 +470,7 @@ namespace Microsoft.TestCommon
                         String.Format(CultureReplacer.DefaultCulture, "Value must be less than or equal to {0}.", maxValue), false, actualValue);
         }
 
+#if !NETSTANDARD1_3
         /// <summary>
         /// Verifies that the code throws an HttpException (or optionally any exception which derives from it).
         /// </summary>
@@ -481,7 +486,27 @@ namespace Microsoft.TestCommon
             Equal(httpCode, ex.GetHttpCode());
             return ex;
         }
+#endif
 
+#if NETSTANDARD1_3
+        /// <summary>
+        /// Verifies that the code throws an ArgumentOutOfRangeException (or optionally any exception which derives from it).
+        /// </summary>
+        /// <param name="testCode">A delegate to the code to be tested</param>
+        /// <param name="paramName">The name of the parameter that should throw the exception</param>
+        /// <param name="invalidValue">The expected invalid value that should appear in the message</param>
+        /// <param name="enumType">The type of the enumeration</param>
+        /// <param name="allowDerivedExceptions">Pass true to allow exceptions which derive from ArgumentOutOfRangeException; pass false, otherwise</param>
+        /// <returns>The exception that was thrown, when successful</returns>
+        /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
+        public static ArgumentOutOfRangeException ThrowsInvalidEnumArgument(Action testCode, string paramName, int invalidValue, Type enumType, bool allowDerivedExceptions = false)
+        {
+            string message = String.Format(CultureReplacer.DefaultCulture,
+                                           "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.{3}Parameter name: {0}",
+                                           paramName, invalidValue, enumType.Name, Environment.NewLine);
+            return Throws<ArgumentOutOfRangeException>(testCode, message, allowDerivedExceptions);
+        }
+#else
         /// <summary>
         /// Verifies that the code throws an InvalidEnumArgumentException (or optionally any exception which derives from it).
         /// </summary>
@@ -499,6 +524,7 @@ namespace Microsoft.TestCommon
                                            paramName, invalidValue, enumType.Name, Environment.NewLine);
             return Throws<InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);
         }
+#endif
 
         /// <summary>
         /// Verifies that the code throws an HttpException (or optionally any exception which derives from it).

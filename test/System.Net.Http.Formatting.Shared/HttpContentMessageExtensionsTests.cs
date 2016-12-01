@@ -263,7 +263,7 @@ namespace System.Net.Http
             {
                 HttpContent content = new StringContent(String.Empty);
                 content.Headers.ContentType = ParserData.HttpRequestMediaType;
-                content.ReadAsHttpRequestMessageAsync(Uri.UriSchemeHttp, ParserData.MinBufferSize - 1);
+                content.ReadAsHttpRequestMessageAsync("http", ParserData.MinBufferSize - 1);
             }, "bufferSize", ParserData.MinBufferSize.ToString(), ParserData.MinBufferSize - 1);
         }
 
@@ -357,7 +357,7 @@ namespace System.Net.Http
         public async Task ReadAsHttpRequestMessageAsync_WithHttpsUriScheme_ReturnsUriWithHttps()
         {
             HttpContent content = CreateContent(isRequest: true, hasEntity: true);
-            HttpRequestMessage httpRequest = await content.ReadAsHttpRequestMessageAsync(Uri.UriSchemeHttps);
+            HttpRequestMessage httpRequest = await content.ReadAsHttpRequestMessageAsync("https");
             Assert.Equal(ParserData.HttpsRequestUri, httpRequest.RequestUri);
         }
 
@@ -491,7 +491,7 @@ namespace System.Net.Http
             };
 
             HttpContent content = CreateContent(true, request, "sample body");
-            return content.ReadAsHttpRequestMessageAsync(Uri.UriSchemeHttp, 64 * 1024, 64 * 1024);
+            return content.ReadAsHttpRequestMessageAsync("http", 64 * 1024, 64 * 1024);
         }
 
         [Theory]

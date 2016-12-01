@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+#if NETSTANDARD1_3
+using System.Reflection;
+#endif
 
 namespace Microsoft.TestCommon
 {
@@ -142,6 +145,20 @@ namespace Microsoft.TestCommon
         /// <param name="isAssignableFrom">Verify that the type to test is assignable from this type.</param>
         public void HasProperties(Type type, TypeProperties typeProperties, Type isAssignableFrom)
         {
+#if NETSTANDARD1_3 // Use GetTypeInfo() here. TypeProperties.IsComObject is ignored in this case.
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsAbstract) > 0, type.GetTypeInfo().IsAbstract, "abstract");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsClass) > 0, type.GetTypeInfo().IsClass, "a class");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsDisposable) > 0, typeof(IDisposable).IsAssignableFrom(type), "disposable");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsEnum) > 0, type.GetTypeInfo().IsEnum, "an enum");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsGenericType) > 0, type.GetTypeInfo().IsGenericType, "a generic type");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsGenericTypeDefinition) > 0, type.GetTypeInfo().IsGenericTypeDefinition, "a generic type definition");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsInterface) > 0, type.GetTypeInfo().IsInterface, "an interface");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsNestedPrivate) > 0, type.GetTypeInfo().IsNestedPrivate, "nested private");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsNestedPublic) > 0, type.GetTypeInfo().IsNestedPublic, "nested public");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsPublic) > 0, type.GetTypeInfo().IsPublic, "public");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsSealed) > 0, type.GetTypeInfo().IsSealed, "sealed");
+            TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsVisible) > 0, type.GetTypeInfo().IsVisible, "visible");
+#else
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsAbstract) > 0, type.IsAbstract, "abstract");
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsClass) > 0, type.IsClass, "a class");
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsComObject) > 0, type.IsCOMObject, "a COM object");
@@ -155,6 +172,7 @@ namespace Microsoft.TestCommon
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsPublic) > 0, type.IsPublic, "public");
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsSealed) > 0, type.IsSealed, "sealed");
             TypeAssert.CheckProperty(type, (typeProperties & TypeProperties.IsVisible) > 0, type.IsVisible, "visible");
+#endif
             if (isAssignableFrom != null)
             {
                 TypeAssert.CheckProperty(type, true, isAssignableFrom.IsAssignableFrom(type), String.Format("assignable from {0}", isAssignableFrom.FullName));

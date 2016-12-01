@@ -139,11 +139,20 @@ namespace System.Web.Http
             // Arrange
             MockAsyncCallback mockCallback = new MockAsyncCallback(false);
             MockAsyncResult mockAsyncResult = new MockAsyncResult(mockCallback.Callback, null);
-            ApplicationException applicationException = new ApplicationException("Complete failed!");
+#if NETSTANDARD1_3
+            Exception applicationException = new RankException("Complete failed!");
+#else
+            Exception applicationException = new ApplicationException("Complete failed!");
+#endif
             mockAsyncResult.Complete(completedSynchronously, applicationException);
 
             // Act/Assert
-            Assert.Throws<ApplicationException>(() => MockAsyncResult.End<MockAsyncResult>(mockAsyncResult));
+#if NETSTANDARD1_3
+            Assert.Throws<RankException>(
+#else
+            Assert.Throws<ApplicationException>(
+#endif
+                () => MockAsyncResult.End<MockAsyncResult>(mockAsyncResult));
         }
 
         internal class MockAsyncResult : AsyncResult

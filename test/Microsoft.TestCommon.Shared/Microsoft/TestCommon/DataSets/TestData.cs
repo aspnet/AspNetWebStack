@@ -6,6 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+#if NETSTANDARD1_3
+using System.Reflection;
+#endif
 using Microsoft.TestCommon.Types;
 
 namespace Microsoft.TestCommon
@@ -266,7 +269,11 @@ namespace Microsoft.TestCommon
         /// <param name="type">The type associated with the <see cref="TestData"/> instance.</param>
         protected TestData(Type type)
         {
+#if NETSTANDARD1_3
+            if (type.GetTypeInfo().ContainsGenericParameters)
+#else
             if (type.ContainsGenericParameters)
+#endif
             {
                 throw new InvalidOperationException("Only closed generic types are supported.");
             }

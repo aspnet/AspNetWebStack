@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
 using Moq;
+using Moq.Protected;
 
 namespace System.Net.Http
 {
@@ -57,7 +58,10 @@ namespace System.Net.Http
             bodypart.Dispose();
 
             // Assert
+            mockStream.Protected().Verify("Dispose", Times.Once(), true);
+#if !NETSTANDARD1_3
             mockStream.Verify(s => s.Close(), Times.Once());
+#endif
         }
 
         [Fact]

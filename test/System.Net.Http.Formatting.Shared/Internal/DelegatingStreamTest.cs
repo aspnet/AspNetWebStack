@@ -142,9 +142,12 @@ namespace System.Net.Http.Internal
 
             // Assert
             mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
+#if !NETSTANDARD1_3
             mockInnerStream.Verify(s => s.Close(), Times.Once());
+#endif
         }
 
+#if !NETSTANDARD1_3
         [Fact]
         public void DelegatingStream_Close()
         {
@@ -159,6 +162,7 @@ namespace System.Net.Http.Internal
             mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
             mockInnerStream.Verify(s => s.Close(), Times.Once());
         }
+#endif
 
         [Fact]
         public void DelegatingStream_Seek()

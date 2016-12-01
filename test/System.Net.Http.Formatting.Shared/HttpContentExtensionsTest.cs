@@ -16,6 +16,13 @@ namespace System.Net.Http
 {
     public class HttpContentExtensionsTest
     {
+        private static readonly Encoding _encoding =
+#if NETSTANDARD1_3
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+#else
+            Encoding.Default;
+#endif
+
         private static readonly IEnumerable<MediaTypeFormatter> _emptyFormatterList = Enumerable.Empty<MediaTypeFormatter>();
         private readonly Mock<MediaTypeFormatter> _formatterMock = new Mock<MediaTypeFormatter> { CallBase = true };
         private readonly MediaTypeHeaderValue _mediaType = new MediaTypeHeaderValue("foo/bar");
@@ -229,7 +236,7 @@ namespace System.Net.Http
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             cts.Cancel();
-            HttpContent content = new StringContent("42", Encoding.Default, "application/json");
+            HttpContent content = new StringContent("42", _encoding, "application/json");
 
             await Assert.ThrowsAsync<OperationCanceledException>(() => content.ReadAsAsync(typeof(int), cts.Token));
         }
@@ -287,7 +294,7 @@ namespace System.Net.Http
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             cts.Cancel();
-            HttpContent content = new StringContent("42", Encoding.Default, "application/json");
+            HttpContent content = new StringContent("42", _encoding, "application/json");
 
             return Assert.ThrowsAsync<OperationCanceledException>(() => content.ReadAsAsync<int>(cts.Token));
         }

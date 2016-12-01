@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Formatting;
+#if NETSTANDARD1_3
+using System.Reflection;
+#endif
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -256,7 +259,12 @@ namespace System.Net.Formatting.Tests
         // Given a memory stream (which is representing a textual serialization format), get the string.
         private static string ToString(MemoryStream ms)
         {
+#if NETSTANDARD1_3
+            byte[] b = ms.ToArray();
+#else
             byte[] b = ms.GetBuffer();
+#endif
+
             return System.Text.Encoding.UTF8.GetString(b, 0, (int)ms.Length);
         }
 

@@ -73,7 +73,12 @@ namespace System.Net.Http
             PushStreamContent content = new PushStreamContent((Action<Stream, HttpContent, TransportContext>)streamAction.Action);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ApplicationException>(() => content.CopyToAsync(outputStream));
+#if NETSTANDARD1_3
+            await Assert.ThrowsAsync<RankException>(
+#else
+            await Assert.ThrowsAsync<ApplicationException>(
+#endif
+                () => content.CopyToAsync(outputStream));
             Assert.True(streamAction.WasInvoked);
             Assert.IsType<PushStreamContent.CompleteTaskOnCloseStream>(streamAction.OutputStream);
             Assert.True(outputStream.CanRead);
@@ -139,7 +144,11 @@ namespace System.Net.Http
         {
             // Arrange
             bool faulted = false;
+#if NETSTANDARD1_3
+            Exception exception = new RankException();
+#else
             Exception exception = new ApplicationException();
+#endif
             PushStreamContent content = new PushStreamContent(async (s, c, tc) =>
             {
                 await Task.FromResult(42);
@@ -152,7 +161,7 @@ namespace System.Net.Http
                 // Act
                 await content.CopyToAsync(stream);
             }
-            catch (ApplicationException e)
+            catch (Exception e)
             {
                 Assert.Same(exception, e);
                 faulted = true;
@@ -231,7 +240,11 @@ namespace System.Net.Http
 
                 if (_throwException)
                 {
+#if NETSTANDARD1_3
+                    throw new RankException("Action threw exception!");
+#else
                     throw new ApplicationException("Action threw exception!");
+#endif
                 }
             }
         }
