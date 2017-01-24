@@ -68,6 +68,11 @@ namespace System.Web.Razor.Editor
                 return HandleDotlessCommitInsertion(target);
             }
 
+            if (IsAcceptableIdentifierReplacement(target, normalizedChange))
+            {
+                return TryAcceptChange(target, normalizedChange);
+            }
+
             if (IsAcceptableReplace(target, normalizedChange))
             {
                 return HandleReplacement(target, normalizedChange);
@@ -136,6 +141,59 @@ namespace System.Web.Razor.Editor
                    target.Content.Last() == '.' &&
                    change.NewText == "." &&
                    change.OldLength == 0;
+        }
+
+        private bool IsAcceptableIdentifierReplacement(Span target, TextChange change)
+        {
+            if (!change.IsReplace)
+            {
+                return false;
+            }
+
+            foreach (ISymbol isymbol in target.Symbols)
+            {
+                CSharpSymbol symbol = isymbol as CSharpSymbol;
+
+                if (symbol == null)
+                {
+                    break;
+                }
+
+                int symbolStartIndex = target.Start.AbsoluteIndex + symbol.Start.AbsoluteIndex;
+                int symbolEndIndex = symbolStartIndex + symbol.Content.Length;
+
+                // We're looking for the first symbol that contains the TextChange.
+                if (symbolEndIndex > change.OldPosition)
+                {
+                    if (symbolEndIndex >= change.OldPosition + change.OldLength && symbol.Type == CSharpSymbolType.Identifier)
+                    {
+                        // The symbol we're changing happens to be an identifier. Need to check if its transformed state is also one.
+                        // We do this transformation logic to capture the case that the new text change happens to not be an identifier;
+                        // i.e. "5". Alone, it's numeric, within an identifier it's classified as identifier.
+                        string transformedContent = change.ApplyChange(symbol.Content, symbolStartIndex);
+                        IEnumerable<ISymbol> newSymbols = Tokenizer(transformedContent);
+
+                        if (newSymbols.Count() != 1)
+                        {
+                            // The transformed content resulted in more than one symbol; we can only replace a single identifier with
+                            // another single identifier.
+                            break;
+                        }
+
+                        CSharpSymbol newSymbol = (CSharpSymbol)newSymbols.First();
+                        if (newSymbol.Type == CSharpSymbolType.Identifier)
+                        {
+                            return true;
+                        }
+                    }
+
+                    // Change is touching a non-identifier symbol or spans multiple symbols.
+
+                    break;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsAcceptableReplace(Span target, TextChange change)
