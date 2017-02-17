@@ -14,4 +14,4 @@ This repo includes:
 
 ### Nightly builds
 
-The latest built and tested packages from this repo are available on this MyGet feed: http://myget.org/gallery/aspnetwebstacknightly
+The latest built and tested packages from this repo are available on this MyGet feed: https://myget.org/gallery/aspnetwebstacknightly
