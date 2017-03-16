@@ -113,7 +113,7 @@ namespace System.Web.Razor.Parser
                 }
                 catch (OperationCanceledException)
                 {
-                    return; // Just return if we're cancelled.
+                    return; // Just return if we're canceled.
                 }
             });
         }
