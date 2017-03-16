@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 #if ASPNETMVC && ASPNETWEBPAGES
 #error Runtime projects cannot define both ASPNETMVC and ASPNETWEBPAGES
 #elif ASPNETMVC
-#if !BUILD_GENERATED_VERSION
+#if (!BUILD_GENERATED_VERSION && !NETSTANDARD1_1)
 [assembly: AssemblyVersion("5.2.4.0")] // ASPNETMVC
 [assembly: AssemblyFileVersion("5.2.4.0")] // ASPNETMVC
 #endif
