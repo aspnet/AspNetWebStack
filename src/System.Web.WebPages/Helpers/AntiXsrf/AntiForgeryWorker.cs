@@ -104,7 +104,11 @@ namespace System.Web.Helpers.AntiXsrf
                 // Adding X-Frame-Options header to prevent ClickJacking. See
                 // http://tools.ietf.org/html/draft-ietf-websec-x-frame-options-10
                 // for more information.
-                httpContext.Response.AddHeader("X-Frame-Options", "SAMEORIGIN");
+                var xFrameHeaderName = "X-Frame-Options";
+                if (httpContext.Response.Headers[xFrameHeaderName] == null)
+                {
+                    httpContext.Response.AddHeader(xFrameHeaderName, "SAMEORIGIN");
+                }
             }
 
             // <input type="hidden" name="__AntiForgeryToken" value="..." />
