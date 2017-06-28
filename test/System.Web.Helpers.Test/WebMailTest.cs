@@ -192,7 +192,7 @@ namespace System.Web.Helpers.Test
             var priority = MailPriority.Low;
 
             // Act
-            string fileToAttach = Path.GetTempFileName();
+            string fileToAttach = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
             try
             {
