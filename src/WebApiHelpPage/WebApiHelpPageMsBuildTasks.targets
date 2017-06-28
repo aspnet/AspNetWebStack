@@ -27,7 +27,7 @@
 
             if (!File.Exists(NuGetExe))
             {
-              string tempFile = Path.GetTempFileName();
+              string tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
               try
               {
