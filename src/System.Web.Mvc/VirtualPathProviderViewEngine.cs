@@ -25,6 +25,10 @@ namespace System.Web.Mvc
         internal Func<string, string> GetExtensionThunk = VirtualPathUtility.GetExtension;
         private IViewLocationCache _viewLocationCache;
 
+        private string _DefaultSharedViewFolder ;
+        private string _DefaultAreaFolder ;
+        private string _DefaultViewFolder ;
+
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "This is a shipped API")]
         public string[] AreaMasterLocationFormats { get; set; }
 
@@ -42,6 +46,54 @@ namespace System.Web.Mvc
 
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "This is a shipped API")]
         public string[] PartialViewLocationFormats { get; set; }
+
+        public string DefaultSharedViewFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_DefaultSharedViewFolder))
+                {
+                    _DefaultSharedViewFolder = "Shared";
+                }
+                return _DefaultSharedViewFolder;
+            }
+            set
+            {
+                _DefaultSharedViewFolder = value;
+            }
+        }
+        public string DefaultViewFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_DefaultViewFolder))
+                {
+                    _DefaultViewFolder = "Views";
+                }
+                return _DefaultViewFolder;
+            }
+            set
+            {
+                _DefaultViewFolder = value;
+            }
+        }
+
+        public string DefaultAreaFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_DefaultAreaFolder))
+                {
+                    _DefaultAreaFolder = "Areas";
+                }
+                return _DefaultAreaFolder;
+            }
+            set
+            {
+                _DefaultAreaFolder = value;
+            }
+        }
+
 
         // Neither DefaultViewLocationCache.Null nor a DefaultViewLocationCache instance maintain internal state. Fine
         // if multiple threads race to initialize _viewLocationCache.

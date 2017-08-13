@@ -17,46 +17,46 @@ namespace System.Web.Mvc
         {
             AreaViewLocationFormats = new[]
             {
-                "~/Areas/{2}/Views/{1}/{0}.cshtml",
-                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
-                "~/Areas/{2}/Views/Shared/{0}.cshtml",
-                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder)
             };
             AreaMasterLocationFormats = new[]
             {
-                "~/Areas/{2}/Views/{1}/{0}.cshtml",
-                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
-                "~/Areas/{2}/Views/Shared/{0}.cshtml",
-                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder)
             };
             AreaPartialViewLocationFormats = new[]
             {
-                "~/Areas/{2}/Views/{1}/{0}.cshtml",
-                "~/Areas/{2}/Views/{1}/{0}.vbhtml",
-                "~/Areas/{2}/Views/Shared/{0}.cshtml",
-                "~/Areas/{2}/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{3}/{2}/{4}/{5}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultAreaFolder,DefaultViewFolder, DefaultSharedViewFolder)
             };
 
             ViewLocationFormats = new[]
             {
-                "~/Views/{1}/{0}.cshtml",
-                "~/Views/{1}/{0}.vbhtml",
-                "~/Views/Shared/{0}.cshtml",
-                "~/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{3}/{2}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{1}/{2}/{0}.cshtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{1}/{2}/{0}.vbhtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
             };
             MasterLocationFormats = new[]
             {
-                "~/Views/{1}/{0}.cshtml",
-                "~/Views/{1}/{0}.vbhtml",
-                "~/Views/Shared/{0}.cshtml",
-                "~/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{3}/{2}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{1}/{2}/{0}.cshtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{1}/{2}/{0}.vbhtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
             };
             PartialViewLocationFormats = new[]
             {
-                "~/Views/{1}/{0}.cshtml",
-                "~/Views/{1}/{0}.vbhtml",
-                "~/Views/Shared/{0}.cshtml",
-                "~/Views/Shared/{0}.vbhtml"
+                string.Format("~/{3}/{2}/{1}/{0}.cshtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{3}/{2}/{1}/{0}.vbhtml","{0}","{1}","{2}",DefaultViewFolder),
+                string.Format("~/{1}/{2}/{0}.cshtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
+                string.Format("~/{1}/{2}/{0}.vbhtml","{0}",DefaultViewFolder, DefaultSharedViewFolder),
             };
 
             FileExtensions = new[]
