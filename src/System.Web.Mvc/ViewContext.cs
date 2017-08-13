@@ -52,19 +52,19 @@ window.mvcClientValidationMetadata.push({0});
             {
                 throw new ArgumentNullException("controllerContext");
             }
-            if (view == null)
+            else if (view == null)
             {
                 throw new ArgumentNullException("view");
             }
-            if (viewData == null)
+            else if (viewData == null)
             {
                 throw new ArgumentNullException("viewData");
             }
-            if (tempData == null)
+            else if (tempData == null)
             {
                 throw new ArgumentNullException("tempData");
             }
-            if (writer == null)
+            else if (writer == null)
             {
                 throw new ArgumentNullException("writer");
             }
