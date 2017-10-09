@@ -18,7 +18,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Facebook.6.1.4\lib\net45\Facebook.dll</HintPath>
+      <HintPath>..\..\packages\Facebook.6.4.2\lib\net45\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Moq, Version=4.5.21.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
