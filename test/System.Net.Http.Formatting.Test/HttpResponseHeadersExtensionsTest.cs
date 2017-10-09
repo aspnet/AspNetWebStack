@@ -49,8 +49,8 @@ namespace System.Net.Http
             IEnumerable<string> actualCookies;
             bool addedCorrectly = headers.TryGetValues("Set-Cookie", out actualCookies);
             Assert.True(addedCorrectly);
-            Assert.Equal(1, actualCookies.Count());
-            Assert.Equal(expectedCookie, actualCookies.ElementAt(0));
+            string actualCookie = Assert.Single(actualCookies);
+            Assert.Equal(expectedCookie, actualCookie);
         }
 
         private static HttpResponseHeaders CreateHttpResponseHeaders()

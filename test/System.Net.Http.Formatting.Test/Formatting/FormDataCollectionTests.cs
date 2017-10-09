@@ -69,10 +69,10 @@ namespace System.Net.Http.Formatting
         [Fact]
         public void CreateFromPairs()
         {
-            Dictionary<string, string> pairs = new Dictionary<string, string> 
-            { 
-                { "x",  "1"}, 
-                { "y" , "2"} 
+            Dictionary<string, string> pairs = new Dictionary<string, string>
+            {
+                { "x",  "1"},
+                { "y" , "2"}
             };
 
             var form = new FormDataCollection(pairs);
@@ -154,7 +154,7 @@ namespace System.Net.Http.Formatting
         {
             FormDataCollection fd = new FormDataCollection(queryString);
 
-            Assert.Equal(1, fd.Count());
+            Assert.Single(fd);
             Assert.Equal(expected, fd.Get("x"));
         }
     }

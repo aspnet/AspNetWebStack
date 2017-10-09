@@ -212,8 +212,6 @@ namespace System.Net.Http.Formatting
                     memoryStream, content, transportContext: null));
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             if (!isDefaultEncoding)
@@ -232,8 +230,6 @@ namespace System.Net.Http.Formatting
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // DataContractJsonSerializer does not honor the value of byteOrderMark in the UnicodeEncoding ctor.

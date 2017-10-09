@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Web.WebPages.Razor;
 using System.Web.WebPages.TestUtils;
 using Microsoft.TestCommon;
@@ -21,7 +20,7 @@ namespace Microsoft.Web.Helpers.Test
 
                 // Assert
                 var imports = WebPageRazorHost.GetGlobalImports();
-                Assert.True(imports.Any(ns => ns.Equals("Microsoft.Web.Helpers")));
+                Assert.Contains(imports, ns => ns.Equals("Microsoft.Web.Helpers"));
             });
         }
 

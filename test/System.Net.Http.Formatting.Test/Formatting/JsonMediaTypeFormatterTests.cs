@@ -394,11 +394,10 @@ namespace System.Net.Http.Formatting
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
         {
             // Guard
-            Assert.IsType<Dictionary<string, object>>(testData);
+            IDictionary<string, object> expectedDictionary = Assert.IsType<Dictionary<string, object>>(testData);
 
             // Arrange
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter();
-            IDictionary<string, object> expectedDictionary = (IDictionary<string, object>)testData;
 
             // Arrange & Act & Assert
             object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);
@@ -565,8 +564,6 @@ namespace System.Net.Http.Formatting
             Assert.Equal(beforeMessage, afterMessage);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
@@ -579,8 +576,6 @@ namespace System.Net.Http.Formatting
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange

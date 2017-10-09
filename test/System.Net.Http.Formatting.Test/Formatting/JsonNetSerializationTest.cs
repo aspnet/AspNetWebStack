@@ -192,7 +192,7 @@ namespace System.Net.Http.Formatting
             formatter.SerializerSettings.TypeNameHandling = TypeNameHandling.Objects;
             string json = await SerializeAsync(new Derived(), typeof(Base), formatter);
             object deserializedObject = await DeserializeAsync(json, typeof(Base), formatter);
-            Assert.IsType(typeof(Derived), deserializedObject);
+            Assert.IsType<Derived>(deserializedObject);
         }
 
         [Fact]
@@ -200,7 +200,7 @@ namespace System.Net.Http.Formatting
         {
             string json = "{\"$type\":\"" + typeof(DangerousType).AssemblyQualifiedName + "\"}";
             object deserializedObject = await DeserializeAsync(json, typeof(object));
-            Assert.IsNotType(typeof(DangerousType), deserializedObject);
+            Assert.IsNotType<DangerousType>(deserializedObject);
         }
 
         [Fact]

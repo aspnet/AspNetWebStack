@@ -29,7 +29,7 @@ namespace System.Net.Http.Formatting
             Assert.Equal(headerName, mapping.HeaderName);
             Assert.Equal(headerValue, mapping.HeaderValue);
             Assert.Equal(StringComparison.CurrentCulture, mapping.HeaderValueComparison);
-            Assert.Equal(true, mapping.IsValueSubstring);
+            Assert.True(mapping.IsValueSubstring);
             Assert.MediaType.AreEqual(mediaType, mapping.MediaType, "MediaType failed to set.");
         }
 
@@ -83,7 +83,7 @@ namespace System.Net.Http.Formatting
             Assert.Equal(headerName, mapping.HeaderName);
             Assert.Equal(headerValue, mapping.HeaderValue);
             Assert.Equal(StringComparison.CurrentCulture, mapping.HeaderValueComparison);
-            Assert.Equal(true, mapping.IsValueSubstring);
+            Assert.True(mapping.IsValueSubstring);
             Assert.MediaType.AreEqual(mediaType, mapping.MediaType, "MediaType failed to set.");
         }
 

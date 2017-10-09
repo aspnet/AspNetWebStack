@@ -500,8 +500,8 @@ namespace System.Web.Mvc.Routing
             // Assert
             Assert.NotNull(usage);
             Assert.Equal(AttributeTargets.Class | AttributeTargets.Method, usage.ValidOn);
-            Assert.Equal(false, usage.Inherited);
-            Assert.Equal(true, usage.AllowMultiple);
+            Assert.False(usage.Inherited);
+            Assert.True(usage.AllowMultiple);
         }
 
         private static IDirectRouteBuilder CreateBuilder(Func<RouteEntry> build)

@@ -24,13 +24,12 @@ namespace Microsoft.Web.Helpers.Test
         public void FlashDefaults()
         {
             string html = Video.Flash(GetContext(), _pathUtility, "http://foo.bar.com/foo.swf").ToString().Replace("\r\n", "");
-            Assert.True(html.StartsWith(
-                "<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
-                "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab\" type=\"application/x-oleobject\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"movie\" value=\"http://foo.bar.com/foo.swf\" />"));
-            Assert.True(html.Contains("<embed src=\"http://foo.bar.com/foo.swf\" type=\"application/x-shockwave-flash\" />"));
-            Assert.True(html.EndsWith("</object>"));
+            Assert.StartsWith("<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
+                "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab\" type=\"application/x-oleobject\" >",
+                html);
+            Assert.Contains("<param name=\"movie\" value=\"http://foo.bar.com/foo.swf\" />", html);
+            Assert.Contains("<embed src=\"http://foo.bar.com/foo.swf\" type=\"application/x-shockwave-flash\" />", html);
+            Assert.EndsWith("</object>", html);
         }
 
         [Fact]
@@ -52,39 +51,38 @@ namespace Microsoft.Web.Helpers.Test
                                       play: false, loop: false, menu: false, backgroundColor: "#000", quality: "Q", scale: "S", windowMode: "WM",
                                       baseUrl: "http://foo.bar.com/", version: "1.0.0.0", htmlAttributes: new { id = "fl" }, embedName: "efl").ToString().Replace("\r\n", "");
 
-            Assert.True(html.StartsWith(
-                "<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
+            Assert.StartsWith("<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
                 "codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=1,0,0,0\" " +
-                "height=\"100px\" id=\"fl\" type=\"application/x-oleobject\" width=\"100px\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"play\" value=\"False\" />"));
-            Assert.True(html.Contains("<param name=\"loop\" value=\"False\" />"));
-            Assert.True(html.Contains("<param name=\"menu\" value=\"False\" />"));
-            Assert.True(html.Contains("<param name=\"bgColor\" value=\"#000\" />"));
-            Assert.True(html.Contains("<param name=\"quality\" value=\"Q\" />"));
-            Assert.True(html.Contains("<param name=\"scale\" value=\"S\" />"));
-            Assert.True(html.Contains("<param name=\"wmode\" value=\"WM\" />"));
-            Assert.True(html.Contains("<param name=\"base\" value=\"http://foo.bar.com/\" />"));
+                "height=\"100px\" id=\"fl\" type=\"application/x-oleobject\" width=\"100px\" >",
+                html);
+            Assert.Contains("<param name=\"play\" value=\"False\" />", html);
+            Assert.Contains("<param name=\"loop\" value=\"False\" />", html);
+            Assert.Contains("<param name=\"menu\" value=\"False\" />", html);
+            Assert.Contains("<param name=\"bgColor\" value=\"#000\" />", html);
+            Assert.Contains("<param name=\"quality\" value=\"Q\" />", html);
+            Assert.Contains("<param name=\"scale\" value=\"S\" />", html);
+            Assert.Contains("<param name=\"wmode\" value=\"WM\" />", html);
+            Assert.Contains("<param name=\"base\" value=\"http://foo.bar.com/\" />", html);
 
             var embed = new Regex("<embed.*/>").Match(html);
             Assert.True(embed.Success);
-            Assert.True(embed.Value.StartsWith("<embed src=\"http://foo.bar.com/foo.swf\" width=\"100px\" height=\"100px\" name=\"efl\" type=\"application/x-shockwave-flash\" "));
-            Assert.True(embed.Value.Contains("play=\"False\""));
-            Assert.True(embed.Value.Contains("loop=\"False\""));
-            Assert.True(embed.Value.Contains("menu=\"False\""));
-            Assert.True(embed.Value.Contains("bgColor=\"#000\""));
-            Assert.True(embed.Value.Contains("quality=\"Q\""));
-            Assert.True(embed.Value.Contains("scale=\"S\""));
-            Assert.True(embed.Value.Contains("wmode=\"WM\""));
-            Assert.True(embed.Value.Contains("base=\"http://foo.bar.com/\""));
+            Assert.StartsWith("<embed src=\"http://foo.bar.com/foo.swf\" width=\"100px\" height=\"100px\" name=\"efl\" type=\"application/x-shockwave-flash\" ", embed.Value);
+            Assert.Contains("play=\"False\"", embed.Value);
+            Assert.Contains("loop=\"False\"", embed.Value);
+            Assert.Contains("menu=\"False\"", embed.Value);
+            Assert.Contains("bgColor=\"#000\"", embed.Value);
+            Assert.Contains("quality=\"Q\"", embed.Value);
+            Assert.Contains("scale=\"S\"", embed.Value);
+            Assert.Contains("wmode=\"WM\"", embed.Value);
+            Assert.Contains("base=\"http://foo.bar.com/\"", embed.Value);
         }
 
         [Fact]
         public void FlashWithUnexposedOptions()
         {
             string html = Video.Flash(GetContext(), _pathUtility, "http://foo.bar.com/foo.swf", options: new { X = "Y", Z = 123 }).ToString().Replace("\r\n", "");
-            Assert.True(html.Contains("<param name=\"X\" value=\"Y\" />"));
-            Assert.True(html.Contains("<param name=\"Z\" value=\"123\" />"));
+            Assert.Contains("<param name=\"X\" value=\"Y\" />", html);
+            Assert.Contains("<param name=\"Z\" value=\"123\" />", html);
             // note - can't guarantee order of optional params:
             Assert.True(
                 html.Contains("<embed src=\"http://foo.bar.com/foo.swf\" type=\"application/x-shockwave-flash\" X=\"Y\" Z=\"123\" />") ||
@@ -102,12 +100,10 @@ namespace Microsoft.Web.Helpers.Test
         public void MediaPlayerDefaults()
         {
             string html = Video.MediaPlayer(GetContext(), _pathUtility, "http://foo.bar.com/foo.wmv").ToString().Replace("\r\n", "");
-            Assert.True(html.StartsWith(
-                "<object classid=\"clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"URL\" value=\"http://foo.bar.com/foo.wmv\" />"));
-            Assert.True(html.Contains("<embed src=\"http://foo.bar.com/foo.wmv\" type=\"application/x-mplayer2\" />"));
-            Assert.True(html.EndsWith("</object>"));
+            Assert.StartsWith("<object classid=\"clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6\" >", html);
+            Assert.Contains("<param name=\"URL\" value=\"http://foo.bar.com/foo.wmv\" />", html);
+            Assert.Contains("<embed src=\"http://foo.bar.com/foo.wmv\" type=\"application/x-mplayer2\" />", html);
+            Assert.EndsWith("</object>", html);
         }
 
         [Fact]
@@ -128,38 +124,36 @@ namespace Microsoft.Web.Helpers.Test
             string html = Video.MediaPlayer(GetContext(), _pathUtility, "http://foo.bar.com/foo.wmv", width: "100px", height: "100px",
                                             autoStart: false, playCount: 2, uiMode: "UIMODE", stretchToFit: true, enableContextMenu: false, mute: true,
                                             volume: 1, baseUrl: "http://foo.bar.com/", htmlAttributes: new { id = "mp" }, embedName: "emp").ToString().Replace("\r\n", "");
-            Assert.True(html.StartsWith(
-                "<object classid=\"clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6\" height=\"100px\" id=\"mp\" width=\"100px\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"URL\" value=\"http://foo.bar.com/foo.wmv\" />"));
-            Assert.True(html.Contains("<param name=\"autoStart\" value=\"False\" />"));
-            Assert.True(html.Contains("<param name=\"playCount\" value=\"2\" />"));
-            Assert.True(html.Contains("<param name=\"uiMode\" value=\"UIMODE\" />"));
-            Assert.True(html.Contains("<param name=\"stretchToFit\" value=\"True\" />"));
-            Assert.True(html.Contains("<param name=\"enableContextMenu\" value=\"False\" />"));
-            Assert.True(html.Contains("<param name=\"mute\" value=\"True\" />"));
-            Assert.True(html.Contains("<param name=\"volume\" value=\"1\" />"));
-            Assert.True(html.Contains("<param name=\"baseURL\" value=\"http://foo.bar.com/\" />"));
+            Assert.StartsWith("<object classid=\"clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6\" height=\"100px\" id=\"mp\" width=\"100px\" >", html);
+            Assert.Contains("<param name=\"URL\" value=\"http://foo.bar.com/foo.wmv\" />", html);
+            Assert.Contains("<param name=\"autoStart\" value=\"False\" />", html);
+            Assert.Contains("<param name=\"playCount\" value=\"2\" />", html);
+            Assert.Contains("<param name=\"uiMode\" value=\"UIMODE\" />", html);
+            Assert.Contains("<param name=\"stretchToFit\" value=\"True\" />", html);
+            Assert.Contains("<param name=\"enableContextMenu\" value=\"False\" />", html);
+            Assert.Contains("<param name=\"mute\" value=\"True\" />", html);
+            Assert.Contains("<param name=\"volume\" value=\"1\" />", html);
+            Assert.Contains("<param name=\"baseURL\" value=\"http://foo.bar.com/\" />", html);
 
             var embed = new Regex("<embed.*/>").Match(html);
             Assert.True(embed.Success);
-            Assert.True(embed.Value.StartsWith("<embed src=\"http://foo.bar.com/foo.wmv\" width=\"100px\" height=\"100px\" name=\"emp\" type=\"application/x-mplayer2\" "));
-            Assert.True(embed.Value.Contains("autoStart=\"False\""));
-            Assert.True(embed.Value.Contains("playCount=\"2\""));
-            Assert.True(embed.Value.Contains("uiMode=\"UIMODE\""));
-            Assert.True(embed.Value.Contains("stretchToFit=\"True\""));
-            Assert.True(embed.Value.Contains("enableContextMenu=\"False\""));
-            Assert.True(embed.Value.Contains("mute=\"True\""));
-            Assert.True(embed.Value.Contains("volume=\"1\""));
-            Assert.True(embed.Value.Contains("baseURL=\"http://foo.bar.com/\""));
+            Assert.StartsWith("<embed src=\"http://foo.bar.com/foo.wmv\" width=\"100px\" height=\"100px\" name=\"emp\" type=\"application/x-mplayer2\" ", embed.Value);
+            Assert.Contains("autoStart=\"False\"", embed.Value);
+            Assert.Contains("playCount=\"2\"", embed.Value);
+            Assert.Contains("uiMode=\"UIMODE\"", embed.Value);
+            Assert.Contains("stretchToFit=\"True\"", embed.Value);
+            Assert.Contains("enableContextMenu=\"False\"", embed.Value);
+            Assert.Contains("mute=\"True\"", embed.Value);
+            Assert.Contains("volume=\"1\"", embed.Value);
+            Assert.Contains("baseURL=\"http://foo.bar.com/\"", embed.Value);
         }
 
         [Fact]
         public void MediaPlayerWithUnexposedOptions()
         {
             string html = Video.MediaPlayer(GetContext(), _pathUtility, "http://foo.bar.com/foo.wmv", options: new { X = "Y", Z = 123 }).ToString().Replace("\r\n", "");
-            Assert.True(html.Contains("<param name=\"X\" value=\"Y\" />"));
-            Assert.True(html.Contains("<param name=\"Z\" value=\"123\" />"));
+            Assert.Contains("<param name=\"X\" value=\"Y\" />", html);
+            Assert.Contains("<param name=\"Z\" value=\"123\" />", html);
             Assert.True(
                 html.Contains("<embed src=\"http://foo.bar.com/foo.wmv\" type=\"application/x-mplayer2\" X=\"Y\" Z=\"123\" />") ||
                 html.Contains("<embed src=\"http://foo.bar.com/foo.wmv\" type=\"application/x-mplayer2\" Z=\"123\" X=\"Y\" />")
@@ -180,16 +174,14 @@ namespace Microsoft.Web.Helpers.Test
         public void SilverlightDefaults()
         {
             string html = Video.Silverlight(GetContext(), _pathUtility, "http://foo.bar.com/foo.xap", "100px", "100px").ToString().Replace("\r\n", "");
-            Assert.True(html.StartsWith(
-                "<object data=\"data:application/x-silverlight-2,\" height=\"100px\" type=\"application/x-silverlight-2\" " +
-                "width=\"100px\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"source\" value=\"http://foo.bar.com/foo.xap\" />"));
-            Assert.True(html.Contains(
-                "<a href=\"http://go.microsoft.com/fwlink/?LinkID=149156\" style=\"text-decoration:none\">" +
+            Assert.StartsWith("<object data=\"data:application/x-silverlight-2,\" height=\"100px\" type=\"application/x-silverlight-2\" " +
+                "width=\"100px\" >",
+                html);
+            Assert.Contains("<param name=\"source\" value=\"http://foo.bar.com/foo.xap\" />", html);
+            Assert.Contains("<a href=\"http://go.microsoft.com/fwlink/?LinkID=149156\" style=\"text-decoration:none\">" +
                 "<img src=\"http://go.microsoft.com/fwlink?LinkId=108181\" alt=\"Get Microsoft Silverlight\" " +
-                "style=\"border-style:none\"/></a>"));
-            Assert.True(html.EndsWith("</object>"));
+                "style=\"border-style:none\"/></a>", html);
+            Assert.EndsWith("</object>", html);
         }
 
         [Fact]
@@ -234,14 +226,13 @@ namespace Microsoft.Web.Helpers.Test
             string html = Video.Silverlight(GetContext(), _pathUtility, "http://foo.bar.com/foo.xap", width: "85%", height: "85%",
                                             backgroundColor: "red", initParameters: "X=Y", minimumVersion: "1.0.0.0", autoUpgrade: false,
                                             htmlAttributes: new { id = "sl" }).ToString().Replace("\r\n", "");
-            Assert.True(html.StartsWith(
-                "<object data=\"data:application/x-silverlight-2,\" height=\"85%\" id=\"sl\" " +
-                "type=\"application/x-silverlight-2\" width=\"85%\" >"
-                            ));
-            Assert.True(html.Contains("<param name=\"background\" value=\"red\" />"));
-            Assert.True(html.Contains("<param name=\"initparams\" value=\"X=Y\" />"));
-            Assert.True(html.Contains("<param name=\"minruntimeversion\" value=\"1.0.0.0\" />"));
-            Assert.True(html.Contains("<param name=\"autoUpgrade\" value=\"False\" />"));
+            Assert.StartsWith("<object data=\"data:application/x-silverlight-2,\" height=\"85%\" id=\"sl\" " +
+                "type=\"application/x-silverlight-2\" width=\"85%\" >",
+                html);
+            Assert.Contains("<param name=\"background\" value=\"red\" />", html);
+            Assert.Contains("<param name=\"initparams\" value=\"X=Y\" />", html);
+            Assert.Contains("<param name=\"minruntimeversion\" value=\"1.0.0.0\" />", html);
+            Assert.Contains("<param name=\"autoUpgrade\" value=\"False\" />", html);
 
             var embed = new Regex("<embed.*/>").Match(html);
             Assert.False(embed.Success);
@@ -252,8 +243,8 @@ namespace Microsoft.Web.Helpers.Test
         {
             string html = Video.Silverlight(GetContext(), _pathUtility, "http://foo.bar.com/foo.xap", width: "50px", height: "50px",
                                             options: new { X = "Y", Z = 123 }).ToString().Replace("\r\n", "");
-            Assert.True(html.Contains("<param name=\"X\" value=\"Y\" />"));
-            Assert.True(html.Contains("<param name=\"Z\" value=\"123\" />"));
+            Assert.Contains("<param name=\"X\" value=\"Y\" />", html);
+            Assert.Contains("<param name=\"Z\" value=\"123\" />", html);
         }
 
         [Fact]
@@ -269,8 +260,8 @@ namespace Microsoft.Web.Helpers.Test
             HttpContextBase context = GetContext(serverMock.Object);
 
             string html = Video.Flash(context, pathUtility.Object, "foo.bar").ToString();
-            Assert.True(html.StartsWith("<object"));
-            Assert.True(html.Contains(HttpUtility.HtmlAttributeEncode(HttpUtility.UrlPathEncode(path))));
+            Assert.StartsWith("<object", html);
+            Assert.Contains(HttpUtility.HtmlAttributeEncode(HttpUtility.UrlPathEncode(path)), html);
         }
 
         [Fact]

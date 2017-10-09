@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -167,12 +166,8 @@ namespace System.Net.Http
             NameValueCollection data = await content.ReadAsFormDataAsync();
 
             // Assert
-            Assert.Equal(1, data.Count);
-#if NETFX_CORE
-            Assert.Equal(irregularFormData, data.First().Key);
-#else
-            Assert.Equal(irregularFormData, data.AllKeys[0]);
-#endif
+            Assert.Single(data);
+            Assert.NotNull(data[irregularFormData]);
         }
 
         [Fact]

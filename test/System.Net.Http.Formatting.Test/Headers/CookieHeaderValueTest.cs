@@ -51,6 +51,20 @@ namespace System.Net.Http.Headers
             }
         }
 
+        public static TheoryDataSet<string> CookieHeaderDataSet_NoCookie
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string>();
+                foreach (var item in CookieHeaderDataSet)
+                {
+                    dataSet.Add((string)item[1]);
+                }
+
+                return dataSet;
+            }
+        }
+
         public static TheoryDataSet<string> InvalidCookieHeaderDataSet
         {
             get
@@ -68,9 +82,9 @@ namespace System.Net.Http.Headers
         public void CookieHeaderValue_Ctor1_InitializesCorrectly()
         {
             CookieHeaderValue header = new CookieHeaderValue("cookie", "value");
-            Assert.Equal(1, header.Cookies.Count);
-            Assert.Equal("cookie", header.Cookies[0].Name);
-            Assert.Equal("value", header.Cookies[0].Values.AllKeys[0]);
+            CookieState cookie = Assert.Single(header.Cookies);
+            Assert.Equal("cookie", cookie.Name);
+            Assert.Equal("value", cookie.Values.AllKeys[0]);
         }
 
         [Fact]
@@ -79,10 +93,10 @@ namespace System.Net.Http.Headers
             NameValueCollection nvc = new NameValueCollection();
             nvc.Add("name", "value");
             CookieHeaderValue header = new CookieHeaderValue("cookie", nvc);
-            Assert.Equal(1, header.Cookies.Count);
-            Assert.Equal("cookie", header.Cookies[0].Name);
-            Assert.Equal("name", header.Cookies[0].Values.AllKeys[0]);
-            Assert.Equal("value", header.Cookies[0].Values["name"]);
+            CookieState cookie = Assert.Single(header.Cookies);
+            Assert.Equal("cookie", cookie.Name);
+            Assert.Equal("name", cookie.Values.AllKeys[0]);
+            Assert.Equal("value", cookie.Values["name"]);
         }
 
         [Fact]
@@ -127,8 +141,8 @@ namespace System.Net.Http.Headers
         {
             CookieHeaderValue header = new CookieHeaderValue("cookie", "value");
 
+            Assert.Single(header.Cookies);
             CookieState state = header["cookie"];
-            Assert.Equal(1, header.Cookies.Count);
             Assert.Equal("value", state.Value);
         }
 
@@ -143,8 +157,8 @@ namespace System.Net.Http.Headers
         }
 
         [Theory]
-        [PropertyData("CookieHeaderDataSet")]
-        public void CookieHeaderValue_TryParse_AcceptsValidValues(CookieHeaderValue cookie, string expectedValue)
+        [PropertyData("CookieHeaderDataSet_NoCookie")]
+        public void CookieHeaderValue_TryParse_AcceptsValidValues(string expectedValue)
         {
             CookieHeaderValue header;
             bool result = CookieHeaderValue.TryParse(expectedValue, out header);

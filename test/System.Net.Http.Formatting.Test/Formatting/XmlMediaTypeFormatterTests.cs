@@ -501,8 +501,6 @@ namespace System.Net.Http.Formatting
             Assert.Equal(String.Empty, readObj);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             if (!isDefaultEncoding)
@@ -571,8 +569,6 @@ namespace System.Net.Http.Formatting
                 "The object of type 'JsonSerializer' returned by GetDeserializer must be an instance of either XmlObjectSerializer or XmlSerializer.");
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             if (!isDefaultEncoding)

@@ -48,12 +48,12 @@ namespace System.Net.Http.Formatting
             MockMediaTypeFormatter formatter = new MockMediaTypeFormatter();
             Collection<MediaTypeHeaderValue> supportedMediaTypes = formatter.SupportedMediaTypes;
             Assert.NotNull(supportedMediaTypes);
-            Assert.Equal(0, supportedMediaTypes.Count);
+            Assert.Empty(supportedMediaTypes);
 #if !NETFX_CORE // No MediaTypeMapping support in portable libraries
             Collection<MediaTypeMapping> mappings = formatter.MediaTypeMappings;
 
             Assert.NotNull(mappings);
-            Assert.Equal(0, mappings.Count);
+            Assert.Empty(mappings);
 #endif
         }
 

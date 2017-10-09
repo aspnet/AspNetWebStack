@@ -29,7 +29,7 @@ namespace Microsoft.Web.Helpers.Test
             string twitterTag = String.Empty;
             string actual;
             actual = LinkShare.GetHtml(pageTitle, pageLinkBack, twitterUserName, twitterTag, LinkShareSite.Facebook, LinkShareSite.All).ToString();
-            Assert.True(actual.Contains("twitter.com"));
+            Assert.Contains("twitter.com", actual);
             int pos = actual.IndexOf("facebook.com");
             Assert.True(pos > 0);
             int pos2 = actual.IndexOf("reddit.com");

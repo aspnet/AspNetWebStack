@@ -248,8 +248,6 @@ namespace System.Net.Http.Formatting
             Assert.Equal(testData, readObj);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             if (!isDefaultEncoding)
@@ -274,8 +272,6 @@ namespace System.Net.Http.Formatting
             return ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             if (!isDefaultEncoding)

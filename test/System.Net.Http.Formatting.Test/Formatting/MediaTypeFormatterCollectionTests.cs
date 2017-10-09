@@ -38,7 +38,7 @@ namespace System.Net.Http.Formatting
         public void Constructor1_AcceptsEmptyList()
         {
             MediaTypeFormatterCollection collection = new MediaTypeFormatterCollection(new MediaTypeFormatter[0]);
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Theory]
@@ -191,7 +191,7 @@ namespace System.Net.Http.Formatting
             MediaTypeFormatterCollection collection = new MediaTypeFormatterCollection(new MediaTypeFormatter[0]);
             Assert.Null(collection.FormUrlEncodedFormatter);
         }
-        
+
         [Fact]
         public void Remove_SetsXmlFormatter()
         {
@@ -275,6 +275,7 @@ namespace System.Net.Http.Formatting
         public void FindReader_ReturnsFormatterOnMatch(Type variationType, object testData, string mediaType)
         {
             // Arrange
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             MockMediaTypeFormatter formatter = new MockMediaTypeFormatter() { CallBase = true };
             foreach (string legalMediaType in HttpTestData.LegalMediaTypeStrings)
             {
@@ -335,6 +336,7 @@ namespace System.Net.Http.Formatting
         public void FindWriter_ReturnsFormatterOnMatch(Type variationType, object testData, string mediaType)
         {
             // Arrange
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             MockMediaTypeFormatter formatter = new MockMediaTypeFormatter() { CallBase = true };
             foreach (string legalMediaType in HttpTestData.LegalMediaTypeStrings)
             {

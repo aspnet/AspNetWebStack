@@ -107,6 +107,7 @@ namespace System.Net.Http.Formatting
             typeof(CommonUnitTestDataSets), "EmptyStrings")]
         public void Constructor1ThrowsWithEmptyMediaType(string queryStringParameterName, string queryStringParameterValue, string mediaType)
         {
+            GC.KeepAlive(mediaType); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             Assert.ThrowsArgumentNull(() => new QueryStringMapping(queryStringParameterName, queryStringParameterValue, (MediaTypeHeaderValue)null), "mediaType");
         }
 

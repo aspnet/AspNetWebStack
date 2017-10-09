@@ -40,6 +40,20 @@ namespace System.Net.Http
             }
         }
 
+        public static TheoryDataSet<string, bool> IsMimeMultipartContentTestData_NoSubType
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string, bool>();
+                foreach (var item in IsMimeMultipartContentTestData)
+                {
+                    dataSet.Add((string)item[0], (bool)item[1]);
+                }
+
+                return dataSet;
+            }
+        }
+
         private static HttpContent CreateContent(string boundary, params string[] bodyEntity)
         {
             return CreateContentWithContentType(boundary, DefaultContentType, bodyEntity);
@@ -77,8 +91,8 @@ namespace System.Net.Http
                 Assert.Equal(4, content.Headers.Count());
 
                 IEnumerable<string> parsedValues = content.Headers.GetValues(String.Format("N{0}", cnt));
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal(String.Format("V{0}", cnt), parsedValues.ElementAt(0));
+                string parsedValue = Assert.Single(parsedValues);
+                Assert.Equal(String.Format("V{0}", cnt), parsedValue);
 
                 Assert.Equal(DefaultContentType, content.Headers.ContentType.MediaType);
 
@@ -139,8 +153,8 @@ namespace System.Net.Http
         }
 
         [Theory]
-        [PropertyData("IsMimeMultipartContentTestData")]
-        public async Task ReadAsMultipartAsync_DetectsNonMultipartContent(string mediaType, bool isMultipart, string subtype, bool hasSubtype)
+        [PropertyData("IsMimeMultipartContentTestData_NoSubType")]
+        public async Task ReadAsMultipartAsync_DetectsNonMultipartContent(string mediaType, bool isMultipart)
         {
             StringContent content = new StringContent(String.Empty);
             content.Headers.ContentType = MediaTypeHeaderValue.Parse(mediaType);
@@ -180,9 +194,7 @@ namespace System.Net.Http
             var result = await content.ReadAsMultipartAsync(CancellationToken.None);
 
             // Assert
-            Assert.Equal(1, result.Contents.Count);
-
-            var bodyPart = result.Contents[0];
+            var bodyPart = Assert.Single(result.Contents);
             Assert.Null(bodyPart.Headers.ContentType);
             Assert.Equal("invalid", Assert.Single(bodyPart.Headers.GetValues("Content-Type")));
         }
@@ -197,9 +209,7 @@ namespace System.Net.Http
             var result = await content.ReadAsMultipartAsync(CancellationToken.None);
 
             // Assert
-            Assert.Equal(1, result.Contents.Count);
-
-            var bodyPart = result.Contents[0];
+            var bodyPart = Assert.Single(result.Contents);
             Assert.NotNull(bodyPart.Headers.ContentType);
             Assert.Equal("application/json", bodyPart.Headers.ContentType.MediaType);
         }
@@ -276,8 +286,8 @@ namespace System.Net.Http
             HttpContent content = CreateContent(boundary, singleShortBody);
 
             MultipartMemoryStreamProvider result = await content.ReadAsMultipartAsync();
-            Assert.Equal(1, result.Contents.Count);
-            Assert.Equal(singleShortBody, await result.Contents[0].ReadAsStringAsync());
+            HttpContent resultContent = Assert.Single(result.Contents);
+            Assert.Equal(singleShortBody, await resultContent.ReadAsStringAsync());
             await ValidateContentsAsync(result.Contents);
         }
 
@@ -319,8 +329,8 @@ namespace System.Net.Http
             HttpContent content = CreateContent(boundary, singleLongBody);
 
             MultipartMemoryStreamProvider result = await content.ReadAsMultipartAsync();
-            Assert.Equal(1, result.Contents.Count);
-            Assert.Equal(singleLongBody, await result.Contents[0].ReadAsStringAsync());
+            HttpContent resultContent = Assert.Single(result.Contents);
+            Assert.Equal(singleLongBody, await resultContent.ReadAsStringAsync());
             await ValidateContentsAsync(result.Contents);
         }
 
@@ -389,8 +399,7 @@ namespace System.Net.Http
             for (var cnt = 0; cnt < nesting + 1; cnt++)
             {
                 MultipartMemoryStreamProvider result = await content.ReadAsMultipartAsync();
-                Assert.Equal(1, result.Contents.Count);
-                content = result.Contents[0];
+                content = Assert.Single(result.Contents);
                 Assert.NotNull(content);
             }
 

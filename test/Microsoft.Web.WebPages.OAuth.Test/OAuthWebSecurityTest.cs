@@ -167,57 +167,73 @@ namespace Microsoft.Web.WebPages.OAuth.Test
         [Fact]
         public void LoginSetAuthenticationTicketIfSuccessful()
         {
-            // Arrange 
-            var cookies = new HttpCookieCollection();
-            var context = new Mock<HttpContextBase>();
-            context.Setup(c => c.Request.IsSecureConnection).Returns(true);
-            context.Setup(c => c.Response.Cookies).Returns(cookies);
+            var originalProvider = OAuthWebSecurity.OAuthDataProvider;
+            try
+            {
+                // Arrange
+                var cookies = new HttpCookieCollection();
+                var context = new Mock<HttpContextBase>();
+                context.Setup(c => c.Request.IsSecureConnection).Returns(true);
+                context.Setup(c => c.Response.Cookies).Returns(cookies);
 
-            var dataProvider = new Mock<IOpenAuthDataProvider>(MockBehavior.Strict);
-            dataProvider.Setup(p => p.GetUserNameFromOpenAuth("twitter", "12345")).Returns("hola");
-            OAuthWebSecurity.OAuthDataProvider = dataProvider.Object;
+                var dataProvider = new Mock<IOpenAuthDataProvider>(MockBehavior.Strict);
+                dataProvider.Setup(p => p.GetUserNameFromOpenAuth("twitter", "12345")).Returns("hola");
+                OAuthWebSecurity.OAuthDataProvider = dataProvider.Object;
 
-            OAuthWebSecurity.RegisterTwitterClient("sdfdsfsd", "dfdsfdsf");
+                OAuthWebSecurity.RegisterTwitterClient("sdfdsfsd", "dfdsfdsf");
 
-            // Act
-            bool successful = OAuthWebSecurity.LoginCore(context.Object, "twitter", "12345", createPersistentCookie: false);
+                // Act
+                bool successful = OAuthWebSecurity.LoginCore(context.Object, "twitter", "12345", createPersistentCookie: false);
 
-            // Assert
-            Assert.True(successful);
+                // Assert
+                Assert.True(successful);
 
-            Assert.Equal(1, cookies.Count);
-            HttpCookie addedCookie = cookies[0];
+                Assert.Single(cookies);
+                HttpCookie addedCookie = cookies[0];
 
-            Assert.Equal(FormsAuthentication.FormsCookieName, addedCookie.Name);
-            Assert.True(addedCookie.HttpOnly);
-            Assert.Equal("/", addedCookie.Path);
-            Assert.False(addedCookie.Secure);
-            Assert.False(String.IsNullOrEmpty(addedCookie.Value));
+                Assert.Equal(FormsAuthentication.FormsCookieName, addedCookie.Name);
+                Assert.True(addedCookie.HttpOnly);
+                Assert.Equal("/", addedCookie.Path);
+                Assert.False(addedCookie.Secure);
+                Assert.False(String.IsNullOrEmpty(addedCookie.Value));
 
-            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(addedCookie.Value);
-            Assert.NotNull(ticket);
-            Assert.Equal(2, ticket.Version);
-            Assert.Equal("hola", ticket.Name);
-            Assert.Equal("OAuth", ticket.UserData);
-            Assert.False(ticket.IsPersistent);
+                FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(addedCookie.Value);
+                Assert.NotNull(ticket);
+                Assert.Equal(2, ticket.Version);
+                Assert.Equal("hola", ticket.Name);
+                Assert.Equal("OAuth", ticket.UserData);
+                Assert.False(ticket.IsPersistent);
+            }
+            finally
+            {
+                OAuthWebSecurity.OAuthDataProvider = originalProvider;
+            }
         }
 
         [Fact]
         public void LoginFailIfUserIsNotFound()
         {
-            // Arrange 
-            var context = new Mock<HttpContextBase>();
-            OAuthWebSecurity.RegisterTwitterClient("consumerKey", "consumerSecrte");
+            var originalProvider = OAuthWebSecurity.OAuthDataProvider;
+            try
+            {
+                // Arrange
+                var context = new Mock<HttpContextBase>();
+                OAuthWebSecurity.RegisterTwitterClient("consumerKey", "consumerSecrte");
 
-            var dataProvider = new Mock<IOpenAuthDataProvider>();
-            dataProvider.Setup(p => p.GetUserNameFromOpenAuth("twitter", "12345")).Returns((string)null);
-            OAuthWebSecurity.OAuthDataProvider = dataProvider.Object;
+                var dataProvider = new Mock<IOpenAuthDataProvider>();
+                dataProvider.Setup(p => p.GetUserNameFromOpenAuth("twitter", "12345")).Returns((string)null);
+                OAuthWebSecurity.OAuthDataProvider = dataProvider.Object;
 
-            // Act
-            bool successful = OAuthWebSecurity.LoginCore(context.Object, "twitter", "12345", createPersistentCookie: false);
+                // Act
+                bool successful = OAuthWebSecurity.LoginCore(context.Object, "twitter", "12345", createPersistentCookie: false);
 
-            // Assert
-            Assert.False(successful);
+                // Assert
+                Assert.False(successful);
+            }
+            finally
+            {
+                OAuthWebSecurity.OAuthDataProvider = originalProvider;
+            }
         }
 
         [Fact]

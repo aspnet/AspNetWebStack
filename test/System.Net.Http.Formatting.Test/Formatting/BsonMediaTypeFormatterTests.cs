@@ -101,8 +101,6 @@ namespace System.Net.Http.Formatting
             }
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
@@ -123,11 +121,10 @@ namespace System.Net.Http.Formatting
             return ReadContentUsingCorrectCharacterEncodingHelperAsync(formatter, content, sourceData, mediaType);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
+            GC.KeepAlive(isDefaultEncoding); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             BsonMediaTypeFormatter formatter = new BsonMediaTypeFormatter();
 
             string mediaType = string.Format("application/bson; charset={0}", encoding);
@@ -197,6 +194,7 @@ namespace System.Net.Http.Formatting
         public void CanReadType_ReturnsExpectedValues(Type variationType, object testData)
         {
             // Arrange
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             BsonMediaTypeFormatter formatter = new BsonMediaTypeFormatter();
 
             // Act & Assert
@@ -208,6 +206,7 @@ namespace System.Net.Http.Formatting
         public void CanWriteType_ReturnsExpectedValues(Type variationType, object testData)
         {
             // Arrange
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             BsonMediaTypeFormatter formatter = new BsonMediaTypeFormatter();
 
             // Act & Assert
@@ -381,7 +380,7 @@ namespace System.Net.Http.Formatting
             if (readJObject != null)
             {
                 // Serialized a Dictionary<string, object> to handle simple runtime type; round trips as a JObject
-                Assert.Equal(1, readJObject.Count);
+                Assert.Single(readJObject);
                 JToken readJToken = readJObject["Value"];
                 Assert.NotNull(readJToken);
                 Assert.Equal(testData, readJToken.ToObject(testData.GetType()));
@@ -413,11 +412,10 @@ namespace System.Net.Http.Formatting
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
         {
             // Guard
-            Assert.IsType<Dictionary<string, object>>(testData);
+            IDictionary<string, object> expectedDictionary = Assert.IsType<Dictionary<string, object>>(testData);
 
             // Arrange
             TestBsonMediaTypeFormatter formatter = new TestBsonMediaTypeFormatter();
-            IDictionary<string, object> expectedDictionary = (IDictionary<string, object>)testData;
 
             // Arrange & Act & Assert
             object readObj = await ReadFromStreamAsync_RoundTripsWriteToStreamAsync_Helper(formatter, variationType, testData);

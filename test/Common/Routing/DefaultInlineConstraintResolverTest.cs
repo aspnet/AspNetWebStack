@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 #if ASPNETWEBAPI
 using System.Web.Http.Routing.Constraints;
 #else
@@ -104,8 +103,8 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("length(5)");
 
-            Assert.IsType<LengthRouteConstraint>(constraint);
-            Assert.Equal(5, ((LengthRouteConstraint)constraint).Length);
+            var lengthRouteConstraint = Assert.IsType<LengthRouteConstraint>(constraint);
+            Assert.Equal(5, lengthRouteConstraint.Length);
         }
 
         [Fact]
@@ -113,8 +112,7 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("length(5, 10)");
 
-            Assert.IsType<LengthRouteConstraint>(constraint);
-            LengthRouteConstraint lengthConstraint = (LengthRouteConstraint)constraint;
+            LengthRouteConstraint lengthConstraint = Assert.IsType<LengthRouteConstraint>(constraint);
             Assert.Equal(5, lengthConstraint.MinLength);
             Assert.Equal(10, lengthConstraint.MaxLength);
         }
@@ -132,8 +130,8 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("max(10)");
 
-            Assert.IsType<MaxRouteConstraint>(constraint);
-            Assert.Equal(10, ((MaxRouteConstraint)constraint).Max);
+            var maxRouteConstraint = Assert.IsType<MaxRouteConstraint>(constraint);
+            Assert.Equal(10, maxRouteConstraint.Max);
         }
 
         [Fact]
@@ -141,8 +139,8 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("maxlength(10)");
 
-            Assert.IsType<MaxLengthRouteConstraint>(constraint);
-            Assert.Equal(10, ((MaxLengthRouteConstraint)constraint).MaxLength);
+            var maxLengthRouteConstraint = Assert.IsType<MaxLengthRouteConstraint>(constraint);
+            Assert.Equal(10, maxLengthRouteConstraint.MaxLength);
         }
 
         [Fact]
@@ -150,8 +148,8 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("min(3)");
 
-            Assert.IsType<MinRouteConstraint>(constraint);
-            Assert.Equal(3, ((MinRouteConstraint)constraint).Min);
+            var minRouteConstraint = Assert.IsType<MinRouteConstraint>(constraint);
+            Assert.Equal(3, minRouteConstraint.Min);
         }
 
         [Fact]
@@ -159,8 +157,8 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("minlength(3)");
 
-            Assert.IsType<MinLengthRouteConstraint>(constraint);
-            Assert.Equal(3, ((MinLengthRouteConstraint)constraint).MinLength);
+            var minLengthRouteConstraint = Assert.IsType<MinLengthRouteConstraint>(constraint);
+            Assert.Equal(3, minLengthRouteConstraint.MinLength);
         }
 
         [Fact]
@@ -174,8 +172,7 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("range(5, 10)");
 
-            Assert.IsType<RangeRouteConstraint>(constraint);
-            RangeRouteConstraint rangeConstraint = (RangeRouteConstraint)constraint;
+            RangeRouteConstraint rangeConstraint = Assert.IsType<RangeRouteConstraint>(constraint);
             Assert.Equal(5, rangeConstraint.Min);
             Assert.Equal(10, rangeConstraint.Max);
         }
@@ -185,8 +182,7 @@ namespace System.Web.Mvc.Routing
         {
             var constraint = new DefaultInlineConstraintResolver().ResolveConstraint("regex(abc,defg)");
 
-            Assert.IsType<RegexRouteConstraint>(constraint);
-            RegexRouteConstraint regexConstraint = (RegexRouteConstraint)constraint;
+            RegexRouteConstraint regexConstraint = Assert.IsType<RegexRouteConstraint>(constraint);
             Assert.Equal("abc,defg", regexConstraint.Pattern);
         }
 

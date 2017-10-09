@@ -113,7 +113,7 @@ namespace System.Net.Http.Formatting.Parsers
             ParserState state = parser.ParseBuffer(data, data.Length, ref bytesConsumed, true);
             Assert.Equal(ParserState.Done, state);
             Assert.Equal(data.Length, bytesConsumed);
-            Assert.Equal(0, collection.Count());
+            Assert.Empty(collection);
         }
 
         [Theory]

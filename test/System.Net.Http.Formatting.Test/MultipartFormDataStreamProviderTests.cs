@@ -70,11 +70,11 @@ namespace System.Net.Http
                 Assert.IsType<MemoryStream>(stream0);
                 Assert.IsType<FileStream>(stream1);
 
-                Assert.Equal(1, provider.FileData.Count);
+                MultipartFileData fileData = Assert.Single(provider.FileData);
                 string partialFileName = String.Format("{0}BodyPart_", tempPath);
-                Assert.Contains(partialFileName, provider.FileData[0].LocalFileName);
+                Assert.Contains(partialFileName, fileData.LocalFileName);
 
-                Assert.Same(content.ElementAt(1).Headers.ContentDisposition, provider.FileData[0].Headers.ContentDisposition);
+                Assert.Same(content.ElementAt(1).Headers.ContentDisposition, fileData.Headers.ContentDisposition);
             }
             finally
             {

@@ -52,12 +52,12 @@ namespace System.Net.Http
                 Assert.NotNull(result);
 
                 // Because this is a NameValueCollection, the same name appears only once
-                Assert.Equal(1, result.Count);
+                Assert.Single(result);
 
                 // Values should be a comma separated list of empty strings
                 string[] values = result[""].Split(new char[] { ',' });
 
-                // We expect length+1 segment as the final '&' counts as a segment 
+                // We expect length+1 segment as the final '&' counts as a segment
                 Assert.Equal(index + 1, values.Length);
                 foreach (var value in values)
                 {
@@ -84,7 +84,7 @@ namespace System.Net.Http
                 Assert.NotNull(result);
 
                 // Because this is a NameValueCollection, the same name appears only once
-                Assert.Equal(1, result.Count);
+                Assert.Single(result);
 
                 // Values should be a comma separated list of resultValue
                 string[] values = result[resultName].Split(new char[] { ',' });
