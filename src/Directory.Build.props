@@ -1,0 +1,9 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <IsTestProject>false</IsTestProject>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+</Project>
