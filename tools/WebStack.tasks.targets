@@ -1,7 +1,16 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <BuildTaskAssemblyReference Condition=" '$(BuildTaskAssemblyReference)' == '' And Exists('$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll') ">Microsoft.Build.Tasks.Core</BuildTaskAssemblyReference>
+    <BuildTaskAssemblyReference Condition=" '$(BuildTaskAssemblyReference)' == '' And Exists('$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll') ">Microsoft.Build.Tasks.v$(MSBuildToolsVersion)</BuildTaskAssemblyReference>
+    <BuildTaskAssemblyReference Condition=" '$(BuildTaskAssemblyReference)' == '' And Exists('$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll') ">Microsoft.Build.Tasks.v4.0</BuildTaskAssemblyReference>
+    <!-- Know this file does not exist. But, error message will contain meaningful information. -->
+    <BuildTaskAssemblyReference Condition=" '$(BuildTaskAssemblyReference)' == '' ">Microsoft.Build.Tasks.Core</BuildTaskAssemblyReference>
+    <CodeTaskFactoryAssemblyFile Condition=" '$(CodeTaskFactoryAssemblyFile)' == '' ">$(MSBuildToolsPath)\$(BuildTaskAssemblyReference).dll</CodeTaskFactoryAssemblyFile>
+  </PropertyGroup>
+
   <!-- This task does not support concurrent execution from multiple project files. Its use is only appropriate when
         NuGet.exe is not in use. -->
-  <UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="DownloadNuGet" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryAssemblyFile)">
     <ParameterGroup>
       <OutputFileName ParameterType="System.String" Required="true" />
       <MinimumVersion ParameterType="System.String" Required="true" />
@@ -82,7 +91,7 @@
     </Task>
   </UsingTask>
 
-  <UsingTask TaskName="RegexReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="RegexReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryAssemblyFile)">
     <ParameterGroup>
       <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <Find ParameterType="System.String" Required="true" />
@@ -134,7 +143,7 @@
     </Task>
   </UsingTask>
 
-  <UsingTask TaskName="PrintTestRunSummary" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <UsingTask TaskName="PrintTestRunSummary" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryAssemblyFile)">
     <ParameterGroup>
       <TestResultsDirectory ParameterType="System.String" Required="true" />
     </ParameterGroup>
