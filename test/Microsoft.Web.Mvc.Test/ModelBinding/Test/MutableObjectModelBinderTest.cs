@@ -591,10 +591,10 @@ namespace Microsoft.Web.Mvc.ModelBinding.Test
 
             // Assert
             Assert.False(bindingContext.ModelState.IsValid);
-            Assert.Equal(1, bindingContext.ModelState["foo.NameNoAttribute"].Errors.Count);
+            ModelError error = Assert.Single(bindingContext.ModelState["foo.NameNoAttribute"].Errors);
             Assert.Equal("This is a different exception." + Environment.NewLine
                        + "Parameter name: value",
-                         bindingContext.ModelState["foo.NameNoAttribute"].Errors[0].Exception.Message);
+                         error.Exception.Message);
         }
 
         [Fact]
@@ -622,8 +622,8 @@ namespace Microsoft.Web.Mvc.ModelBinding.Test
 
             // Assert
             Assert.False(bindingContext.ModelState.IsValid);
-            Assert.Equal(1, bindingContext.ModelState["foo.Name"].Errors.Count);
-            Assert.Equal("This message comes from the [Required] attribute.", bindingContext.ModelState["foo.Name"].Errors[0].ErrorMessage);
+            ModelError error = Assert.Single(bindingContext.ModelState["foo.Name"].Errors);
+            Assert.Equal("This message comes from the [Required] attribute.", error.ErrorMessage);
         }
 
         private static ModelMetadata GetMetadataForCanUpdateProperty(string propertyName)

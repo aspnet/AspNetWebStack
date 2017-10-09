@@ -395,7 +395,7 @@ namespace System.Web.Cors.Test
             CorsResult result = corsEngine.EvaluatePolicy(requestContext, policy);
 
             Assert.True(requestContext.IsPreflight);
-            Assert.Equal(1, result.AllowedMethods.Count());
+            Assert.Single(result.AllowedMethods);
             Assert.Contains("PUT", result.AllowedMethods);
         }
 

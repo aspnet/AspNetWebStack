@@ -169,6 +169,7 @@ namespace System.Net.Http.Formatting
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection")]
         public void CanReadTypeReturnsFalse(Type variationType, object testData)
         {
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             TestFormUrlEncodedMediaTypeFormatter formatter = new TestFormUrlEncodedMediaTypeFormatter();
 
             Assert.False(formatter.CanReadType(variationType));
@@ -189,6 +190,7 @@ namespace System.Net.Http.Formatting
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection")]
         public void CanWriteTypeReturnsFalse(Type variationType, object testData)
         {
+            GC.KeepAlive(testData); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             TestFormUrlEncodedMediaTypeFormatter formatter = new TestFormUrlEncodedMediaTypeFormatter();
 
             Assert.False(formatter.CanWriteType(variationType), "formatter should have returned false.");

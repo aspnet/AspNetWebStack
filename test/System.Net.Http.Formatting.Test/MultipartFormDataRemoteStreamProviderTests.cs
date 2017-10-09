@@ -63,12 +63,12 @@ namespace System.Net.Http
                 Assert.IsType<MemoryStream>(stream0);
                 Assert.Single(provider.RemoteStreams, stream1);
 
-                Assert.Equal(1, provider.FileData.Count);
+                MultipartRemoteFileData fileData = Assert.Single(provider.FileData);
                 string expectedUrl = provider.UrlBase + "Filename";
-                Assert.Equal(expectedUrl, provider.FileData[0].Location);
+                Assert.Equal(expectedUrl, fileData.Location);
 
                 Assert.Same(content.ElementAt(1).Headers.ContentDisposition,
-                    provider.FileData[0].Headers.ContentDisposition);
+                    fileData.Headers.ContentDisposition);
             }
             finally
             {

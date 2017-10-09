@@ -16,30 +16,30 @@ namespace System.Net.Http
         private const string ContentIDRootContent = "Content with matching Content-ID";
         private const string OtherContent = "Other Content";
 
-        public static TheoryDataSet<string, bool> MultipartRelatedWithStartParameter
+        public static TheoryDataSet<string> MultipartRelatedWithStartParameter
         {
             get
             {
-                return new TheoryDataSet<string, bool>
+                return new TheoryDataSet<string>
                 {
-                    { String.Format("multipart/related; boundary={0}; start=\"{1}\"", Boundary, ContentID), true },
-                    { String.Format("multipart/related; start={0}; boundary={1}", ContentID, Boundary), true },
+                    { String.Format("multipart/related; boundary={0}; start=\"{1}\"", Boundary, ContentID) },
+                    { String.Format("multipart/related; start={0}; boundary={1}", ContentID, Boundary) },
                 };
             }
         }
 
-        public static TheoryDataSet<string, bool> MultipartWithMissingOrInvalidStartParameter
+        public static TheoryDataSet<string> MultipartWithMissingOrInvalidStartParameter
         {
             get
             {
-                return new TheoryDataSet<string, bool>
+                return new TheoryDataSet<string>
                 {
-                    { String.Format("multipart/form-data; start=\"{0}\"; boundary={1}", ContentID, Boundary), false },
-                    { String.Format("multipart/form-data; start={0}; boundary={1}", ContentID, Boundary), false },
-                    { String.Format("multipart/form-data; boundary={0}", Boundary), false },
-                    { String.Format("multipart/related; boundary={0}", Boundary), false },
-                    { String.Format("multipart/mixed; start={0}; boundary={1}", ContentID, Boundary), false },
-                    { String.Format("multipart/mixed; boundary={1}", ContentID, Boundary), false },
+                    { String.Format("multipart/form-data; start=\"{0}\"; boundary={1}", ContentID, Boundary) },
+                    { String.Format("multipart/form-data; start={0}; boundary={1}", ContentID, Boundary) },
+                    { String.Format("multipart/form-data; boundary={0}", Boundary) },
+                    { String.Format("multipart/related; boundary={0}", Boundary) },
+                    { String.Format("multipart/mixed; start={0}; boundary={1}", ContentID, Boundary) },
+                    { String.Format("multipart/mixed; boundary={1}", ContentID, Boundary) },
                 };
             }
         }
@@ -53,7 +53,7 @@ namespace System.Net.Http
 
         [Theory]
         [PropertyData("MultipartRelatedWithStartParameter")]
-        public async Task RootContent_ReturnsNullIfContentIDIsNotMatched(string mediaType, bool hasStartParameter)
+        public async Task RootContent_ReturnsNullIfContentIDIsNotMatched(string mediaType)
         {
             // Arrange
             MultipartContent content = new MultipartContent("related", Boundary);
@@ -77,8 +77,21 @@ namespace System.Net.Http
 
         [Theory]
         [PropertyData("MultipartRelatedWithStartParameter")]
+        public async Task RootContent_PicksContent_WithStartParameter(string mediaType)
+        {
+            var result = await RootContent_PicksContent_Setup(mediaType);
+            Assert.Equal(ContentIDRootContent, result);
+        }
+
+        [Theory]
         [PropertyData("MultipartWithMissingOrInvalidStartParameter")]
-        public async Task RootContent_PicksContent(string mediaType, bool hasStartParameter)
+        public async Task RootContent_PicksContent_WithoutStartParameter(string mediaType)
+        {
+            var result = await RootContent_PicksContent_Setup(mediaType);
+            Assert.Equal(DefaultRootContent, result);
+        }
+
+        private async Task<string> RootContent_PicksContent_Setup(string mediaType)
         {
             // Arrange
             MultipartContent content = new MultipartContent("related", Boundary);
@@ -95,17 +108,7 @@ namespace System.Net.Http
 
             // Act
             HttpContent actualRootContent = provider.RootContent;
-            string result = await actualRootContent.ReadAsStringAsync();
-
-            // Assert
-            if (hasStartParameter)
-            {
-                Assert.Equal(ContentIDRootContent, result);
-            }
-            else
-            {
-                Assert.Equal(DefaultRootContent, result);
-            }
+            return await actualRootContent.ReadAsStringAsync();
         }
     }
 }

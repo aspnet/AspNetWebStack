@@ -29,7 +29,7 @@ namespace System.Net.Http.Formatting.Parsers
 
             Assert.ThrowsArgumentGreaterThanOrEqualTo(() => new InternetMessageFormatHeaderParser(headers.ElementAt(0), ParserData.MinHeaderSize - 1),
                 "maxHeaderSize", ParserData.MinHeaderSize.ToString(), ParserData.MinHeaderSize - 1);
-            
+
             Assert.ThrowsArgumentNull(() => { new InternetMessageFormatHeaderParser(null, ParserData.MinHeaderSize); }, "headers");
         }
 
@@ -57,7 +57,7 @@ namespace System.Net.Http.Formatting.Parsers
             Assert.Equal(ParserState.Done, state);
             Assert.Equal(data.Length, bytesConsumed);
 
-            Assert.Equal(0, headers.Count());
+            Assert.Empty(headers);
         }
 
         [Fact]
@@ -76,10 +76,10 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(ParserState.Done, state);
                 Assert.Equal(data.Length, totalBytesConsumed);
 
-                Assert.Equal(1, headers.Count());
+                Assert.Single(headers);
                 IEnumerable<string> parsedValues = headers.GetValues("N");
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal(parsedValues.ElementAt(0), "V");
+                string parsedValue = Assert.Single(parsedValues);
+                Assert.Equal("V", parsedValue);
             }
         }
 
@@ -99,10 +99,10 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(ParserState.Done, state);
                 Assert.Equal(data.Length, totalBytesConsumed);
 
-                Assert.Equal(1, headers.Count());
+                Assert.Single(headers);
                 IEnumerable<string> parsedValues = headers.GetValues("N");
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal("", parsedValues.ElementAt(0));
+                string parsedValue = Assert.Single(parsedValues);
+                Assert.Equal("", parsedValue);
             }
         }
 
@@ -122,7 +122,7 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(ParserState.Done, state);
                 Assert.Equal(data.Length, totalBytesConsumed);
 
-                Assert.Equal(1, headers.Count());
+                Assert.Single(headers);
                 IEnumerable<string> parsedValues = headers.GetValues("N");
                 Assert.Equal(2, parsedValues.Count());
                 Assert.Equal("V1", parsedValues.ElementAt(0));
@@ -149,16 +149,16 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(3, headers.Count());
 
                 IEnumerable<string> parsedValues = headers.GetValues("N1");
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal("V1", parsedValues.ElementAt(0));
+                string parsedValue = Assert.Single(parsedValues);
+                Assert.Equal("V1", parsedValue);
 
                 parsedValues = headers.GetValues("N2");
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal("V2", parsedValues.ElementAt(0));
+                parsedValue = Assert.Single(parsedValues);
+                Assert.Equal("V2", parsedValue);
 
                 parsedValues = headers.GetValues("N3");
-                Assert.Equal(1, parsedValues.Count());
-                Assert.Equal("V3", parsedValues.ElementAt(0));
+                parsedValue = Assert.Single(parsedValues);
+                Assert.Equal("V3", parsedValue);
             }
         }
 
@@ -229,9 +229,9 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(ParserState.Done, state);
                 Assert.Equal(data.Length, totalBytesConsumed);
 
-                Assert.Equal(1, headers.Count());
+                Assert.Single(headers);
                 IEnumerable<string> parsedValues = headers.GetValues("N");
-                Assert.Equal(1, parsedValues.Count());
+                string parsedValue = Assert.Single(parsedValues);
                 Assert.Equal("V1, V2, V3,      V4, \tV5", parsedValues.ElementAt(0));
             }
         }
@@ -449,7 +449,7 @@ namespace System.Net.Http.Formatting.Parsers
                 });
         }
 
-        // Set of samples from RFC 5322 with times adjusted to GMT following HTTP style for date time format. 
+        // Set of samples from RFC 5322 with times adjusted to GMT following HTTP style for date time format.
         static readonly string[] Rfc5322Sample1 = new string[] {
             @"From: John Doe <jdoe@machine.example>",
             @"To: Mary Smith <mary@example.net>",

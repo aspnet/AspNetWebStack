@@ -178,7 +178,7 @@ namespace Microsoft.TestCommon
         /// <returns>An instance of type <typeparamref name="T"/>.</returns>
         public T InvokeConstructor<T>(Type genericBaseType, Type genericParameterType, params object[] parameterValues)
         {
-            Assert.NotNull(genericBaseType == null);
+            Assert.NotNull(genericBaseType);
             Assert.True(genericBaseType.IsGenericTypeDefinition);
             Assert.NotNull(genericParameterType);
 
@@ -217,14 +217,14 @@ namespace Microsoft.TestCommon
         /// <typeparam name="T">The type of instance.</typeparam>
         /// <param name="instance">The instance to test.</param>
         /// <param name="genericTypeParameter">The type of the generic parameter to which the instance's generic type should have been bound.</param>
-        public void IsCorrectGenericType<T>(T instance, Type genericTypeParameter)
+        public void IsCorrectGenericType<T>(T instance, Type genericTypeParameter) where T : class
         {
             Assert.NotNull(instance);
             Assert.NotNull(genericTypeParameter);
             Assert.True(instance.GetType().IsGenericType);
             Type[] genericArguments = instance.GetType().GetGenericArguments();
-            Assert.Equal(1, genericArguments.Length);
-            Assert.Equal(genericTypeParameter, genericArguments[0]);
+            Type genericArgument = Assert.Single(genericArguments);
+            Assert.Equal(genericTypeParameter, genericArgument);
         }
 
         /// <summary>

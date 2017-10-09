@@ -17,70 +17,70 @@ namespace System.Net.Http
                 // IEnumerable<string> inputCookies, string matchName, IEnumerable<string> expectedOuput
                 return new TheoryDataSet<string[], string, string[]>
                 {
-                    { 
-                        new string[] {}, 
-                        "empty", 
-                        new string[] {} 
+                    {
+                        new string[] {},
+                        "empty",
+                        new string[] {}
                     },
-                    { 
+                    {
                         new string[]
                         {
                             "RMID=2dab5fc9747d4f8edaf410ff",
                             "adxcs=-",
                             "adxcl=l*2ba62=4fc449bf:1",
                             "adxcs=si=0:1",
-                        }, 
-                        "nomatch", 
-                        new string[] {} 
+                        },
+                        "nomatch",
+                        new string[] {}
                     },
-                    { 
+                    {
                         new string[]
                         {
                             "RMID=2dab5fc9747d4f8edaf410ff",
                             "adxcs=-",
                             "adxcl=l*2ba62=4fc449bf:1",
                             "ADXCS=si=0:1",
-                        }, 
-                        "adxcs", 
-                        new string[] 
+                        },
+                        "adxcs",
+                        new string[]
                         {
                             "adxcs=-",
                             "ADXCS=si=0%3a1"
-                        } 
+                        }
                     },
-                    { 
+                    {
                         new string[]
                         {
                             "MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!",
                             "MC0=1334766377159; MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!; MUID=20EC57A324256BF3039D54E520256B7D&TUID=1",
-                        }, 
-                        "A", 
+                        },
+                        "A",
                         new string[]
                         {
                             "MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!",
                             "MC0=1334766377159; MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!; MUID=20EC57A324256BF3039D54E520256B7D&TUID=1",
-                        } 
+                        }
                     },
-                    { 
+                    {
                         new string[]
                         {
                             "MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!",
                             "MC0=1334766377159; MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!; MUID=20EC57A324256BF3039D54E520256B7D&TUID=1",
-                        }, 
-                        "MC0", 
+                        },
+                        "MC0",
                         new string[]
                         {
                             "MC0=1334766377159; MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!; MUID=20EC57A324256BF3039D54E520256B7D&TUID=1",
-                        } 
+                        }
                     },
-                    { 
+                    {
                         new string[]
                         {
                             "MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!",
                             "MC0=1334766377159; MC1=GUID=e87574286c55d547b5a0b19fb27d57a4&HASH=2874&LV=20124&V=3&LU=1334766376863; MS0=7bbaad2a8316483c89bbd2ca4e96fcea; A=I&I=AxUFAAAAAACSCAAAHFNnP3xE7Uth5BCZZSiqZQ!!; MUID=20EC57A324256BF3039D54E520256B7D&TUID=1",
-                        }, 
-                        "MC", 
-                        new string[] { } 
+                        },
+                        "MC",
+                        new string[] { }
                     },
                 };
             }
@@ -102,7 +102,7 @@ namespace System.Net.Http
             IEnumerable<CookieHeaderValue> cookies = headers.GetCookies();
 
             // Assert
-            Assert.Equal(0, cookies.Count());
+            Assert.Empty(cookies);
         }
 
         [Theory]
@@ -117,8 +117,8 @@ namespace System.Net.Http
             IEnumerable<CookieHeaderValue> cookies = headers.GetCookies();
 
             // Assert
-            Assert.Equal(1, cookies.Count());
-            string actualCookie = cookies.ElementAt(0).ToString();
+            CookieHeaderValue cookie = Assert.Single(cookies);
+            string actualCookie = cookie.ToString();
             Assert.Equal(expectedCookie, actualCookie);
         }
 

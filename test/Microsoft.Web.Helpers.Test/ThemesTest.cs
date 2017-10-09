@@ -99,9 +99,9 @@ namespace Microsoft.Web.Helpers.Test
             themesImpl.Initialize(themeDirectory: themeDirectory, defaultTheme: defaultTheme);
 
             // Ensure Theme use scope storage to store properties
-            Assert.Equal(scope[ThemesImplementation.ThemesInitializedKey], true);
-            Assert.Equal(scope[ThemesImplementation.ThemeDirectoryKey], themeDirectory);
-            Assert.Equal(scope[ThemesImplementation.DefaultThemeKey], defaultTheme);
+            Assert.Equal((object)true, scope[ThemesImplementation.ThemesInitializedKey]);
+            Assert.Equal(themeDirectory, scope[ThemesImplementation.ThemeDirectoryKey]);
+            Assert.Equal(defaultTheme, scope[ThemesImplementation.DefaultThemeKey]);
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace Microsoft.Web.Helpers.Test
             var themePath = themesImpl.GetResourcePath(fileName: "wp7.css");
 
             // Assert
-            Assert.Equal(themePath, @"themes/mobile/wp7.css");
+            Assert.Equal(@"themes/mobile/wp7.css", themePath);
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace Microsoft.Web.Helpers.Test
             var themePath = themesImpl.GetResourcePath(folder: "styles", fileName: "wp7.css");
 
             // Assert
-            Assert.Equal(themePath, @"themes/mobile/styles/wp7.css");
+            Assert.Equal(@"themes/mobile/styles/wp7.css", themePath);
         }
 
         [Fact]
@@ -223,7 +223,7 @@ namespace Microsoft.Web.Helpers.Test
             var themePath = themesImpl.GetResourcePath(folder: "styles", fileName: "main.css");
 
             // Assert
-            Assert.Equal(themePath, @"themes/default/styles/main.css");
+            Assert.Equal(@"themes/default/styles/main.css", themePath);
         }
 
         [Fact]
@@ -270,9 +270,9 @@ namespace Microsoft.Web.Helpers.Test
 
             // Assert
             Assert.Equal(3, themes.Count);
-            Assert.Equal(themes[0], "default");
-            Assert.Equal(themes[1], "mobile");
-            Assert.Equal(themes[2], "rotary-phone");
+            Assert.Equal("default", themes[0]);
+            Assert.Equal("mobile", themes[1]);
+            Assert.Equal("rotary-phone", themes[2]);
         }
 
         /// <remarks>

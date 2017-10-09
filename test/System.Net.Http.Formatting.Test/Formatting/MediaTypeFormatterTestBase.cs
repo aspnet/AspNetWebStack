@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Formatting.DataSets;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -138,6 +139,7 @@ namespace System.Net.Http.Formatting
         public async Task ReadFromStreamAsync_WhenContentLengthIsZero_ReturnsDefaultTypeValue<T>(T value)
         {
             // Arrange
+            GC.KeepAlive(value); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             TFormatter formatter = CreateFormatter();
             HttpContent content = new StringContent("");
 
@@ -320,9 +322,16 @@ namespace System.Net.Http.Formatting
             formatter.Verify();
         }
 
+        // Remove this suppression once we pick up an xunit.analyzers package containing the xnuit/xunit#1466 fix.
+#pragma warning disable xUnit1013 // Public method should be marked as test
+        [Theory]
+        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public abstract Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding);
 
+        [Theory]
+        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public abstract Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding);
+#pragma warning restore xUnit1013 // Public method should be marked as test
 
         protected virtual TFormatter CreateFormatter()
         {
@@ -359,7 +368,7 @@ namespace System.Net.Http.Formatting
             return readObj;
         }
 
-        public async Task ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        protected async Task ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = null;
@@ -391,7 +400,7 @@ namespace System.Net.Http.Formatting
             Assert.Equal(content, result);
         }
 
-        public async Task WriteToStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        protected async Task WriteToStreamAsync_UsesCorrectCharacterEncodingHelper(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = null;
@@ -445,7 +454,7 @@ namespace System.Net.Http.Formatting
             return enc;
         }
 
-        public static Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        protected static Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = CreateOrGetSupportedEncoding(formatter, encoding, isDefaultEncoding);
@@ -455,7 +464,7 @@ namespace System.Net.Http.Formatting
             return ReadContentUsingCorrectCharacterEncodingHelperAsync(formatter, content, sourceData, mediaType);
         }
 
-        public static async Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] sourceData, string mediaType)
+        protected static async Task ReadContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] sourceData, string mediaType)
         {
             // Arrange
             MemoryStream memStream = new MemoryStream(sourceData);
@@ -475,7 +484,7 @@ namespace System.Net.Http.Formatting
             Assert.Equal(content, result);
         }
 
-        public static Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
+        protected static Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, string formattedContent, string mediaType, string encoding, bool isDefaultEncoding)
         {
             // Arrange
             Encoding enc = CreateOrGetSupportedEncoding(formatter, encoding, isDefaultEncoding);
@@ -491,7 +500,7 @@ namespace System.Net.Http.Formatting
         }
 
 
-        public static async Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] expectedData, string mediaType)
+        protected static async Task WriteContentUsingCorrectCharacterEncodingHelperAsync(MediaTypeFormatter formatter, string content, byte[] expectedData, string mediaType)
         {
             // Arrange
             MemoryStream memStream = new MemoryStream();

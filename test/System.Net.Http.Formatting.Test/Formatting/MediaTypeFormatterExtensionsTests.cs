@@ -42,15 +42,14 @@ namespace System.Net.Http.Formatting
         public void AddRequestHeaderMappingAddsSuccessfully()
         {
             MediaTypeFormatter formatter = new MockMediaTypeFormatter();
-            Assert.Equal(0, formatter.MediaTypeMappings.Count);
+            Assert.Empty(formatter.MediaTypeMappings);
             formatter.AddRequestHeaderMapping("name", "value", StringComparison.CurrentCulture, true, new MediaTypeHeaderValue("application/xml"));
             IEnumerable<RequestHeaderMapping> mappings = formatter.MediaTypeMappings.OfType<RequestHeaderMapping>();
-            Assert.Equal(1, mappings.Count());
-            RequestHeaderMapping mapping = mappings.ElementAt(0);
+            RequestHeaderMapping mapping = Assert.Single(mappings);
             Assert.Equal("name", mapping.HeaderName);
             Assert.Equal("value", mapping.HeaderValue);
             Assert.Equal(StringComparison.CurrentCulture, mapping.HeaderValueComparison);
-            Assert.Equal(true, mapping.IsValueSubstring);
+            Assert.True(mapping.IsValueSubstring);
             Assert.Equal(new MediaTypeHeaderValue("application/xml"), mapping.MediaType);
         }
 
@@ -65,15 +64,14 @@ namespace System.Net.Http.Formatting
         public void AddRequestHeaderMapping1AddsSuccessfully()
         {
             MediaTypeFormatter formatter = new MockMediaTypeFormatter();
-            Assert.Equal(0, formatter.MediaTypeMappings.Count);
+            Assert.Empty(formatter.MediaTypeMappings);
             formatter.AddRequestHeaderMapping("name", "value", StringComparison.CurrentCulture, true, "application/xml");
             IEnumerable<RequestHeaderMapping> mappings = formatter.MediaTypeMappings.OfType<RequestHeaderMapping>();
-            Assert.Equal(1, mappings.Count());
-            RequestHeaderMapping mapping = mappings.ElementAt(0);
+            RequestHeaderMapping mapping = Assert.Single(mappings);
             Assert.Equal("name", mapping.HeaderName);
             Assert.Equal("value", mapping.HeaderValue);
             Assert.Equal(StringComparison.CurrentCulture, mapping.HeaderValueComparison);
-            Assert.Equal(true, mapping.IsValueSubstring);
+            Assert.True(mapping.IsValueSubstring);
             Assert.Equal(new MediaTypeHeaderValue("application/xml"), mapping.MediaType);
         }
     }

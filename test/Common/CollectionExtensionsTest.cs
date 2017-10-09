@@ -16,8 +16,8 @@ namespace System.Collections.Generic
 
             string[] emptyAppended = empty.AppendAndReallocate("AppendedEmpty");
 
-            Assert.Equal(1, emptyAppended.Length);
-            Assert.Equal("AppendedEmpty", emptyAppended[0]);
+            string singleAppended = Assert.Single(emptyAppended);
+            Assert.Equal("AppendedEmpty", singleAppended);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace System.Collections.Generic
             Assert.Equal(expected, enumerableAsIList);
             Assert.NotSame(expected, enumerableAsIList);
         }
-        
+
         [Fact]
         public void AsList_List_ReturnsSameInstance()
         {
@@ -131,6 +131,7 @@ namespace System.Collections.Generic
             Assert.NotSame(array, arrayAsList);
         }
 
+        [Fact]
         public void AsList_ListWrapperCollection_ReturnsSameInstance()
         {
             List<object> list = new List<object> { new object(), new object() };
@@ -270,7 +271,7 @@ namespace System.Collections.Generic
             Assert.Equal(hasNulls[2], hasNullsResult[1]);
         }
 
-        [Fact] 
+        [Fact]
         public void ToDictionaryFastArray2Element()
         {
             string[] input = new string[] {"AA", "BB"};
@@ -283,7 +284,7 @@ namespace System.Collections.Generic
             Assert.Equal(StringComparer.OrdinalIgnoreCase, result.Comparer);
         }
 
-        [Fact] 
+        [Fact]
         public void ToDictionaryFastIListList2Element()
         {
             string[] input = new string[] {"AA", "BB"};
@@ -311,7 +312,7 @@ namespace System.Collections.Generic
             Assert.Equal(StringComparer.OrdinalIgnoreCase, arrayResult.Comparer);
         }
 
-        [Fact] 
+        [Fact]
         public void ToDictionaryFastIEnumerableArray2Element()
         {
             string[] input = new string[] {"AA", "BB"};

@@ -152,7 +152,7 @@ namespace System.Net.Http
         {
             HttpContentHeaders headers = FormattingUtilities.CreateEmptyContentHeaders();
             Assert.NotNull(headers);
-            Assert.Equal(0, headers.Count());
+            Assert.Empty(headers);
         }
 
         [Theory]

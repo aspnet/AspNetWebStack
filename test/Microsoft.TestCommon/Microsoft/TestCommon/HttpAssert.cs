@@ -109,8 +109,6 @@ namespace Microsoft.TestCommon
             foreach (KeyValuePair<string, IEnumerable<string>> expectedHeader in expectedHeaders)
             {
                 KeyValuePair<string, IEnumerable<string>> actualHeader = actualHeaders.FirstOrDefault(h => h.Key == expectedHeader.Key);
-                Assert.NotNull(actualHeader);
-
                 if (expectedHeader.Key == "Date")
                 {
                     HandleDateHeader(expectedHeader.Value.ToArray(), actualHeader.Value.ToArray());

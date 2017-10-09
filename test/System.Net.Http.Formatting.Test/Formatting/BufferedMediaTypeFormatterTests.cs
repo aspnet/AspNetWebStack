@@ -92,7 +92,7 @@ namespace System.Net.Http.Formatting
         [Fact]
         public async Task BufferedWrite()
         {
-            // Arrange. Specifically use the base class with async signatures. 
+            // Arrange. Specifically use the base class with async signatures.
             MediaTypeFormatter formatter = new MockBufferedMediaTypeFormatter();
             MemoryStream output = new MemoryStream();
 
@@ -108,7 +108,7 @@ namespace System.Net.Http.Formatting
         [Fact]
         public async Task BufferedRead()
         {
-            // Arrange. Specifically use the base class with async signatures. 
+            // Arrange. Specifically use the base class with async signatures.
             MediaTypeFormatter formatter = new MockBufferedMediaTypeFormatter();
             byte[] expectedBytes = ExpectedSupportedEncodings.ElementAt(0).GetBytes(TestData);
             MemoryStream input = new MemoryStream(expectedBytes);
@@ -120,8 +120,6 @@ namespace System.Net.Http.Formatting
             Assert.Equal(TestData, result);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
@@ -132,8 +130,6 @@ namespace System.Net.Http.Formatting
             return ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(formatter, content, content, mediaType, encoding, isDefaultEncoding);
         }
 
-        [Theory]
-        [TestDataSet(typeof(HttpTestData), "ReadAndWriteCorrectCharacterEncoding")]
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange

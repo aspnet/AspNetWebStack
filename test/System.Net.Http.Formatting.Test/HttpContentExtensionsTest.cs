@@ -215,8 +215,8 @@ namespace System.Net.Http
                 .Returns<Type, Stream, HttpContent, IFormatterLogger>(async (type, stream, content, logger) =>
                     {
                         MultipartMemoryStreamProvider provider = await content.ReadAsMultipartAsync();
-                        Assert.Equal(1, provider.Contents.Count);
-                        return await provider.Contents[0].ReadAsStringAsync();
+                        HttpContent providerContent = Assert.Single(provider.Contents);
+                        return await providerContent.ReadAsStringAsync();
                     });
             MediaTypeFormatter formatter = _formatterMock.Object;
             formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("multipart/mixed"));

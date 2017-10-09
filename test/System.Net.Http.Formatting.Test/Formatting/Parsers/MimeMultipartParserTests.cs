@@ -391,9 +391,8 @@ namespace System.Net.Http.Formatting.Parsers
             }
         }
 
-        [Theory]
-        [TestDataSet(typeof(MimeMultipartParserTests), "TrueAndFalse", typeof(MimeMultipartParserTests), "TrueAndFalse")]
-        public void MaxMessageSizeIsExact(bool withExtraWhitespace, bool withExtraCRLF)
+        [Fact]
+        public void MaxMessageSizeIsExact()
         {
             string boundary = "--A";
             byte[] data = CreateBuffer(boundary, "cool");
@@ -409,7 +408,7 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(data.Length, totalBytesConsumed);
 
                 Assert.Equal(2, bodyParts.Count);
-                Assert.Equal(0, bodyParts[0].Length);
+                Assert.Empty(bodyParts[0]);
             }
         }
 
@@ -440,9 +439,9 @@ namespace System.Net.Http.Formatting.Parsers
                 Assert.Equal(4, bodyParts.Count);
                 Assert.Empty(bodyParts[0]);
 
-                Assert.True(bodyParts[1].EndsWith("A"));
-                Assert.True(bodyParts[2].EndsWith("B"));
-                Assert.True(bodyParts[3].EndsWith("C"));
+                Assert.EndsWith("A", bodyParts[1]);
+                Assert.EndsWith("B", bodyParts[2]);
+                Assert.EndsWith("C", bodyParts[3]);
             }
         }
 

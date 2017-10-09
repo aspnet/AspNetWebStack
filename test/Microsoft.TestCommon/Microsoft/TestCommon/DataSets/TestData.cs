@@ -368,7 +368,6 @@ namespace Microsoft.TestCommon
         private static readonly Type OpenIQueryableType = typeof(IQueryable<>);
         private static readonly Type OpenDictionaryType = typeof(Dictionary<,>);
         private static readonly Type OpenTestDataHolderType = typeof(TestDataHolder<>);
-        private int dictionaryKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestData&lt;T&gt;"/> class.
@@ -444,9 +443,9 @@ namespace Microsoft.TestCommon
         public Dictionary<string, T> GetTestDataAsDictionary()
         {
             // Some TestData collections contain duplicates e.g. UintTestData contains both 0 and UInt32.MinValue.
-            // Therefore use dictionaryKey, not _unused.ToString().  Reset key to keep dictionaries consistent if used
-            // multiple times.
-            dictionaryKey = 0;
+            // Therefore use dictionaryKey, not _unused.ToString(). Do not reuse key to keep dictionaries consistent
+            // if enumerated multiple times.
+            int dictionaryKey = 0;
             return this.GetTypedTestData().ToDictionary(_unused => (dictionaryKey++).ToString());
         }
 

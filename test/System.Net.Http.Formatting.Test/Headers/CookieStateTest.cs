@@ -88,7 +88,7 @@ namespace System.Net.Http.Headers
 
             // Assert
             Assert.Equal("name", cookie.Name);
-            Assert.Equal(1, cookie.Values.Count);
+            Assert.Single(cookie.Values);
             Assert.Equal("n1", cookie.Values.AllKeys[0]);
             Assert.Equal("v1", cookie.Values["n1"]);
             Assert.Equal("n1", cookie.Value);
@@ -163,7 +163,7 @@ namespace System.Net.Http.Headers
 
             // Assert
             Assert.Equal("name", actualValue.Name);
-            Assert.Equal(1, actualValue.Values.Count);
+            Assert.Single(actualValue.Values);
             Assert.Equal("n1", actualValue.Values.AllKeys[0]);
             Assert.Equal("v1", actualValue.Values["n1"]);
         }

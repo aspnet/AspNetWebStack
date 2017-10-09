@@ -143,7 +143,7 @@ namespace System.Net.Http.Internal
             var nvc = CreateInstance();
 
             Assert.IsType<HttpValueCollection>(nvc);
-            Assert.Equal(0, nvc.Count);
+            Assert.Empty(nvc);
         }
 
         // This set of tests requires running on a separate appdomain so we don't

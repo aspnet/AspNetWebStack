@@ -169,7 +169,7 @@ namespace Microsoft.AspNet.Facebook.Test
             }
 
             // Assert
-            Assert.Equal(false, authorizeFilter.DeniedPermissionPromptHookTriggered);
+            Assert.False(authorizeFilter.DeniedPermissionPromptHookTriggered);
 
             // Act 2
             // We're making a "second" request essentially
