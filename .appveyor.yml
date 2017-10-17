@@ -6,14 +6,14 @@ branches:
     - /^(.*\/)?ci-.*$/
     - /^rel\/.*/
 configuration:
-  CodeAnalysis
-  Release
+  - CodeAnalysis
+  - Release
 matrix:
   fast_finish: true
 before_build:
   - cmd: .\build.cmd EnableSkipStrongNames
 build_script:
-  - cmd: .\build.cmd UnitTest /P:Configuration=$(configuration)
+  - cmd: .\build.cmd UnitTest /P:Configuration=%Configuration%
 clone_depth: 1
 test: off
 deploy: off
