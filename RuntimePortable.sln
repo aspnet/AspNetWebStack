@@ -50,8 +50,8 @@ Global
 		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.CodeAnalysis|Any CPU.Build.0 = CodeAnalysis|Any CPU
 		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DECB05DF-B33A-44A0-B5DE-B14A8CE0740F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
