@@ -13,6 +13,7 @@ using Moq;
 
 namespace System.Web.Mvc.Html.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class DefaultDisplayTemplatesTest
     {
         // BooleanTemplate

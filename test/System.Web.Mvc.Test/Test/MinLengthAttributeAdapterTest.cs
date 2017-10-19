@@ -2,11 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Microsoft.TestCommon;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class MinLengthAttributeAdapterTest
     {
         [Fact]

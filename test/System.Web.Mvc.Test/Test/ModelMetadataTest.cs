@@ -10,6 +10,7 @@ using Moq;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class ModelMetadataTest
     {
         // Guard clauses
@@ -826,7 +827,7 @@ namespace System.Web.Mvc.Test
                     Assert.Equal(derivedModel.GetType(), type);
                     Assert.Equal("MyProperty", propertyName);
                 })
-                .Returns<Func<object>, Type, string>((accessor, type, propertyName) => 
+                .Returns<Func<object>, Type, string>((accessor, type, propertyName) =>
                 {
                     return new ModelMetadata(provider.Object, derivedModel.GetType(), accessor, type, propertyName);
                 })

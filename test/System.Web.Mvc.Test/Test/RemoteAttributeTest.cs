@@ -9,6 +9,7 @@ using Moq;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class RemoteAttributeTest
     {
         // Good route name, bad route name
@@ -261,7 +262,7 @@ namespace System.Web.Mvc.Test
         [Fact]
         public void ActionController_InArea_RemoteFindsControllerInCurrentArea()
         {
-            // Arrange 
+            // Arrange
             ModelMetadata metadata = ModelMetadataProviders.Current.GetMetadataForProperty(modelAccessor: null,
                 containerType: typeof(string), propertyName: "Length");
             TestableRemoteAttribute attribute = new TestableRemoteAttribute("Action", "Controller");

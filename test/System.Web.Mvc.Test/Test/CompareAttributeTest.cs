@@ -8,6 +8,7 @@ using Moq;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class CompareAttributeTest
     {
         [Fact]

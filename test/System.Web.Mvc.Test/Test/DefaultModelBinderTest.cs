@@ -15,6 +15,7 @@ using Moq.Protected;
 
 namespace System.Web.Mvc.Test
 {
+    [Xunit.Collection("Uses ScopeStorage or ViewEngines.Engines")] // Uses ModelMetadataProviders.Current
     public class DefaultModelBinderTest
     {
         [Fact]
