@@ -60,14 +60,26 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\System.Net.Http.Formatting.Test\DataSets\Types\DerivedFormUrlEncodedMediaTypeFormatter.cs">
+      <Link>DataSets\Types\DerivedFormUrlEncodedMediaTypeFormatter.cs</Link>
+    </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\BsonMediaTypeFormatterTests.cs">
       <Link>Formatting\BsonMediaTypeFormatterTests.cs</Link>
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormDataCollectionTests.cs">
       <Link>Internal\FormDataCollectionTests.cs</Link>
     </Compile>
+    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedFromContentTests.cs">
+      <Link>Formatting\FormUrlEncodedFromContentTests.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedFromUriQueryTests.cs">
+      <Link>Formatting\FormUrlEncodedFromUriQueryTests.cs</Link>
+    </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedJsonTests.cs">
       <Link>Internal\FormUrlEncodedJsonTests.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedMediaTypeFormatterTests.cs">
+      <Link>Formatting\FormUrlEncodedMediaTypeFormatterTests.cs</Link>
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\JsonNetSerializationTest.cs">
       <Link>Formatting\JsonNetSerializationTest.cs</Link>
@@ -77,6 +89,9 @@
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\Parsers\FormUrlEncodedParserTests.cs">
       <Link>Internal\FormUrlEncodedParserTests.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Net.Http.Formatting.Test\HttpContentFormDataExtensionsTest.cs">
+      <Link>HttpContentFormDataExtensionsTest.cs</Link>
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting.Test\Internal\HttpValueCollectionTest.cs">
       <Link>HttpValueCollectionTest.cs</Link>

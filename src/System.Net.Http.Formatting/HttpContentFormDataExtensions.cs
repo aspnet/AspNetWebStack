@@ -8,6 +8,9 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+#if NETFX_CORE
+using NameValueCollection = System.Net.Http.Formatting.HttpValueCollection;
+#endif
 
 namespace System.Net.Http
 {
