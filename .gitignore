@@ -18,3 +18,4 @@ _[Ss]cripts
 *.sln.ide
 .vs/
 project.lock.json
+*launchSettings.json
