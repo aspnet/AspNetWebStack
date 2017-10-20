@@ -498,9 +498,7 @@ namespace System.Net.Http.Formatting.DataSets
                 {
                     new XmlMediaTypeFormatter(),
                     new JsonMediaTypeFormatter(),
-#if !NETFX_CORE // not present in portable library version
                     new FormUrlEncodedMediaTypeFormatter()
-#endif
                 });
             }
         }
@@ -521,9 +519,7 @@ namespace System.Net.Http.Formatting.DataSets
                 {
                     new DerivedXmlMediaTypeFormatter(),
                     new DerivedJsonMediaTypeFormatter(),
-#if !NETFX_CORE // not present in portable library version
                     new DerivedFormUrlEncodedMediaTypeFormatter(),
-#endif
                 });
             }
         }
