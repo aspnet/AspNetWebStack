@@ -5,9 +5,13 @@ using System.Collections.Specialized;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
+#if NETFX_CORE
+using NameValueCollection = System.Net.Http.Formatting.HttpValueCollection;
+#endif
 
 namespace System.Net.Http
 {
@@ -150,7 +154,11 @@ namespace System.Net.Http
 
             // Assert
             Assert.Equal(1, data.Count);
+#if NETFX_CORE
+            Assert.Equal(irregularFormData, data.First().Key);
+#else
             Assert.Equal(irregularFormData, data.AllKeys[0]);
+#endif
         }
 
         [Fact]

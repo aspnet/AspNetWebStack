@@ -59,6 +59,9 @@
     <Compile Include="..\System.Net.Http.Formatting\Formatting\FormUrlEncodedJson.cs">
       <Link>Formatting\FormUrlEncodedJson.cs</Link>
     </Compile>
+    <Compile Include="..\System.Net.Http.Formatting\Formatting\FormUrlEncodedMediaTypeFormatter.cs">
+      <Link>Formatting\FormUrlEncodedMediaTypeFormatter.cs</Link>
+    </Compile>
     <Compile Include="..\System.Net.Http.Formatting\Formatting\IFormatterLogger.cs">
       <Link>Formatting\IFormatterLogger.cs</Link>
     </Compile>
@@ -115,6 +118,9 @@
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting\Formatting\XmlMediaTypeFormatter.cs">
       <Link>Formatting\XmlMediaTypeFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Net.Http.Formatting\HttpContentFormDataExtensions.cs">
+      <Link>HttpContentFormDataExtensions.cs</Link>
     </Compile>
     <Compile Include="..\System.Net.Http.Formatting\Internal\HttpValueCollection.cs">
       <Link>Internal\HttpValueCollection.cs</Link>
