@@ -279,10 +279,15 @@ namespace System.Web.Mvc.Test
         {
             // Arrange
             var attr = new OutputCacheAttribute { VaryByCustom = "foo" };
+            var application1 = new Mock<HttpApplication>();
+            application1.Setup(a => a.GetVaryByCustomString(It.IsAny<HttpContext>(), "foo")).Returns("1");
             var context1 = new MockActionExecutingContext();
-            context1.Setup(c => c.HttpContext.ApplicationInstance.GetVaryByCustomString(It.IsAny<HttpContext>(), "foo")).Returns("1");
+            context1.SetupGet(c => c.HttpContext.ApplicationInstance).Returns(application1.Object);
+
+            var application2 = new Mock<HttpApplication>();
+            application2.Setup(a => a.GetVaryByCustomString(It.IsAny<HttpContext>(), "foo")).Returns("2");
             var context2 = new MockActionExecutingContext();
-            context2.Setup(c => c.HttpContext.ApplicationInstance.GetVaryByCustomString(It.IsAny<HttpContext>(), "foo")).Returns("2");
+            context2.SetupGet(c => c.HttpContext.ApplicationInstance).Returns(application2.Object);
 
             // Act
             string result1 = attr.GetChildActionUniqueId(context1.Object);

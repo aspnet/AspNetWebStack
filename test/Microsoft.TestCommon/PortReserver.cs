@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -154,7 +155,9 @@ namespace Microsoft.TestCommon
         {
             IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
 
-            return ipGlobalProperties.GetActiveTcpListeners();
+            return ipGlobalProperties.GetActiveTcpListeners()
+                .Concat(ipGlobalProperties.GetActiveUdpListeners())
+                .ToArray();
         }
     }
 }
