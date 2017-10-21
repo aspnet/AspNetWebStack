@@ -447,8 +447,10 @@ namespace System.Web.Http.WebHost
         public async Task ProcessRequestAsync_DisposesRequestAndResponse()
         {
             // Arrange
+            Mock<HttpResponseBase> responseMock = new Mock<HttpResponseBase>() { DefaultValue = DefaultValue.Mock };
+            responseMock.SetupGet(r => r.OutputStream).Returns(Stream.Null);
             Mock<HttpContextBase> contextMock = new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock };
-            contextMock.SetupGet((hcb) => hcb.Response.OutputStream).Returns(Stream.Null);
+            contextMock.SetupGet(hcb => hcb.Response).Returns(responseMock.Object);
             IDictionary items = new Dictionary<object, object>();
             contextMock.SetupGet((hcb) => hcb.Items).Returns(items);
             HttpContextBase context = contextMock.Object;
@@ -481,8 +483,10 @@ namespace System.Web.Http.WebHost
         public async Task ProcessRequestAsync_DisposesRequestAndResponseWithContent()
         {
             // Arrange
+            Mock<HttpResponseBase> responseMock = new Mock<HttpResponseBase>() { DefaultValue = DefaultValue.Mock };
+            responseMock.SetupGet(r => r.OutputStream).Returns(Stream.Null);
             Mock<HttpContextBase> contextMock = new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock };
-            contextMock.SetupGet((hcb) => hcb.Response.OutputStream).Returns(Stream.Null);
+            contextMock.SetupGet(hcb => hcb.Response).Returns(responseMock.Object);
             IDictionary items = new Dictionary<object, object>();
             contextMock.SetupGet((hcb) => hcb.Items).Returns(items);
             HttpContextBase context = contextMock.Object;
@@ -515,8 +519,10 @@ namespace System.Web.Http.WebHost
         public async Task ProcessRequestAsync_IfHandlerFaults_DisposesRequest()
         {
             // Arrange
+            Mock<HttpResponseBase> responseMock = new Mock<HttpResponseBase>();
+            responseMock.SetupGet(r => r.OutputStream).Returns(Stream.Null);
             Mock<HttpContextBase> contextMock = new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock };
-            contextMock.SetupGet((hcb) => hcb.Response.OutputStream).Returns(Stream.Null);
+            contextMock.SetupGet(hcb => hcb.Response).Returns(responseMock.Object);
             IDictionary items = new Dictionary<object, object>();
             contextMock.SetupGet((hcb) => hcb.Items).Returns(items);
             HttpContextBase context = contextMock.Object;
@@ -546,32 +552,42 @@ namespace System.Web.Http.WebHost
         public void SuppressFormsAuthenticationRedirect_DoesntRequireSuppressRedirect()
         {
             // Arrange
+            Mock<HttpResponseBase> responseMock = new Mock<HttpResponseBase>();
+            responseMock.SetupGet(r => r.StatusCode).Returns(200);
+            responseMock.SetupSet(r => r.SuppressFormsAuthenticationRedirect = It.IsAny<bool>()).Verifiable();
             Mock<HttpContextBase> contextMock = new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock };
             IDictionary contextItems = new Hashtable();
-            contextMock.SetupGet(hcb => hcb.Response.StatusCode).Returns(200);
+            contextMock.SetupGet(hcb => hcb.Response).Returns(responseMock.Object);
             contextMock.SetupGet(hcb => hcb.Items).Returns(contextItems);
 
             // Act
             HttpControllerHandler.EnsureSuppressFormsAuthenticationRedirect(contextMock.Object);
 
             // Assert
-            Assert.False(contextMock.Object.Response.SuppressFormsAuthenticationRedirect);
+            responseMock.VerifySet(r => r.SuppressFormsAuthenticationRedirect = It.IsAny<bool>(), Times.Never);
         }
 
         [Fact]
         public void SuppressFormsAuthenticationRedirect_RequireSuppressRedirect()
         {
             // Arrange
+            bool suppressFormsAuthenticationRedirect = false;
+            Mock<HttpResponseBase> responseMock = new Mock<HttpResponseBase>();
+            responseMock.SetupGet(r => r.StatusCode).Returns(401);
+            responseMock.SetupSet<bool>(r => r.SuppressFormsAuthenticationRedirect = It.IsAny<bool>())
+                .Callback(value => suppressFormsAuthenticationRedirect = value)
+                .Verifiable();
             Mock<HttpContextBase> contextMock = new Mock<HttpContextBase>() { DefaultValue = DefaultValue.Mock };
             IDictionary contextItems = new Hashtable();
-            contextMock.SetupGet(hcb => hcb.Response.StatusCode).Returns(401);
+            contextMock.SetupGet(hcb => hcb.Response).Returns(responseMock.Object);
             contextMock.SetupGet(hcb => hcb.Items).Returns(contextItems);
 
             // Act
             HttpControllerHandler.EnsureSuppressFormsAuthenticationRedirect(contextMock.Object);
 
             // Assert
-            Assert.True(contextMock.Object.Response.SuppressFormsAuthenticationRedirect);
+            responseMock.VerifySet(r => r.SuppressFormsAuthenticationRedirect = It.IsAny<bool>(), Times.Once);
+            Assert.True(suppressFormsAuthenticationRedirect);
         }
 
         [Fact]

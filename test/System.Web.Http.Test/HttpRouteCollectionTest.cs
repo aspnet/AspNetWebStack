@@ -21,7 +21,7 @@ namespace System.Web.Http
             handler1.As<IDisposable>().Setup(c => c.Dispose()).Verifiable();
 
             var handler2 = new Mock<HttpMessageHandler>();
-            handler1.As<IDisposable>().Setup(c => c.Dispose()).Verifiable();
+            handler2.As<IDisposable>().Setup(c => c.Dispose()).Verifiable();
 
             var route1 = new Mock<IHttpRoute>();
             route1.SetupGet(r => r.Handler).Returns(handler1.Object);

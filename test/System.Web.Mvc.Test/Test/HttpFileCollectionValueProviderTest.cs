@@ -112,14 +112,17 @@ namespace System.Web.Mvc.Test
 
         private static HttpFileCollectionValueProvider GetValueProvider()
         {
-            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
-            mockControllerContext.Setup(o => o.HttpContext.Request.Files.Count).Returns(_allFiles.Length);
-            mockControllerContext.Setup(o => o.HttpContext.Request.Files.AllKeys).Returns(_allFiles.Select(f => f.Key).ToArray());
+            Mock<HttpFileCollectionBase> mockFileCollection = new Mock<HttpFileCollectionBase>();
+            mockFileCollection.SetupGet(c => c.Count).Returns(_allFiles.Length);
+            mockFileCollection.SetupGet(c => c.AllKeys).Returns(_allFiles.Select(f => f.Key).ToArray());
             for (int i = 0; i < _allFiles.Length; i++)
             {
                 int j = i;
-                mockControllerContext.Setup(o => o.HttpContext.Request.Files[j]).Returns(_allFiles[j].Value);
+                mockFileCollection.SetupGet(c => c[j]).Returns(_allFiles[j].Value);
             }
+
+            Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
+            mockControllerContext.SetupGet(o => o.HttpContext.Request.Files).Returns(mockFileCollection.Object);
 
             return new HttpFileCollectionValueProvider(mockControllerContext.Object);
         }
