@@ -8,6 +8,6 @@
     </ItemGroup>
 
     <!-- Override AppDomains default (set in xunit.runner.json). Need them with this runner. -->
-    <xunit AppDomains="true" Assemblies="@(TestAssembly)"/>
+    <xunit AppDomains="true" Assemblies="@(TestAssembly)" Condition="$(IsTestProject)"/>
   </Target>
 </Project>
