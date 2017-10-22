@@ -10,11 +10,11 @@
     <!-- Use CustomAfterMicrosoftCommonTargets property (defined in Microsoft.Common.targets) to
              inject post-Common targets files without requiring the inclusion -->
     <CustomAfterMicrosoftCommonTargets>$(WebStackToolsPath)WebStack.targets</CustomAfterMicrosoftCommonTargets>
-    
+
     <!-- Force rebuild if this file changes -->
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
-  
+
   <!-- Project Defaults -->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -36,7 +36,7 @@
     <!-- Target 4.5 by default -->
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
 
-    <!-- Disable C# 6.0 features in Visual Studio since those features are not always available in command-line builds. -->
+    <!-- Disable C# 6.0 features in Visual Studio. -->
     <LangVersion Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">5</LangVersion>
 
     <!-- Everything is delay signed by default -->

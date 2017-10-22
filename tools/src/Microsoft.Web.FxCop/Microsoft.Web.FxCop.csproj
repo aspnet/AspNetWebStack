@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <FxCopLocation>$(MSBuildProgramFiles32)\Microsoft Visual Studio $(VisualStudioVersion)\Team Tools\Static Analysis Tools\FxCop\</FxCopLocation>
+    <FxCopLocation>$(VsInstallRoot)\Team Tools\Static Analysis Tools\FxCop\</FxCopLocation>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FxCopSdk">

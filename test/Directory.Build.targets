@@ -1,0 +1,13 @@
+<Project>
+  <Import Project="..\Directory.Build.targets"/>
+  <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
+
+  <Target Name="Test">
+    <ItemGroup Condition=" '@(TestAssembly)' == '' ">
+      <TestAssembly Include="$(TargetPath)"/>
+    </ItemGroup>
+
+    <!-- Override AppDomains default (set in xunit.runner.json). Need them with this runner. -->
+    <xunit AppDomains="true" Assemblies="@(TestAssembly)"/>
+  </Target>
+</Project>
