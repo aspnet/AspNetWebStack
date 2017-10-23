@@ -68,15 +68,15 @@
     <Exec Command='"$(NuGetExe)" restore "%(SolutionsToBuild.Identity)" -PackagesDirectory packages -NonInteractive -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
     <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
   </Target>
-  
+
   <Target Name="BuildTools">
     <PropertyGroup>
         <FxCopProjectLocation>$(MsBuildThisFileDirectory)tools\src\Microsoft.Web.FxCop\</FxCopProjectLocation>
         <CustomFxCopRulesPath>$(MsBuildThisFileDirectory)packages\CustomFxCopRules</CustomFxCopRulesPath>
     </PropertyGroup>
-    <MsBuild 
+    <MsBuild
           Condition=" '$(CodeAnalysis)' == 'true' "
-          Projects="$(FxCopProjectLocation)\Microsoft.Web.FxCop.csproj" 
+          Projects="$(FxCopProjectLocation)\Microsoft.Web.FxCop.csproj"
           Properties="Configuration=Release;OutputPath=$(CustomFxCopRulesPath)" />
   </Target>
 
@@ -98,17 +98,20 @@
 
   <Target Name="RunTests" DependsOnTargets="CheckSkipStrongNames">
     <ItemGroup>
-      <TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll;bin\$(Configuration)\test\*.Test.*.dll;bin\$(Configuration)\Test\NetCore\*.Test.dll;bin\$(Configuration)\Test\NetStandard\*.Test.dll" />
-      <XunitProject Include="tools\WebStack.xunit.targets">
-        <Properties>TestAssembly=%(TestDLLsXunit.FullPath);XmlPath=$(TestResultsDirectory)%(TestDLLsXunit.FileName)-XunitResults.xml</Properties>
-      </XunitProject>
+      <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll" />
+      <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.*.dll" />
+      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetCore\*.Test.dll" />
+      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetStandard\*.Test.dll" />
+      <_XunitProject Include="tools\WebStack.xunit.targets">
+        <Properties>TestAssembly=%(_TestDLLsXunit.FullPath);XmlPath=$(TestResultsDirectory)%(_TestDLLsXunit.FileName)-XunitResults.xml</Properties>
+      </_XunitProject>
     </ItemGroup>
 
-    <!-- Re-create the test results directory so that print summary doesn't run on old test results -->
+    <!-- Recreate the test results directory so that print summary doesn't run on old test results. -->
     <RemoveDir Directories="$(TestResultsDirectory)" />
     <MakeDir Directories="$(TestResultsDirectory)" />
 
-    <MSBuild Projects="@(XunitProject)" BuildInParallel="$(TestInParallel)" Targets="Xunit" />
+    <MSBuild Projects="@(_XunitProject)" BuildInParallel="$(TestInParallel)" Targets="Xunit" />
   </Target>
 
   <Target Name="CheckSkipStrongNames" DependsOnTargets="RestoreSkipStrongNames">

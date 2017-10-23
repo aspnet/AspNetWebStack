@@ -178,10 +178,23 @@
                         var assemblies = xml.Elements(XName.Get("assembly"));
                         foreach (XElement assembly in assemblies)
                         {
-                            int failures = Int32.Parse(assembly.Attribute(XName.Get("failed")).Value);
+                            XAttribute failed = assembly.Attribute(XName.Get("failed"));
+                            if (failed == null)
+                            {
+                                // Occasionally xUnit does not write information about test assembly completion.
+                                XAttribute name = assembly.Attribute(XName.Get("name"));
+                                Log.LogWarning(
+                                    "No results in {0} for {1}.",
+                                    testResultFile,
+                                    name == null ? "unknown assembly" : name.Value);
+
+                                continue;
+                            }
+
+                            int failures = Int32.Parse(failed.Value);
+                            testsFailed += failures;
 
                             testsPassed += Int32.Parse(assembly.Attribute(XName.Get("passed")).Value);
-                            testsFailed += failures;
                             testsSkipped += Int32.Parse(assembly.Attribute(XName.Get("skipped")).Value);
                             timeSpent += Decimal.Parse(assembly.Attribute(XName.Get("time")).Value);
 
