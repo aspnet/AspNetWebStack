@@ -36,8 +36,8 @@ namespace System.Web.WebPages.Test
             var item = "!!@#$#$";
             var item2 = "13l53125";
             var d = new UrlDataList(item + "/" + item2);
-            Assert.True(d.IndexOf(item) == 0);
-            Assert.True(d.IndexOf(item2) == 1);
+            Assert.Equal(0, d.IndexOf(item));
+            Assert.Equal(1, d.IndexOf(item2));
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace System.Web.WebPages.Test
         {
             var item = "!!@#$#$";
             var d = new UrlDataList(item);
-            Assert.True(d.Contains(item));
+            Assert.Contains(item, d);
         }
 
         [Fact]
@@ -92,14 +92,14 @@ namespace System.Web.WebPages.Test
         public void CountTest()
         {
             var d = new UrlDataList("x");
-            Assert.Equal(1, d.Count);
+            Assert.Single(d);
         }
 
         [Fact]
         public void IsReadOnlyTest()
         {
             var d = new UrlDataList(null);
-            Assert.Equal(true, d.IsReadOnly);
+            Assert.True(d.IsReadOnly);
         }
 
         [Fact]

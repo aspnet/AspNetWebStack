@@ -133,8 +133,8 @@ namespace System.Web.Razor.Test.Parser
             context.StartBlock(BlockType.Expression);
 
             // Assert
-            Assert.Equal(1, context.BlockStack.Count);
-            Assert.Equal(BlockType.Expression, context.BlockStack.Peek().Type);
+            BlockBuilder blockBuilder = Assert.Single(context.BlockStack);
+            Assert.Equal(BlockType.Expression, blockBuilder.Type);
         }
 
         [Fact]
@@ -150,10 +150,10 @@ namespace System.Web.Razor.Test.Parser
             context.EndBlock();
 
             // Assert
-            Assert.Equal(1, context.BlockStack.Count);
-            Assert.Equal(BlockType.Expression, context.BlockStack.Peek().Type);
-            Assert.Equal(1, context.BlockStack.Peek().Children.Count);
-            Assert.Equal(BlockType.Statement, ((Block)context.BlockStack.Peek().Children[0]).Type);
+            BlockBuilder blockBuilder = Assert.Single(context.BlockStack);
+            Assert.Equal(BlockType.Expression, blockBuilder.Type);
+            SyntaxTreeNode node = Assert.Single(blockBuilder.Children);
+            Assert.Equal(BlockType.Statement, Assert.IsType<Block>(node).Type);
         }
 
         [Fact]

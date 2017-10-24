@@ -162,7 +162,7 @@ namespace System.Web.WebPages.Test
             dynamic dyn = d;
             Assert.IsType<int>(dyn.Count);
             d.Add("x", 1);
-            Assert.Equal(1, d.Count);
+            Assert.Single(d);
             d.Add("y", 2);
             Assert.Equal(2, d.Count);
             dyn.Count = "foo";

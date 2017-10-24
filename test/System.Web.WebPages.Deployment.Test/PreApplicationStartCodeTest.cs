@@ -342,7 +342,7 @@ In order to use this site, specify a version in the site’s web.config file. Fo
 
             // Assert
             Assert.Equal("Changes were detected in the Web Pages runtime version that require your application to be recompiled. Refresh your browser window to continue.", ex.Message);
-            Assert.Equal(ex.Data["WebPages.VersionChange"], true);
+            Assert.Equal((object)true, ex.Data["WebPages.VersionChange"]);
             Assert.False(registeredForChangeNotification);
             VerifyVersionFile(buildManager, new Version(LatestVersion));
             Assert.True(fileSystem.FileExists(@"site\bin\WebPagesRecompilation.deleteme"));

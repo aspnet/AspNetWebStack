@@ -55,7 +55,7 @@ namespace System.Web.WebPages.Razor.Test
             host.PostProcessGeneratedCode(context);
 
             // Assert
-            Assert.True(context.Namespace.Imports.OfType<CodeNamespaceImport>().Any(import => String.Equals("Foo.Bar", import.Namespace)));
+            Assert.Contains(context.Namespace.Imports.OfType<CodeNamespaceImport>(), import => String.Equals("Foo.Bar", import.Namespace));
         }
 
         [Fact]

@@ -67,7 +67,7 @@ namespace System.Web.WebPages.Administration.Test
             // Act
             var repositoryFolder = WebProjectManager.GetWebRepositoryDirectory(siteRoot);
 
-            Assert.Equal(repositoryFolder, @"my-site\App_Data\packages");
+            Assert.Equal(@"my-site\App_Data\packages", repositoryFolder);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace System.Web.WebPages.Administration.Test
 
             // Assert
             Assert.NotNull(package);
-            Assert.Equal(package.Id, "A");
+            Assert.Equal("A", package.Id);
         }
 
         [Fact]
@@ -111,8 +111,8 @@ namespace System.Web.WebPages.Administration.Test
 
             // Assert
             Assert.Equal(2, result.Count());
-            Assert.True(result.Any(c => c.Id == "C"));
-            Assert.True(result.Any(c => c.Id == "B"));
+            Assert.Contains(result, c => c.Id == "C");
+            Assert.Contains(result, c => c.Id == "B");
         }
 
         [Fact]

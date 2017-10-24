@@ -65,7 +65,7 @@ namespace System.Web.WebPages.Test
             PropertyHelper[] helpers2 = PropertyHelper.GetProperties(anonymous);
 
             // Assert
-            Assert.Equal(1, helpers1.Length);
+            Assert.Single(helpers1);
             Assert.ReferenceEquals(helpers1, helpers2);
             Assert.ReferenceEquals(helpers1[0], helpers2[0]);
         }
@@ -149,8 +149,8 @@ namespace System.Web.WebPages.Test
             anonymous.StringProp = "Five";
 
             // Act + Assert
-            PropertyHelper helper1 = Assert.Single(PropertyHelper.GetProperties(anonymous).Where(prop => prop.Name == "IntProp"));
-            PropertyHelper helper2 = Assert.Single(PropertyHelper.GetProperties(anonymous).Where(prop => prop.Name == "StringProp"));
+            PropertyHelper helper1 = Assert.Single(PropertyHelper.GetProperties(anonymous), prop => prop.Name == "IntProp");
+            PropertyHelper helper2 = Assert.Single(PropertyHelper.GetProperties(anonymous), prop => prop.Name == "StringProp");
             Assert.Equal(3, helper1.GetValue(anonymous));
             Assert.Equal("Five", helper2.GetValue(anonymous));
         }
@@ -196,8 +196,8 @@ namespace System.Web.WebPages.Test
             Assert.NotNull(helpers);
             Assert.Equal(2, helpers.Length);
 
-            PropertyHelper propAHelper = Assert.Single(helpers.Where(h => h.Name == "PropA"));
-            PropertyHelper propBHelper = Assert.Single(helpers.Where(h => h.Name == "PropB"));
+            PropertyHelper propAHelper = Assert.Single(helpers, h => h.Name == "PropA");
+            PropertyHelper propBHelper = Assert.Single(helpers, h => h.Name == "PropB");
 
             Assert.Equal("propAValue", propAHelper.GetValue(derived));
             Assert.Equal("propBValue", propBHelper.GetValue(derived));
@@ -216,8 +216,8 @@ namespace System.Web.WebPages.Test
             Assert.NotNull(helpers);
             Assert.Equal(2, helpers.Length);
 
-            PropertyHelper propAHelper = Assert.Single(helpers.Where(h => h.Name == "PropA"));
-            PropertyHelper propBHelper = Assert.Single(helpers.Where(h => h.Name == "PropB"));
+            PropertyHelper propAHelper = Assert.Single(helpers, h => h.Name == "PropA");
+            PropertyHelper propBHelper = Assert.Single(helpers, h => h.Name == "PropB");
 
             Assert.Equal("propAValue", propAHelper.GetValue(derived));
             Assert.Equal("Newed", propBHelper.GetValue(derived));
@@ -236,8 +236,8 @@ namespace System.Web.WebPages.Test
             Assert.NotNull(helpers);
             Assert.Equal(2, helpers.Length);
 
-            PropertyHelper propAHelper = Assert.Single(helpers.Where(h => h.Name == "PropA"));
-            PropertyHelper propBHelper = Assert.Single(helpers.Where(h => h.Name == "PropB"));
+            PropertyHelper propAHelper = Assert.Single(helpers, h => h.Name == "PropA");
+            PropertyHelper propBHelper = Assert.Single(helpers, h => h.Name == "PropB");
 
             Assert.Equal("Overriden", propAHelper.GetValue(derived));
             Assert.Equal("propBValue", propBHelper.GetValue(derived));

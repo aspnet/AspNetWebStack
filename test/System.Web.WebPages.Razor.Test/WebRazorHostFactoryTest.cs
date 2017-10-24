@@ -339,8 +339,8 @@ namespace System.Web.WebPages.Razor.Test
 
             // Assert
             Assert.NotNull(pages);
-            Assert.Equal(1, pages.Namespaces.Count);
-            Assert.Equal("System.Text.RegularExpressions", pages.Namespaces[0].Namespace);
+            NamespaceInfo namespaceInfo = Assert.IsType<NamespaceInfo>(Assert.Single(pages.Namespaces));
+            Assert.Equal("System.Text.RegularExpressions", namespaceInfo.Namespace);
         }
 
         [Fact]

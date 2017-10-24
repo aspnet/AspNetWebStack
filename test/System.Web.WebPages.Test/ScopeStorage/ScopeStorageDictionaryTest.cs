@@ -16,7 +16,7 @@ namespace System.Web.WebPages.Test
             var stateStorage = GetChainedStorageStateDictionary();
 
             // Act and Assert
-            Assert.Equal(stateStorage["f"], "f2");
+            Assert.Equal("f2", stateStorage["f"]);
         }
 
         [Fact]
@@ -26,8 +26,8 @@ namespace System.Web.WebPages.Test
             var stateStorage = GetChainedStorageStateDictionary();
 
             // Act and Assert
-            Assert.Equal(stateStorage["a"], "a2");
-            Assert.Equal(stateStorage["d"], "d2");
+            Assert.Equal("a2", stateStorage["a"]);
+            Assert.Equal("d2", stateStorage["d"]);
         }
 
         [Fact]
@@ -37,8 +37,8 @@ namespace System.Web.WebPages.Test
             var stateStorage = GetChainedStorageStateDictionary();
 
             // Act and Assert
-            Assert.Equal(stateStorage["c"], "c0");
-            Assert.Equal(stateStorage["b"], "b1");
+            Assert.Equal("c0", stateStorage["c"]);
+            Assert.Equal("b1", stateStorage["b"]);
         }
 
         [Fact]
@@ -99,12 +99,12 @@ namespace System.Web.WebPages.Test
             var scopeStorage = GetChainedStorageStateDictionary();
 
             // Act and Assert
-            Assert.Equal(scopeStorage["a"], "a2");
-            Assert.Equal(scopeStorage["b"], "b1");
-            Assert.Equal(scopeStorage["c"], "c0");
-            Assert.Equal(scopeStorage["d"], "d2");
-            Assert.Equal(scopeStorage["e"], "e1");
-            Assert.Equal(scopeStorage["f"], "f2");
+            Assert.Equal("a2", scopeStorage["a"]);
+            Assert.Equal("b1", scopeStorage["b"]);
+            Assert.Equal("c0", scopeStorage["c"]);
+            Assert.Equal("d2", scopeStorage["d"]);
+            Assert.Equal("e1", scopeStorage["e"]);
+            Assert.Equal("f2", scopeStorage["f"]);
         }
 
         [Fact]
@@ -117,7 +117,7 @@ namespace System.Web.WebPages.Test
             dictionary.Clear();
 
             // Assert
-            Assert.Equal(0, dictionary.Count);
+            Assert.Empty(dictionary);
         }
 
         [Fact]
@@ -137,16 +137,16 @@ namespace System.Web.WebPages.Test
             var dictionary = GetChainedStorageStateDictionary();
             var array = new KeyValuePair<object, object>[8];
 
-            // Act 
+            // Act
             dictionary.CopyTo(array, 2);
 
             // Assert
-            Assert.Equal(array[2].Key, "a");
-            Assert.Equal(array[2].Value, "a2");
-            Assert.Equal(array[4].Key, "f");
-            Assert.Equal(array[4].Value, "f2");
-            Assert.Equal(array[7].Key, "c");
-            Assert.Equal(array[7].Value, "c0");
+            Assert.Equal("a", array[2].Key);
+            Assert.Equal("a2", array[2].Value);
+            Assert.Equal("f", array[4].Key);
+            Assert.Equal("f2", array[4].Value);
+            Assert.Equal("c", array[7].Key);
+            Assert.Equal("c0", array[7].Value);
         }
 
         private ScopeStorageDictionary GetChainedStorageStateDictionary()

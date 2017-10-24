@@ -129,20 +129,20 @@ namespace System.Web.WebPages.Administration.Test
 
             // Assert
             var document = XDocument.Parse(result);
-            Assert.Equal(document.Root.Name, "sources");
-            Assert.Equal(document.Root.Elements().Count(), 2);
+            Assert.Equal("sources", document.Root.Name);
+            Assert.Equal(2, document.Root.Elements().Count());
 
             var firstFeed = document.Root.Elements().First();
-            Assert.Equal(firstFeed.Name, "source");
-            Assert.Equal(firstFeed.Attribute("displayname").Value, "Feed1");
-            Assert.Equal(firstFeed.Attribute("url").Value, "http://www.microsoft.com/Feed1");
-            Assert.Equal(firstFeed.Attribute("filterpreferred").Value, "false");
+            Assert.Equal("source", firstFeed.Name);
+            Assert.Equal("Feed1", firstFeed.Attribute("displayname").Value);
+            Assert.Equal("http://www.microsoft.com/Feed1", firstFeed.Attribute("url").Value);
+            Assert.Equal("false", firstFeed.Attribute("filterpreferred").Value);
 
             var secondFeed = document.Root.Elements().Last();
-            Assert.Equal(secondFeed.Name, "source");
-            Assert.Equal(secondFeed.Attribute("displayname").Value, "Feed2");
-            Assert.Equal(secondFeed.Attribute("url").Value, "http://www.microsoft.com/Feed2");
-            Assert.Equal(secondFeed.Attribute("filterpreferred").Value, "true");
+            Assert.Equal("source", secondFeed.Name);
+            Assert.Equal("Feed2", secondFeed.Attribute("displayname").Value);
+            Assert.Equal("http://www.microsoft.com/Feed2", secondFeed.Attribute("url").Value);
+            Assert.Equal("true", secondFeed.Attribute("filterpreferred").Value);
         }
     }
 }

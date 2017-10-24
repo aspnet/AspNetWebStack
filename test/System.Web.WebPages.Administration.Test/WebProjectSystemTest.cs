@@ -80,7 +80,7 @@ namespace System.Web.WebPages.Administration.Test
             XDocument document = XDocument.Load(memoryStream);
 
             var element = document.Root;
-            Assert.Equal(element.Name, "configuration");
+            Assert.Equal("configuration", element.Name);
 
             // Use SingleOrDefault to ensure there's exactly one element with that name
             var assemblies = document.Root
@@ -126,7 +126,7 @@ namespace System.Web.WebPages.Administration.Test
             XDocument document = XDocument.Load(memoryStream);
 
             var element = document.Root;
-            Assert.Equal(element.Name, "configuration");
+            Assert.Equal("configuration", element.Name);
 
             // Use SingleOrDefault to ensure there's exactly one element with that name
             var assemblies = document.Root
@@ -187,7 +187,7 @@ namespace System.Web.WebPages.Administration.Test
             XDocument document = XDocument.Load(memoryStream);
 
             var element = document.Root;
-            Assert.Equal(element.Name, "configuration");
+            Assert.Equal("configuration", element.Name);
 
             // Use SingleOrDefault to ensure there's exactly one element with that name
             var assemblies = document.Root

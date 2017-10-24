@@ -85,14 +85,14 @@ namespace System.Web.WebPages.Test
             decimal value = 12345.00M;
             using (new CultureReplacer("ar-DZ"))
             {
-                Assert.Equal(value.ToString(CultureInfo.CurrentCulture), "12345.00");
-                Assert.Equal(value.ToString(), "12345.00");
+                Assert.Equal("12345.00", value.ToString(CultureInfo.CurrentCulture));
+                Assert.Equal("12345.00", value.ToString());
             }
 
             using (new CultureReplacer("bg-BG"))
             {
-                Assert.Equal(value.ToString(CultureInfo.CurrentCulture), "12345,00");
-                Assert.Equal(value.ToString(), "12345,00");
+                Assert.Equal("12345,00", value.ToString(CultureInfo.CurrentCulture));
+                Assert.Equal("12345,00", value.ToString());
             }
         }
 

@@ -121,11 +121,11 @@ namespace Microsoft.WebPages.Test.Helpers
                                            new[] { "baz", "baz2" }, HttpCacheability.Public);
 
             // Assert
-            Assert.Equal(varyByParams["foo"], true);
-            Assert.Equal(varyByHeader["bar"], true);
-            Assert.Equal(varyByHeader["bar2"], true);
-            Assert.Equal(varyByContentEncoding["baz"], true);
-            Assert.Equal(varyByContentEncoding["baz2"], true);
+            Assert.True(varyByParams["foo"]);
+            Assert.True(varyByHeader["bar"]);
+            Assert.True(varyByHeader["bar2"]);
+            Assert.True(varyByContentEncoding["baz"]);
+            Assert.True(varyByContentEncoding["baz2"]);
         }
     }
 }

@@ -223,7 +223,7 @@ namespace System.Web.Helpers.AntiXsrf.Test
             tokenStore.SaveCookieToken(mockHttpContext.Object, token);
 
             // Assert
-            Assert.Equal(1, cookies.Count);
+            Assert.Single(cookies);
             HttpCookie cookie = cookies["cookie-name"];
 
             Assert.NotNull(cookie);

@@ -54,9 +54,9 @@ namespace System.Web.WebPages.Test
             var d = new PageDataDictionary<dynamic>();
             var item = new KeyValuePair<object, object>("x", 1);
             d.Add(item);
-            Assert.True(d.Contains(item));
+            Assert.Contains(item, d);
             var item2 = new KeyValuePair<object, object>("y", 2);
-            Assert.False(d.Contains(item2));
+            Assert.DoesNotContain(item2, d);
         }
 
         [Fact]
@@ -106,9 +106,9 @@ namespace System.Web.WebPages.Test
             var d = new PageDataDictionary<dynamic>();
             var item = new KeyValuePair<object, object>("x", 2);
             d.Add(item);
-            Assert.True(d.Contains(item));
+            Assert.Contains(item, d);
             d.Remove(item);
-            Assert.False(d.Contains(item));
+            Assert.DoesNotContain(item, d);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace System.Web.WebPages.Test
         {
             var d = new PageDataDictionary<dynamic>();
             d.Add("x", 1);
-            Assert.Equal(1, d.Count);
+            Assert.Single(d);
             d.Add("y", 2);
             Assert.Equal(2, d.Count);
         }

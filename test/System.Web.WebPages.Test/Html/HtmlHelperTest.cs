@@ -35,7 +35,7 @@ namespace System.Web.WebPages.Test
             string encodedHtml = htmlHelper.Encode(text);
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace System.Web.WebPages.Test
             string encodedHtml = htmlHelper.Encode(text);
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]
@@ -201,7 +201,7 @@ namespace System.Web.WebPages.Test
         /// has the attribute name underscore correctly transformed to a dash
         /// </summary>
         /// <param name="helperInvocation"></param>
-        public static void AssertHelperTransformsAttributesUnderscoresToDashs(Func<HtmlHelper, object, IHtmlString> helperInvocation)
+        internal static void AssertHelperTransformsAttributesUnderscoresToDashs(Func<HtmlHelper, object, IHtmlString> helperInvocation)
         {
             // Arrange
             HtmlHelper helper = HtmlHelperFactory.Create();

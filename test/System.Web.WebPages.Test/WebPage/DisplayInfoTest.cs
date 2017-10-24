@@ -16,6 +16,7 @@ namespace System.Web.WebPages.Test
             Assert.ThrowsArgumentNull(() => new DisplayInfo("testPath", displayMode: null), "displayMode");
         }
 
+        [Fact]
         public void ConstructorSetsDisplayInfoProperties()
         {
             // Arrange
@@ -30,6 +31,7 @@ namespace System.Web.WebPages.Test
             Assert.Equal(displayMode, info.DisplayMode);
         }
 
+        [Fact]
         public void ConstructorSetsEmptyFilePath()
         {
             // Act & Assert

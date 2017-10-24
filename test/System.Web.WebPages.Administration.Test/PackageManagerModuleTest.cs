@@ -22,7 +22,7 @@ namespace System.Web.WebPages.Administration.Test
             sourceFile.Setup(c => c.ReadSources()).Callback(() => sourceFileCalled = true);
             ISet<WebPackageSource> set = new HashSet<WebPackageSource>();
 
-            // Act 
+            // Act
             PackageManagerModule.InitPackageSourceFile(sourceFile.Object, ref set);
 
             // Assert
@@ -42,9 +42,9 @@ namespace System.Web.WebPages.Administration.Test
             PackageManagerModule.InitPackageSourceFile(sourceFile.Object, ref set);
 
             Assert.NotNull(set);
-            Assert.Equal(set.Count(), 2);
-            Assert.Equal(set.First().Source, "http://go.microsoft.com/fwlink/?LinkID=226946");
-            Assert.Equal(set.Last().Source, "http://go.microsoft.com/fwlink/?LinkID=226948");
+            Assert.Equal(2, set.Count());
+            Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=226946", set.First().Source);
+            Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=226948", set.Last().Source);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace System.Web.WebPages.Administration.Test
 
             // Assert
             Assert.NotNull(set);
-            Assert.Equal(set.Count(), 2);
+            Assert.Equal(2, set.Count());
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace System.Web.WebPages.Administration.Test
             bool returnValue = PackageManagerModule.AddPackageSource(sourceFile.Object, set, new WebPackageSource(source: "http://www.microsoft.com/feed3", name: "Feed3"));
 
             // Assert
-            Assert.Equal(set.Count(), 3);
+            Assert.Equal(3, set.Count());
             Assert.True(writeCalled);
             Assert.True(returnValue);
         }
@@ -94,7 +94,7 @@ namespace System.Web.WebPages.Administration.Test
             bool returnValue = PackageManagerModule.AddPackageSource(sourceFile.Object, set, new WebPackageSource(source: "http://www.microsoft.com/feed1", name: "Feed1"));
 
             // Assert
-            Assert.Equal(set.Count(), 2);
+            Assert.Equal(2, set.Count());
             Assert.False(writeCalled);
             Assert.False(returnValue);
         }
@@ -112,8 +112,8 @@ namespace System.Web.WebPages.Administration.Test
             PackageManagerModule.RemovePackageSource(sourceFile.Object, set, "feed1");
 
             // Assert
-            Assert.Equal(set.Count(), 1);
-            Assert.False(set.Any(s => s.Name == "Feed1"));
+            Assert.Single(set);
+            Assert.DoesNotContain(set, s => s.Name == "Feed1");
             Assert.True(writeCalled);
         }
 
@@ -130,7 +130,7 @@ namespace System.Web.WebPages.Administration.Test
             PackageManagerModule.RemovePackageSource(sourceFile.Object, set, "feed3");
 
             // Assert
-            Assert.Equal(set.Count(), 2);
+            Assert.Equal(2, set.Count());
             Assert.False(writeCalled);
         }
 
