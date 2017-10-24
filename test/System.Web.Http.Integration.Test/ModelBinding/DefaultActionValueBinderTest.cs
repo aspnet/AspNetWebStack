@@ -63,7 +63,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             var result = context.ActionArguments;
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
             var item = Assert.IsType<ActionValueItem>(result["item"]);
             Assert.Equal(cust.FirstName, item.FirstName);
             Assert.Equal(cust.LastName, item.LastName);
@@ -170,8 +170,8 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> actionArgument = Assert.Single(actionContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionArgument.Value);
             Assert.Equal(5, deserializedActionValueItem.Id);
             Assert.Equal("queryFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("queryLastName", deserializedActionValueItem.LastName);
@@ -197,8 +197,8 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> actionArgument = Assert.Single(actionContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionArgument.Value);
             Assert.Equal(5, deserializedActionValueItem.Id);
             Assert.Equal("queryFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("queryLastName", deserializedActionValueItem.LastName);
@@ -224,8 +224,8 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(actionContext.ActionArguments);
+            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(keyValuePair.Value);
             ActionValueItem deserializedActionValueItem = items.First();
             Assert.Equal(5, deserializedActionValueItem.Id);
             Assert.Equal("queryFirstName", deserializedActionValueItem.FirstName);
@@ -252,9 +252,9 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             Assert.True(actionContext.ModelState.IsValid);
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(actionContext.ActionArguments.First().Value);
-            Assert.Equal(0, items.Count());     // expect unsuccessful bind but proves we don't loop infinitely
+            KeyValuePair<string, object> keyValuePair = Assert.Single(actionContext.ActionArguments);
+            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(keyValuePair.Value);
+            Assert.Empty(items);     // expect unsuccessful bind but proves we don't loop infinitely
         }
 
         [Fact]
@@ -276,8 +276,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(actionContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(5, deserializedActionValueItem.Id);
             Assert.Equal("queryFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("queryLastName", deserializedActionValueItem.LastName);
@@ -302,8 +302,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(actionContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(5, deserializedActionValueItem.Id);
             Assert.Equal("queryFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("queryLastName", deserializedActionValueItem.LastName);
@@ -473,8 +473,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
-            Assert.Equal(1, controllerContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(controllerContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(controllerContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(6, deserializedActionValueItem.Id);
             Assert.Equal("routeFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("routeLastName", deserializedActionValueItem.LastName);
@@ -504,8 +504,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(controllerContext, cancellationToken);
 
             // Assert
-            Assert.Equal(1, controllerContext.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(controllerContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(controllerContext.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsType<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(6, deserializedActionValueItem.Id);
             Assert.Equal("routeFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("routeLastName", deserializedActionValueItem.LastName);
@@ -532,8 +532,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(actionContext, cancellationToken);
 
             // Assert
-            Assert.Equal(1, actionContext.ActionArguments.Count);
-            Assert.Equal(cancellationToken, actionContext.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(actionContext.ActionArguments);
+            Assert.Equal(cancellationToken, keyValuePair.Value);
         }
         #endregion ControllerContext
 
@@ -558,8 +558,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("testLastName", deserializedActionValueItem.LastName);
@@ -606,8 +606,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("testLastName", deserializedActionValueItem.LastName);
@@ -656,8 +656,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(item.Id, deserializedActionValueItem.Id);
             Assert.Equal(item.FirstName, deserializedActionValueItem.FirstName);
             Assert.Equal(item.LastName, deserializedActionValueItem.LastName);
@@ -692,8 +692,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("testLastName", deserializedActionValueItem.LastName);
@@ -738,8 +738,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, CancellationToken.None);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            object deserializedActionValueItem = context.ActionArguments.First().Value;
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            object deserializedActionValueItem = keyValuePair.Value;
             Assert.Null(deserializedActionValueItem);
         }
 
@@ -795,8 +795,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("testLastName", deserializedActionValueItem.LastName);
@@ -820,8 +820,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem deserializedActionValueItem = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
             Assert.Equal("testLastName", deserializedActionValueItem.LastName);
@@ -848,8 +848,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            IEnumerable<ActionValueItem> items = Assert.IsAssignableFrom<IEnumerable<ActionValueItem>>(keyValuePair.Value);
             ActionValueItem deserializedActionValueItem = items.First();
             Assert.Equal(7, deserializedActionValueItem.Id);
             Assert.Equal("testFirstName", deserializedActionValueItem.FirstName);
@@ -879,8 +879,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, cancellationToken);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            JToken deserializedJsonValue = Assert.IsAssignableFrom<JToken>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            JToken deserializedJsonValue = Assert.IsAssignableFrom<JToken>(keyValuePair.Value);
             string deserializedJsonAsString = deserializedJsonValue.ToString(Formatting.None);
             Assert.Equal(json, deserializedJsonAsString);
         }
@@ -983,8 +983,8 @@ namespace System.Web.Http.ModelBinding
             await provider.BindValuesAsync(context, CancellationToken.None);
 
             // Assert
-            Assert.Equal(1, context.ActionArguments.Count);
-            ActionValueItem result = Assert.IsAssignableFrom<ActionValueItem>(context.ActionArguments.First().Value);
+            KeyValuePair<string, object> keyValuePair = Assert.Single(context.ActionArguments);
+            ActionValueItem result = Assert.IsAssignableFrom<ActionValueItem>(keyValuePair.Value);
             Assert.Equal(7, result.Id);
             Assert.Equal("testFirstName", result.FirstName);
             Assert.Equal("testLastName", result.LastName);

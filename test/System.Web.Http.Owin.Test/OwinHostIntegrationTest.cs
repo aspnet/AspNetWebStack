@@ -75,7 +75,9 @@ namespace System.Web.Http.Owin
             return CreateBaseUrl(port) + "/" + localPath;
         }
 
+#pragma warning disable xUnit1013 // Public method should be marked as test
         public void Configuration(IAppBuilder appBuilder)
+#pragma warning restore xUnit1013 // Public method should be marked as test
         {
             var config = new HttpConfiguration();
             config.Routes.MapHttpRoute("Default", "{controller}");

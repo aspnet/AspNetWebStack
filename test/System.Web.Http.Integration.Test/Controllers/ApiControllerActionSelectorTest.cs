@@ -237,7 +237,7 @@ namespace System.Web.Http
             context.ControllerDescriptor = new HttpControllerDescriptor(context.Configuration, "test", typeof(TestController));
             HttpActionDescriptor descriptor = ApiControllerHelper.SelectAction(context);
 
-            Assert.Equal<string>("PutUser", descriptor.ActionName);
+            Assert.Equal("PutUser", descriptor.ActionName);
 
             // When you have the HttpMethod attribute, the convention should not be applied.
             httpMethod = "PUT";
@@ -254,7 +254,7 @@ namespace System.Web.Http
             AssertAllowedHeaders(exception.Response, HttpMethod.Get, new HttpMethod("PATCH"), HttpMethod.Post, HttpMethod.Delete, HttpMethod.Head);
         }
 
-        // Verify response has all the methods in its Allow header. values are unsorted. 
+        // Verify response has all the methods in its Allow header. values are unsorted.
         private void AssertAllowedHeaders(HttpResponseMessage response, params HttpMethod[] allowedMethods)
         {
             foreach (var method in allowedMethods)

@@ -21,7 +21,7 @@ namespace System.Web.Http.SelfHost
                 return new TheoryDataSet<string, HttpBindingSecurityMode, HttpClientCredentialType>()
                 {
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Basic},
-                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Basic}, 
+                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Basic},
                 };
             }
         }
@@ -33,7 +33,7 @@ namespace System.Web.Http.SelfHost
                 return new TheoryDataSet<string, HttpBindingSecurityMode, HttpClientCredentialType>()
                 {
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Certificate},
-                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Certificate}, 
+                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Certificate},
                 };
             }
         }
@@ -49,7 +49,7 @@ namespace System.Web.Http.SelfHost
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Basic},
                     {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Basic},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Digest},
-                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Digest}, 
+                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Digest},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Ntlm},
                     {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Ntlm},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Windows},
@@ -69,7 +69,7 @@ namespace System.Web.Http.SelfHost
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Certificate},
                     {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Certificate},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Digest},
-                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Digest}, 
+                    {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Digest},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Ntlm},
                     {"https://localhost", HttpBindingSecurityMode.Transport, HttpClientCredentialType.Ntlm},
                     {"http://localhost", HttpBindingSecurityMode.TransportCredentialOnly, HttpClientCredentialType.Windows},
@@ -377,6 +377,7 @@ namespace System.Web.Http.SelfHost
         public void HttpSelfHostConfiguration_WrongClientCredentialType_WithUsernamePasswordValidator_Throws(string address, HttpBindingSecurityMode mode, HttpClientCredentialType clientCredentialType)
         {
             // Arrange
+            GC.KeepAlive(mode); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             HttpBinding binding = new HttpBinding();
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(address)
             {
@@ -397,6 +398,7 @@ namespace System.Web.Http.SelfHost
         public void HttpSelfHostConfiguration_CorrectClientCredentialType_WithUsernamePasswordValidator_Works(string address, HttpBindingSecurityMode mode, HttpClientCredentialType clientCredentialType)
         {
             // Arrange
+            GC.KeepAlive(mode); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             HttpBinding binding = new HttpBinding();
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(address)
             {
@@ -414,6 +416,7 @@ namespace System.Web.Http.SelfHost
         public void HttpSelfHostConfiguration_WrongClientCredentialType_WithX509CertificateValidator_Throws(string address, HttpBindingSecurityMode mode, HttpClientCredentialType clientCredentialType)
         {
             // Arrange
+            GC.KeepAlive(mode); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             HttpBinding binding = new HttpBinding();
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(address)
             {
@@ -434,6 +437,7 @@ namespace System.Web.Http.SelfHost
         public void HttpSelfHostConfiguration_CorrectClientCredentialType_WithX509CertificateValidator_Works(string address, HttpBindingSecurityMode mode, HttpClientCredentialType clientCredentialType)
         {
             // Arrange
+            GC.KeepAlive(mode); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             HttpBinding binding = new HttpBinding();
             HttpSelfHostConfiguration config = new HttpSelfHostConfiguration(address)
             {

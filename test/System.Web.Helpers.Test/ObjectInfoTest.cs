@@ -37,8 +37,8 @@ namespace System.Web.Helpers.Test
             visitor.Print(null);
 
             // Assert
-            Assert.Equal(1, visitor.Values.Count);
-            Assert.Equal("null", visitor.Values[0]);
+            string value = Assert.Single(visitor.Values);
+            Assert.Equal("null", value);
         }
 
         [Fact]
@@ -51,8 +51,8 @@ namespace System.Web.Helpers.Test
             visitor.Print(String.Empty);
 
             // Assert
-            Assert.Equal(1, visitor.Values.Count);
-            Assert.Equal(String.Empty, visitor.Values[0]);
+            string value = Assert.Single(visitor.Values);
+            Assert.Equal(String.Empty, value);
         }
 
         [Fact]
@@ -65,8 +65,8 @@ namespace System.Web.Helpers.Test
             visitor.Print(404);
 
             // Assert
-            Assert.Equal(1, visitor.Values.Count);
-            Assert.Equal("404", visitor.Values[0]);
+            string value = Assert.Single(visitor.Values);
+            Assert.Equal("404", value);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace System.Web.Helpers.Test
             // Assert
             foreach (var num in values)
             {
-                Assert.True(visitor.Values.Contains(num.ToString()));
+                Assert.Contains(num.ToString(), visitor.Values);
             }
         }
 
@@ -116,8 +116,8 @@ namespace System.Web.Helpers.Test
             // Assert
             for (int i = 0; i < values.Count; i++)
             {
-                Assert.True(visitor.Values.Contains(values[i].ToString()));
-                Assert.True(visitor.Indexes.Contains(i));
+                Assert.Contains(values[i].ToString(), visitor.Values);
+                Assert.Contains(i, visitor.Indexes);
             }
         }
 
@@ -134,8 +134,8 @@ namespace System.Web.Helpers.Test
             // Assert
             for (int i = 0; i < values.Length; i++)
             {
-                Assert.True(visitor.Values.Contains(values[i].ToString()));
-                Assert.True(visitor.Indexes.Contains(i));
+                Assert.Contains(values[i].ToString(), visitor.Values);
+                Assert.Contains(i, visitor.Indexes);
             }
         }
 
@@ -148,7 +148,7 @@ namespace System.Web.Helpers.Test
             values["a"] = "1";
             values["b"] = null;
 
-            // Act            
+            // Act
             visitor.Print(values);
 
             // Assert
@@ -165,7 +165,7 @@ namespace System.Web.Helpers.Test
                 MockObjectVisitor visitor = CreateObjectVisitor();
                 var dt = new DateTime(2001, 11, 20, 10, 30, 1);
 
-                // Act            
+                // Act
                 visitor.Print(dt);
 
                 // Assert
@@ -189,19 +189,19 @@ namespace System.Web.Helpers.Test
 
             using (new CultureReplacer("en-US"))
             {
-                // Act            
+                // Act
                 visitor.Print(person);
 
                 // Assert
                 Assert.Equal(9, visitor.Members.Count);
-                Assert.True(visitor.Members.Contains("double Age = 23.3"));
-                Assert.True(visitor.Members.Contains("string Name = David"));
-                Assert.True(visitor.Members.Contains("DateTime Dob = 11/19/1986 12:00:00 AM"));
-                Assert.True(visitor.Members.Contains("short Type = 1"));
-                Assert.True(visitor.Members.Contains("float Float = 0"));
-                Assert.True(visitor.Members.Contains("byte Byte = 0"));
-                Assert.True(visitor.Members.Contains("decimal Decimal = 0"));
-                Assert.True(visitor.Members.Contains("bool Bool = False"));
+                Assert.Contains("double Age = 23.3", visitor.Members);
+                Assert.Contains("string Name = David", visitor.Members);
+                Assert.Contains("DateTime Dob = 11/19/1986 12:00:00 AM", visitor.Members);
+                Assert.Contains("short Type = 1", visitor.Members);
+                Assert.Contains("float Float = 0", visitor.Members);
+                Assert.Contains("byte Byte = 0", visitor.Members);
+                Assert.Contains("decimal Decimal = 0", visitor.Members);
+                Assert.Contains("bool Bool = False", visitor.Members);
             }
         }
 
@@ -223,10 +223,10 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(node);
 
-            // Assert            
-            Assert.True(visitor.Members.Contains("string Name = David"));
-            Assert.True(visitor.Members.Contains(String.Format("double Age = {0}", 23.3)));
-            Assert.True(visitor.Members.Contains("PersonNode Next = Visited"));
+            // Assert
+            Assert.Contains("string Name = David", visitor.Members);
+            Assert.Contains(String.Format("double Age = {0}", 23.3), visitor.Members);
+            Assert.Contains("PersonNode Next = Visited", visitor.Members);
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(values);
 
-            // Assert            
+            // Assert
             Assert.Equal("Visited", visitor.Values[0]);
             Assert.Equal("Visited " + values.GetHashCode(), visitor.Visited[0]);
         }
@@ -256,7 +256,7 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(values);
 
-            // Assert            
+            // Assert
             Assert.Equal("Visited", visitor.Values[0]);
             Assert.Equal("Visited " + values.GetHashCode(), visitor.Visited[0]);
         }
@@ -275,9 +275,9 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(values);
 
-            // Assert            
-            Assert.True(visitor.Values.Contains("Visited"));
-            Assert.True(visitor.Visited.Contains("Visited " + nameValues.GetHashCode()));
+            // Assert
+            Assert.Contains("Visited", visitor.Values);
+            Assert.Contains("Visited " + nameValues.GetHashCode(), visitor.Visited);
         }
 
         [Fact]
@@ -291,7 +291,7 @@ namespace System.Web.Helpers.Test
             visitor.Print(cls);
 
             // Assert
-            Assert.Equal(0, visitor.Members.Count);
+            Assert.Empty(visitor.Members);
         }
 
         [Fact]
@@ -309,14 +309,14 @@ namespace System.Web.Helpers.Test
             {
                 if (i < 1000)
                 {
-                    Assert.True(visitor.Values.Contains(i.ToString()));
+                    Assert.Contains(i.ToString(), visitor.Values);
                 }
                 else
                 {
-                    Assert.False(visitor.Values.Contains(i.ToString()));
+                    Assert.DoesNotContain(i.ToString(), visitor.Values);
                 }
             }
-            Assert.True(visitor.Values.Contains("Limit Exceeded"));
+            Assert.Contains("Limit Exceeded", visitor.Values);
         }
 
         [Fact]
@@ -330,8 +330,8 @@ namespace System.Web.Helpers.Test
             visitor.Print(value);
 
             // Assert
-            Assert.True(visitor.Members.Contains("string Name = John"));
-            Assert.True(visitor.Members.Contains("int X = 1"));
+            Assert.Contains("string Name = John", visitor.Members);
+            Assert.Contains("int X = 1", visitor.Members);
         }
 
         [Fact]
@@ -346,9 +346,9 @@ namespace System.Web.Helpers.Test
             // Actt
             visitor.Print(value);
 
-            // Assert            
-            Assert.True(visitor.Members.Contains("string Foo = John"));
-            Assert.True(visitor.Members.Contains("int Bar = 1"));
+            // Assert
+            Assert.Contains("string Foo = John", visitor.Members);
+            Assert.Contains("int Bar = 1", visitor.Members);
         }
 
         [Fact]
@@ -364,10 +364,10 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(d);
 
-            // Assert                                   
-            Assert.True(visitor.Members.Contains("DynamicDictionary Cycle = Visited"));
-            Assert.True(visitor.Members.Contains("string Name = Foo"));
-            Assert.True(visitor.Members.Contains("Value = null"));
+            // Assert
+            Assert.Contains("DynamicDictionary Cycle = Visited", visitor.Members);
+            Assert.Contains("string Name = Foo", visitor.Members);
+            Assert.Contains("Value = null", visitor.Members);
         }
 
         [Fact]
@@ -383,7 +383,7 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(d);
 
-            // Assert                                   
+            // Assert
             Assert.False(visitor.Members.Any());
         }
 
@@ -425,7 +425,7 @@ namespace System.Web.Helpers.Test
             // Act
             visitor.Print(value);
 
-            // Assert            
+            // Assert
             Assert.Equal("int MyProperty = Property accessor 'MyProperty' on object 'System.Web.Helpers.Test.ObjectInfoTest+ClassWithPropertyThatThrowsException' threw the following exception:'Property that shows an exception'", visitor.Members[0]);
         }
 
@@ -457,7 +457,7 @@ namespace System.Web.Helpers.Test
             HtmlElement element = new HtmlElement("span");
             printer.PushElement(element);
 
-            // Act            
+            // Act
             printer.VisitConvertedValue('x', "x");
 
             // Assert
@@ -475,7 +475,7 @@ namespace System.Web.Helpers.Test
             HtmlElement element = new HtmlElement("span");
             printer.PushElement(element);
 
-            // Act            
+            // Act
             printer.VisitConvertedValue('\t', "\t");
 
             // Assert

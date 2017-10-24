@@ -29,7 +29,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             string responseString = await response.Content.ReadAsStringAsync();
-            Assert.Equal<string>("5", responseString);
+            Assert.Equal("5", responseString);
         }
 
     }

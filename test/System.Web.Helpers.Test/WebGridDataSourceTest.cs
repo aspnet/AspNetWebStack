@@ -196,7 +196,7 @@ namespace System.Web.Helpers.Test
             var rows = dataSource.GetRows(new SortInfo(), 0);
 
             // Assert
-            Assert.Equal(rows.Count, 2);
+            Assert.Equal(2, rows.Count);
             Assert.Equal(rows.ElementAt(0).Value.LastName, "B2");
             Assert.Equal(rows.ElementAt(1).Value.LastName, "A2");
         }
@@ -212,7 +212,7 @@ namespace System.Web.Helpers.Test
             var rows = dataSource.GetRows(new SortInfo { SortColumn = "LastName", SortDirection = SortDirection.Descending }, 0);
 
             // Assert
-            Assert.Equal(rows.Count, 2);
+            Assert.Equal(2, rows.Count);
             Assert.Equal(rows.ElementAt(0).Value.LastName, "E2");
             Assert.Equal(rows.ElementAt(1).Value.LastName, "D2");
         }
@@ -228,7 +228,7 @@ namespace System.Web.Helpers.Test
             var rows = dataSource.GetRows(new SortInfo(), 1);
 
             // Assert
-            Assert.Equal(rows.Count, 2);
+            Assert.Equal(2, rows.Count);
             Assert.Equal(rows.ElementAt(0).Value.LastName, "C2");
             Assert.Equal(rows.ElementAt(1).Value.LastName, "E2");
         }
@@ -244,7 +244,7 @@ namespace System.Web.Helpers.Test
             var rows = dataSource.GetRows(new SortInfo(), 0);
 
             // Assert
-            Assert.Equal(rows.Count, 2);
+            Assert.Equal(2, rows.Count);
             Assert.Equal(rows.ElementAt(0).Value, String.Empty);
             Assert.Null(rows.ElementAt(1).Value);
         }

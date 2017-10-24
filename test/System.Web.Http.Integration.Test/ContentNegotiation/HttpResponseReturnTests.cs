@@ -41,8 +41,8 @@ namespace System.Web.Http.ContentNegotiation
 
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>(expectedResponseValue, await response.Content.ReadAsStringAsync());
+            Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
@@ -59,8 +59,8 @@ namespace System.Web.Http.ContentNegotiation
 
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>(expectedResponseValue, await response.Content.ReadAsStringAsync());
+            Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
@@ -77,7 +77,7 @@ namespace System.Web.Http.ContentNegotiation
             Assert.Equal(new[] { "cookie1", "cookie2" }, list);
         }
 
-        public void SetupHost()
+        private void SetupHost()
         {
             baseAddress = "http://localhost/";
 

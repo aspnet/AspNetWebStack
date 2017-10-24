@@ -214,8 +214,8 @@ namespace System.Web.Helpers.Test
                 Assert.Equal(Encoding.UTF8, message.BodyEncoding);
                 Assert.Equal(Encoding.Unicode, message.HeadersEncoding);
 
-                Assert.True(message.Headers.AllKeys.Contains("header1"));
-                Assert.True(message.Attachments.Count == 1);
+                Assert.Contains("header1", message.Headers.AllKeys);
+                Assert.Single(message.Attachments);
             }
             finally
             {
@@ -254,7 +254,7 @@ namespace System.Web.Helpers.Test
             WebMail.AssignHeaderValues(message, headers);
 
             // Assert
-            Assert.Equal(1, message.Headers.Count);
+            Assert.Single(message.Headers);
             Assert.Equal("foo1", message.Headers.AllKeys[0]);
             Assert.Equal("bar1", message.Headers[0]);
         }
@@ -318,7 +318,7 @@ namespace System.Web.Helpers.Test
             Assert.Equal(MailPriority.Normal, message.Priority);
 
             // Assert we transparently set header values
-            Assert.Equal(1, message.Headers.Count);
+            Assert.Single(message.Headers);
             Assert.Equal("Priority", message.Headers.Keys[0]);
             Assert.Equal("invalid-value", message.Headers["Priority"]);
         }
@@ -334,10 +334,10 @@ namespace System.Web.Helpers.Test
             WebMail.AssignHeaderValues(message, headers);
 
             // Assert
-            Assert.Equal(0, message.To.Count);
+            Assert.Empty(message.To);
 
             // Assert we transparently set header values
-            Assert.Equal(1, message.Headers.Count);
+            Assert.Single(message.Headers);
             Assert.Equal("To", message.Headers.Keys[0]);
             Assert.Equal("not-#-email@@", message.Headers["To"]);
         }
@@ -353,10 +353,10 @@ namespace System.Web.Helpers.Test
             WebMail.AssignHeaderValues(message, headers);
 
             // Assert
-            Assert.Equal(0, message.To.Count);
+            Assert.Empty(message.To);
 
             // Assert we transparently set header values
-            Assert.Equal(1, message.Headers.Count);
+            Assert.Single(message.Headers);
             Assert.Equal("Priority", message.Headers.Keys[0]);
             Assert.Equal("false", message.Headers["Priority"]);
         }

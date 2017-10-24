@@ -27,7 +27,7 @@ namespace System.Web.Http.SelfHost
             this.SetupHost();
         }
 
-        public void SetupHost()
+        private void SetupHost()
         {
             baseAddress = String.Format("http://localhost/");
 
@@ -144,7 +144,7 @@ namespace System.Web.Http.SelfHost
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
             Assert.Equal("application/xml", response.Content.Headers.ContentType.MediaType);
-            Assert.True((await response.Content.ReadAsStringAsync()).Contains(expectedResponseValue));
+            Assert.Contains(expectedResponseValue, await response.Content.ReadAsStringAsync());
         }
 
         private static string GenerateHttpCollectionKeyInput(int num)

@@ -22,11 +22,11 @@ namespace System.Web.Helpers.Test
             var grid = new WebGrid(GetContext(), ajaxUpdateContainerId: "grid")
                 .Bind(new[] { new { First = "First", Second = "Second" } });
             string html = grid.Table().ToString();
-            Assert.True(html.Contains("<script"));
+            Assert.Contains("<script", html);
             html = grid.Table().ToString();
-            Assert.False(html.Contains("<script"));
+            Assert.DoesNotContain("<script", html);
             html = grid.Pager().ToString();
-            Assert.False(html.Contains("<script"));
+            Assert.DoesNotContain("<script", html);
         }
 
         [Fact]
@@ -35,16 +35,16 @@ namespace System.Web.Helpers.Test
             var grid = new WebGrid(GetContext(), ajaxUpdateCallback: "myCallback")
                 .Bind(new[] { new { First = "First", Second = "Second" } });
             string html = grid.Table().ToString();
-            Assert.False(html.Contains("<script"));
-            Assert.False(html.Contains("myCallback"));
+            Assert.DoesNotContain("<script", html);
+            Assert.DoesNotContain("myCallback", html);
         }
 
         [Fact]
         public void ColumnNameDefaultsExcludesIndexedProperties()
         {
             var grid = new WebGrid(GetContext()).Bind(new[] { "First", "Second" });
-            Assert.Equal(1, grid.ColumnNames.Count());
-            Assert.True(grid.ColumnNames.Contains("Length"));
+            Assert.Single(grid.ColumnNames);
+            Assert.Contains("Length", grid.ColumnNames);
         }
 
         [Fact]
@@ -52,8 +52,8 @@ namespace System.Web.Helpers.Test
         {
             var grid = new WebGrid(GetContext()).Bind(Dynamics(new { First = "First", Second = "Second" }));
             Assert.Equal(2, grid.ColumnNames.Count());
-            Assert.True(grid.ColumnNames.Contains("First"));
-            Assert.True(grid.ColumnNames.Contains("Second"));
+            Assert.Contains("First", grid.ColumnNames);
+            Assert.Contains("Second", grid.ColumnNames);
         }
 
         [Fact]
@@ -61,8 +61,8 @@ namespace System.Web.Helpers.Test
         {
             var grid = new WebGrid(GetContext()).Bind(new[] { new { First = "First", Second = "Second" } });
             Assert.Equal(2, grid.ColumnNames.Count());
-            Assert.True(grid.ColumnNames.Contains("First"));
-            Assert.True(grid.ColumnNames.Contains("Second"));
+            Assert.Contains("First", grid.ColumnNames);
+            Assert.Contains("Second", grid.ColumnNames);
         }
 
         [Fact]
@@ -84,15 +84,15 @@ namespace System.Web.Helpers.Test
                 }
             });
             Assert.Equal(7, grid.ColumnNames.Count());
-            Assert.True(grid.ColumnNames.Contains("DateTime"));
-            Assert.True(grid.ColumnNames.Contains("DateTimeOffset"));
-            Assert.True(grid.ColumnNames.Contains("Decimal"));
-            Assert.True(grid.ColumnNames.Contains("Guid"));
-            Assert.True(grid.ColumnNames.Contains("Int32"));
-            Assert.True(grid.ColumnNames.Contains("NullableInt32"));
-            Assert.True(grid.ColumnNames.Contains("TimeSpan"));
-            Assert.False(grid.ColumnNames.Contains("Object"));
-            Assert.False(grid.ColumnNames.Contains("Projection"));
+            Assert.Contains("DateTime", grid.ColumnNames);
+            Assert.Contains("DateTimeOffset", grid.ColumnNames);
+            Assert.Contains("Decimal", grid.ColumnNames);
+            Assert.Contains("Guid", grid.ColumnNames);
+            Assert.Contains("Int32", grid.ColumnNames);
+            Assert.Contains("NullableInt32", grid.ColumnNames);
+            Assert.Contains("TimeSpan", grid.ColumnNames);
+            Assert.DoesNotContain("Object", grid.ColumnNames);
+            Assert.DoesNotContain("Projection", grid.ColumnNames);
         }
 
         [Fact]
@@ -780,7 +780,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             string html = grid.Pager().ToString();
-            Assert.True(html.Contains("<script"));
+            Assert.Contains("<script", html);
         }
 
         [Fact]
@@ -793,8 +793,8 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             string html = grid.Pager().ToString();
-            Assert.True(html.Contains("<script"));
-            Assert.True(html.Contains("data-swhgcallback=\"myCallback\""));
+            Assert.Contains("<script", html);
+            Assert.Contains("data-swhgcallback=\"myCallback\"", html);
         }
 
         [Fact]
@@ -1952,8 +1952,8 @@ namespace System.Web.Helpers.Test
                 new { First = "First", Second = "Second" }
             });
             string html = grid.Table().ToString();
-            Assert.True(html.Contains("<script"));
-            Assert.True(html.Contains("swhgajax=\"true\""));
+            Assert.Contains("<script", html);
+            Assert.Contains("swhgajax=\"true\"", html);
         }
 
         [Fact]
@@ -1964,8 +1964,8 @@ namespace System.Web.Helpers.Test
                 new { First = "First", Second = "Second" }
             });
             string html = grid.Table().ToString();
-            Assert.True(html.Contains("<script"));
-            Assert.True(html.Contains("myCallback"));
+            Assert.Contains("<script", html);
+            Assert.Contains("myCallback", html);
         }
 
         [Fact]
@@ -1976,8 +1976,8 @@ namespace System.Web.Helpers.Test
                 new { First = "First", Second = "Second" }
             });
             string html = grid.Table().ToString();
-            Assert.True(html.Contains(@"&#39;grid&#39;"));
-            Assert.True(html.Contains(@"&#39;myCallback&#39;"));
+            Assert.Contains(@"&#39;grid&#39;", html);
+            Assert.Contains(@"&#39;myCallback&#39;", html);
         }
 
         [Fact]
@@ -2101,10 +2101,10 @@ namespace System.Web.Helpers.Test
 
             // Assert
             Assert.NotNull(html);
-            Assert.Equal(grid.Rows[0]["Salary"], 20);
-            Assert.Equal(grid.Rows[1]["Salary"], 15);
-            Assert.Equal(grid.Rows[2]["Salary"], 10);
-            Assert.Equal(grid.Rows[3]["Salary"], 5);
+            Assert.Equal(20, grid.Rows[0]["Salary"]);
+            Assert.Equal(15, grid.Rows[1]["Salary"]);
+            Assert.Equal(10, grid.Rows[2]["Salary"]);
+            Assert.Equal(5, grid.Rows[3]["Salary"]);
         }
 
         [Fact]
@@ -2142,9 +2142,9 @@ namespace System.Web.Helpers.Test
             var html = grid.Table();
 
             // Assert
-            Assert.Equal(grid.Rows[0]["Salary"], 5);
-            Assert.Equal(grid.Rows[1]["Salary"], 10);
-            Assert.Equal(grid.Rows[2]["Salary"], 15);
+            Assert.Equal(5, grid.Rows[0]["Salary"]);
+            Assert.Equal(10, grid.Rows[1]["Salary"]);
+            Assert.Equal(15, grid.Rows[2]["Salary"]);
 
             UnitTestHelper.AssertEqualsIgnoreWhitespace(
                 "<table><thead><tr>"
@@ -2172,9 +2172,9 @@ namespace System.Web.Helpers.Test
             var html = grid.Table();
 
             // Assert
-            Assert.Equal(grid.Rows[0]["Salary"], 5);
-            Assert.Equal(grid.Rows[1]["Salary"], 10);
-            Assert.Equal(grid.Rows[2]["Salary"], 15);
+            Assert.Equal(5, grid.Rows[0]["Salary"]);
+            Assert.Equal(10, grid.Rows[1]["Salary"]);
+            Assert.Equal(15, grid.Rows[2]["Salary"]);
 
             UnitTestHelper.AssertEqualsIgnoreWhitespace(
                 "<table><thead><tr>"

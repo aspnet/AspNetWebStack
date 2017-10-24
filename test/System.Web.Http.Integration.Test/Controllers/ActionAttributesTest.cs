@@ -27,7 +27,7 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(ActionAttributeTestController));
             HttpActionDescriptor descriptor = ApiControllerHelper.SelectAction(controllerContext);
 
-            Assert.Equal<string>(expectedActionName, descriptor.ActionName);
+            Assert.Equal(expectedActionName, descriptor.ActionName);
         }
 
         [Theory]
@@ -63,7 +63,7 @@ namespace System.Web.Http
         [InlineData("PUT", "ActionAttributeTest/AddUsers")] // id is required on this action, so url is invalid. 404
         [InlineData("WHATEVER", "ActionAttributeTest/AddUsers")] // id is required on this action, so url is invalid. 404
         [InlineData("GET", "ActionAttributeTest/Users")] // key param is required, bad url. 404
-        [InlineData("POST", "ActionAttributeTest/Users")] // key param is required, bad url. 404 
+        [InlineData("POST", "ActionAttributeTest/Users")] // key param is required, bad url. 404
         [InlineData("PATCHING", "ActionAttributeTest/Users")] // key param is required, bad url. 404
         [InlineData("NonAction", "ActionAttributeTest/NonAction")] // NonAction, 404
         [InlineData("GET", "ActionAttributeTest/NonAction")] // NonAction, 404
@@ -86,7 +86,7 @@ namespace System.Web.Http
 
             // Error message might be ApiControllerActionSelector_ActionNameNotFound or ApiControllerActionSelector_ActionNotFound
             string actualMessage = (string)((HttpError)content.Value)["MessageDetail"];
-            Assert.True(actualMessage.StartsWith("No action was found on the controller 'ActionAttributeTestController' that matches"));
+            Assert.StartsWith("No action was found on the controller 'ActionAttributeTestController' that matches", actualMessage);
         }
 
         [Theory]
@@ -115,7 +115,7 @@ namespace System.Web.Http
             controllerContext.ControllerDescriptor = new HttpControllerDescriptor(controllerContext.Configuration, "test", typeof(ActionAttributeTestController));
             HttpActionDescriptor descriptor = ApiControllerHelper.SelectAction(controllerContext);
 
-            Assert.Equal<string>(expectedActionName, descriptor.ActionName);
+            Assert.Equal(expectedActionName, descriptor.ActionName);
         }
 
         [Theory]

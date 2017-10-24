@@ -69,8 +69,8 @@ namespace System.Web.Http.ApiExplorer
 
             ApiDescription description = explorer.ApiDescriptions.FirstOrDefault(desc => desc.ActionDescriptor.ActionName == "GetWithEnumParameter");
             Assert.NotNull(description);
-            Assert.Equal(1, description.ParameterDescriptions.Count);
-            Assert.Equal(ApiParameterSource.FromUri, description.ParameterDescriptions[0].Source);
+            ApiParameterDescription parameterDescription = Assert.Single(description.ParameterDescriptions);
+            Assert.Equal(ApiParameterSource.FromUri, parameterDescription.Source);
             Assert.Equal("EnumParameterOverloads?scope={scope}", description.RelativePath);
 
             description = explorer.ApiDescriptions.FirstOrDefault(desc => desc.ActionDescriptor.ActionName == "GetWithTwoEnumParameters");
@@ -82,8 +82,8 @@ namespace System.Web.Http.ApiExplorer
 
             description = explorer.ApiDescriptions.FirstOrDefault(desc => desc.ActionDescriptor.ActionName == "GetWithNullableEnumParameter");
             Assert.NotNull(description);
-            Assert.Equal(1, description.ParameterDescriptions.Count);
-            Assert.Equal(ApiParameterSource.FromUri, description.ParameterDescriptions[0].Source);
+            parameterDescription = Assert.Single(description.ParameterDescriptions);
+            Assert.Equal(ApiParameterSource.FromUri, parameterDescription.Source);
             Assert.Equal("EnumParameterOverloads?level={level}", description.RelativePath);
         }
 
@@ -153,7 +153,7 @@ namespace System.Web.Http.ApiExplorer
             public string Value { get; set; }
         }
 
-        // We only support complex types whose all of their individual 
+        // We only support complex types whose all of their individual
         // properties can be converted from string.
         public class NonDescribable
         {

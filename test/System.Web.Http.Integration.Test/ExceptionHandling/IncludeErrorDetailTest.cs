@@ -97,7 +97,7 @@ namespace System.Web.Http
         {
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             JObject json = JToken.Parse(await response.Content.ReadAsStringAsync()) as JObject;
-            Assert.Equal(1, json.Count);
+            Assert.Single(json);
             string errorMessage = ((JValue)json["Message"]).ToString();
             Assert.Equal("An error has occurred.", errorMessage);
         }

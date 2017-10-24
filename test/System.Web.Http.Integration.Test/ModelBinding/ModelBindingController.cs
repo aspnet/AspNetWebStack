@@ -65,7 +65,6 @@ namespace System.Web.Http.ModelBinding
 
         public Task<int> GetIntAsync(int value, CancellationToken token)
         {
-            Assert.NotNull(token);
             TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
             tcs.TrySetResult(value);
             return tcs.Task;
@@ -236,8 +235,8 @@ namespace System.Web.Http.ModelBinding
         {
             Assert.True(x != null, "Expected ModelBindOrder cannot be null.");
             Assert.True(y != null, "Actual ModelBindOrder was null.");
-            Assert.Equal<string>(x.ItemName, y.ItemName);
-            Assert.Equal<int>(x.Quantity, y.Quantity);
+            Assert.Equal(x.ItemName, y.ItemName);
+            Assert.Equal(x.Quantity, y.Quantity);
 
             if (x.Customer != null)
             {

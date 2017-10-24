@@ -48,7 +48,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             string[] allowMethods = headers.GetValues("Access-Control-Allow-Methods").FirstOrDefault().Split(',');
             Assert.Contains("DELETE", allowMethods);
             Assert.Contains("PUT", allowMethods);
@@ -64,7 +64,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             string[] exposedHeaders = headers.GetValues("Access-Control-Expose-Headers").FirstOrDefault().Split(',');
             Assert.Contains("baz", exposedHeaders);
         }
@@ -80,7 +80,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             string[] allowHeaders = headers.GetValues("Access-Control-Allow-Headers").FirstOrDefault().Split(',');
             Assert.Contains("foo", allowHeaders);
             Assert.Contains("bar", allowHeaders);
@@ -98,7 +98,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             Assert.Equal("true", headers.GetValues("Access-Control-Allow-Credentials").FirstOrDefault());
         }
 
@@ -114,7 +114,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             Assert.Equal("*", headers.GetValues("Access-Control-Allow-Origin").FirstOrDefault());
         }
 
@@ -130,7 +130,7 @@ namespace System.Web.Cors.Test.WebAPI
             response.WriteCorsHeaders(corsResult);
             HttpResponseHeaders headers = response.Headers;
 
-            Assert.Equal(1, headers.Count());
+            Assert.Single(headers);
             Assert.Equal("10", headers.GetValues("Access-Control-Max-Age").FirstOrDefault());
         }
     }

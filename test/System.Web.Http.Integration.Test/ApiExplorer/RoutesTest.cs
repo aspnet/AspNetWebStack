@@ -20,7 +20,7 @@ namespace System.Web.Http.ApiExplorer
             IApiExplorer explorer = config.Services.GetApiExplorer();
 
             Assert.NotNull(explorer);
-            Assert.Equal(0, explorer.ApiDescriptions.Count);
+            Assert.Empty(explorer.ApiDescriptions);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace System.Web.Http.ApiExplorer
             IApiExplorer explorer = config.Services.GetApiExplorer();
 
             Assert.NotNull(explorer);
-            Assert.Equal(0, explorer.ApiDescriptions.Count);
+            Assert.Empty(explorer.ApiDescriptions);
         }
 
         public static IEnumerable<object[]> VerifyDescription_OnDefaultRoute_PropertyData

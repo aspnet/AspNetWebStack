@@ -21,7 +21,7 @@ namespace System.Web.Helpers.Test
             bool result = DynamicHelper.TryGetMemberValue(dynamic, mockMemberBinder, out value);
 
             // Assert
-            Assert.Equal(value, "Bar");
+            Assert.Equal("Bar", value);
         }
 
         private class MockMemberBinder : GetMemberBinder

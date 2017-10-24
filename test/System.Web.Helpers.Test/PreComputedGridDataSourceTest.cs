@@ -27,13 +27,13 @@ namespace System.Web.Helpers.Test
             var grid = new WebGrid(GetContext());
             var dataSource = new PreComputedGridDataSource(grid: grid, values: Enumerable.Range(0, 10).Cast<dynamic>(), totalRows: 10);
 
-            // Act 
+            // Act
             var rows = dataSource.GetRows(new SortInfo { SortColumn = String.Empty }, 0);
 
             // Assert
-            Assert.Equal(rows.Count, 10);
-            Assert.Equal(rows.First().Value, 0);
-            Assert.Equal(rows.Last().Value, 9);
+            Assert.Equal(10, rows.Count);
+            Assert.Equal(0, rows.First().Value);
+            Assert.Equal(9, rows.Last().Value);
         }
 
         private HttpContextBase GetContext()

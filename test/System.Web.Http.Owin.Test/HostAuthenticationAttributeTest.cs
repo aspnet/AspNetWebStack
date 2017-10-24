@@ -135,8 +135,7 @@ namespace System.Web.Http.Owin
             IAuthenticationFilter innerFilter = product.InnerFilter;
 
             // Assert
-            Assert.IsType<HostAuthenticationFilter>(innerFilter);
-            HostAuthenticationFilter typedInnerFilter = (HostAuthenticationFilter)innerFilter;
+            HostAuthenticationFilter typedInnerFilter = Assert.IsType<HostAuthenticationFilter>(innerFilter);
             Assert.Same(expectedAuthenticationType, typedInnerFilter.AuthenticationType);
         }
 

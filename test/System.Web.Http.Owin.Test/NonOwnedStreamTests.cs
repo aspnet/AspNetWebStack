@@ -109,7 +109,7 @@ namespace System.Web.Http.Owin
                 bool canRead = product.CanRead;
 
                 // Assert
-                Assert.Equal(false, canRead);
+                Assert.False(canRead);
             }
         }
 

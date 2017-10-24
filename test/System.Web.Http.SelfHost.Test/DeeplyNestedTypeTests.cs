@@ -25,7 +25,7 @@ namespace System.Web.Http.SelfHost
             this.SetupHost();
         }
 
-        public void SetupHost()
+        private void SetupHost()
         {
             baseAddress = String.Format("http://localhost/");
 
