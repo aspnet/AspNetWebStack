@@ -67,8 +67,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(converted);
-            Assert.Single(converted);
-            Assert.Equal("42", converted[0]);
+            string value = Assert.Single(converted);
+            Assert.Equal("42", value);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace System.Web.Mvc.Test
             DefaultModelBinderTest.StringContainer returned = (DefaultModelBinderTest.StringContainer)vpr.ConvertTo(typeof(DefaultModelBinderTest.StringContainer));
 
             // Assert
-            Assert.Equal(returned.Value, "someValue (fr-FR)");
+            Assert.Equal("someValue (fr-FR)", returned.Value);
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace System.Web.Mvc.Test
             string returned = (string)vpr.ConvertTo(typeof(string));
 
             // Assert
-            Assert.Equal(returned, "someValue (en-US)");
+            Assert.Equal("someValue (en-US)", returned);
         }
 
         [Fact]
@@ -216,7 +216,7 @@ namespace System.Web.Mvc.Test
             object outValue = vpr.ConvertTo(typeof(MyEnum));
 
             // Assert
-            Assert.Equal(outValue, MyEnum.Value1);
+            Assert.Equal(MyEnum.Value1, outValue);
         }
 
         [Fact]
@@ -229,7 +229,7 @@ namespace System.Web.Mvc.Test
             object outValue = vpr.ConvertTo(typeof(MyEnum));
 
             // Assert
-            Assert.Equal(outValue, MyEnum.Value1);
+            Assert.Equal(MyEnum.Value1, outValue);
         }
 
         [Fact]
@@ -242,7 +242,7 @@ namespace System.Web.Mvc.Test
             object outValue = vpr.ConvertTo(typeof(MyEnum));
 
             // Assert
-            Assert.Equal(outValue, MyEnum.Value1);
+            Assert.Equal(MyEnum.Value1, outValue);
         }
 
         [Fact]
@@ -403,7 +403,7 @@ namespace System.Web.Mvc.Test
             DefaultModelBinderTest.StringContainer returned = (DefaultModelBinderTest.StringContainer)vpr.ConvertTo(typeof(DefaultModelBinderTest.StringContainer), gbCulture);
 
             // Assert
-            Assert.Equal(returned.Value, "someValue (en-GB)");
+            Assert.Equal("someValue (en-GB)", returned.Value);
         }
 
         [Fact]

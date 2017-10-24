@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Web.Razor;
 using Microsoft.TestCommon;
@@ -37,7 +38,7 @@ namespace System.Web.Mvc.Razor.Test
             var generator = new MvcCSharpRazorCodeGenerator("FooClass", "Root.Namespace", "SomeSourceFile.cshtml", mockHost.Object);
 
             // Assert
-            Assert.Equal(0, generator.Context.GeneratedClass.BaseTypes.Count);
+            Assert.Empty(generator.Context.GeneratedClass.BaseTypes);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace System.Web.Mvc.Razor.Test
             var generator = new MvcCSharpRazorCodeGenerator("FooClass", "Root.Namespace", "_viewStart.cshtml", mockHost.Object);
 
             // Assert
-            Assert.Equal(0, generator.Context.GeneratedClass.BaseTypes.Count);
+            Assert.Empty(generator.Context.GeneratedClass.BaseTypes);
         }
 
         [Fact]
@@ -65,8 +66,8 @@ namespace System.Web.Mvc.Razor.Test
             var generator = new MvcCSharpRazorCodeGenerator("FooClass", "Root.Namespace", "SomeSourceFile.cshtml", mockHost.Object);
 
             // Assert
-            Assert.Equal(1, generator.Context.GeneratedClass.BaseTypes.Count);
-            Assert.Equal("System.Web.Mvc.WebViewPage<dynamic>", generator.Context.GeneratedClass.BaseTypes[0].BaseType);
+            var baseType = Assert.IsType<CodeTypeReference>(Assert.Single(generator.Context.GeneratedClass.BaseTypes));
+            Assert.Equal("System.Web.Mvc.WebViewPage<dynamic>", baseType.BaseType);
         }
     }
 }

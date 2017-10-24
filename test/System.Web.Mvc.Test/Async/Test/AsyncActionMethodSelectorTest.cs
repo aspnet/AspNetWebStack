@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Mvc.Routing;
-using System.Web.Routing;
-using System.Web.Routing.Test;
 using Microsoft.TestCommon;
 using Moq;
 
@@ -239,23 +236,23 @@ namespace System.Web.Mvc.Async.Test
             // Assert
             Assert.Equal(6, selector.NonAliasedMethods.Count);
 
-            List<MethodInfo> sortedMethods = selector.NonAliasedMethods["foo"].OrderBy(methodInfo => methodInfo.GetParameters().Length).ToList();
+            List<MethodInfo> sortedMethods = selector.NonAliasedMethods["foo"].OrderBy(method => method.GetParameters().Length).ToList();
             Assert.Equal("Foo", sortedMethods[0].Name);
             Assert.Empty(sortedMethods[0].GetParameters());
             Assert.Equal("Foo", sortedMethods[1].Name);
             Assert.Equal(typeof(string), sortedMethods[1].GetParameters()[0].ParameterType);
 
-            Assert.Equal(1, selector.NonAliasedMethods["EventPattern"].Count());
-            Assert.Equal("EventPatternAsync", selector.NonAliasedMethods["EventPattern"].First().Name);
-            Assert.Equal(1, selector.NonAliasedMethods["EventPatternAmbiguous"].Count());
-            Assert.Equal("EventPatternAmbiguousAsync", selector.NonAliasedMethods["EventPatternAmbiguous"].First().Name);
-            Assert.Equal(1, selector.NonAliasedMethods["EventPatternWithoutCompletionMethod"].Count());
-            Assert.Equal("EventPatternWithoutCompletionMethodAsync", selector.NonAliasedMethods["EventPatternWithoutCompletionMethod"].First().Name);
+            MethodInfo methodInfo = Assert.Single(selector.NonAliasedMethods["EventPattern"]);
+            Assert.Equal("EventPatternAsync", methodInfo.Name);
+            methodInfo = Assert.Single(selector.NonAliasedMethods["EventPatternAmbiguous"]);
+            Assert.Equal("EventPatternAmbiguousAsync", methodInfo.Name);
+            methodInfo = Assert.Single(selector.NonAliasedMethods["EventPatternWithoutCompletionMethod"]);
+            Assert.Equal("EventPatternWithoutCompletionMethodAsync", methodInfo.Name);
 
-            Assert.Equal(1, selector.NonAliasedMethods["TaskPattern"].Count());
-            Assert.Equal("TaskPattern", selector.NonAliasedMethods["TaskPattern"].First().Name);
-            Assert.Equal(1, selector.NonAliasedMethods["GenericTaskPattern"].Count());
-            Assert.Equal("GenericTaskPattern", selector.NonAliasedMethods["GenericTaskPattern"].First().Name);
+            methodInfo = Assert.Single(selector.NonAliasedMethods["TaskPattern"]);
+            Assert.Equal("TaskPattern", methodInfo.Name);
+            methodInfo = Assert.Single(selector.NonAliasedMethods["GenericTaskPattern"]);
+            Assert.Equal("GenericTaskPattern", methodInfo.Name);
         }
 
         private class MethodLocatorController : Controller

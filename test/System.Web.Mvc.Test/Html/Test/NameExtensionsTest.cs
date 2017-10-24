@@ -72,7 +72,7 @@ namespace System.Web.Mvc.Html.Test
             Assert.Equal("prefix.IntValue", html.NameFor(m => m.IntValue).ToHtmlString());
             Assert.Equal("prefix.Inner.StringValue", html.NameFor(m => m.Inner.StringValue).ToHtmlString());
         }
-        
+
         // Regression test for codeplex #554 - editor templates for collections would add an extra dot to the
         // generated name.
         [Fact]
@@ -91,11 +91,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("IdEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void Id_IdEncodes_PropertyName(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("IdEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void Id_IdEncodes_PropertyName(string text, string expectedText)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -109,11 +106,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("IdEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void IdHelpers_IdEncode_Prefix(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("IdEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void IdHelpers_IdEncode_Prefix(string text, string expectedText)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -133,11 +127,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void Name_AttributeEncodes_PropertyName(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void Name_AttributeEncodes_PropertyName(string text, string expectedText)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -151,11 +142,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void NameHelpers_AttributeEncode_Prefix(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void NameHelpers_AttributeEncode_Prefix(string text, string expectedText)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);

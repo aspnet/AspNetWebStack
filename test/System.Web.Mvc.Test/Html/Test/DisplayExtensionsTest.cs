@@ -150,11 +150,8 @@ namespace System.Web.Mvc.Html.Test
 
         // Inconsistent but long-standing behavior.
         [Theory]
-        [PropertyData("HtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ObjectTemplate_DoesNotEncodeNullDisplayText(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("HtmlEncodedData_JustText", PropertyType = typeof(EncodedDataSets))]
+        public void ObjectTemplate_DoesNotEncodeNullDisplayText(string text)
         {
             // Arrange
             var viewData = new ViewDataDictionary<ObjectTemplateModel>(model: null);

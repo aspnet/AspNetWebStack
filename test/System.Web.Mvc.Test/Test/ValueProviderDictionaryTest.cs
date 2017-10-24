@@ -3,7 +3,6 @@
 
 using System.Collections.Specialized;
 using System.Globalization;
-using System.Threading;
 using System.Web.Routing;
 using System.Web.TestUtil;
 using Microsoft.TestCommon;
@@ -110,9 +109,9 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.NotNull(result);
             Assert.Equal("fooFromForm", result.AttemptedValue);
-            string[] stringValue = Assert.IsType<string[]>(result.RawValue);
-            Assert.Single(stringValue);
-            Assert.Equal("fooFromForm", stringValue[0]);
+            string[] stringValues = Assert.IsType<string[]>(result.RawValue);
+            string stringValue = Assert.Single(stringValues);
+            Assert.Equal("fooFromForm", stringValue);
             Assert.Equal(CultureInfo.GetCultureInfo("fr-FR"), result.Culture);
         }
 
@@ -132,12 +131,13 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.NotNull(result);
             Assert.Equal("bazFromQueryString", result.AttemptedValue);
-            string[] stringValue = Assert.IsType<string[]>(result.RawValue);
-            Assert.Single(stringValue);
-            Assert.Equal("bazFromQueryString", stringValue[0]);
+            string[] stringValues = Assert.IsType<string[]>(result.RawValue);
+            string stringValue = Assert.Single(stringValues);
+            Assert.Equal("bazFromQueryString", stringValue);
             Assert.Equal(CultureInfo.InvariantCulture, result.Culture);
         }
 
+        [Fact]
         public void ValueFromRoute()
         {
             // Arrange

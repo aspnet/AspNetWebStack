@@ -138,10 +138,10 @@ namespace System.Web.Mvc.Test
             Assert.Equal(3, deserializedDict.Count);
 
             ModelState foo = deserializedDict["FOO"];
-            Assert.IsType<InvalidOperationException>(foo.Errors[0].Exception);
-            Assert.Equal("Some invalid operation.", foo.Errors[0].Exception.Message);
-            Assert.IsType<InvalidOperationException>(foo.Errors[1].Exception);
-            Assert.Equal("Some other invalid operation.", foo.Errors[1].Exception.Message);
+            InvalidOperationException exception0 = Assert.IsType<InvalidOperationException>(foo.Errors[0].Exception);
+            Assert.Equal("Some invalid operation.", exception0.Message);
+            InvalidOperationException exception1 = Assert.IsType<InvalidOperationException>(foo.Errors[1].Exception);
+            Assert.Equal("Some other invalid operation.", exception1.Message);
 
             ModelState bar = deserializedDict["BAR"];
             Assert.Equal("Some exception text.", bar.Errors[0].ErrorMessage);
@@ -317,8 +317,8 @@ namespace System.Web.Mvc.Test
             Assert.Single(dictionary);
             ModelState modelState = dictionary["some key"];
 
-            Assert.Single(modelState.Errors);
-            Assert.Equal("some error", modelState.Errors[0].ErrorMessage);
+            ModelError error = Assert.Single(modelState.Errors);
+            Assert.Equal("some error", error.ErrorMessage);
             Assert.Equal("some value", modelState.Value.ConvertTo(typeof(string)));
         }
     }

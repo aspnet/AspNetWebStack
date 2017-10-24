@@ -54,14 +54,14 @@ namespace System.ComponentModel
         public void AttributeListContainsWrappedTrue()
         {
             Attribute presentAttribute = _collection[2];
-            Assert.True(_list.Contains(presentAttribute));
+            Assert.Contains(presentAttribute, _list);
         }
 
         [Fact]
         public void AttributeListContainsMissingFalse()
         {
             Attribute missingAttribute = new MissingAttribute();
-            Assert.False(_list.Contains(missingAttribute));
+            Assert.DoesNotContain(missingAttribute, _list);
         }
 
         [Fact]

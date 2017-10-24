@@ -26,7 +26,7 @@ namespace System.Web.Mvc.Test
         public void FormatPropertyForClientValidationPrependsStarDot()
         {
             string prepended = CompareAttribute.FormatPropertyForClientValidation("test");
-            Assert.Equal(prepended, "*.test");
+            Assert.Equal("*.test", prepended);
         }
 
         [Fact]
@@ -110,9 +110,8 @@ namespace System.Web.Mvc.Test
             CompareAttribute attr = new CompareAttribute("CompareProperty");
             List<ModelClientValidationRule> ruleList = new List<ModelClientValidationRule>(attr.GetClientValidationRules(metadata.Object, null));
 
-            Assert.Equal(ruleList.Count, 1);
-
-            ModelClientValidationEqualToRule actualRule = ruleList[0] as ModelClientValidationEqualToRule;
+            ModelClientValidationRule rule = Assert.Single(ruleList);
+            ModelClientValidationEqualToRule actualRule = Assert.IsType<ModelClientValidationEqualToRule>(rule);
 
             Assert.Equal("'CurrentProperty' and 'CompareProperty' do not match.", actualRule.ErrorMessage);
             Assert.Equal("equalto", actualRule.ValidationType);
@@ -129,9 +128,8 @@ namespace System.Web.Mvc.Test
             CompareAttribute attr = new CompareAttribute("ComparePropertyWithDisplayName");
             List<ModelClientValidationRule> ruleList = new List<ModelClientValidationRule>(attr.GetClientValidationRules(metadata, null));
 
-            Assert.Equal(ruleList.Count, 1);
-
-            ModelClientValidationEqualToRule actualRule = ruleList[0] as ModelClientValidationEqualToRule;
+            ModelClientValidationRule rule = Assert.Single(ruleList);
+            ModelClientValidationEqualToRule actualRule = Assert.IsType<ModelClientValidationEqualToRule>(rule);
 
             Assert.Equal("'CurrentProperty' and 'DisplayName' do not match.", actualRule.ErrorMessage);
             Assert.Equal("equalto", actualRule.ValidationType);
@@ -149,8 +147,8 @@ namespace System.Web.Mvc.Test
             attr.OtherPropertyDisplayName = "SetDisplayName";
 
             List<ModelClientValidationRule> ruleList = new List<ModelClientValidationRule>(attr.GetClientValidationRules(metadata, null));
-            Assert.Equal(ruleList.Count, 1);
-            ModelClientValidationEqualToRule actualRule = ruleList[0] as ModelClientValidationEqualToRule;
+            ModelClientValidationRule rule = Assert.Single(ruleList);
+            ModelClientValidationEqualToRule actualRule = Assert.IsType<ModelClientValidationEqualToRule>(rule);
 
             Assert.Equal("'CurrentProperty' and 'SetDisplayName' do not match.", actualRule.ErrorMessage);
         }

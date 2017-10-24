@@ -79,7 +79,7 @@ namespace System.Web.Mvc.Ajax.Test
             form.Dispose();
 
             // Assert
-            Assert.True(writer.ToString().EndsWith("</form>"));
+            Assert.EndsWith("</form>", writer.ToString());
         }
 
         // GlobalizationScript

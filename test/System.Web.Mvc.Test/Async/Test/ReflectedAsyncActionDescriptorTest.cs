@@ -192,8 +192,8 @@ namespace System.Web.Mvc.Async.Test
             object[] attributes = ad.GetCustomAttributes(true /* inherit */);
 
             // Assert
-            Assert.Single(attributes);
-            Assert.Equal(typeof(AuthorizeAttribute), attributes[0].GetType());
+            object attribute = Assert.Single(attributes);
+            Assert.IsType<AuthorizeAttribute>(attribute);
         }
 
         [Fact]
@@ -225,9 +225,9 @@ namespace System.Web.Mvc.Async.Test
             // Assert
             Assert.NotSame(pDescsFirstCall, pDescsSecondCall);
             Assert.Equal(pDescsFirstCall, pDescsSecondCall);
-            Assert.Single(pDescsFirstCall);
 
-            ReflectedParameterDescriptor pDesc = pDescsFirstCall[0] as ReflectedParameterDescriptor;
+            ParameterDescriptor parameterDescriptor = Assert.Single(pDescsFirstCall);
+            ReflectedParameterDescriptor pDesc = Assert.IsType<ReflectedParameterDescriptor>(parameterDescriptor);
 
             Assert.NotNull(pDesc);
             Assert.Same(ad, pDesc.ActionDescriptor);

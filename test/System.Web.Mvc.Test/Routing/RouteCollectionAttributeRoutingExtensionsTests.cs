@@ -113,7 +113,7 @@ namespace System.Web.Routing
 
             Assert.Equal(AttributeTargets.Class, usage.ValidOn);
             Assert.False(usage.AllowMultiple); // only 1 per class
-            Assert.False(usage.Inherited); // RoutePrefix is not inherited. 
+            Assert.False(usage.Inherited); // RoutePrefix is not inherited.
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace System.Web.Routing
 
             Assert.Equal("puget-sound/getme", route.Url);
             Assert.Equal("PugetSound", route.DataTokens["area"]);
-            Assert.Equal(false, route.DataTokens["usenamespacefallback"]);
+            Assert.Equal((object)false, route.DataTokens["usenamespacefallback"]);
             Assert.Equal("GetMe", Assert.Single(route.GetTargetActionDescriptors()).ActionName);
             Assert.Equal(typeof(PugetSoundController).Namespace, ((string[])route.DataTokens["namespaces"])[0]);
         }
@@ -157,7 +157,7 @@ namespace System.Web.Routing
 
             Assert.Equal("puget-sound/prefpref/getme", route.Url);
             Assert.Equal("PugetSound", route.DataTokens["area"]);
-            Assert.Equal(false, route.DataTokens["usenamespacefallback"]);
+            Assert.Equal((object)false, route.DataTokens["usenamespacefallback"]);
             Assert.Equal("GetMe", Assert.Single(route.GetTargetActionDescriptors()).ActionName);
             Assert.Equal(typeof(PrefixedPugetSoundController).Namespace, ((string[])route.DataTokens["namespaces"])[0]);
         }

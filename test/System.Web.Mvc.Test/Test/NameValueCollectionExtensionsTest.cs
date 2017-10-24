@@ -27,6 +27,7 @@ namespace System.Web.Mvc.Test
             Assert.Equal("BazCollection", dictionary["baz"]);
         }
 
+        [Fact]
         public void CopyToReplaceExisting()
         {
             // Arrange

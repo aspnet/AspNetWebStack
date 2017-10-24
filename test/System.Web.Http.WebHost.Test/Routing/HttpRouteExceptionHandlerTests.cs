@@ -243,7 +243,7 @@ namespace System.Web.Http.WebHost.Routing
 
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
 
         }

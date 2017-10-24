@@ -394,7 +394,7 @@ namespace System.Web.Mvc.Test
             string encodedUrl = urlHelper.Encode(@"SomeUrl /+\");
 
             // Assert
-            Assert.Equal(encodedUrl, "SomeUrl+%2f%2b%5c");
+            Assert.Equal("SomeUrl+%2f%2b%5c", encodedUrl);
         }
 
         [Fact]

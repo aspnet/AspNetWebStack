@@ -176,10 +176,10 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(4, result.SearchedLocations.Count());
-            Assert.True(result.SearchedLocations.Contains("location1"));
-            Assert.True(result.SearchedLocations.Contains("location2"));
-            Assert.True(result.SearchedLocations.Contains("location3"));
-            Assert.True(result.SearchedLocations.Contains("location4"));
+            Assert.Contains("location1", result.SearchedLocations);
+            Assert.Contains("location2", result.SearchedLocations);
+            Assert.Contains("location3", result.SearchedLocations);
+            Assert.Contains("location4", result.SearchedLocations);
         }
 
         [Fact]
@@ -199,8 +199,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(2, result.SearchedLocations.Count());
-            Assert.True(result.SearchedLocations.Contains("location1"));
-            Assert.True(result.SearchedLocations.Contains("location2"));
+            Assert.Contains("location1", result.SearchedLocations);
+            Assert.Contains("location2", result.SearchedLocations);
         }
 
         [Fact]
@@ -433,10 +433,10 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(4, result.SearchedLocations.Count());
-            Assert.True(result.SearchedLocations.Contains("location1"));
-            Assert.True(result.SearchedLocations.Contains("location2"));
-            Assert.True(result.SearchedLocations.Contains("location3"));
-            Assert.True(result.SearchedLocations.Contains("location4"));
+            Assert.Contains("location1", result.SearchedLocations);
+            Assert.Contains("location2", result.SearchedLocations);
+            Assert.Contains("location3", result.SearchedLocations);
+            Assert.Contains("location4", result.SearchedLocations);
         }
 
         [Fact]
@@ -456,8 +456,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(2, result.SearchedLocations.Count());
-            Assert.True(result.SearchedLocations.Contains("location1"));
-            Assert.True(result.SearchedLocations.Contains("location2"));
+            Assert.Contains("location1", result.SearchedLocations);
+            Assert.Contains("location2", result.SearchedLocations);
         }
 
         [Fact]

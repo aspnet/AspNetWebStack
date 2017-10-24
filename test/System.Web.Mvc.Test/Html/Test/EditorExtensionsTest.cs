@@ -21,11 +21,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void BooleanTemplate_AttributeEncodes_AddedHtmlAttributes(
-            string text,
-            bool htmlEncode,
-            string htmlEncodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void BooleanTemplate_AttributeEncodes_AddedHtmlAttributes(string text, string htmlEncodedText)
         {
             // Arrange
             var expectedResult = "<input attribute=\"" +
@@ -110,11 +107,10 @@ namespace System.Web.Mvc.Html.Test
 
         // Inconsistent but long-standing behavior.
         [Theory]
-        [PropertyData("ConditionallyHtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("ConditionallyHtmlEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
         public void CollectionTemplateWrappingObjectTemplate_DoesNotEncodeNullDisplayText_IfNull(
             string text,
-            bool htmlEncode,
-            string unusedText)
+            bool htmlEncode)
         {
             // Arrange
             var model = new[] { (ObjectTemplateModel)null, };
@@ -154,11 +150,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void StringTemplate_AttributeEncodes_AddedHtmlAttributes(
-            string text,
-            bool htmlEncode,
-            string htmlEncodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void StringTemplate_AttributeEncodes_AddedHtmlAttributes(string text, string htmlEncodedText)
         {
             // Arrange
             var expectedResult = "<input attribute=\"" +
@@ -193,11 +186,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void StringTemplate_AttributeEncodesText(
-            string text,
-            bool htmlEncode,
-            string htmlEncodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void StringTemplate_AttributeEncodesText(string text, string htmlEncodedText)
         {
             // Arrange
             var expectedResult =

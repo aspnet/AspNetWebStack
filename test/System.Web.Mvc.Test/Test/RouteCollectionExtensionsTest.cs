@@ -156,7 +156,7 @@ namespace System.Web.Mvc.Test
             Assert.NotNull(route.DataTokens);
             Assert.NotNull(route.DataTokens["Namespaces"]);
             string[] routeNameSpaces = route.DataTokens["Namespaces"] as string[];
-            Assert.Equal(routeNameSpaces.Length, 2);
+            Assert.Equal(2, routeNameSpaces.Length);
             Assert.Same(route, routes["RouteName"]);
             Assert.Same(routeNameSpaces, _nameSpaces);
             Assert.Equal("SomeUrl", route.Url);
@@ -222,7 +222,7 @@ namespace System.Web.Mvc.Test
             Assert.NotNull(route.DataTokens);
             Assert.NotNull(route.DataTokens["Namespaces"]);
             string[] routeNameSpaces = route.DataTokens["Namespaces"] as string[];
-            Assert.Equal(routeNameSpaces.Length, 2);
+            Assert.Equal(2, routeNameSpaces.Length);
             Assert.Same(route, routes["RouteName"]);
             Assert.Same(routeNameSpaces, _nameSpaces);
             Assert.Equal("SomeUrl", route.Url);

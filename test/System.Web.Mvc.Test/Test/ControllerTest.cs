@@ -1301,7 +1301,7 @@ namespace System.Web.Mvc.Test
             Assert.NotNull(mockContext.Object.Session[SessionStateTempDataProvider.TempDataSessionStateKey]);
             TempDataDictionary tempData = new TempDataDictionary();
             tempData.Load(controller.ControllerContext, controller.TempDataProvider);
-            Assert.Equal(tempData["Key1"], "Value1");
+            Assert.Equal("Value1", tempData["Key1"]);
         }
 
         [Fact]
@@ -2017,7 +2017,7 @@ namespace System.Web.Mvc.Test
 
             public override void Remove(string name)
             {
-                Assert.Equal<string>(SessionStateTempDataProvider.TempDataSessionStateKey, name);
+                Assert.Equal(SessionStateTempDataProvider.TempDataSessionStateKey, name);
                 _sessionData.Remove(name);
             }
 
@@ -2025,12 +2025,12 @@ namespace System.Web.Mvc.Test
             {
                 get
                 {
-                    Assert.Equal<string>(SessionStateTempDataProvider.TempDataSessionStateKey, name);
+                    Assert.Equal(SessionStateTempDataProvider.TempDataSessionStateKey, name);
                     return _sessionData[name];
                 }
                 set
                 {
-                    Assert.Equal<string>(SessionStateTempDataProvider.TempDataSessionStateKey, name);
+                    Assert.Equal(SessionStateTempDataProvider.TempDataSessionStateKey, name);
                     _sessionData[name] = value;
                 }
             }

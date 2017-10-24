@@ -69,7 +69,7 @@ namespace System.Web.Routing
             route.DataTokens.Add(RouteDataTokenKeys.Actions, new ActionDescriptor[0]);
             ActionDescriptor[] originalActions = route.GetTargetActionDescriptors();
             Assert.NotNull(originalActions); // Guard
-            Assert.Equal(0, originalActions.Length); // Guard
+            Assert.Empty(originalActions); // Guard
             RouteEntry entry = new RouteEntry(name: null, route: route);
             IDirectRouteFactory factory = CreateStubRouteFactory(entry);
             ControllerDescriptor controllerDescriptor = CreateStubControllerDescriptor("IgnoreController");

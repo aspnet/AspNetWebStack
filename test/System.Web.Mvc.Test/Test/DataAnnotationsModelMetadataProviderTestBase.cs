@@ -23,9 +23,9 @@ namespace System.Web.Mvc.Test
             IEnumerable<ModelMetadata> result = provider.GetMetadataForProperties("foo", typeof(string));
 
             // Assert
-            Assert.True(result.Any(m => m.ModelType == typeof(int)
+            Assert.Contains(result, m => m.ModelType == typeof(int)
                                         && m.PropertyName == "Length"
-                                        && (int)m.Model == 3));
+                                        && (int)m.Model == 3);
         }
 
         [Fact]
