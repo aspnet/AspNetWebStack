@@ -505,7 +505,7 @@ namespace System.Web.Http.Filters
 
                 // Assert
                 Assert.NotNull(expectedStackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
         }
 

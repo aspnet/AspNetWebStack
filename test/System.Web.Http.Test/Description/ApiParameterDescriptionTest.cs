@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Web.Http.Controllers;
 using Microsoft.TestCommon;
@@ -25,8 +24,8 @@ namespace System.Web.Http.Description
             IEnumerable<PropertyInfo> bindableProperties = parameter.GetBindableProperties();
 
             // Assert
-            Assert.Equal(1, bindableProperties.Count());
-            Assert.Equal("ValidProperty", bindableProperties.Single().Name);
+            PropertyInfo bindableProperty = Assert.Single(bindableProperties);
+            Assert.Equal("ValidProperty", bindableProperty.Name);
         }
     }
 

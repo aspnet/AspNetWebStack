@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
@@ -346,8 +345,7 @@ namespace System.Web.Http.Results
                     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
                     Assert.Same(expectedLocation, response.Headers.Location.OriginalString);
                     HttpContent content = response.Content;
-                    Assert.IsType<ObjectContent<object>>(content);
-                    ObjectContent<object> typedContent = (ObjectContent<object>)content;
+                    ObjectContent<object> typedContent = Assert.IsType<ObjectContent<object>>(content);
                     Assert.Same(expectedContent, typedContent.Value);
                     Assert.Same(expectedFormatter, typedContent.Formatter);
                     Assert.NotNull(typedContent.Headers);
@@ -495,8 +493,7 @@ namespace System.Web.Http.Results
                         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
                         Assert.Same(expectedLocation, response.Headers.Location.OriginalString);
                         HttpContent content = response.Content;
-                        Assert.IsType<ObjectContent<object>>(content);
-                        ObjectContent<object> typedContent = (ObjectContent<object>)content;
+                        ObjectContent<object> typedContent = Assert.IsType<ObjectContent<object>>(content);
                         Assert.Same(expectedContent, typedContent.Value);
                         Assert.Same(expectedOutputFormatter, typedContent.Formatter);
                         Assert.NotNull(typedContent.Headers);
@@ -632,8 +629,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(formatters);
-                    Assert.Equal(1, formatters.Count());
-                    Assert.Same(expectedFormatter, formatters.Single());
+                    MediaTypeFormatter formatter = Assert.Single(formatters);
+                    Assert.Same(expectedFormatter, formatter);
                 }
             }
         }
@@ -769,8 +766,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(formatters);
-                    Assert.Equal(1, formatters.Count());
-                    Assert.Same(expectedFormatter, formatters.Single());
+                    MediaTypeFormatter formatter = Assert.Single(formatters);
+                    Assert.Same(expectedFormatter, formatter);
                 }
             }
         }

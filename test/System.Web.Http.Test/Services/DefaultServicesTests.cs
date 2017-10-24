@@ -91,7 +91,7 @@ namespace System.Web.Http.Services
             Assert.IsType<RouteDataValueProviderFactory>(valueProviderFactories[1]);
 
             object[] exceptionLoggers = defaultServices.GetServices(typeof(IExceptionLogger)).ToArray();
-            Assert.Equal(0, exceptionLoggers.Length);
+            Assert.Empty(exceptionLoggers);
         }
 
         // Add tests

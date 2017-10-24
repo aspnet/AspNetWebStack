@@ -24,6 +24,7 @@ namespace System.Web.Http.Tracing
         public void ValueToString_Formats(Type variationType, object testData)
         {
             // Arrange
+            GC.KeepAlive(variationType); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             string expected = Convert.ToString(testData, CultureInfo.CurrentCulture);
 
             // Act

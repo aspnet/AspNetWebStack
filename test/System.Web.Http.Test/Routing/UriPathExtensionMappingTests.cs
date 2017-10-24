@@ -3,7 +3,6 @@
 
 using System.Net.Http.Formatting.DataSets;
 using System.Net.Http.Headers;
-using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
@@ -85,6 +84,7 @@ namespace System.Net.Http.Formatting
             typeof(HttpTestData), "UriTestDataStrings")]
         public void TryMatchMediaType_Returns_MatchWithExtensionInRouteData(string uriPathExtension, string mediaType, string baseUriString)
         {
+            GC.KeepAlive(baseUriString); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             UriPathExtensionMapping mapping = new UriPathExtensionMapping(uriPathExtension, mediaType);
             HttpRequestMessage request = GetRequestWithExtInRouteData(uriPathExtension);
             Assert.Equal(1.0, mapping.TryMatchMediaType(request));
@@ -97,6 +97,7 @@ namespace System.Net.Http.Formatting
             typeof(HttpTestData), "UriTestDataStrings")]
         public void TryMatchMediaType_Returns_MatchWithExtensionInRouteData_DifferCase(string uriPathExtension, string mediaType, string baseUriString)
         {
+            GC.KeepAlive(baseUriString); // Mark parameter as used. See xUnit1026, [Theory] method doesn't use all parameters.
             UriPathExtensionMapping mapping = new UriPathExtensionMapping(uriPathExtension.ToUpperInvariant(), mediaType);
             HttpRequestMessage request = GetRequestWithExtInRouteData(uriPathExtension.ToLowerInvariant());
             Assert.Equal(1.0, mapping.TryMatchMediaType(request));

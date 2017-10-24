@@ -299,7 +299,7 @@ namespace System.Web.Http.ModelBinding
                 int actual = formData.ReadAs<int>(actionContext);
 
                 // Assert
-                Assert.Equal<int>(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
@@ -319,7 +319,7 @@ namespace System.Web.Http.ModelBinding
                 int actual = (int)formData.ReadAs(typeof(int), "a", actionContext);
 
                 // Assert
-                Assert.Equal<int>(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
@@ -343,7 +343,7 @@ namespace System.Web.Http.ModelBinding
                 int actual = (int)formData.ReadAs(typeof(int), "a", actionContext);
 
                 // Assert
-                Assert.Equal<int>(expected, actual);
+                Assert.Equal(expected, actual);
             }
         }
 
@@ -366,7 +366,7 @@ namespace System.Web.Http.ModelBinding
                     formatterLogger: (new Mock<IFormatterLogger>()).Object, config: configuration);
 
                 // Assert
-                Assert.Equal<int>(30, actual);
+                Assert.Equal(30, actual);
                 Assert.Same(clonedConfiguration.Services, configuration.Services);
             }
         }

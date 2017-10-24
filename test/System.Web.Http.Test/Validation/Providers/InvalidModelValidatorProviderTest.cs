@@ -46,8 +46,8 @@ namespace System.Web.Http.Validation.Providers
 
             IEnumerable<ModelValidator> validators = validatorProvider.GetValidators(_metadataProvider.GetMetadataForProperty(null, typeof(InvalidModel), "Value"), _noValidatorProviders);
 
-            Assert.Equal(1, validators.Count());
-            Assert.Throws<InvalidOperationException>(() => validators.First().Validate(null, null),
+            ModelValidator validator = Assert.Single(validators);
+            Assert.Throws<InvalidOperationException>(() => validator.Validate(null, null),
                 "Property 'Value' on type 'System.Web.Http.Validation.Providers.InvalidModelValidatorProviderTest+InvalidModel' is invalid. Value-typed properties marked as [Required] must also be marked with [DataMember(IsRequired=true)] to be recognized as required. Consider attributing the declaring type with [DataContract] and the property with [DataMember(IsRequired=true)].");
         }
 

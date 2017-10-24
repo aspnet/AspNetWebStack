@@ -863,8 +863,7 @@ namespace System.Web.Http
             using (HttpRequestMessage expectedRequest = CreateRequest())
             {
                 ApiController controller = CreateFakeController();
-                Assert.IsType<RequestBackedHttpRequestContext>(controller.RequestContext); // Guard
-                RequestBackedHttpRequestContext context = (RequestBackedHttpRequestContext)controller.RequestContext;
+                RequestBackedHttpRequestContext context = Assert.IsType<RequestBackedHttpRequestContext>(controller.RequestContext); // Guard
 
                 // Act
                 controller.Request = expectedRequest;

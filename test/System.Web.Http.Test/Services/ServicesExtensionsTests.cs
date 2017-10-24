@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http.Controllers;
 using System.Web.Http.ExceptionHandling;
 using Microsoft.TestCommon;
@@ -34,7 +33,7 @@ namespace System.Web.Http.Services
 
             // Act
             IExceptionHandler exceptionHandler = ServicesExtensions.GetExceptionHandler(services);
-            
+
             // Assert
             mock.Verify(s => s.GetService(typeof(IExceptionHandler)), Times.Once());
             Assert.Same(expectedExceptionHandler, exceptionHandler);
@@ -58,8 +57,8 @@ namespace System.Web.Http.Services
             // Assert
             mock.Verify(s => s.GetServices(typeof(IExceptionLogger)), Times.Once());
             Assert.NotNull(exceptionLoggers);
-            Assert.Equal(1, exceptionLoggers.Count());
-            Assert.Same(expectedExceptionLogger, exceptionLoggers.Single());
+            IExceptionLogger exceptionLogger = Assert.Single(exceptionLoggers);
+            Assert.Same(expectedExceptionLogger, exceptionLogger);
         }
     }
 }

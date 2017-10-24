@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Web.Http.Batch;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
@@ -169,7 +168,7 @@ namespace System.Web.Http
             Assert.NotNull(route);
             Assert.Equal("SomeRouteTemplate", route.RouteTemplate);
             Assert.IsType<StopRoutingHandler>(route.Handler);
-            Assert.True(route.Defaults.Count == 0);
+            Assert.Empty(route.Defaults);
             Assert.Empty(route.Constraints);
         }
 
@@ -188,7 +187,7 @@ namespace System.Web.Http
             Assert.NotNull(route);
             Assert.Equal("SomeRouteTemplate", route.RouteTemplate);
             Assert.IsType<StopRoutingHandler>(route.Handler);
-            Assert.True(route.Defaults.Count == 0);
+            Assert.Empty(route.Defaults);
             Assert.Single(route.Constraints);
             Assert.Equal("DefaultFoo", route.Constraints["Foo"]);
         }

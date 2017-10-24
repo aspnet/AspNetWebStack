@@ -23,11 +23,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<IFilter> mockFilter = new Mock<IFilter>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<FilterTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<FilterTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -37,11 +37,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<IActionFilter> mockFilter = new Mock<IActionFilter>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ActionFilterTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ActionFilterTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -51,11 +51,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<IExceptionFilter> mockFilter = new Mock<IExceptionFilter>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ExceptionFilterTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ExceptionFilterTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -70,10 +70,8 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.NotNull(tracers);
-            Assert.Equal(1, tracers.Count());
-            IFilter untypedFilter = tracers.Single();
-            Assert.IsType<AuthenticationFilterTracer>(untypedFilter);
-            AuthenticationFilterTracer tracer = (AuthenticationFilterTracer)untypedFilter;
+            IFilter untypedFilter = Assert.Single(tracers);
+            AuthenticationFilterTracer tracer = Assert.IsType<AuthenticationFilterTracer>(untypedFilter);
             Assert.Same(expectedInner, tracer.InnerFilter);
             Assert.Same(expectedTraceWriter, tracer.TraceWriter);
         }
@@ -85,11 +83,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<IAuthorizationFilter> mockFilter = new Mock<IAuthorizationFilter>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<AuthorizationFilterTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<AuthorizationFilterTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -104,10 +102,8 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.NotNull(tracers);
-            Assert.Equal(1, tracers.Count());
-            IFilter untypedFilter = tracers.Single();
-            Assert.IsType<OverrideFilterTracer>(untypedFilter);
-            OverrideFilterTracer tracer = (OverrideFilterTracer)untypedFilter;
+            IFilter untypedFilter = Assert.Single(tracers);
+            OverrideFilterTracer tracer = Assert.IsType<OverrideFilterTracer>(untypedFilter);
             Assert.Same(expectedInner, tracer.InnerFilter);
             Assert.Same(expectedTraceWriter, tracer.TraceWriter);
         }
@@ -119,11 +115,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<ActionFilterAttribute> mockFilter = new Mock<ActionFilterAttribute>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ActionFilterAttributeTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ActionFilterAttributeTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -133,11 +129,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<ExceptionFilterAttribute> mockFilter = new Mock<ExceptionFilterAttribute>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ExceptionFilterAttributeTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ExceptionFilterAttributeTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -147,11 +143,11 @@ namespace System.Web.Http.Tracing.Tracers
             Mock<AuthorizationFilterAttribute> mockFilter = new Mock<AuthorizationFilterAttribute>();
 
             // Act
-            IFilter[] wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter()).ToArray();
+            IEnumerable<IFilter> wrappedFilters = FilterTracer.CreateFilterTracers(mockFilter.Object, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<AuthorizationFilterAttributeTracer>(wrappedFilters[0]);
+            IFilter wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<AuthorizationFilterAttributeTracer>(wrappedFilter);
         }
 
         [Fact]
@@ -165,11 +161,11 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.Equal(5, wrappedFilters.Length);
-            Assert.Equal(1, wrappedFilters.OfType<ActionFilterTracer>().Count());
-            Assert.Equal(1, wrappedFilters.OfType<AuthorizationFilterTracer>().Count());
-            Assert.Equal(1, wrappedFilters.OfType<AuthenticationFilterTracer>().Count());
-            Assert.Equal(1, wrappedFilters.OfType<ExceptionFilterTracer>().Count());
-            Assert.Equal(1, wrappedFilters.OfType<OverrideFilterTracer>().Count());
+            Assert.Single(wrappedFilters.OfType<ActionFilterTracer>());
+            Assert.Single(wrappedFilters.OfType<AuthorizationFilterTracer>());
+            Assert.Single(wrappedFilters.OfType<AuthenticationFilterTracer>());
+            Assert.Single(wrappedFilters.OfType<ExceptionFilterTracer>());
+            Assert.Single(wrappedFilters.OfType<OverrideFilterTracer>());
         }
 
         [Fact]
@@ -180,11 +176,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<FilterTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<FilterTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -195,11 +191,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ActionFilterTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ActionFilterTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -210,11 +206,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ExceptionFilterTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ExceptionFilterTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -230,12 +226,10 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.NotNull(filters);
-            Assert.Equal(1, filters.Count());
-            FilterInfo filterInfo = filters.Single();
+            FilterInfo filterInfo = Assert.Single(filters);
             Assert.NotNull(filterInfo);
             IFilter untypedFilter = filterInfo.Instance;
-            Assert.IsType<AuthenticationFilterTracer>(untypedFilter);
-            AuthenticationFilterTracer tracer = (AuthenticationFilterTracer)untypedFilter;
+            AuthenticationFilterTracer tracer = Assert.IsType<AuthenticationFilterTracer>(untypedFilter);
             Assert.Same(expectedInner, tracer.InnerFilter);
             Assert.Same(expectedTraceWriter, tracer.TraceWriter);
         }
@@ -248,11 +242,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<AuthorizationFilterTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<AuthorizationFilterTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -268,12 +262,10 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.NotNull(filters);
-            Assert.Equal(1, filters.Count());
-            FilterInfo filterInfo = filters.Single();
+            FilterInfo filterInfo = Assert.Single(filters);
             Assert.NotNull(filterInfo);
             IFilter untypedFilter = filterInfo.Instance;
-            Assert.IsType<OverrideFilterTracer>(untypedFilter);
-            OverrideFilterTracer tracer = (OverrideFilterTracer)untypedFilter;
+            OverrideFilterTracer tracer = Assert.IsType<OverrideFilterTracer>(untypedFilter);
             Assert.Same(expectedInner, tracer.InnerFilter);
             Assert.Same(expectedTraceWriter, tracer.TraceWriter);
         }
@@ -286,11 +278,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ActionFilterAttributeTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ActionFilterAttributeTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -301,11 +293,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<ExceptionFilterAttributeTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<ExceptionFilterAttributeTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -316,11 +308,11 @@ namespace System.Web.Http.Tracing.Tracers
             FilterInfo filter = new FilterInfo(mockFilter.Object, FilterScope.Action);
 
             // Act
-            FilterInfo[] wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter()).ToArray();
+            IEnumerable<FilterInfo> wrappedFilters = FilterTracer.CreateFilterTracers(filter, new TestTraceWriter());
 
             // Assert
-            Assert.Equal(1, wrappedFilters.Length);
-            Assert.IsType<AuthorizationFilterAttributeTracer>(wrappedFilters[0].Instance);
+            FilterInfo wrappedFilter = Assert.Single(wrappedFilters);
+            Assert.IsType<AuthorizationFilterAttributeTracer>(wrappedFilter.Instance);
         }
 
         [Fact]
@@ -334,11 +326,11 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.Equal(5, wrappedFilters.Length);
-            Assert.Equal(1, wrappedFilters.Where(f => f.Instance.GetType() == typeof(ActionFilterTracer)).Count());
-            Assert.Equal(1, wrappedFilters.Where(f => f.Instance.GetType() == typeof(AuthorizationFilterTracer)).Count());
-            Assert.Equal(1, wrappedFilters.Where(f => f.Instance.GetType() == typeof(AuthenticationFilterTracer)).Count());
-            Assert.Equal(1, wrappedFilters.Where(f => f.Instance.GetType() == typeof(ExceptionFilterTracer)).Count());
-            Assert.Equal(1, wrappedFilters.Where(f => f.Instance.GetType() == typeof(OverrideFilterTracer)).Count());
+            Assert.Single(wrappedFilters, f => f.Instance.GetType() == typeof(ActionFilterTracer));
+            Assert.Single(wrappedFilters, f => f.Instance.GetType() == typeof(AuthorizationFilterTracer));
+            Assert.Single(wrappedFilters, f => f.Instance.GetType() == typeof(AuthenticationFilterTracer));
+            Assert.Single(wrappedFilters, f => f.Instance.GetType() == typeof(ExceptionFilterTracer));
+            Assert.Single(wrappedFilters, f => f.Instance.GetType() == typeof(OverrideFilterTracer));
         }
 
         [Fact]

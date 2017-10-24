@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.ExceptionServices;
@@ -81,12 +80,11 @@ namespace System.Web.Http.Dispatcher
                     IExceptionLogger exceptionLogger = product.ExceptionLogger;
 
                     // Assert
-                    Assert.IsType<CompositeExceptionLogger>(exceptionLogger);
-                    CompositeExceptionLogger compositeLogger = (CompositeExceptionLogger)exceptionLogger;
+                    CompositeExceptionLogger compositeLogger = Assert.IsType<CompositeExceptionLogger>(exceptionLogger);
                     IEnumerable<IExceptionLogger> loggers = compositeLogger.Loggers;
                     Assert.NotNull(loggers);
-                    Assert.Equal(1, loggers.Count());
-                    Assert.Same(expectedExceptionLogger, loggers.Single());
+                    IExceptionLogger logger = Assert.Single(loggers);
+                    Assert.Same(expectedExceptionLogger, logger);
                 }
             }
         }
@@ -106,8 +104,7 @@ namespace System.Web.Http.Dispatcher
                     IExceptionHandler exceptionHandler = product.ExceptionHandler;
 
                     // Assert
-                    Assert.IsType<LastChanceExceptionHandler>(exceptionHandler);
-                    LastChanceExceptionHandler lastChanceHandler = (LastChanceExceptionHandler)exceptionHandler;
+                    LastChanceExceptionHandler lastChanceHandler = Assert.IsType<LastChanceExceptionHandler>(exceptionHandler);
                     Assert.Same(expectedExceptionHandler, lastChanceHandler.InnerHandler);
                 }
             }
@@ -359,7 +356,7 @@ namespace System.Web.Http.Dispatcher
 
                 Assert.Same(exceptionInfo.SourceException, exception);
                 Assert.NotNull(exception.StackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
         }
 
@@ -486,8 +483,7 @@ namespace System.Web.Http.Dispatcher
                 HttpResponseMessage ignore = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
-                Assert.IsType<RequestBackedHttpRequestContext>(requestContext);
-                RequestBackedHttpRequestContext typedRequestContext = (RequestBackedHttpRequestContext)requestContext;
+                RequestBackedHttpRequestContext typedRequestContext = Assert.IsType<RequestBackedHttpRequestContext>(requestContext);
                 Assert.Same(request, typedRequestContext.Request);
                 Assert.Same(configuration, typedRequestContext.Configuration);
             }
@@ -524,8 +520,7 @@ namespace System.Web.Http.Dispatcher
                 HttpResponseMessage ignore = await invoker.SendAsync(request, CancellationToken.None);
 
                 // Assert
-                Assert.IsType<RequestBackedHttpRequestContext>(requestContext);
-                RequestBackedHttpRequestContext typedRequestContext = (RequestBackedHttpRequestContext)requestContext;
+                RequestBackedHttpRequestContext typedRequestContext = Assert.IsType<RequestBackedHttpRequestContext>(requestContext);
                 Assert.Same(request, typedRequestContext.Request);
                 Assert.Same(configuration, typedRequestContext.Configuration);
             }

@@ -28,7 +28,7 @@ namespace System.Web.Http.ValueProviders.Providers
             NameValueCollection result = ParseQueryString(null);
 
             // Assert
-            Assert.Equal(0, result.Count);
+            Assert.Empty(result);
         }
 
         [Fact]
