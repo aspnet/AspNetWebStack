@@ -110,10 +110,10 @@ namespace System.Web.Mvc.Test
             Assert.False(viewContext.ClientValidationEnabled);
             viewContext.ClientValidationEnabled = true;
             Assert.True(viewContext.ClientValidationEnabled);
-            Assert.Equal(true, scope[ViewContext.ClientValidationKeyName]);
+            Assert.Equal((object)true, scope[ViewContext.ClientValidationKeyName]);
             viewContext.ClientValidationEnabled = false;
             Assert.False(viewContext.ClientValidationEnabled);
-            Assert.Equal(false, scope[ViewContext.ClientValidationKeyName]);
+            Assert.Equal((object)false, scope[ViewContext.ClientValidationKeyName]);
         }
 
         [Fact]
@@ -129,10 +129,10 @@ namespace System.Web.Mvc.Test
             Assert.False(viewContext.UnobtrusiveJavaScriptEnabled);
             viewContext.UnobtrusiveJavaScriptEnabled = true;
             Assert.True(viewContext.UnobtrusiveJavaScriptEnabled);
-            Assert.Equal(true, scope[ViewContext.UnobtrusiveJavaScriptKeyName]);
+            Assert.Equal((object)true, scope[ViewContext.UnobtrusiveJavaScriptKeyName]);
             viewContext.UnobtrusiveJavaScriptEnabled = false;
             Assert.False(viewContext.UnobtrusiveJavaScriptEnabled);
-            Assert.Equal(false, scope[ViewContext.UnobtrusiveJavaScriptKeyName]);
+            Assert.Equal((object)false, scope[ViewContext.UnobtrusiveJavaScriptKeyName]);
         }
 
         [Fact]

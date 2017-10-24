@@ -165,7 +165,7 @@ namespace System.Web.Mvc.Razor.Test
                 factory.Markup("\r\n")
             };
             Assert.Equal(expectedSpans, spans.ToArray());
-            Assert.Equal(0, errors.Count);
+            Assert.Empty(errors);
         }
 
         [Fact]

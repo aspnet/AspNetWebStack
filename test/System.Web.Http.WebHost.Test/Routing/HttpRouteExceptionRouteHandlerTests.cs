@@ -1,12 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Routing;
 using Microsoft.TestCommon;
 
@@ -40,8 +35,7 @@ namespace System.Web.Http.WebHost.Routing
             IHttpHandler handler = product.GetHttpHandler(requestContext);
 
             // Assert
-            Assert.IsType<HttpRouteExceptionHandler>(handler);
-            HttpRouteExceptionHandler typedHandler = (HttpRouteExceptionHandler)handler;
+            HttpRouteExceptionHandler typedHandler = Assert.IsType<HttpRouteExceptionHandler>(handler);
             Assert.Same(expectedExceptionInfo, typedHandler.ExceptionInfo);
         }
 

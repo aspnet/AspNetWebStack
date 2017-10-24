@@ -43,8 +43,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.Equal(2, attributes.Count());
-            Assert.True(attributes.Any(a => a.Roles == "foo"));
-            Assert.True(attributes.Any(a => a.Roles == "bar"));
+            Assert.Contains(attributes, a => a.Roles == "foo");
+            Assert.Contains(attributes, a => a.Roles == "bar");
         }
 
         [Fact]

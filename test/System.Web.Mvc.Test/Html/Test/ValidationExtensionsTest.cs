@@ -768,11 +768,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ValidationMessage_DoesNotEncode_Tag(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("AttributeEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
+        public void ValidationMessage_DoesNotEncode_Tag(string text, bool htmlEncode)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -945,11 +942,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ValidationMessageNonUnobtrusive_DoesNotEncode_Tag(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("AttributeEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
+        public void ValidationMessageNonUnobtrusive_DoesNotEncode_Tag(string text, bool htmlEncode)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -1375,11 +1369,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ValidationMessageFor_DoesNotEncode_Tag(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("AttributeEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
+        public void ValidationMessageFor_DoesNotEncode_Tag(string text, bool htmlEncode)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -1540,11 +1531,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ValidationMessageForNonUnobtrusive_DoesNotEncode_Tag(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("AttributeEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
+        public void ValidationMessageForNonUnobtrusive_DoesNotEncode_Tag(string text, bool htmlEncode)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);
@@ -2015,11 +2003,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ValidationSummary_DoesNotEncode_Tag(
-            string text,
-            bool htmlEncode,
-            string unusedText)
+        [PropertyData("AttributeEncodedData_NoEncodedText", PropertyType = typeof(EncodedDataSets))]
+        public void ValidationSummary_DoesNotEncode_Tag(string text, bool htmlEncode)
         {
             // Arrange
             var viewData = new ViewDataDictionary<string>(model: null);

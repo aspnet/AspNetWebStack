@@ -36,8 +36,7 @@ namespace System.Web.Http.WebHost.Routing
                 // Assert
                 Assert.NotNull(routeData);
                 Assert.Same(product, routeData.Route);
-                Assert.IsType<HttpRouteExceptionRouteHandler>(routeData.RouteHandler);
-                HttpRouteExceptionRouteHandler typedHandler = (HttpRouteExceptionRouteHandler)routeData.RouteHandler;
+                HttpRouteExceptionRouteHandler typedHandler = Assert.IsType<HttpRouteExceptionRouteHandler>(routeData.RouteHandler);
                 ExceptionDispatchInfo exceptionInfo = typedHandler.ExceptionInfo;
                 Assert.NotNull(exceptionInfo); // Guard
                 Assert.Same(expectedException, exceptionInfo.SourceException);

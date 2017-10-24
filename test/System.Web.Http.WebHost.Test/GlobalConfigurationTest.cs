@@ -66,8 +66,7 @@ namespace System.Web.Http
             object service = configuration.Services.GetService(typeof(IExceptionHandler));
 
             // Assert
-            Assert.IsType(typeof(WebHostExceptionHandler), service); // Guard
-            WebHostExceptionHandler typedHandler = (WebHostExceptionHandler)service;
+            WebHostExceptionHandler typedHandler = Assert.IsType<WebHostExceptionHandler>(service); // Guard
             Assert.IsType(defaultExceptionHandlerType, typedHandler.InnerHandler);
         }
 

@@ -123,11 +123,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("HtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void Label_HtmlEncodes_LabelText(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("HtmlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void Label_HtmlEncodes_LabelText(string text, string expectedText)
         {
             // Arrange & Act
             var result =
@@ -199,11 +196,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void LabelWithAnonymousValues_AttributeEncodes_AddedHtmlAttributes(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void LabelWithAnonymousValues_AttributeEncodes_AddedHtmlAttributes(string text, string expectedText)
         {
             // Arrange & Act
             var result = html.Label("PropertyName", "text", new { attribute = text }, metadataProvider.Object);
@@ -310,11 +304,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("HtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void LabelFor_HtmlEncodes_LabelText(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("HtmlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void LabelFor_HtmlEncodes_LabelText(string text, string expectedText)
         {
             // Arrange
             var dummy = "this is a dummy parameter value";
@@ -369,11 +360,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void LabeForlWithAnonymousValues_AttributeEncodes_AddedHtmlAttributes(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void LabeForlWithAnonymousValues_AttributeEncodes_AddedHtmlAttributes(string text, string expectedText)
         {
             // Arrange
             var dummy = "this is a dummy parameter value";

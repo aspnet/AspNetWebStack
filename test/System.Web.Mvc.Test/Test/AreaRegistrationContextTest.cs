@@ -65,7 +65,7 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Equal(route, routes["the_name"]);
             Assert.Equal("the_area", route.DataTokens["area"]);
-            Assert.Equal(true, route.DataTokens["UseNamespaceFallback"]);
+            Assert.Equal((object)true, route.DataTokens["UseNamespaceFallback"]);
             Assert.Null(route.DataTokens["namespaces"]);
         }
 
@@ -86,7 +86,7 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Equal(route, routes["the_name"]);
             Assert.Equal("the_area", route.DataTokens["area"]);
-            Assert.Equal(false, route.DataTokens["UseNamespaceFallback"]);
+            Assert.Equal((object)false, route.DataTokens["UseNamespaceFallback"]);
             Assert.Equal(explicitNamespaces, (string[])route.DataTokens["namespaces"]);
         }
 
@@ -107,7 +107,7 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Equal(route, routes["the_name"]);
             Assert.Equal("the_area", route.DataTokens["area"]);
-            Assert.Equal(false, route.DataTokens["UseNamespaceFallback"]);
+            Assert.Equal((object)false, route.DataTokens["UseNamespaceFallback"]);
             Assert.Equal(implicitNamespaces, (string[])route.DataTokens["namespaces"]);
         }
 
@@ -125,7 +125,7 @@ namespace System.Web.Mvc.Test
             Assert.Equal(route, routes["the_name"]);
             Assert.Equal("the_area", route.DataTokens["area"]);
             Assert.Null(route.DataTokens["namespaces"]);
-            Assert.Equal(true, route.DataTokens["UseNamespaceFallback"]);
+            Assert.Equal((object)true, route.DataTokens["UseNamespaceFallback"]);
         }
 
         private static void ReplaceCollectionContents(ICollection<string> collectionToReplace, IEnumerable<string> newContents)

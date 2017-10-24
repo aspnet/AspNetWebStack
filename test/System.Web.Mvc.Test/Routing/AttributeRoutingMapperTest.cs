@@ -1,12 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc.Async;
 using System.Web.Routing;
 using Microsoft.TestCommon;
-using Moq;
 
 namespace System.Web.Mvc.Routing
 {
@@ -47,7 +44,7 @@ namespace System.Web.Mvc.Routing
             var entries = AttributeRoutingMapper.GetAttributeRoutes(controllerType);
 
             // Assert
-            var controllerEntry = Assert.Single(entries.Where(r => !r.Route.Defaults.ContainsKey("action")));
+            var controllerEntry = Assert.Single(entries, r => !r.Route.Defaults.ContainsKey("action"));
             Assert.Same(controllerType, controllerEntry.Route.GetTargetControllerDescriptor().ControllerType);
 
             var actionMethods = controllerEntry.Route.GetTargetActionDescriptors().ToArray();
@@ -79,14 +76,14 @@ namespace System.Web.Mvc.Routing
             var entries = AttributeRoutingMapper.GetAttributeRoutes(controllerType);
 
             // Assert
-            var controllerEntry = Assert.Single(entries.Where(r => !r.Route.Defaults.ContainsKey("action")));
+            var controllerEntry = Assert.Single(entries, r => !r.Route.Defaults.ContainsKey("action"));
             Assert.Same(controllerType, controllerEntry.Route.GetTargetControllerDescriptor().ControllerType);
 
             var actionMethods = controllerEntry.Route.GetTargetActionDescriptors().ToArray();
-            Assert.Equal(1, actionMethods.Length);
+            Assert.Single(actionMethods);
             Assert.Single(actionMethods, a => a.ActionName == "GoodAction");
 
-            var actionEntry = Assert.Single(entries.Where(r => r.Route.Defaults.ContainsKey("action")));
+            var actionEntry = Assert.Single(entries, r => r.Route.Defaults.ContainsKey("action"));
             Assert.Equal("DirectRouteAction", Assert.Single(actionEntry.Route.GetTargetActionDescriptors()).ActionName);
         }
 
@@ -100,10 +97,10 @@ namespace System.Web.Mvc.Routing
             var entries = AttributeRoutingMapper.GetAttributeRoutes(controllerType);
 
             // Assert
-            var controllerEntry = Assert.Single(entries.Where(r => !r.Route.Defaults.ContainsKey("action")));
+            var controllerEntry = Assert.Single(entries, r => !r.Route.Defaults.ContainsKey("action"));
             Assert.False(controllerEntry.Route.GetTargetIsAction());
 
-            var actionEntry = Assert.Single(entries.Where(r => r.Route.Defaults.ContainsKey("action")));
+            var actionEntry = Assert.Single(entries, r => r.Route.Defaults.ContainsKey("action"));
             Assert.True(actionEntry.Route.GetTargetIsAction());
         }
 

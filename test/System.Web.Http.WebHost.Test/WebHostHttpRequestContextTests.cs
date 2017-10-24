@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.IO;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
@@ -352,7 +351,7 @@ namespace System.Web.Http.WebHost
                 bool includeErrorDetail = context.IncludeErrorDetail;
 
                 // Assert
-                Assert.Equal(true, includeErrorDetail);
+                Assert.True(includeErrorDetail);
             }
         }
 
@@ -374,7 +373,7 @@ namespace System.Web.Http.WebHost
                 bool includeErrorDetail = context.IncludeErrorDetail;
 
                 // Assert
-                Assert.Equal(false, includeErrorDetail);
+                Assert.False(includeErrorDetail);
             }
         }
 
@@ -468,7 +467,7 @@ namespace System.Web.Http.WebHost
                 bool isLocal = context.IsLocal;
 
                 // Assert
-                Assert.Equal(false, isLocal);
+                Assert.False(isLocal);
             }
         }
 

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc.Filters;
 using Microsoft.TestCommon;
 using Moq;
@@ -38,8 +37,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.NotNull(usage);
             Assert.Equal(AttributeTargets.Class | AttributeTargets.Method, usage.ValidOn);
-            Assert.Equal(true, usage.Inherited);
-            Assert.Equal(false, usage.AllowMultiple);
+            Assert.True(usage.Inherited);
+            Assert.False(usage.AllowMultiple);
         }
 
         [Fact]
@@ -56,8 +55,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(filters);
-            Assert.Equal(1, filters.Count());
-            Filter filter = filters.Single();
+            Filter filter = Assert.Single(filters);
             Assert.NotNull(filter);
             Assert.Same(expected, filter.Instance);
         }

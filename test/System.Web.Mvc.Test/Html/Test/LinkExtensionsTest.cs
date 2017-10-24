@@ -25,11 +25,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("UrlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ActionLink_UrlEncodesAction(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("UrlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void ActionLink_UrlEncodesAction(string text, string expectedText)
         {
             // Arrange
             var helper = MvcHelper.GetHtmlHelper();
@@ -122,11 +119,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("UrlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void ActionLinkWithControllerName_UrlEncodesController(
-            string text,
-            bool htmlEncode,
-            string expectedText)
+        [PropertyData("UrlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void ActionLinkWithControllerName_UrlEncodesController(string text, string expectedText)
         {
             // Arrange
             var helper = MvcHelper.GetHtmlHelper();
@@ -167,10 +161,9 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void ActionLinkWithControllerNameAndObjectProperties_AttributeEncodes_AddedHtmlAttributes(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             // Arrange
@@ -559,10 +552,9 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void RouteLinkWithObjectProperties_AttributeEncodes_AddedHtmlAttributes(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             // Arrange
@@ -667,7 +659,7 @@ namespace System.Web.Mvc.Html.Test
             // Assert
             Assert.Equal(@"<a foo-baz=""baz"" href=""" + AppPathModifier + @"/app/named/home2/newaction/someid"">linktext</a>", html.ToHtmlString());
         }
-        
+
         // Class for the ActionLinkProducesLowercaseUrlsAfterRegisteringAnArea test
         private class MyAreaRegistration : AreaRegistration
         {

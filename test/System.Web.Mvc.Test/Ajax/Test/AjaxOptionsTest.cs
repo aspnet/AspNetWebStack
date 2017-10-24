@@ -36,9 +36,9 @@ namespace System.Web.Mvc.Ajax.Test
         public void InsertionModeStringTests()
         {
             // Act & Assert
-            Assert.Equal(new AjaxOptions { InsertionMode = InsertionMode.Replace }.InsertionModeString, "Sys.Mvc.InsertionMode.replace");
-            Assert.Equal(new AjaxOptions { InsertionMode = InsertionMode.InsertAfter }.InsertionModeString, "Sys.Mvc.InsertionMode.insertAfter");
-            Assert.Equal(new AjaxOptions { InsertionMode = InsertionMode.InsertBefore }.InsertionModeString, "Sys.Mvc.InsertionMode.insertBefore");
+            Assert.Equal("Sys.Mvc.InsertionMode.replace", new AjaxOptions { InsertionMode = InsertionMode.Replace }.InsertionModeString);
+            Assert.Equal("Sys.Mvc.InsertionMode.insertAfter", new AjaxOptions { InsertionMode = InsertionMode.InsertAfter }.InsertionModeString);
+            Assert.Equal("Sys.Mvc.InsertionMode.insertBefore", new AjaxOptions { InsertionMode = InsertionMode.InsertBefore }.InsertionModeString);
         }
 
         [Theory]
@@ -53,7 +53,7 @@ namespace System.Web.Mvc.Ajax.Test
 
             // Act
             string result = options.InsertionModeUnobtrusive;
-            
+
             // Assert
             Assert.Equal(expected, result);
         }

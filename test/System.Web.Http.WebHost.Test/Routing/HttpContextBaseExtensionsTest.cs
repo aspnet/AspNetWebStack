@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using Microsoft.TestCommon;
 using Moq;
@@ -27,7 +26,7 @@ namespace System.Web.Http.WebHost.Routing
             col.Add("customHeader", "customHeaderValue");
             requestMock.Setup(r => r.Headers).Returns(col);
             contextMock.Setup(o => o.Request).Returns(requestMock.Object);
-            
+
             // Act
             contextMock.Object.GetOrCreateHttpRequestMessage();
 
@@ -37,8 +36,8 @@ namespace System.Web.Http.WebHost.Routing
             Assert.Equal(HttpMethod.Get, request.Method);
             IEnumerable<string> headerValues;
             Assert.True(request.Headers.TryGetValues("customHeader", out headerValues));
-            Assert.Equal(1, headerValues.Count());
-            Assert.Equal("customHeaderValue", headerValues.First());
+            string headerValue = Assert.Single(headerValues);
+            Assert.Equal("customHeaderValue", headerValue);
         }
     }
 }

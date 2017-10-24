@@ -122,10 +122,9 @@ window.mvcClientValidationMetadata.push({""Fields"":[],""FormId"":""form_id"",""
         }
 
         [Theory]
-        [PropertyData("UrlEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("UrlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void BeginFormWithActionController_UrlEncodesAction(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             BeginFormHelper(
@@ -134,10 +133,9 @@ window.mvcClientValidationMetadata.push({""Fields"":[],""FormId"":""form_id"",""
         }
 
         [Theory]
-        [PropertyData("UrlEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("UrlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void BeginFormWithActionController_UrlEncodesController(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             BeginFormHelper(
@@ -162,10 +160,9 @@ window.mvcClientValidationMetadata.push({""Fields"":[],""FormId"":""form_id"",""
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void BeginFormWithActionControllerFormMethodHtmlValues_AttributeEncodes_AddedHtmlAttributes(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             BeginFormHelper(
@@ -312,10 +309,9 @@ window.mvcClientValidationMetadata.push({""Fields"":[],""FormId"":""form_id"",""
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
         public void BeginRouteFormWithRouteNameFormMethodHtmlValues_AttributeEncodes_AddedHtmlAttributes(
             string text,
-            bool htmlEncode,
             string expectedText)
         {
             BeginFormHelper(

@@ -971,7 +971,7 @@ namespace System.Web.Mvc.Html.Test
 
             // Assert
             Assert.NotNull(viewData);
-            Assert.True(viewData.TemplateInfo.VisitedObjects.Contains("Hello"));
+            Assert.Contains("Hello", viewData.TemplateInfo.VisitedObjects);
         }
 
         [Fact]
@@ -992,7 +992,7 @@ namespace System.Web.Mvc.Html.Test
 
             // Assert
             Assert.NotNull(viewData);
-            Assert.True(viewData.TemplateInfo.VisitedObjects.Contains(typeof(string)));
+            Assert.Contains(typeof(string), viewData.TemplateInfo.VisitedObjects);
         }
 
         [Fact]

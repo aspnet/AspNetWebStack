@@ -108,7 +108,7 @@ namespace System.Web.Mvc.Test
             string encodedHtml = htmlHelper.AttributeEncode((object)@"<"">");
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;&quot;>");
+            Assert.Equal("&lt;&quot;>", encodedHtml);
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace System.Web.Mvc.Test
             string encodedHtml = htmlHelper.AttributeEncode(@"<"">");
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;&quot;>");
+            Assert.Equal("&lt;&quot;>", encodedHtml);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace System.Web.Mvc.Test
             string encodedHtml = htmlHelper.Encode((object)"<br />");
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace System.Web.Mvc.Test
             string encodedHtml = htmlHelper.Encode("<br />");
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]

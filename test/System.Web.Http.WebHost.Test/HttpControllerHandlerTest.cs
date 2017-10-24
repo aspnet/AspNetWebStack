@@ -286,10 +286,8 @@ namespace System.Web.Http.WebHost
             Assert.Equal(inputStreamMessage, result);
         }
 
-        [Theory]
-        [InlineData(ReadEntityBodyMode.None)]
-        [InlineData(ReadEntityBodyMode.Bufferless)]
-        public async Task ConvertRequest_DoesLazyGetBufferlessInputStream_IfRequestStreamHasNotBeenRead(ReadEntityBodyMode readEntityBodyMode)
+        [Fact]
+        public async Task ConvertRequest_DoesLazyGetBufferlessInputStream_IfRequestStreamHasNotBeenRead()
         {
             // Arrange
             bool inputStreamCalled = false;
@@ -404,8 +402,7 @@ namespace System.Web.Http.WebHost
             {
                 // Assert
                 HttpRequestContext context = expectedRequest.GetRequestContext();
-                Assert.IsType<WebHostHttpRequestContext>(context);
-                WebHostHttpRequestContext typedContext = (WebHostHttpRequestContext)context;
+                WebHostHttpRequestContext typedContext = Assert.IsType<WebHostHttpRequestContext>(context);
                 Assert.Same(contextBase, typedContext.Context);
                 Assert.Same(requestBase, typedContext.WebRequest);
                 Assert.Same(expectedRequest, typedContext.Request);
@@ -613,8 +610,8 @@ namespace System.Web.Http.WebHost
             }
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.OK, responseBase.StatusCode);
-            Assert.True(responseBase.Headers["Content-Type"].StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType));
+            Assert.Equal((int)HttpStatusCode.OK, responseBase.StatusCode);
+            Assert.StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType, responseBase.Headers["Content-Type"]);
             Assert.Equal("\"hello\"", responseString);
         }
 
@@ -772,8 +769,8 @@ namespace System.Web.Http.WebHost
             }
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
-            Assert.True(responseBase.Headers["Content-Type"].StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType));
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType, responseBase.Headers["Content-Type"]);
             Assert.Equal("An error has occurred.", httpError["Message"]);
             Assert.Equal("The 'ObjectContent`1' type failed to serialize the response body for content type 'application/json; charset=utf-8'.", httpError["ExceptionMessage"]);
             Assert.Equal(typeof(InvalidOperationException).FullName, httpError["ExceptionType"]);
@@ -820,8 +817,8 @@ namespace System.Web.Http.WebHost
             }
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
-            Assert.True(responseBase.Headers["Content-Type"].StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType));
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.StartsWith(JsonMediaTypeFormatter.DefaultMediaType.MediaType, responseBase.Headers["Content-Type"]);
             Assert.Equal("An error has occurred.", httpError["Message"]);
             Assert.Equal("The 'ObjectContent`1' type failed to serialize the response body for content type 'application/json; charset=utf-8'.", httpError["ExceptionMessage"]);
             Assert.Equal(typeof(InvalidOperationException).FullName, httpError["ExceptionType"]);
@@ -861,7 +858,7 @@ namespace System.Web.Http.WebHost
             memoryStream.Seek(0L, SeekOrigin.Begin);
 
             // Assert
-            Assert.Equal<int>((int)errorResponse.StatusCode, responseBase.StatusCode);
+            Assert.Equal((int)errorResponse.StatusCode, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Equal("myValue", responseBase.Headers["myHeader"]);
             Assert.Null(responseBase.Headers["Content-Type"]);
@@ -903,8 +900,8 @@ namespace System.Web.Http.WebHost
             }
 
             // Assert
-            Assert.Equal<int>((int)errorResponse.StatusCode, responseBase.StatusCode);
-            Assert.True(responseBase.Headers["Content-Type"].StartsWith("application/fake"));
+            Assert.Equal((int)errorResponse.StatusCode, responseBase.StatusCode);
+            Assert.StartsWith("application/fake", responseBase.Headers["Content-Type"]);
             Assert.Equal("user message", responseContent);
             Assert.Equal("myValue", responseBase.Headers["myHeader"]);
         }
@@ -946,7 +943,7 @@ namespace System.Web.Http.WebHost
                 exceptionHandler, CancellationToken.None);
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Null(responseBase.Headers["Content-Type"]);
         }
@@ -986,7 +983,7 @@ namespace System.Web.Http.WebHost
                 exceptionHandler, CancellationToken.None);
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Null(responseBase.Headers["Content-Type"]);
         }
@@ -1038,7 +1035,7 @@ namespace System.Web.Http.WebHost
                 exceptionHandler, CancellationToken.None);
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Null(responseBase.Headers["Content-Type"]);
         }
@@ -1079,7 +1076,7 @@ namespace System.Web.Http.WebHost
                 exceptionHandler, CancellationToken.None);
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Null(responseBase.Headers["Content-Type"]);
         }
@@ -1097,7 +1094,7 @@ namespace System.Web.Http.WebHost
             await CopyResponseAsync(contextMock.Object, request: new HttpRequestMessage(), response: null);
 
             // Assert
-            Assert.Equal<int>((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, responseBase.StatusCode);
             Assert.Equal(0, memoryStream.Length);
             Assert.Null(responseBase.Headers["Content-Type"]);
         }
@@ -1390,7 +1387,7 @@ namespace System.Web.Http.WebHost
 
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
         }
 

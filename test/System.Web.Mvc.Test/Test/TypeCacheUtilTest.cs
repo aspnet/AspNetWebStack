@@ -31,7 +31,7 @@ namespace System.Web.Mvc.Test
 
             MemoryStream cachedStream = buildManager.CachedFileStore[cacheName] as MemoryStream;
             Assert.NotNull(cachedStream);
-            Assert.NotEqual(0, cachedStream.ToArray().Length);
+            Assert.NotEmpty(cachedStream.ToArray());
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace System.Web.Mvc.Test
             Assert.NotNull(writeStream);
 
             byte[] streamContents = writeStream.ToArray();
-            Assert.NotEqual(0, streamContents.Length);
+            Assert.NotEmpty(streamContents);
 
             // READING
 
@@ -97,7 +97,7 @@ namespace System.Web.Mvc.Test
             Assert.NotNull(writeStream);
 
             byte[] streamContents = writeStream.ToArray();
-            Assert.NotEqual(0, streamContents.Length);
+            Assert.NotEmpty(streamContents);
 
             // READING
 

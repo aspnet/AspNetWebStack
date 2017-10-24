@@ -1,11 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Specialized;
 using System.Web.WebPages.TestUtils;
 using Microsoft.TestCommon;
-using Moq;
 
 namespace System.Web.Http.WebHost
 {
@@ -29,7 +27,7 @@ namespace System.Web.Http.WebHost
 #pragma warning restore
             PreAppStartTestHelper.TestPreAppStartClass(preApplicationStartType);
             object[] attrs = preApplicationStartType.GetCustomAttributes(typeof(ObsoleteAttribute), true);
-            Assert.Equal(1, attrs.Length);
+            Assert.Single(attrs);
         }
     }
 }

@@ -24,9 +24,10 @@ namespace System.Web.Mvc.Test
             // Assert
 
             // Original ViewData should not be modified by redfined ViewData and ViewBag
-            Assert.Single((htmlHelper as HtmlHelper).ViewData.Keys);
-            Assert.Equal(1, (htmlHelper as HtmlHelper).ViewData["A"]);
-            Assert.Equal(1, (htmlHelper as HtmlHelper).ViewBag.A);
+            HtmlHelper baseHelper = (HtmlHelper)htmlHelper;
+            Assert.Single(baseHelper.ViewData.Keys);
+            Assert.Equal(1, baseHelper.ViewData["A"]);
+            Assert.Equal(1, baseHelper.ViewBag.A);
 
             // Redefined ViewData and ViewBag should be in sync
             Assert.Equal(3, htmlHelper.ViewData.Keys.Count);

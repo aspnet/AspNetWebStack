@@ -233,8 +233,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(2, result.SearchedLocations.Count()); // Both view and master locations
-            Assert.True(result.SearchedLocations.Contains("~/vpath/controllerName/viewName.view"));
-            Assert.True(result.SearchedLocations.Contains("~/vpath/controllerName/masterName.master"));
+            Assert.Contains("~/vpath/controllerName/viewName.view", result.SearchedLocations);
+            Assert.Contains("~/vpath/controllerName/masterName.master", result.SearchedLocations);
         }
 
         [Fact]
@@ -278,8 +278,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Null(result.View);
             Assert.Equal(2, result.SearchedLocations.Count()); // View was found, not included in 'searched locations'
-            Assert.True(result.SearchedLocations.Contains("~/vpath/areaName/controllerName/masterName.master"));
-            Assert.True(result.SearchedLocations.Contains("~/vpath/controllerName/masterName.master"));
+            Assert.Contains("~/vpath/areaName/controllerName/masterName.master", result.SearchedLocations);
+            Assert.Contains("~/vpath/controllerName/masterName.master", result.SearchedLocations);
         }
 
         [Fact]

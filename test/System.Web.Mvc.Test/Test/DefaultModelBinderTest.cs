@@ -175,11 +175,11 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Canada", modelAsDictionary["CA"].Name);
             Assert.Equal("United States", modelAsDictionary["US"].Name);
             Assert.Equal(2, modelAsDictionary["CA"].States.Count());
-            Assert.True(modelAsDictionary["CA"].States.Contains("Québec"));
-            Assert.True(modelAsDictionary["CA"].States.Contains("British Columbia"));
+            Assert.Contains("Québec", modelAsDictionary["CA"].States);
+            Assert.Contains("British Columbia", modelAsDictionary["CA"].States);
             Assert.Equal(2, modelAsDictionary["US"].States.Count());
-            Assert.True(modelAsDictionary["US"].States.Contains("Washington"));
-            Assert.True(modelAsDictionary["US"].States.Contains("Oregon"));
+            Assert.Contains("Washington", modelAsDictionary["US"].States);
+            Assert.Contains("Oregon", modelAsDictionary["US"].States);
         }
 
         [Fact]
@@ -215,11 +215,11 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Canada", modelAsDictionary["CA"].Name);
             Assert.Equal("United States", modelAsDictionary["US"].Name);
             Assert.Equal(2, modelAsDictionary["CA"].States.Count());
-            Assert.True(modelAsDictionary["CA"].States.Contains("Québec"));
-            Assert.True(modelAsDictionary["CA"].States.Contains("British Columbia"));
+            Assert.Contains("Québec", modelAsDictionary["CA"].States);
+            Assert.Contains("British Columbia", modelAsDictionary["CA"].States);
             Assert.Equal(2, modelAsDictionary["US"].States.Count());
-            Assert.True(modelAsDictionary["US"].States.Contains("Washington"));
-            Assert.True(modelAsDictionary["US"].States.Contains("Oregon"));
+            Assert.Contains("Washington", modelAsDictionary["US"].States);
+            Assert.Contains("Oregon", modelAsDictionary["US"].States);
         }
 
         [Fact]
@@ -254,14 +254,14 @@ namespace System.Web.Mvc.Test
             Assert.Equal(2, modelAsDictionary.Count);
             Assert.Equal("Canada", modelAsDictionary["CA"].Name);
             Assert.Equal("United States", modelAsDictionary["US"].Name);
-            Assert.Equal(1, modelAsDictionary["CA"].States.Count());
-            Assert.True(modelAsDictionary["CA"].States.Contains("Québec"));
+            string state = Assert.Single(modelAsDictionary["CA"].States);
+            Assert.Contains("Québec", state);
 
             // We do not accept double notation for a same entry, so we can't find that state.
-            Assert.False(modelAsDictionary["CA"].States.Contains("British Columbia"));
+            Assert.DoesNotContain("British Columbia", state);
             Assert.Equal(2, modelAsDictionary["US"].States.Count());
-            Assert.True(modelAsDictionary["US"].States.Contains("Washington"));
-            Assert.True(modelAsDictionary["US"].States.Contains("Oregon"));
+            Assert.Contains("Washington", modelAsDictionary["US"].States);
+            Assert.Contains("Oregon", modelAsDictionary["US"].States);
         }
 
         [Fact]
@@ -733,8 +733,8 @@ namespace System.Web.Mvc.Test
             // Assert
             ModelState modelState = bindingContext.ModelState["IntReadWrite"];
             Assert.NotNull(modelState);
-            Assert.Single(modelState.Errors);
-            Assert.Equal("The value 'foo' is not valid for IntReadWrite.", modelState.Errors[0].ErrorMessage);
+            ModelError error = Assert.Single(modelState.Errors);
+            Assert.Equal("The value 'foo' is not valid for IntReadWrite.", error.ErrorMessage);
         }
 
         [Fact]
@@ -1050,7 +1050,7 @@ namespace System.Web.Mvc.Test
             helper.PublicBindProperty(new ControllerContext(), bindingContext, pd);
 
             // Assert
-            Assert.Equal(false, bindingContext.ModelState.IsValidField("IntReadWriteNonNegative"));
+            Assert.False(bindingContext.ModelState.IsValidField("IntReadWriteNonNegative"));
             var error = Assert.Single(bindingContext.ModelState["IntReadWriteNonNegative"].Errors);
             Assert.Equal("Some error text.", error.ErrorMessage);
             Assert.Equal(4, model.IntReadWriteNonNegative);
@@ -1212,8 +1212,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             var returnedValueAsIntArray = Assert.IsType<int[]>(returnedValue);
-            Assert.Single(returnedValueAsIntArray);
-            Assert.Equal(42, returnedValueAsIntArray[0]);
+            var returnedInt = Assert.Single(returnedValueAsIntArray);
+            Assert.Equal(42, returnedInt);
         }
 
         [Fact]
@@ -1318,8 +1318,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.False(bindingContext.ModelState.IsValidField("foo"));
-            Assert.IsType<InvalidOperationException>(bindingContext.ModelState["foo"].Errors[0].Exception);
-            Assert.Equal("The parameter conversion from type 'System.String' to type 'System.Int32' failed. See the inner exception for more information.", bindingContext.ModelState["foo"].Errors[0].Exception.Message);
+            InvalidOperationException exception = Assert.IsType<InvalidOperationException>(bindingContext.ModelState["foo"].Errors[0].Exception);
+            Assert.Equal("The parameter conversion from type 'System.String' to type 'System.Int32' failed. See the inner exception for more information.", exception.Message);
             Assert.Null(returnedValue);
         }
 
@@ -1791,7 +1791,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.Equal(3, model.Count);
-            Assert.Equal(false, bindingContext.ModelState.IsValidField("foo[1]"));
+            Assert.False(bindingContext.ModelState.IsValidField("foo[1]"));
             Assert.Equal("A value is required.", bindingContext.ModelState["foo[1]"].Errors[0].ErrorMessage);
             Assert.Equal(0, model[0]);
             Assert.Equal(0, model[1]);
@@ -2505,7 +2505,7 @@ namespace System.Web.Mvc.Test
                 .Single();
 
             // Assert
-            Assert.True(property.Attributes.Cast<Attribute>().Any(a => a is RequiredAttribute));
+            Assert.Contains(property.Attributes.Cast<Attribute>(), a => a is RequiredAttribute);
         }
 
         [Fact]
@@ -2521,7 +2521,7 @@ namespace System.Web.Mvc.Test
                 .Single();
 
             // Assert
-            Assert.True(property.Attributes.Cast<Attribute>().Any(a => a is RangeAttribute));
+            Assert.Contains(property.Attributes.Cast<Attribute>(), a => a is RangeAttribute);
         }
 
         [Fact]
@@ -2537,8 +2537,8 @@ namespace System.Web.Mvc.Test
                 .Single();
 
             // Assert
-            Assert.True(property.Attributes.Cast<Attribute>().Any(a => a is RequiredAttribute));
-            Assert.True(property.Attributes.Cast<Attribute>().Any(a => a is RangeAttribute));
+            Assert.Contains(property.Attributes.Cast<Attribute>(), a => a is RequiredAttribute);
+            Assert.Contains(property.Attributes.Cast<Attribute>(), a => a is RangeAttribute);
         }
 
         // GetPropertyValue tests
@@ -2666,7 +2666,8 @@ namespace System.Web.Mvc.Test
             Assert.Single(modelBinder.ModelState);
             ModelState stateModel = modelBinder.ModelState[BASE_MODEL_NAME];
             Assert.NotNull(stateModel);
-            Assert.Equal("Minimum must be less than or equal to Maximum", stateModel.Errors.Single().ErrorMessage);
+            ModelError error = Assert.Single(stateModel.Errors);
+            Assert.Equal("Minimum must be less than or equal to Maximum", error.ErrorMessage);
         }
 
         [Fact]
@@ -2719,7 +2720,8 @@ namespace System.Web.Mvc.Test
             Assert.Single(modelBinder.ModelState);
             ModelState stateModel = modelBinder.ModelState[BASE_MODEL_NAME];
             Assert.NotNull(stateModel);
-            Assert.Equal("The object just isn't right", stateModel.Errors.Single().ErrorMessage);
+            ModelError error = Assert.Single(stateModel.Errors);
+            Assert.Equal("The object just isn't right", error.ErrorMessage);
         }
 
         [AlwaysInvalid]
@@ -2741,7 +2743,8 @@ namespace System.Web.Mvc.Test
             Assert.Single(modelBinder.ModelState);
             ModelState stateModel = modelBinder.ModelState[BASE_MODEL_NAME];
             Assert.NotNull(stateModel);
-            Assert.Equal("The field OnModelUpdatedModelNoValidationResult is invalid.", stateModel.Errors.Single().ErrorMessage);
+            ModelError error = Assert.Single(stateModel.Errors);
+            Assert.Equal("The field OnModelUpdatedModelNoValidationResult is invalid.", error.ErrorMessage);
         }
 
         [Fact]
@@ -2875,8 +2878,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             ModelState modelState = binder.Context.ModelState[BASE_MODEL_NAME + ".NonNullableString"];
-            Assert.Single(modelState.Errors);
-            Assert.IsType<ArgumentNullException>(modelState.Errors[0].Exception);
+            ModelError error = Assert.Single(modelState.Errors);
+            Assert.IsType<ArgumentNullException>(error.Exception);
         }
 
         [Fact]

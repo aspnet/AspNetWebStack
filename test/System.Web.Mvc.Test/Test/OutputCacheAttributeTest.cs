@@ -47,7 +47,7 @@ namespace System.Web.Mvc.Test
             Assert.Equal("SomeProfile", cacheSettings.CacheProfile);
             Assert.Equal(50, cacheSettings.Duration);
             Assert.Equal(OutputCacheLocation.Downstream, cacheSettings.Location);
-            Assert.Equal(true, cacheSettings.NoStore);
+            Assert.True(cacheSettings.NoStore);
             Assert.Equal("SomeSqlDependency", cacheSettings.SqlDependency);
             Assert.Equal("SomeContentEncoding", cacheSettings.VaryByContentEncoding);
             Assert.Equal("SomeCustom", cacheSettings.VaryByCustom);

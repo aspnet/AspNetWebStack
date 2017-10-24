@@ -307,7 +307,7 @@ namespace System.Web.Http.WebHost.Routing
 
             // Assert
             // Altough it contains the ignore route, GetVirtualPath from the ignored route will always return null.
-            Assert.Equal(collection.Count, 1);
+            Assert.Equal(1, collection.Count);
             Assert.Null(httpvPathData);
         }
 
@@ -322,7 +322,7 @@ namespace System.Web.Http.WebHost.Routing
 
             var response = await SubmitRequestAsync(request);
 
-            Assert.Equal(response.StatusCode, Net.HttpStatusCode.NotFound);
+            Assert.Equal(Net.HttpStatusCode.NotFound, response.StatusCode);
             Assert.True(response.RequestMessage.Properties.ContainsKey(HttpPropertyKeys.NoRouteMatched));
         }
 
@@ -411,7 +411,7 @@ namespace System.Web.Http.WebHost.Routing
 
             var response = await SubmitRequestAsync(request);
 
-            Assert.Equal(response.StatusCode, Net.HttpStatusCode.NotFound);
+            Assert.Equal(Net.HttpStatusCode.NotFound, response.StatusCode);
             Assert.True(response.RequestMessage.Properties.ContainsKey(HttpPropertyKeys.NoRouteMatched));
         }
 
@@ -427,7 +427,7 @@ namespace System.Web.Http.WebHost.Routing
 
             var response = await SubmitRequestAsync(request);
 
-            Assert.Equal(response.StatusCode, Net.HttpStatusCode.OK);
+            Assert.Equal(Net.HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(String.Concat("values/", await response.Content.ReadAsStringAsync()), requestPath);
         }
 

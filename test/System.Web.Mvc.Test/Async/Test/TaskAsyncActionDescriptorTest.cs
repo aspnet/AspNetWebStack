@@ -145,7 +145,7 @@ namespace System.Web.Mvc.Async.Test
                 "Test exception from action"
                 );
 
-            Assert.True(ex.StackTrace.Contains("System.Web.Mvc.Async.Test.TaskAsyncActionDescriptorTest.ExecuteController."));
+            Assert.Contains("System.Web.Mvc.Async.Test.TaskAsyncActionDescriptorTest.ExecuteController.", ex.StackTrace);
         }
 
         [Fact]
@@ -169,7 +169,7 @@ namespace System.Web.Mvc.Async.Test
                 "Test exception from action"
                 );
 
-            Assert.True(ex.StackTrace.Contains("System.Web.Mvc.Async.Test.TaskAsyncActionDescriptorTest.ExecuteController."));
+            Assert.Contains("System.Web.Mvc.Async.Test.TaskAsyncActionDescriptorTest.ExecuteController.", ex.StackTrace);
         }
 
         [Fact]
@@ -389,9 +389,9 @@ namespace System.Web.Mvc.Async.Test
             // Assert
             Assert.NotSame(pDescsFirstCall, pDescsSecondCall); // Should get a new array every time
             Assert.Equal(pDescsFirstCall, pDescsSecondCall);
-            Assert.Single(pDescsFirstCall);
 
-            ReflectedParameterDescriptor pDesc = pDescsFirstCall[0] as ReflectedParameterDescriptor;
+            ParameterDescriptor parameterDescriptor = Assert.Single(pDescsFirstCall);
+            ReflectedParameterDescriptor pDesc = Assert.IsType<ReflectedParameterDescriptor>(parameterDescriptor);
 
             Assert.NotNull(pDesc);
             Assert.Same(ad, pDesc.ActionDescriptor);

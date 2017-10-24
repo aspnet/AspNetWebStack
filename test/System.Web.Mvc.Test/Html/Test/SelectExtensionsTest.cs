@@ -781,11 +781,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_AttributeEncodes_AddedHtmlAttributes(
-            string text,
-            bool htmlEncode,
-            string encodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_AttributeEncodes_AddedHtmlAttributes(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -810,8 +807,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_AttributeEncodes_Name(string text, bool htmlEncode, string encodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_AttributeEncodes_Name(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -837,8 +834,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_AttributeEncodes_OptGroupLabel(string text, bool htmlEncode, string encodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_AttributeEncodes_OptGroupLabel(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -865,8 +862,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("HtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_HtmlEncodes_OptionLabel(string text, bool htmlEncode, string encodedText)
+        [PropertyData("HtmlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_HtmlEncodes_OptionLabel(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -891,8 +888,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_AttributeEncodes_Prefix(string text, bool htmlEncode, string encodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_AttributeEncodes_Prefix(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -920,8 +917,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("HtmlEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_HtmlEncodes_Text(string text, bool htmlEncode, string encodedText)
+        [PropertyData("HtmlEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_HtmlEncodes_Text(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>
@@ -944,8 +941,8 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Theory]
-        [PropertyData("AttributeEncodedData", PropertyType = typeof(EncodedDataSets))]
-        public void DropDownList_AttributeEncodes_Value(string text, bool htmlEncode, string encodedText)
+        [PropertyData("AttributeEncodedData_NoHtmlEncode", PropertyType = typeof(EncodedDataSets))]
+        public void DropDownList_AttributeEncodes_Value(string text, string encodedText)
         {
             // Arrange
             var selectList = new List<SelectListItem>

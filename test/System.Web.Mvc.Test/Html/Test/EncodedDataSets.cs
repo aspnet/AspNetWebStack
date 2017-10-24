@@ -86,6 +86,35 @@ namespace System.Web.Mvc.Html.Test
             }
         }
 
+        public static TheoryDataSet<string, bool> AttributeEncodedData_NoEncodedText
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string, bool>();
+                foreach (var stringSet in StringSets)
+                {
+                    dataSet.Add(stringSet.Text, false);
+                    dataSet.Add(stringSet.Text, true);
+                }
+
+                return dataSet;
+            }
+        }
+
+        public static TheoryDataSet<string, string> AttributeEncodedData_NoHtmlEncode
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string, string>();
+                foreach (var stringSet in StringSets)
+                {
+                    dataSet.Add(stringSet.Text, stringSet.AttributeEncodedText);
+                }
+
+                return dataSet;
+            }
+        }
+
         public static TheoryDataSet<string, bool, string> ConditionallyHtmlEncodedData
         {
             get
@@ -98,6 +127,21 @@ namespace System.Web.Mvc.Html.Test
                 }
 
                 return result;
+            }
+        }
+
+        public static TheoryDataSet<string, bool> ConditionallyHtmlEncodedData_NoEncodedText
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string, bool>();
+                foreach (var stringSet in StringSets)
+                {
+                    dataSet.Add(stringSet.Text, false);
+                    dataSet.Add(stringSet.Text, true);
+                }
+
+                return dataSet;
             }
         }
 
@@ -114,6 +158,34 @@ namespace System.Web.Mvc.Html.Test
                 }
 
                 return result;
+            }
+        }
+
+        public static TheoryDataSet<string, string> HtmlEncodedData_NoHtmlEncode
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string, string>();
+                foreach (var stringSet in StringSets)
+                {
+                    dataSet.Add(stringSet.Text, stringSet.HtmlEncodedText);
+                }
+
+                return dataSet;
+            }
+        }
+
+        public static TheoryDataSet<string> HtmlEncodedData_JustText
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<string>();
+                foreach (var stringSet in StringSets)
+                {
+                    dataSet.Add(stringSet.Text);
+                }
+
+                return dataSet;
             }
         }
 
@@ -134,6 +206,21 @@ namespace System.Web.Mvc.Html.Test
             }
         }
 
+        public static TheoryDataSet<string, string> IdEncodedData_NoHtmlEncode
+        {
+            get
+            {
+                var result = new TheoryDataSet<string, string>();
+                foreach (var encodedString in StringSets)
+                {
+                    // Add leading 'a' to avoid sanitizing to an empty string.
+                    result.Add("a" + encodedString.Text, "a" + encodedString.IdEncodedText);
+                }
+
+                return result;
+            }
+        }
+
         public static TheoryDataSet<string, bool, string> UrlEncodedData
         {
             get
@@ -144,6 +231,20 @@ namespace System.Web.Mvc.Html.Test
                     // Same results whether ModelMetadata.HtmlEncode is true or false.
                     result.Add(encodedString.Text, false, encodedString.UrlEncodedText);
                     result.Add(encodedString.Text, true, encodedString.UrlEncodedText);
+                }
+
+                return result;
+            }
+        }
+
+        public static TheoryDataSet<string, string> UrlEncodedData_NoHtmlEncode
+        {
+            get
+            {
+                var result = new TheoryDataSet<string, string>();
+                foreach (var encodedString in StringSets)
+                {
+                    result.Add(encodedString.Text, encodedString.UrlEncodedText);
                 }
 
                 return result;

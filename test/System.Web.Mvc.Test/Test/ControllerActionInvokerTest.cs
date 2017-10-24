@@ -1485,8 +1485,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Equal(ad, postContext.ActionDescriptor);
             Assert.Same(result, postContext.Result);
-            Assert.Single(callQueue);
-            Assert.Same(filter1, callQueue[0]);
+            AuthorizationFilterHelper resultFilter = Assert.Single(callQueue);
+            Assert.Same(filter1, resultFilter);
         }
 
         [Fact]
@@ -1543,8 +1543,8 @@ namespace System.Web.Mvc.Test
             // Assert
             Assert.Same(ad, postContext.ActionDescriptor);
             Assert.Same(controller, postContext.Controller);
-            Assert.Equal(1, callQueue.Count);
-            Assert.Same(filter, callQueue[0]);
+            AuthenticationFilterHelper actualHelper = Assert.Single(callQueue);
+            Assert.Same(filter, actualHelper);
             Assert.Same(principal, postContext.Principal);
         }
 
@@ -1574,8 +1574,8 @@ namespace System.Web.Mvc.Test
             Assert.Same(ad, postContext.ActionDescriptor);
             Assert.Same(controller, postContext.Controller);
             Assert.Same(result, postContext.Result);
-            Assert.Single(callQueue);
-            Assert.Same(filter1, callQueue[0]);
+            AuthenticationFilterHelper resultFilter = Assert.Single(callQueue);
+            Assert.Same(filter1, resultFilter);
         }
 
         [Fact]
@@ -1603,8 +1603,8 @@ namespace System.Web.Mvc.Test
             Assert.Same(ad, postContext.ActionDescriptor);
             Assert.Same(controller, postContext.Controller);
             Assert.Same(principal, postContext.HttpContext.User);
-            Assert.Single(callQueue);
-            Assert.Same(filter, callQueue[0]);
+            AuthenticationFilterHelper resultFilter = Assert.Single(callQueue);
+            Assert.Same(filter, resultFilter);
         }
 
         [Fact]
@@ -1630,8 +1630,8 @@ namespace System.Web.Mvc.Test
                 Assert.Same(ad, postContext.ActionDescriptor);
                 Assert.Same(controller, postContext.Controller);
                 Assert.Same(principal, Thread.CurrentPrincipal);
-                Assert.Single(callQueue);
-                Assert.Same(filter, callQueue[0]);
+                AuthenticationFilterHelper resultFilter = Assert.Single(callQueue);
+                Assert.Same(filter, resultFilter);
             }
         }
 
@@ -1660,8 +1660,8 @@ namespace System.Web.Mvc.Test
                 Assert.Same(ad, postContext.ActionDescriptor);
                 Assert.Same(controller, postContext.Controller);
                 Assert.NotSame(controllerContext.HttpContext.User, Thread.CurrentPrincipal);
-                Assert.Single(callQueue);
-                Assert.Same(filter, callQueue[0]);
+                AuthenticationFilterHelper resultFilter = Assert.Single(callQueue);
+                Assert.Same(filter, resultFilter);
             }
         }
 
@@ -2213,8 +2213,8 @@ namespace System.Web.Mvc.Test
             ResultExecutedContext result = helper.PublicInvokeActionResultWithFilters(context, filters, actionResult);
 
             // Assert
-            Assert.Equal(1, actions.Count);
-            Assert.Equal("OnResultExecuting1", actions[0]);
+            string action = Assert.Single(actions);
+            Assert.Equal("OnResultExecuting1", action);
             Assert.Null(result.Exception);
             Assert.True(result.Canceled);
             Assert.Same(actionResult, result.Result);

@@ -44,8 +44,8 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.Equal("NewName", ad.ActionName);
-            Assert.IsType<ReflectedActionDescriptor>(ad);
-            Assert.Same(targetMethod, ((ReflectedActionDescriptor)ad).MethodInfo);
+            ReflectedActionDescriptor actionDescriptor = Assert.IsType<ReflectedActionDescriptor>(ad);
+            Assert.Same(targetMethod, actionDescriptor.MethodInfo);
             Assert.Same(cd, ad.ControllerDescriptor);
         }
 

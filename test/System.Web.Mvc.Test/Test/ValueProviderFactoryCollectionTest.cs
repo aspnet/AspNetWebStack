@@ -61,9 +61,9 @@ namespace System.Web.Mvc.Test
         public void ValueProviderFactoryCollectionCombinedItemsCaches()
         {
             // Arrange
-            var factories = new ValueProviderFactory[] 
+            var factories = new ValueProviderFactory[]
             {
-                new Mock<ValueProviderFactory>(MockBehavior.Strict).Object, 
+                new Mock<ValueProviderFactory>(MockBehavior.Strict).Object,
                 new Mock<ValueProviderFactory>(MockBehavior.Strict).Object
             };
             var collection = new ValueProviderFactoryCollection(factories);
@@ -104,9 +104,9 @@ namespace System.Web.Mvc.Test
         private static void TestCacheReset(Action<ValueProviderFactoryCollection> mutatingAction)
         {
             // Arrange
-            var providers = new List<ValueProviderFactory>() 
+            var providers = new List<ValueProviderFactory>()
             {
-                new Mock<ValueProviderFactory>(MockBehavior.Strict).Object, 
+                new Mock<ValueProviderFactory>(MockBehavior.Strict).Object,
                 new Mock<ValueProviderFactory>(MockBehavior.Strict).Object
             };
             var collection = new ValueProviderFactoryCollection(providers);
@@ -212,8 +212,8 @@ namespace System.Web.Mvc.Test
             collection[0] = newFactory;
 
             // Assert
-            Assert.Single(collection);
-            Assert.Equal(newFactory, collection[0]);
+            ValueProviderFactory factory = Assert.Single(collection);
+            Assert.Equal(newFactory, factory);
         }
 
         [Fact]

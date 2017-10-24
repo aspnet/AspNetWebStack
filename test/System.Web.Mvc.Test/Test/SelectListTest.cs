@@ -43,8 +43,8 @@ namespace System.Web.Mvc.Test
             Assert.Null(selectList.DataValueField);
             Assert.Null(selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
         }
 
         [Fact]
@@ -99,8 +99,8 @@ namespace System.Web.Mvc.Test
             Assert.Equal("SomeValueField", selectList.DataValueField);
             Assert.Equal("SomeTextField", selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
         }
 
         [Fact]
@@ -129,8 +129,8 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Value", selectList.DataValueField);
             Assert.Equal("Text", selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
             Assert.Same(disabledValues, selectList.DisabledValues);
             Assert.Equal(disabledValues, selectList.DisabledValues);
             Assert.Null(selectList.DataGroupField);
@@ -162,8 +162,8 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Value", selectList.DataValueField);
             Assert.Equal("Text", selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
             Assert.Equal("Group", selectList.DataGroupField);
         }
 
@@ -195,8 +195,8 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Value", selectList.DataValueField);
             Assert.Equal("Text", selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
             Assert.Equal("Group", selectList.DataGroupField);
             Assert.Equal(disabledGroups, selectList.DisabledGroups);
         }
@@ -228,8 +228,8 @@ namespace System.Web.Mvc.Test
             Assert.Equal("Value", selectList.DataValueField);
             Assert.Equal("Text", selectList.DataTextField);
             Assert.Same(selectedValue, selectList.SelectedValue);
-            Assert.Single(selectedValues);
-            Assert.Same(selectedValue, selectedValues[0]);
+            object resultValue = Assert.Single(selectedValues);
+            Assert.Same(selectedValue, resultValue);
             Assert.Equal("Group", selectList.DataGroupField);
             Assert.Same(disabledValues, selectList.DisabledValues);
         }

@@ -41,6 +41,20 @@ namespace System.Web.Http.WebHost
             }
         }
 
+        public static TheoryDataSet<HttpContent> OutputBufferingTestData_NoExpectedResult
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<HttpContent>();
+                foreach (var item in OutputBufferingTestData)
+                {
+                    dataSet.Add((HttpContent)item[0]);
+                }
+
+                return dataSet;
+            }
+        }
+
         [Fact]
         void UseBufferedInputStream_Returns_True()
         {
@@ -94,8 +108,8 @@ namespace System.Web.Http.WebHost
         }
 
         [Theory]
-        [PropertyData("OutputBufferingTestData")]
-        public void UseBufferedOutputStream_CausesContentLengthHeaderToBeSet(HttpContent content, bool expectedResult)
+        [PropertyData("OutputBufferingTestData_NoExpectedResult")]
+        public void UseBufferedOutputStream_CausesContentLengthHeaderToBeSet(HttpContent content)
         {
             // Arrange & Act
             WebHostBufferPolicySelector selector = new WebHostBufferPolicySelector();
