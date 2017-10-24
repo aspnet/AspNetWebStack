@@ -40,7 +40,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             string responseString = await response.Content.ReadAsStringAsync();
-            Assert.Equal<string>(expectedResponse, responseString);
+            Assert.Equal(expectedResponse, responseString);
         }
 
         [Theory]
@@ -65,7 +65,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             string responseString = await response.Content.ReadAsStringAsync();
-            Assert.Equal<string>(expectedResponse, responseString);
+            Assert.Equal(expectedResponse, responseString);
         }
 
         [Theory]
@@ -91,7 +91,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
-            Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
+            Assert.Equal(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
 
         [Theory]
@@ -116,7 +116,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             ModelBindOrder actualItem = await response.Content.ReadAsAsync<ModelBindOrder>();
-            Assert.Equal<ModelBindOrder>(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
+            Assert.Equal(expectedItem, actualItem, new ModelBindOrderEqualityComparer());
         }
 
         [Theory]

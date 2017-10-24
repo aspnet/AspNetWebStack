@@ -630,8 +630,7 @@ namespace System.Web.Http.Owin
 
                     // Assert
                     HttpRequestContext requestContext = request.GetRequestContext();
-                    Assert.IsType<OwinHttpRequestContext>(requestContext);
-                    OwinHttpRequestContext typedContext = (OwinHttpRequestContext)requestContext;
+                    OwinHttpRequestContext typedContext = Assert.IsType<OwinHttpRequestContext>(requestContext);
                     Assert.Same(expectedContext, typedContext.Context);
                     Assert.Same(request, typedContext.Request);
                 }
@@ -1171,7 +1170,7 @@ namespace System.Web.Http.Owin
                     var exception = await Assert.ThrowsAsync<Exception>(() => product.Invoke(context));
                     Assert.Same(expectedException, exception);
                     Assert.NotNull(exception.StackTrace);
-                    Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                    Assert.StartsWith(expectedStackTrace, exception.StackTrace);
                 }
             }
         }

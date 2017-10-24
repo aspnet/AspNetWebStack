@@ -27,7 +27,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             string responseString = await response.Content.ReadAsStringAsync();
-            Assert.Equal<string>("\"ModelBinding:GetStringFromRoute\"", responseString);
+            Assert.Equal("\"ModelBinding:GetStringFromRoute\"", responseString);
         }
     }
 }

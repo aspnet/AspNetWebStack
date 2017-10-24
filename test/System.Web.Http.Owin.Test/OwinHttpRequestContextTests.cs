@@ -175,7 +175,7 @@ namespace System.Web.Http.Owin
                 bool includeErrorDetail = context.IncludeErrorDetail;
 
                 // Assert
-                Assert.Equal(false, includeErrorDetail);
+                Assert.False(includeErrorDetail);
             }
         }
 
@@ -194,7 +194,7 @@ namespace System.Web.Http.Owin
                 bool includeErrorDetail = context.IncludeErrorDetail;
 
                 // Assert
-                Assert.Equal(true, includeErrorDetail);
+                Assert.True(includeErrorDetail);
             }
         }
 
@@ -310,7 +310,7 @@ namespace System.Web.Http.Owin
                 bool isLocal = context.IsLocal;
 
                 // Assert
-                Assert.Equal(false, isLocal);
+                Assert.False(isLocal);
             }
         }
 

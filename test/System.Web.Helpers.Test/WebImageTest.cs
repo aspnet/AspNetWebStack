@@ -385,7 +385,7 @@ namespace System.Web.Helpers.Test
             image.Resize(200, 100, preserveAspectRatio: true, preventEnlarge: true);
 
             // Assert
-            Assert.Equal(image.ImageFormat, "png");
+            Assert.Equal("png", image.ImageFormat);
             image.Save(GetContext(), saveAction, @"x:\1.png", null, false);
 
             using (Image modified = Image.FromStream(output))
@@ -980,7 +980,7 @@ namespace System.Web.Helpers.Test
             image.Save(GetContext(), saveAction, filePath: specifiedOutputFile, imageFormat: null, forceWellKnownExtension: true);
 
             // Assert
-            Assert.Equal(Path.GetExtension(actualOutputFile), ".png");
+            Assert.Equal(".png", Path.GetExtension(actualOutputFile));
         }
 
         [Fact]
@@ -997,7 +997,7 @@ namespace System.Web.Helpers.Test
             image.Save(GetContext(), saveAction, filePath: specifiedOutputFile, imageFormat: null, forceWellKnownExtension: true);
 
             // Assert
-            Assert.Equal(Path.GetExtension(actualOutputFile), ".png");
+            Assert.Equal(".png", Path.GetExtension(actualOutputFile));
         }
 
         [Fact]

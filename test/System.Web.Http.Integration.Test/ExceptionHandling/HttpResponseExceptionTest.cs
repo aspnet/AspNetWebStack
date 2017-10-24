@@ -48,7 +48,7 @@ namespace System.Web.Http.ExceptionHandling
                 {
                     Assert.NotNull(response.Content);
                     Assert.NotNull(response.Content.Headers.ContentType);
-                    Assert.Equal(response.Content.Headers.ContentType.MediaType, "application/json");
+                    Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
 
                     if (throwAt == "DoNotThrow")
                     {

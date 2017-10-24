@@ -93,8 +93,7 @@ namespace System.Web.Http.Owin
             // Assert
             Assert.Null(context.ErrorResult);
             IPrincipal principal = context.Principal;
-            Assert.IsType<ClaimsPrincipal>(principal);
-            ClaimsPrincipal claimsPrincipal = (ClaimsPrincipal)principal;
+            ClaimsPrincipal claimsPrincipal = Assert.IsType<ClaimsPrincipal>(principal);
             IIdentity identity = claimsPrincipal.Identity;
             Assert.Same(expectedIdentity, identity);
         }
@@ -291,8 +290,8 @@ namespace System.Web.Http.Owin
             Assert.NotNull(challenge);
             string[] authenticationTypes = challenge.AuthenticationTypes;
             Assert.NotNull(authenticationTypes);
-            Assert.Equal(1, authenticationTypes.Length);
-            Assert.Same(expectedAuthenticationType, authenticationTypes[0]);
+            string authenticationType = Assert.Single(authenticationTypes);
+            Assert.Same(expectedAuthenticationType, authenticationType);
             AuthenticationProperties extra = challenge.Properties;
             Assert.Same(originalExtra, extra);
         }
@@ -321,8 +320,8 @@ namespace System.Web.Http.Owin
             Assert.NotNull(challenge);
             string[] authenticationTypes = challenge.AuthenticationTypes;
             Assert.NotNull(authenticationTypes);
-            Assert.Equal(1, authenticationTypes.Length);
-            Assert.Same(expectedAuthenticationType, authenticationTypes[0]);
+            string authenticationType = Assert.Single(authenticationTypes);
+            Assert.Same(expectedAuthenticationType, authenticationType);
             AuthenticationProperties extra = challenge.Properties;
             Assert.NotNull(extra);
         }

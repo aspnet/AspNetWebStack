@@ -156,8 +156,7 @@ namespace System.Web.Http.Owin
             Assert.NotNull(challenge);
             string[] authenticationTypes = challenge.AuthenticationTypes;
             Assert.NotNull(authenticationTypes);
-            Assert.Equal(1, authenticationTypes.Length);
-            string authenticationType = authenticationTypes[0];
+            string authenticationType = Assert.Single(authenticationTypes);
             Assert.Null(authenticationType);
         }
 
@@ -185,8 +184,7 @@ namespace System.Web.Http.Owin
             Assert.NotNull(challenge);
             string[] authenticationTypes = challenge.AuthenticationTypes;
             Assert.NotNull(authenticationTypes);
-            Assert.Equal(1, authenticationTypes.Length);
-            string authenticationType = authenticationTypes[0];
+            string authenticationType = Assert.Single(authenticationTypes);
             Assert.Null(authenticationType);
             AuthenticationProperties actualExtraWrapper = challenge.Properties;
             Assert.NotNull(actualExtraWrapper);
@@ -217,8 +215,7 @@ namespace System.Web.Http.Owin
             Assert.NotNull(challenge);
             string[] authenticationTypes = challenge.AuthenticationTypes;
             Assert.NotNull(authenticationTypes);
-            Assert.Equal(1, authenticationTypes.Length);
-            string authenticationType = authenticationTypes[0];
+            string authenticationType = Assert.Single(authenticationTypes);
             Assert.Null(authenticationType);
             AuthenticationProperties actualExtraWrapper = challenge.Properties;
             Assert.NotNull(actualExtraWrapper);

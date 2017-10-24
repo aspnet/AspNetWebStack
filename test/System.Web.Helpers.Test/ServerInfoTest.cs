@@ -111,7 +111,7 @@ namespace System.Web.Helpers.Test
 
                 // Assert
                 Assert.True(configValue.ContainsKey("Legacy Code Access Security"));
-                Assert.Equal(configValue["Legacy Code Access Security"], "Legacy Code Access Security has been detected on your system. Microsoft WebPage features require the ASP.NET 4 Code Access Security model. For information about how to resolve this, contact your server administrator.");
+                Assert.Equal("Legacy Code Access Security has been detected on your system. Microsoft WebPage features require the ASP.NET 4 Code Access Security model. For information about how to resolve this, contact your server administrator.", configValue["Legacy Code Access Security"]);
             };
 
             AppDomainUtils.RunInSeparateAppDomain(GetAppDomainSetup(legacyCasEnabled: true), action);

@@ -45,10 +45,10 @@ namespace System.Web.Http.ContentNegotiation
 
             IEnumerable<string> versionHdr = null;
             Assert.True(response.Content.Headers.TryGetValues("Version", out versionHdr));
-            Assert.Equal<string>("1.3.5.0", versionHdr.First());
+            Assert.Equal("1.3.5.0", versionHdr.First());
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("text/plainwithversioninfo", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal("text/plainwithversioninfo", response.Content.Headers.ContentType.MediaType);
         }
 
         [Fact]
@@ -66,8 +66,8 @@ namespace System.Web.Http.ContentNegotiation
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("text/plain", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<string>("Hello World!", await response.Content.ReadAsStringAsync());
+            Assert.Equal("text/plain", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal("Hello World!", await response.Content.ReadAsStringAsync());
         }
 
         [Fact]
@@ -86,8 +86,8 @@ namespace System.Web.Http.ContentNegotiation
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("text/plain", response.Content.Headers.ContentType.MediaType);
-            Assert.Equal<int>(100, Convert.ToInt32(await response.Content.ReadAsStringAsync()));
+            Assert.Equal("text/plain", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal(100, Convert.ToInt32(await response.Content.ReadAsStringAsync()));
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace System.Web.Http.ContentNegotiation
             response.EnsureSuccessStatusCode();
             Assert.NotNull(response.Content);
             Assert.NotNull(response.Content.Headers.ContentType);
-            Assert.Equal<string>("text/plain", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal("text/plain", response.Content.Headers.ContentType.MediaType);
         }
 
         private void SetupHost()

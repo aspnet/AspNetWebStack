@@ -32,8 +32,8 @@ namespace System.Web.Http.Cors.Test
 
             config.Initializer(config);
 
-            Assert.Equal(1, config.MessageHandlers.Count);
-            Assert.IsType(typeof(CorsMessageHandler), config.MessageHandlers[0]);
+            var handler = Assert.Single(config.MessageHandlers);
+            Assert.IsType<CorsMessageHandler>(handler);
         }
 
         [Fact]
@@ -49,8 +49,8 @@ namespace System.Web.Http.Cors.Test
 
             config.Initializer(config);
 
-            Assert.Equal(1, config.MessageHandlers.Count);
-            Assert.IsType(typeof(CorsMessageHandler), config.MessageHandlers[0]);
+            var handler = Assert.Single(config.MessageHandlers);
+            Assert.IsType<CorsMessageHandler>(handler);
         }
 
         [Fact]
@@ -66,8 +66,8 @@ namespace System.Web.Http.Cors.Test
             config.Initializer(config);
             config.Initializer(config);
 
-            Assert.Equal(1, config.MessageHandlers.Count);
-            Assert.IsType(typeof(CorsMessageHandler), config.MessageHandlers[0]);
+            var handler = Assert.Single(config.MessageHandlers);
+            Assert.IsType<CorsMessageHandler>(handler);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace System.Web.Http.Cors.Test
             config.Initializer(config);
 
             ICorsPolicyProviderFactory providerFactory = config.GetCorsPolicyProviderFactory();
-            Assert.IsType(typeof(CorsPolicyProviderFactoryTracer), providerFactory);
+            Assert.IsType<CorsPolicyProviderFactoryTracer>(providerFactory);
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace System.Web.Http.Cors.Test
             ICorsPolicyProviderFactory providerFactory = config.GetCorsPolicyProviderFactory();
 
             Assert.NotNull(providerFactory);
-            Assert.IsType(typeof(AttributeBasedPolicyProviderFactory), providerFactory);
+            Assert.IsType<AttributeBasedPolicyProviderFactory>(providerFactory);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace System.Web.Http.Cors.Test
         {
             HttpConfiguration config = new HttpConfiguration();
             ICorsEngine corsEngine = config.GetCorsEngine();
-            Assert.IsType(typeof(CorsEngine), corsEngine);
+            Assert.IsType<CorsEngine>(corsEngine);
         }
 
         [Fact]

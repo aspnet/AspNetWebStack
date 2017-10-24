@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Cors;
 using System.Web.Http.Controllers;
-using System.Web.Http.Hosting;
 using System.Web.Http.Routing;
 using Microsoft.TestCommon;
 using Moq;
@@ -64,7 +63,7 @@ namespace System.Web.Http.Cors
             request.SetRouteData(route.GetRouteData("/", request));
 
             ICorsPolicyProvider provider = providerFactory.GetCorsPolicyProvider(request);
-                                      
+
             // Assert
             Assert.NotNull(controllerContext);
             Assert.Equal(config, controllerContext.Configuration);
@@ -86,7 +85,7 @@ namespace System.Web.Http.Cors
             HttpControllerContext controllerContext = null;
             var actionSelector = new Mock<IHttpActionSelector>();
             actionSelector.Setup(s => s.SelectAction(It.IsAny<HttpControllerContext>()))
-                          .Callback<HttpControllerContext>(context => 
+                          .Callback<HttpControllerContext>(context =>
                           {
                               Assert.False(((SampleController)context.Controller).Disposed);
                               controllerContext = context;
@@ -214,7 +213,7 @@ namespace System.Web.Http.Cors
             ICorsPolicyProvider policyProvider = providerFactory.GetCorsPolicyProvider(request);
 
             Assert.NotNull(policyProvider);
-            Assert.IsType(typeof(EnableCorsAttribute), policyProvider);
+            Assert.IsType<EnableCorsAttribute>(policyProvider);
         }
 
         [Fact]
@@ -232,7 +231,7 @@ namespace System.Web.Http.Cors
             ICorsPolicyProvider policyProvider = providerFactory.GetCorsPolicyProvider(request);
 
             Assert.NotNull(policyProvider);
-            Assert.IsType(typeof(DisableCorsAttribute), policyProvider);
+            Assert.IsType<DisableCorsAttribute>(policyProvider);
         }
 
         [Fact]
@@ -250,8 +249,8 @@ namespace System.Web.Http.Cors
 
             Assert.True(request.GetCorsRequestContext().IsPreflight);
             EnableCorsAttribute enableCorsAttribute = Assert.IsType<EnableCorsAttribute>(provider);
-            Assert.Equal(1, enableCorsAttribute.Origins.Count());
-            Assert.Equal("http://example.com", enableCorsAttribute.Origins.First());
+            string origin = Assert.Single(enableCorsAttribute.Origins);
+            Assert.Equal("http://example.com", origin);
         }
 
         [Fact]

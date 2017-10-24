@@ -44,7 +44,7 @@ namespace System.Web.Http.Cors.Tracing
 
             ICorsPolicyProvider policyProvider = tracer.GetCorsPolicyProvider(new HttpRequestMessage());
 
-            Assert.IsType(typeof(CorsPolicyProviderTracer), policyProvider);
+            Assert.IsType<CorsPolicyProviderTracer>(policyProvider);
         }
 
         [Fact]
