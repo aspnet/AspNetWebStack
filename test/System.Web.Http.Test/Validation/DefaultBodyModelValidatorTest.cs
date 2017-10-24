@@ -100,7 +100,7 @@ namespace System.Web.Http.Validation
                             { "[0].Property3", "Error3" }
                         }
                     },
-                    
+
                     // Testing we don't blow up on cycles
                     { LonelyPerson, typeof(Person), new Dictionary<string, string>()
                         {
@@ -111,7 +111,7 @@ namespace System.Web.Http.Validation
 
                     // Testing that we don't bubble up exceptions when property getters throw
                     { new Uri("/api/values", UriKind.Relative), typeof(Uri), new Dictionary<string, string>() },
-                    
+
                     // Testing that excluded types don't result in any errors
                     { typeof(string), typeof(Type), new Dictionary<string, string>() },
                     { new byte[] { (byte)'a', (byte)'b' }, typeof(byte[]), new Dictionary<string, string>() },
@@ -204,7 +204,7 @@ namespace System.Web.Http.Validation
             // Assert
             Assert.False(actionContext.ModelState.IsValid);
             ModelState modelState = actionContext.ModelState["Owner"];
-            Assert.Equal(1, modelState.Errors.Count);
+            Assert.Single(modelState.Errors);
         }
 
         [Fact]

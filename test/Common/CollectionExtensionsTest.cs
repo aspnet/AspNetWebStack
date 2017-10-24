@@ -14,10 +14,10 @@ namespace System.Collections.Generic
         {
             string[] empty = new string[0];
 
-            string[] emptyAppended = empty.AppendAndReallocate("AppendedEmpty");
+            string[] oneAppended = empty.AppendAndReallocate("AppendedEmpty");
 
-            Assert.Equal(1, emptyAppended.Length);
-            Assert.Equal("AppendedEmpty", emptyAppended[0]);
+            string one = Assert.Single(oneAppended);
+            Assert.Equal("AppendedEmpty", one);
         }
 
         [Fact]
@@ -131,6 +131,7 @@ namespace System.Collections.Generic
             Assert.NotSame(array, arrayAsList);
         }
 
+        [Fact]
         public void AsList_ListWrapperCollection_ReturnsSameInstance()
         {
             List<object> list = new List<object> { new object(), new object() };

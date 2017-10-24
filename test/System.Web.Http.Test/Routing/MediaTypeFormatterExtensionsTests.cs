@@ -23,10 +23,10 @@ namespace System.Net.Http.Formatting
 
             mockFormatter.AddUriPathExtensionMapping("ext", new MediaTypeHeaderValue("application/test"));
 
-            Assert.Equal(1, mockFormatter.MediaTypeMappings.Count);
-            Assert.IsType(typeof(UriPathExtensionMapping), mockFormatter.MediaTypeMappings[0]);
-            Assert.Equal("ext", (mockFormatter.MediaTypeMappings[0] as UriPathExtensionMapping).UriPathExtension);
-            Assert.Equal("application/test", (mockFormatter.MediaTypeMappings[0] as UriPathExtensionMapping).MediaType.MediaType);
+            MediaTypeMapping mediaTypeMapping = Assert.Single(mockFormatter.MediaTypeMappings);
+            UriPathExtensionMapping uriPathExtensionMapping = Assert.IsType<UriPathExtensionMapping>(mediaTypeMapping);
+            Assert.Equal("ext", uriPathExtensionMapping.UriPathExtension);
+            Assert.Equal("application/test", uriPathExtensionMapping.MediaType.MediaType);
         }
 
         [Fact]
@@ -43,10 +43,10 @@ namespace System.Net.Http.Formatting
 
             mockFormatter.AddUriPathExtensionMapping("ext", "application/test");
 
-            Assert.Equal(1, mockFormatter.MediaTypeMappings.Count);
-            Assert.IsType(typeof(UriPathExtensionMapping), mockFormatter.MediaTypeMappings[0]);
-            Assert.Equal("ext", (mockFormatter.MediaTypeMappings[0] as UriPathExtensionMapping).UriPathExtension);
-            Assert.Equal("application/test", (mockFormatter.MediaTypeMappings[0] as UriPathExtensionMapping).MediaType.MediaType);
+            MediaTypeMapping mediaTypeMapping = Assert.Single(mockFormatter.MediaTypeMappings);
+            UriPathExtensionMapping uriPathExtensionMapping = Assert.IsType<UriPathExtensionMapping>(mediaTypeMapping);
+            Assert.Equal("ext", uriPathExtensionMapping.UriPathExtension);
+            Assert.Equal("application/test", uriPathExtensionMapping.MediaType.MediaType);
         }
     }
 }

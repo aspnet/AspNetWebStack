@@ -347,14 +347,13 @@ namespace System.Web.Http.ModelBinding.Binders
             // Assert
             ModelStateDictionary modelStateDictionary = bindingContext.ModelState;
             Assert.False(modelStateDictionary.IsValid);
-            Assert.Equal(1, modelStateDictionary.Count);
+            Assert.Single(modelStateDictionary);
 
             // Check Age error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.Age", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("The Age property is required.", modelError.ErrorMessage);
@@ -400,14 +399,13 @@ namespace System.Web.Http.ModelBinding.Binders
             // Assert
             ModelStateDictionary modelStateDictionary = bindingContext.ModelState;
             Assert.False(modelStateDictionary.IsValid);
-            Assert.Equal(1, modelStateDictionary.Count);
+            Assert.Single(modelStateDictionary);
 
             // Check Age error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.Age", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("A value is required.", modelError.ErrorMessage);
@@ -443,18 +441,16 @@ namespace System.Web.Http.ModelBinding.Binders
             // Check Age error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.Age", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("The Age field is required.", modelError.ErrorMessage);
 
             // Check City error.
             Assert.True(modelStateDictionary.TryGetValue("theModel.City", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            modelError = modelState.Errors[0];
+            modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("The City field is required.", modelError.ErrorMessage);
@@ -492,14 +488,13 @@ namespace System.Web.Http.ModelBinding.Binders
             // Assert
             ModelStateDictionary modelStateDictionary = bindingContext.ModelState;
             Assert.False(modelStateDictionary.IsValid);
-            Assert.Equal(1, modelStateDictionary.Count);
+            Assert.Single(modelStateDictionary);
 
             // Check City error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.City", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("The City field is required.", modelError.ErrorMessage);
@@ -529,14 +524,13 @@ namespace System.Web.Http.ModelBinding.Binders
             // Assert
             ModelStateDictionary modelStateDictionary = bindingContext.ModelState;
             Assert.False(modelStateDictionary.IsValid);
-            Assert.Equal(1, modelStateDictionary.Count);
+            Assert.Single(modelStateDictionary);
 
             // Check ValueTypeRequired error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.ValueTypeRequired", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("Sample message", modelError.ErrorMessage);
@@ -570,14 +564,13 @@ namespace System.Web.Http.ModelBinding.Binders
             // Assert
             ModelStateDictionary modelStateDictionary = bindingContext.ModelState;
             Assert.False(modelStateDictionary.IsValid);
-            Assert.Equal(1, modelStateDictionary.Count);
+            Assert.Single(modelStateDictionary);
 
             // Check ValueTypeRequired error.
             ModelState modelState;
             Assert.True(modelStateDictionary.TryGetValue("theModel.ValueTypeRequired", out modelState));
-            Assert.Equal(1, modelState.Errors.Count);
 
-            ModelError modelError = modelState.Errors[0];
+            ModelError modelError = Assert.Single(modelState.Errors);
             Assert.Null(modelError.Exception);
             Assert.NotNull(modelError.ErrorMessage);
             Assert.Equal("Sample message", modelError.ErrorMessage);
@@ -801,10 +794,10 @@ namespace System.Web.Http.ModelBinding.Binders
 
             // Assert
             Assert.False(bindingContext.ModelState.IsValid);
-            Assert.Equal(1, bindingContext.ModelState["foo.NameNoAttribute"].Errors.Count);
-            Assert.Equal("This is a different exception." + Environment.NewLine
-                       + "Parameter name: value",
-                         bindingContext.ModelState["foo.NameNoAttribute"].Errors[0].Exception.Message);
+            ModelError modelError = Assert.Single(bindingContext.ModelState["foo.NameNoAttribute"].Errors);
+            Assert.Equal(
+                "This is a different exception." + Environment.NewLine + "Parameter name: value",
+                modelError.Exception.Message);
         }
 
         [Fact]
@@ -830,8 +823,8 @@ namespace System.Web.Http.ModelBinding.Binders
 
             // Assert
             Assert.False(bindingContext.ModelState.IsValid);
-            Assert.Equal(1, bindingContext.ModelState["foo.Name"].Errors.Count);
-            Assert.Equal("This message comes from the [Required] attribute.", bindingContext.ModelState["foo.Name"].Errors[0].ErrorMessage);
+            ModelError modelError = Assert.Single(bindingContext.ModelState["foo.Name"].Errors);
+            Assert.Equal("This message comes from the [Required] attribute.", modelError.ErrorMessage);
         }
 
         private static ModelMetadata GetMetadataForCanUpdateProperty(string propertyName)

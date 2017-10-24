@@ -795,8 +795,8 @@ namespace System.Net.Http
             request.RegisterForDispose(disposable);
 
             var list = Assert.IsType<List<IDisposable>>(request.Properties[HttpPropertyKeys.DisposableRequestResourcesKey]);
-            Assert.Equal(1, list.Count);
-            Assert.Same(disposable, list[0]);
+            IDisposable item = Assert.Single(list);
+            Assert.Same(disposable, item);
         }
 
         [Fact]
@@ -810,8 +810,8 @@ namespace System.Net.Http
             request.RegisterForDispose(disposable);
 
             Assert.Same(list, request.Properties[HttpPropertyKeys.DisposableRequestResourcesKey]);
-            Assert.Equal(1, list.Count);
-            Assert.Same(disposable, list[0]);
+            IDisposable item = Assert.Single(list);
+            Assert.Same(disposable, item);
         }
 
         [Fact]
@@ -1025,7 +1025,7 @@ namespace System.Net.Http
                 bool isLocal = request.IsLocal();
 
                 // Assert
-                Assert.Equal(false, isLocal);
+                Assert.False(isLocal);
             }
         }
 

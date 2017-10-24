@@ -41,13 +41,13 @@ namespace System.Web.Http.Tracing
                     { typeof(IAuthorizationFilter), typeof(AuthorizationFilterTracer), new string[0] },
                     { typeof(IAuthenticationFilter), typeof(AuthenticationFilterTracer), new string[0] },
                     { typeof(IOverrideFilter), typeof(OverrideFilterTracer), new string[0] },
-                    { typeof(BufferedMediaTypeFormatter), typeof(BufferedMediaTypeFormatterTracer), new string[] 
+                    { typeof(BufferedMediaTypeFormatter), typeof(BufferedMediaTypeFormatterTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_BufferSize", "set_BufferSize", 
-                            "get_SupportedMediaTypes", 
-                            "get_SupportedEncodings", 
-                            "get_MediaTypeMappings", 
+                            "get_BufferSize", "set_BufferSize",
+                            "get_SupportedMediaTypes",
+                            "get_SupportedEncodings",
+                            "get_MediaTypeMappings",
                             "get_RequiredMemberSelector", "set_RequiredMemberSelector",
                             // Cannot override, inner handles correctly
                             "ReadFromStreamAsync", "WriteToStreamAsync", "SelectCharacterEncoding"
@@ -60,22 +60,22 @@ namespace System.Web.Http.Tracing
                     { typeof(FormatterParameterBinding), typeof(FormatterParameterBindingTracer), new string[]
                         {
                             // Handled in base ctor
-                            "get_Formatters", "set_Formatters", 
-                            "get_BodyModelValidator", "set_BodyModelValidator", 
+                            "get_Formatters", "set_Formatters",
+                            "get_BodyModelValidator", "set_BodyModelValidator",
                             "get_Descriptor",
                             // Cannot override but handled by overriding ErrorMessage
                             "get_IsValid",
                             "GetValue", "SetValue"
                         }
                     },
-                    { typeof(FormUrlEncodedMediaTypeFormatter), typeof(FormUrlEncodedMediaTypeFormatterTracer), new string[] 
+                    { typeof(FormUrlEncodedMediaTypeFormatter), typeof(FormUrlEncodedMediaTypeFormatterTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_MaxDepth", "set_MaxDepth", 
+                            "get_MaxDepth", "set_MaxDepth",
                             "get_ReadBufferSize", "set_ReadBufferSize",
-                            "get_SupportedMediaTypes", 
-                            "get_SupportedEncodings", 
-                            "get_MediaTypeMappings", 
+                            "get_SupportedMediaTypes",
+                            "get_SupportedEncodings",
+                            "get_MediaTypeMappings",
                             "get_RequiredMemberSelector", "set_RequiredMemberSelector",
                             // Cannot override, base handles correctly via SupportedEncodings
                             "SelectCharacterEncoding",
@@ -84,14 +84,14 @@ namespace System.Web.Http.Tracing
                     { typeof(HttpActionBinding), typeof(HttpActionBindingTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_ActionDescriptor", "set_ActionDescriptor", 
+                            "get_ActionDescriptor", "set_ActionDescriptor",
                             "get_ParameterBindings", "set_ParameterBindings"
                         }
                     },
                     { typeof(HttpActionDescriptor), typeof(HttpActionDescriptorTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_Configuration", "set_Configuration", 
+                            "get_Configuration", "set_Configuration",
                             "get_ControllerDescriptor", "set_ControllerDescriptor"
                         }
                     },
@@ -102,7 +102,7 @@ namespace System.Web.Http.Tracing
                     { typeof(HttpControllerDescriptor), typeof(HttpControllerDescriptorTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_Configuration", "set_Configuration", 
+                            "get_Configuration", "set_Configuration",
                             "get_ControllerType", "set_ControllerType",
                             "get_ControllerName", "set_ControllerName"
                         }
@@ -118,28 +118,28 @@ namespace System.Web.Http.Tracing
                             "GetValue", "SetValue",
                         }
                     },
-                    { typeof(JsonMediaTypeFormatter), typeof(JsonMediaTypeFormatterTracer), new string[] 
+                    { typeof(JsonMediaTypeFormatter), typeof(JsonMediaTypeFormatterTracer), new string[]
                         {
                             // Values copied in ctor
                             "get_MaxDepth", "set_MaxDepth",
-                            "get_SupportedMediaTypes", 
-                            "get_SupportedEncodings", 
-                            "get_MediaTypeMappings", 
+                            "get_SupportedMediaTypes",
+                            "get_SupportedEncodings",
+                            "get_MediaTypeMappings",
                             "get_RequiredMemberSelector", "set_RequiredMemberSelector",
                             "get_Indent", "set_Indent",
                             "get_UseDataContractJsonSerializer", "set_UseDataContractJsonSerializer",
                             "get_SerializerSettings", "set_SerializerSettings",
                             // Cannot override, base handles correctly
-                            "SelectCharacterEncoding", 
+                            "SelectCharacterEncoding",
                             // Cannot override behavior, but copying SerializerSettings in ctor captures inner's result
                             "CreateDefaultSerializerSettings"
                         }
                     },
-                    { typeof(MediaTypeFormatter), typeof(MediaTypeFormatterTracer), new string[] 
+                    { typeof(MediaTypeFormatter), typeof(MediaTypeFormatterTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_SupportedMediaTypes", "get_SupportedEncodings", 
-                            "get_MediaTypeMappings", 
+                            "get_SupportedMediaTypes", "get_SupportedEncodings",
+                            "get_MediaTypeMappings",
                             "get_RequiredMemberSelector", "set_RequiredMemberSelector",
                             // Cannot override, base handles correctly
                             "SelectCharacterEncoding"
@@ -161,18 +161,18 @@ namespace System.Web.Http.Tracing
                             "Dispose"
                         }
                     },
-                    { typeof(XmlMediaTypeFormatter), typeof(XmlMediaTypeFormatterTracer), new string[] 
+                    { typeof(XmlMediaTypeFormatter), typeof(XmlMediaTypeFormatterTracer), new string[]
                         {
                             // Values copied in ctor
-                            "get_SupportedMediaTypes", 
-                            "get_SupportedEncodings", 
-                            "get_MediaTypeMappings", 
+                            "get_SupportedMediaTypes",
+                            "get_SupportedEncodings",
+                            "get_MediaTypeMappings",
                             "get_RequiredMemberSelector", "set_RequiredMemberSelector",
                             "get_UseXmlSerializer", "set_UseXmlSerializer",
                             "get_Indent", "set_Indent",
                             "get_WriterSettings",
                             "get_MaxDepth", "set_MaxDepth",
-                            "InvokeCreateXmlReader", "InvokeCreateXmlWriter", 
+                            "InvokeCreateXmlReader", "InvokeCreateXmlWriter",
                             "InvokeGetDeserializer", "InvokeGetSerializer",
                             // Cannot override, base handles correctly
                             "SelectCharacterEncoding",
@@ -184,6 +184,49 @@ namespace System.Web.Http.Tracing
                     },
                     { typeof(DefaultHttpControllerTypeResolver), typeof(DefaultHttpControllerTypeResolverTracer), new string[0] },
                 };
+            }
+        }
+
+        // Following filters work best if there are no duplicate tracer types in AllKnownTracers. Currently the case.
+        public static TheoryDataSet<Type, Type> AllKnownTracers_NoExclusions
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<Type, Type>();
+                foreach (var item in AllKnownTracers)
+                {
+                    dataSet.Add((Type)item[0], (Type)item[1]);
+                }
+
+                return dataSet;
+            }
+        }
+
+        public static TheoryDataSet<Type, string[]> AllKnownTracers_NoInnerType
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<Type, string[]>();
+                foreach (var item in AllKnownTracers)
+                {
+                    dataSet.Add((Type)item[1], (string[])item[2]);
+                }
+
+                return dataSet;
+            }
+        }
+
+        public static TheoryDataSet<Type> AllKnownTracers_JustTracerType
+        {
+            get
+            {
+                var dataSet = new TheoryDataSet<Type>();
+                foreach (var item in AllKnownTracers)
+                {
+                    dataSet.Add((Type)item[1]);
+                }
+
+                return dataSet;
             }
         }
 
@@ -205,8 +248,8 @@ namespace System.Web.Http.Tracing
         }
 
         [Theory]
-        [PropertyData("AllKnownTracers")]
-        public void All_Tracers_Are_Internal_And_Disposable_When_Inner_Is_Disposable(Type innerType, Type tracerType, string[] exclusions)
+        [PropertyData("AllKnownTracers_NoExclusions")]
+        public void All_Tracers_Are_Internal_And_Disposable_When_Inner_Is_Disposable(Type innerType, Type tracerType)
         {
             // Arrange
             TypeAssert.TypeProperties typeProperties = TypeAssert.TypeProperties.IsClass;
@@ -224,16 +267,16 @@ namespace System.Web.Http.Tracing
         }
 
         [Theory]
-        [PropertyData("AllKnownTracers")]
-        public void All_Tracers_Use_Correct_Namespace(Type innerType, Type tracerType, string[] exclusions)
+        [PropertyData("AllKnownTracers_JustTracerType")]
+        public void All_Tracers_Use_Correct_Namespace(Type tracerType)
         {
             // Arrange & Act & Assert
             Assert.Equal("System.Web.Http.Tracing.Tracers", tracerType.Namespace);
         }
 
         [Theory]
-        [PropertyData("AllKnownTracers")]
-        public void All_Excluded_Members_Are_Declared(Type innerType, Type tracerType, string[] exclusions)
+        [PropertyData("AllKnownTracers_NoInnerType")]
+        public void All_Excluded_Members_Are_Declared(Type tracerType, string[] exclusions)
         {
             // Arrange & Act
             string[] declaredMembers = tracerType.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Select<MemberInfo, string>(m => m.Name).ToArray();

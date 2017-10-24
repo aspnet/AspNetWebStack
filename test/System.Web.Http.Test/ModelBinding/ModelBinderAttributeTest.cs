@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http.Controllers;
 using System.Web.Http.Dependencies;
 using System.Web.Http.ValueProviders;
@@ -52,7 +51,7 @@ namespace System.Web.Http.ModelBinding
         [Fact]
         public void BinderType_From_DependencyResolver()
         {
-            // To test dependency resolver, the registered type and actual type should be different. 
+            // To test dependency resolver, the registered type and actual type should be different.
             HttpConfiguration config = new HttpConfiguration();
             var mockDependencyResolver = new Mock<IDependencyResolver>();
             mockDependencyResolver.Setup(r => r.GetService(typeof(CustomModelBinderProvider)))
@@ -93,8 +92,8 @@ namespace System.Web.Http.ModelBinding
             IEnumerable<ValueProviderFactory> vpfs = attr.GetValueProviderFactories(config);
 
             Assert.IsType<CustomModelBinderProvider>(attr.GetModelBinderProvider(config));
-            Assert.Equal(1, vpfs.Count());
-            Assert.IsType<CustomValueProviderFactory>(vpfs.First());
+            object valueProviderFactory = Assert.Single(vpfs);
+            Assert.IsType<CustomValueProviderFactory>(valueProviderFactory);
         }
 
         [Fact]
@@ -110,7 +109,7 @@ namespace System.Web.Http.ModelBinding
             IModelBinder binder = attr.GetModelBinder(config, null);
 
             // Assert
-            Assert.Null(attr.BinderType); // using the default 
+            Assert.Null(attr.BinderType); // using the default
             Assert.NotNull(binder);
             Assert.IsType<CustomModelBinder>(binder);
         }

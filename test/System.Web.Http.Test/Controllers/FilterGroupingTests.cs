@@ -22,10 +22,10 @@ namespace System.Web.Http.Controllers
 
             // Act
             IActionFilter[] actionFilters = product.ActionFilters;
-            
+
             // Assert
             Assert.NotNull(actionFilters);
-            Assert.Equal(0, actionFilters.Length);
+            Assert.Empty(actionFilters);
         }
 
         [Fact]
@@ -120,8 +120,8 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(actionFilters);
-            Assert.Equal(1, actionFilters.Length);
-            Assert.Same(expectedActionFilter, actionFilters[0]);
+            IActionFilter singleFilter = Assert.Single(actionFilters);
+            Assert.Same(expectedActionFilter, singleFilter);
         }
 
         [Fact]
@@ -169,8 +169,8 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(authorizationFilters);
-            Assert.Equal(1, authorizationFilters.Length);
-            Assert.Same(expectedActionFilter, authorizationFilters[0]);
+            IAuthorizationFilter authorizationFilter = Assert.Single(authorizationFilters);
+            Assert.Same(expectedActionFilter, authorizationFilter);
         }
 
         [Fact]
@@ -193,8 +193,8 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(authenticationFilters);
-            Assert.Equal(1, authenticationFilters.Length);
-            Assert.Same(expectedActionFilter, authenticationFilters[0]);
+            IAuthenticationFilter authenticationFilter = Assert.Single(authenticationFilters);
+            Assert.Same(expectedActionFilter, authenticationFilter);
         }
 
         [Fact]
@@ -216,8 +216,8 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(exceptionFilters);
-            Assert.Equal(1, exceptionFilters.Length);
-            Assert.Same(expectedActionFilter, exceptionFilters[0]);
+            IExceptionFilter exceptionFilter = Assert.Single(exceptionFilters);
+            Assert.Same(expectedActionFilter, exceptionFilter);
         }
 
         [Fact]
@@ -237,10 +237,10 @@ namespace System.Web.Http.Controllers
 
             // Assert
             Assert.NotNull(actionFilters);
-            Assert.Equal(1, actionFilters.Length);
-            Assert.Same(expectedInstance, actionFilters[0]);
+            IActionFilter actionFilter = Assert.Single(actionFilters);
+            Assert.Same(expectedInstance, actionFilter);
             Assert.NotNull(exceptionFilters);
-            Assert.Equal(0, exceptionFilters.Length);
+            Assert.Empty(exceptionFilters);
         }
 
         private static IActionFilter CreateDummyActionFilter()

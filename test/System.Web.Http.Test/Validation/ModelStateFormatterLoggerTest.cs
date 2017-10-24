@@ -19,8 +19,8 @@ namespace System.Web.Http.Validation
             formatterLogger.LogError("property", "error");
 
             Assert.True(modelState.ContainsKey("prefix.property"));
-            Assert.Equal(1, modelState["prefix.property"].Errors.Count);
-            Assert.Equal("error", modelState["prefix.property"].Errors[0].ErrorMessage);
+            ModelError error = Assert.Single(modelState["prefix.property"].Errors);
+            Assert.Equal("error", error.ErrorMessage);
         }
 
         [Fact]
@@ -35,8 +35,8 @@ namespace System.Web.Http.Validation
             formatterLogger.LogError("property", e);
 
             Assert.True(modelState.ContainsKey("prefix.property"));
-            Assert.Equal(1, modelState["prefix.property"].Errors.Count);
-            Assert.Equal(e, modelState["prefix.property"].Errors[0].Exception);
+            ModelError error = Assert.Single(modelState["prefix.property"].Errors);
+            Assert.Equal(e, error.Exception);
         }
     }
 }

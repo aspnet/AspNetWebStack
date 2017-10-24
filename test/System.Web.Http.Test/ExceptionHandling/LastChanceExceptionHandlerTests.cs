@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading;
@@ -114,15 +113,14 @@ namespace System.Web.Http.ExceptionHandling
                 await product.HandleAsync(context, cancellationToken);
 
                 // Assert
-                Assert.IsType<ExceptionResult>(result);
-                ExceptionResult exceptionResult = (ExceptionResult)result;
+                ExceptionResult exceptionResult = Assert.IsType<ExceptionResult>(result);
                 Assert.Same(expectedException, exceptionResult.Exception);
                 Assert.Equal(includeDetail, exceptionResult.IncludeErrorDetail);
                 Assert.Same(expectedContentNegotiator, exceptionResult.ContentNegotiator);
                 Assert.Same(expectedRequest, exceptionResult.Request);
                 Assert.NotNull(exceptionResult.Formatters);
-                Assert.Equal(1, exceptionResult.Formatters.Count());
-                Assert.Same(expectedFormatter, exceptionResult.Formatters.Single());
+                MediaTypeFormatter formatter = Assert.Single(exceptionResult.Formatters);
+                Assert.Same(expectedFormatter, formatter);
             }
         }
 

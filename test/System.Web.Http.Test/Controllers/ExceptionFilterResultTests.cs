@@ -310,7 +310,7 @@ namespace System.Web.Http.Controllers
                 Assert.NotNull(expectedStackTrace);
                 Assert.NotNull(exception);
                 Assert.NotNull(exception.StackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
         }
 

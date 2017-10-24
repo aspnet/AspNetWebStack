@@ -28,7 +28,7 @@ namespace System.Web.Http.Internal
                     { typeof(Dictionary<int, int>), typeof(IDictionary<int, int>)},
                     { typeof(HttpRequestMessage), typeof(HttpRequestMessage)},
                     { typeof(HttpConfiguration), typeof(HttpConfiguration)},
-                    { typeof(ReflectedHttpActionDescriptor), typeof(HttpActionDescriptor) }, 
+                    { typeof(ReflectedHttpActionDescriptor), typeof(HttpActionDescriptor) },
                     { typeof(ApiControllerActionSelector), typeof(IHttpActionSelector)},
                     { typeof(ApiControllerActionInvoker), typeof(IHttpActionInvoker)},
                     { typeof(List<HttpStatusCode>), typeof(IEnumerable<HttpStatusCode>)},
@@ -36,9 +36,27 @@ namespace System.Web.Http.Internal
             }
         }
 
+        public static TheoryDataSet<Type> ValidInstanceTypeParameters
+        {
+            get
+            {
+                return new TheoryDataSet<Type>
+                {
+                    { typeof(List<int>) },
+                    { typeof(Dictionary<int, int>) },
+                    { typeof(HttpRequestMessage) },
+                    { typeof(HttpConfiguration) },
+                    { typeof(ReflectedHttpActionDescriptor) },
+                    { typeof(ApiControllerActionSelector) },
+                    { typeof(ApiControllerActionInvoker) },
+                    { typeof(List<HttpStatusCode>) },
+                };
+            }
+        }
+
         [Theory]
-        [PropertyData("ValidTypeParameters")]
-        public void CreateType(Type instanceType, Type baseType)
+        [PropertyData("ValidInstanceTypeParameters")]
+        public void CreateType(Type instanceType)
         {
             // Arrange
             Func<object> instanceDelegate = TypeActivator.Create(instanceType);
@@ -74,8 +92,8 @@ namespace System.Web.Http.Internal
         }
 
         [Theory]
-        [PropertyData("ValidTypeParameters")]
-        public void CreateOfT(Type instanceType, Type baseType)
+        [PropertyData("ValidInstanceTypeParameters")]
+        public void CreateOfT(Type instanceType)
         {
             // Arrange
             Type activatorType = typeof(TypeActivator);

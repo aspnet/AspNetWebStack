@@ -171,7 +171,7 @@ namespace System.Web.Http.Dispatcher
                 HttpResponseMessage response = await invoker.SendAsync(expectedRequest, CancellationToken.None);
 
                 // Assert
-                Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
                 Assert.True(response.RequestMessage.Properties.ContainsKey(HttpPropertyKeys.NoRouteMatched));
             }
         }
