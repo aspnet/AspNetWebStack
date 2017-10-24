@@ -80,7 +80,7 @@ namespace System.Web.WebPages.Test
             PropertyHelper[] helpers2 = HtmlAttributePropertyHelper.GetProperties(anonymous);
 
             // Assert
-            Assert.Equal(1, helpers1.Length);
+            Assert.Single(helpers1);
             Assert.ReferenceEquals(helpers1, helpers2);
             Assert.ReferenceEquals(helpers1[0], helpers2[0]);
         }
@@ -96,17 +96,17 @@ namespace System.Web.WebPages.Test
             PropertyHelper[] helpers2 = PropertyHelper.GetProperties(anonymous);
 
             // Assert
-            Assert.Equal(1, helpers1.Length);
-            Assert.Equal(1, helpers2.Length);
+            PropertyHelper helper1 = Assert.Single(helpers1);
+            PropertyHelper helper2 = Assert.Single(helpers2);
 
-            Assert.NotEqual<PropertyHelper[]>(helpers1, helpers2);
-            Assert.NotEqual<PropertyHelper>(helpers1[0], helpers2[0]);
+            Assert.NotEqual(helpers1, helpers2);
+            Assert.NotEqual(helper1, helper2);
 
-            Assert.IsType<HtmlAttributePropertyHelper>(helpers1[0]);
-            Assert.IsNotType<HtmlAttributePropertyHelper>(helpers2[0]);
+            Assert.IsType<HtmlAttributePropertyHelper>(helper1);
+            Assert.IsNotType<HtmlAttributePropertyHelper>(helper2);
 
-            Assert.Equal("bar-baz1", helpers1[0].Name);
-            Assert.Equal("bar_baz1", helpers2[0].Name);
+            Assert.Equal("bar-baz1", helper1.Name);
+            Assert.Equal("bar_baz1", helper2.Name);
         }
     }
 }

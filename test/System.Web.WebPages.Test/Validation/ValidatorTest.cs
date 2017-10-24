@@ -339,10 +339,10 @@ namespace System.Web.WebPages.Validation.Test
             var result = validator.ClientValidationRule;
 
             // Assert
-            Assert.Equal(result.ValidationType, "length");
-            Assert.Equal(result.ErrorMessage, "String must be between 4 and 6 characters.");
-            Assert.Equal(result.ValidationParameters["min"], 4);
-            Assert.Equal(result.ValidationParameters["max"], 6);
+            Assert.Equal("length", result.ValidationType);
+            Assert.Equal("String must be between 4 and 6 characters.", result.ErrorMessage);
+            Assert.Equal(4, result.ValidationParameters["min"]);
+            Assert.Equal(6, result.ValidationParameters["max"]);
         }
 
         [Fact]
@@ -356,9 +356,9 @@ namespace System.Web.WebPages.Validation.Test
             var result = validator.ClientValidationRule;
 
             // Assert
-            Assert.Equal(result.ValidationType, "length");
-            Assert.Equal(result.ErrorMessage, "Must be at least 6 letters.");
-            Assert.Equal(result.ValidationParameters["max"], 6);
+            Assert.Equal("length", result.ValidationType);
+            Assert.Equal("Must be at least 6 letters.", result.ErrorMessage);
+            Assert.Equal(6, result.ValidationParameters["max"]);
         }
 
         [Fact]

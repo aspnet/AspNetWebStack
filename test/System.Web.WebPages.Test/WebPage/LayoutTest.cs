@@ -65,8 +65,8 @@ namespace System.Web.WebPages.Test
 
             var result = Utils.RenderWebPage(page, request: request.Object);
             Assert.Equal(2, page.PageContext.SourceFiles.Count);
-            Assert.True(page.PageContext.SourceFiles.Contains("~/MyApp/index.cshtml"));
-            Assert.True(page.PageContext.SourceFiles.Contains("~/MyFiles/Layout.cshtml"));
+            Assert.Contains("~/MyApp/index.cshtml", page.PageContext.SourceFiles);
+            Assert.Contains("~/MyFiles/Layout.cshtml", page.PageContext.SourceFiles);
         }
 
         private static void LayoutBasicTestInternal(string layoutPath, string pagePath = "~/index.cshtml", string layoutPage = "Layout.cshtml")
@@ -75,7 +75,7 @@ namespace System.Web.WebPages.Test
             // PageData["Title"] = "MyPage";
             // Layout = "Layout.cshtml";
             // WriteLiteral("hello world");
-            // 
+            //
             // The layout page ~/Layout.cshtml does the following:
             // WriteLiteral(Title);
             // RenderBody();
@@ -109,7 +109,7 @@ namespace System.Web.WebPages.Test
             // PageData["Title"] = "MyPage";
             // Layout = "Layout1.cshtml";
             // WriteLiteral("hello world");
-            // 
+            //
             // The first layout page ~/Layout1.cshtml does the following:
             // Layout = "Layout2.cshtml";
             // WriteLiteral("<layout1>");
@@ -291,7 +291,7 @@ namespace System.Web.WebPages.Test
             // The page ~/layout1.cshtml does the following:
             // Layout = "Layout2.cshtml";
             // @section body {
-            //     body in layout1 
+            //     body in layout1
             //     @RenderSection("body")
             // }
             //

@@ -75,8 +75,8 @@ namespace System.Web.WebPages.Validation.Test
             var results = validationHelper.Validate();
 
             // Assert
-            Assert.Equal(1, results.Count());
-            Assert.Equal(message, results.First().ErrorMessage);
+            ValidationResult result = Assert.Single(results);
+            Assert.Equal(message, result.ErrorMessage);
         }
 
         [Fact]
@@ -92,8 +92,8 @@ namespace System.Web.WebPages.Validation.Test
             var results = validationHelper.Validate();
 
             // Assert
-            Assert.Equal(1, results.Count());
-            Assert.Equal(message, results.First().ErrorMessage);
+            ValidationResult result = Assert.Single(results);
+            Assert.Equal(message, result.ErrorMessage);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace System.Web.WebPages.Validation.Test
             var results = validationHelper.Validate();
 
             // Assert
-            Assert.Equal(0, results.Count());
+            Assert.Empty(results);
         }
 
         [Fact]
@@ -124,8 +124,8 @@ namespace System.Web.WebPages.Validation.Test
             var results = validationHelper.Validate();
 
             // Assert
-            Assert.Equal(1, results.Count());
-            Assert.Equal("This field is required.", results.First().ErrorMessage);
+            ValidationResult result = Assert.Single(results);
+            Assert.Equal("This field is required.", result.ErrorMessage);
         }
 
         [Fact]
@@ -416,8 +416,7 @@ namespace System.Web.WebPages.Validation.Test
             var oddValidator = new Mock<IValidator>();
             oddValidator.Setup(c => c.Validate(It.IsAny<ValidationContext>())).Returns<ValidationContext>(v =>
             {
-                Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
-                var context = (HttpContextBase)v.ObjectInstance;
+                var context = Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
                 var value = Int32.Parse(context.Request.Form["foo"]);
 
                 if (value % 2 != 0)
@@ -430,11 +429,11 @@ namespace System.Web.WebPages.Validation.Test
 
             // Act
             validationHelper.Add("foo", oddValidator.Object);
-            var result = validationHelper.Validate();
+            var results = validationHelper.Validate();
 
             // Assert
-            Assert.Equal(1, result.Count());
-            Assert.Equal(message, result.First().ErrorMessage);
+            ValidationResult result = Assert.Single(results);
+            Assert.Equal(message, result.ErrorMessage);
             oddValidator.Verify();
         }
 
@@ -447,8 +446,7 @@ namespace System.Web.WebPages.Validation.Test
             var oddValidator = new Mock<IValidator>();
             oddValidator.Setup(c => c.Validate(It.IsAny<ValidationContext>())).Returns<ValidationContext>(v =>
             {
-                Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
-                var context = (HttpContextBase)v.ObjectInstance;
+                var context = Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
                 if (context.Request.Form["foo"].IsEmpty())
                 {
                     return ValidationResult.Success;
@@ -465,11 +463,11 @@ namespace System.Web.WebPages.Validation.Test
             // Act
             validationHelper.Add(new[] { "foo", "bar" }, oddValidator.Object);
             validationHelper.RequireField("foo");
-            var result = validationHelper.Validate("foo");
+            var results = validationHelper.Validate("foo");
 
             // Assert
-            Assert.Equal(1, result.Count());
-            Assert.Equal("This field is required.", result.First().ErrorMessage);
+            ValidationResult result = Assert.Single(results);
+            Assert.Equal("This field is required.", result.ErrorMessage);
         }
 
         [Fact]
@@ -481,8 +479,7 @@ namespace System.Web.WebPages.Validation.Test
             var oddValidator = new Mock<IValidator>();
             oddValidator.Setup(c => c.Validate(It.IsAny<ValidationContext>())).Returns<ValidationContext>(v =>
             {
-                Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
-                var context = (HttpContextBase)v.ObjectInstance;
+                var context = Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
                 if (context.Request.Form["foo"].IsEmpty())
                 {
                     return ValidationResult.Success;
@@ -516,8 +513,7 @@ namespace System.Web.WebPages.Validation.Test
             var oddValidator = new Mock<IValidator>();
             oddValidator.Setup(c => c.Validate(It.IsAny<ValidationContext>())).Returns<ValidationContext>(v =>
             {
-                Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
-                var context = (HttpContextBase)v.ObjectInstance;
+                var context = Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
                 if (context.Request.Form["foo"].IsEmpty())
                 {
                     return ValidationResult.Success;
@@ -549,8 +545,7 @@ namespace System.Web.WebPages.Validation.Test
             var oddValidator = new Mock<IValidator>();
             oddValidator.Setup(c => c.Validate(It.IsAny<ValidationContext>())).Returns<ValidationContext>(v =>
             {
-                Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
-                var context = (HttpContextBase)v.ObjectInstance;
+                var context = Assert.IsAssignableFrom<HttpContextBase>(v.ObjectInstance);
                 int value;
                 if (!Int32.TryParse(context.Request.Form["foo"], out value))
                 {

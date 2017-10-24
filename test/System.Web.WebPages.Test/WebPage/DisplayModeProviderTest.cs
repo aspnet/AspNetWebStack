@@ -169,8 +169,8 @@ namespace System.Web.WebPages.Test
             var availableDisplayModes = displayModeProvider.GetAvailableDisplayModesForContext(httpContext.Object, displayMode2.Object, requireConsistentDisplayMode: true).ToList();
 
             // Assert
-            Assert.Equal(1, availableDisplayModes.Count);
-            Assert.Equal(displayMode3.Object, availableDisplayModes[0]);
+            var availableDisplayMode = Assert.Single(availableDisplayModes);
+            Assert.Equal(displayMode3.Object, availableDisplayMode);
         }
 
         [Fact]
@@ -225,8 +225,8 @@ namespace System.Web.WebPages.Test
             var availableDisplayModes = displayModeProvider.GetAvailableDisplayModesForContext(httpContext.Object, displayMode1.Object, requireConsistentDisplayMode: false).ToList();
 
             // Assert
-            Assert.Equal(1, availableDisplayModes.Count);
-            Assert.Equal(displayMode2.Object, availableDisplayModes[0]);
+            IDisplayMode availableDisplayMode = Assert.Single(availableDisplayModes);
+            Assert.Equal(displayMode2.Object, availableDisplayMode);
         }
     }
 }

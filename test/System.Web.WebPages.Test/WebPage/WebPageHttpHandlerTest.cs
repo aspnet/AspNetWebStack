@@ -52,14 +52,14 @@ namespace System.Web.WebPages.Test
             Mock<HttpContextBase> context = Utils.CreateTestContext(httpRequest.Object, httpResponse.Object);
             var page = Utils.CreatePage(p => p.Write(contents));
 
-            // Act 
+            // Act
             var webPageHttpHandler = new WebPageHttpHandler(page);
             webPageHttpHandler.ProcessRequestInternal(context.Object);
 
             // Assert
             Assert.Equal(contents, writer.ToString());
-            Assert.Equal(1, page.PageContext.SourceFiles.Count);
-            Assert.True(page.PageContext.SourceFiles.Contains("~/index.cshtml"));
+            Assert.Single(page.PageContext.SourceFiles);
+            Assert.Contains("~/index.cshtml", page.PageContext.SourceFiles);
         }
 
         [Fact]
@@ -87,8 +87,8 @@ namespace System.Web.WebPages.Test
             WebPageHttpHandler.GenerateSourceFilesHeader(webPageContext);
 
             // Assert
-            Assert.Equal(headerKey, "X-SourceFiles");
-            Assert.Equal(headerValue, "=?UTF-8?B?Zm9vfGJhcnzOuw==?=");
+            Assert.Equal("X-SourceFiles", headerKey);
+            Assert.Equal("=?UTF-8?B?Zm9vfGJhcnzOuw==?=", headerValue);
         }
 
         [Fact]
@@ -166,8 +166,7 @@ namespace System.Web.WebPages.Test
 
             // Act
             IHttpHandler handler = WebPageHttpHandler.CreateFromVirtualPath(virtualPath, new VirtualPathFactoryManager(mockBuildManager.Object));
-            Assert.IsType<WebPageHttpHandler>(handler);
-            WebPageHttpHandler webPageHttpHandler = (WebPageHttpHandler)handler;
+            WebPageHttpHandler webPageHttpHandler = Assert.IsType<WebPageHttpHandler>(handler);
             webPageHttpHandler.ProcessRequestInternal(httpContext.Object);
 
             // Assert

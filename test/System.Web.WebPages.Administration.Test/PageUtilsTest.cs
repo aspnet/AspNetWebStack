@@ -99,7 +99,7 @@ namespace System.Web.WebPages.Administration.Test
             PageUtils.PersistFilter(response.Object, "my-cookie", new Dictionary<string, string>());
 
             // Assert
-            Assert.Equal(1, cookies.Count);
+            Assert.Single(cookies);
         }
 
         [Fact]
@@ -115,8 +115,8 @@ namespace System.Web.WebPages.Administration.Test
 
             // Assert
             var cookie = cookies["my-cookie"];
-            Assert.Equal(cookie["a"], "b");
-            Assert.Equal(cookie["x"], "y");
+            Assert.Equal("b", cookie["a"]);
+            Assert.Equal("y", cookie["x"]);
         }
 
         [Fact]

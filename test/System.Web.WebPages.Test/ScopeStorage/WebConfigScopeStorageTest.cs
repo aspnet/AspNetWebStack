@@ -20,8 +20,8 @@ namespace System.Web.WebPages.Test
             var stateStorage = GetWebConfigScopeStorage();
 
             // Assert
-            Assert.Equal(stateStorage["foo1"], "bar1");
-            Assert.Equal(stateStorage["foo2"], "bar2");
+            Assert.Equal("bar1", stateStorage["foo1"]);
+            Assert.Equal("bar2", stateStorage["foo2"]);
         }
 
         [Fact]
@@ -31,8 +31,8 @@ namespace System.Web.WebPages.Test
             var stateStorage = GetWebConfigScopeStorage();
 
             // Assert
-            Assert.Equal(stateStorage["FOO1"], "bar1");
-            Assert.Equal(stateStorage["FoO2"], "bar2");
+            Assert.Equal("bar1", stateStorage["FOO1"]);
+            Assert.Equal("bar2", stateStorage["FoO2"]);
         }
 
         [Fact]

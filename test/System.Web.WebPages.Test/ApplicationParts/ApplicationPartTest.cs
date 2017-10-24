@@ -30,7 +30,7 @@ namespace System.Web.WebPages.Test
             var virtualPath = ApplicationPart.ResolveVirtualPath(appPartRoot, basePath, path);
 
             // Assert
-            Assert.Equal(virtualPath, "~/base/somefile");
+            Assert.Equal("~/base/somefile", virtualPath);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace System.Web.WebPages.Test
             var virtualPath = ApplicationPart.ResolveVirtualPath(appPartRoot, basePath, path);
 
             // Assert
-            Assert.Equal(virtualPath, "~/app/somefile");
+            Assert.Equal("~/app/somefile", virtualPath);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace System.Web.WebPages.Test
             var virtualPath = ApplicationPart.ResolveVirtualPath(appPartRoot, basePath, path);
 
             // Assert
-            Assert.Equal(virtualPath, "~/somefile");
+            Assert.Equal("~/somefile", virtualPath);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace System.Web.WebPages.Test
             var name = ApplicationPart.GetResourceNameFromVirtualPath(moduleName, path);
 
             // Assert
-            Assert.Equal(name, "my-module.bar.foo");
+            Assert.Equal("my-module.bar.foo", name);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace System.Web.WebPages.Test
             var name = ApplicationPart.GetResourceNameFromVirtualPath(moduleName, path);
 
             // Assert
-            Assert.Equal(name, "my-module.program_files.data_files.my file .foo");
+            Assert.Equal("my-module.program_files.data_files.my file .foo", name);
         }
 
         [Fact]

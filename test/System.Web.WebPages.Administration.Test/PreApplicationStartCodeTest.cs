@@ -22,8 +22,8 @@ namespace System.Web.WebPages.Administration.Test
 
                 // TODO: Need a way to see if the module was actually registered
                 var registeredAssemblies = ApplicationPart.GetRegisteredParts().ToList();
-                Assert.Equal(1, registeredAssemblies.Count);
-                registeredAssemblies.First().Assembly.Equals(adminPackageAssembly);
+                ApplicationPart part = Assert.Single(registeredAssemblies);
+                part.Assembly.Equals(adminPackageAssembly);
             });
         }
 

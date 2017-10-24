@@ -16,7 +16,7 @@ namespace System.Web.WebPages.Test
             var dictionary = new Dictionary<object, object>(ScopeStorageComparer.Instance) { { "foo", "bar" } };
 
             // Act and Assert
-            Assert.Equal(dictionary["foo"], "bar");
+            Assert.Equal("bar", dictionary["foo"]);
             Assert.Equal(dictionary["foo"], dictionary["FOo"]);
         }
 
@@ -27,9 +27,9 @@ namespace System.Web.WebPages.Test
             var stateStorage = new Dictionary<object, object> { { 4, "4-value" }, { new Person { ID = 10 }, "person-value" } };
 
             // Act and Assert
-            Assert.Equal(stateStorage[4], "4-value");
+            Assert.Equal("4-value", stateStorage[4]);
             Assert.Equal(stateStorage[(int)8 / 2], stateStorage[4]);
-            Assert.Equal(stateStorage[new Person { ID = 10 }], "person-value");
+            Assert.Equal("person-value", stateStorage[new Person { ID = 10 }]);
         }
 
         private class Person

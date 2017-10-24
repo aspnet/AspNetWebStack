@@ -18,7 +18,7 @@ namespace System.Web.WebPages.Test.ApplicationModule
             var root1 = "~/myappmodule";
             var root2 = "~/myappmodule2/";
 
-            // Act 
+            // Act
             var actualPath11 = ApplicationPartRegistry.GetRootRelativeVirtualPath(root1, path1);
             var actualPath12 = ApplicationPartRegistry.GetRootRelativeVirtualPath(root1, path2);
             var actualPath21 = ApplicationPartRegistry.GetRootRelativeVirtualPath(root2, path1);
@@ -114,7 +114,7 @@ namespace System.Web.WebPages.Test.ApplicationModule
 
             // Assert
             Assert.True(dictionary.Exists("~/mymodule/Page1"));
-            Assert.Equal(dictionary.CreateInstance("~/mymodule/Page1"), "foo");
+            Assert.Equal("foo", dictionary.CreateInstance("~/mymodule/Page1"));
             Assert.False(dictionary.Exists("~/mymodule/Page2"));
             Assert.False(dictionary.Exists("~/mymodule/Page3"));
         }

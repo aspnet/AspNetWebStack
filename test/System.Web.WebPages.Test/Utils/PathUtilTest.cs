@@ -57,7 +57,7 @@ namespace System.Web.WebPages.Test
             var extensions = paths.Select(PathUtil.GetExtension);
 
             // Assert
-            Assert.True(extensions.All(ext => ext.Length == 0));
+            Assert.All(extensions, ext => Assert.Empty(ext));
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace System.Web.WebPages.Test
             var extensions = paths.Select(PathUtil.GetExtension);
 
             // Assert
-            Assert.True(extensions.All(ext => ext.Length == 0));
+            Assert.All(extensions, ext => Assert.Empty(ext));
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace System.Web.WebPages.Test
             var extensions = paths.Select(PathUtil.GetExtension);
 
             // Assert
-            Assert.True(extensions.All(ext => ext.Length == 0));
+            Assert.All(extensions, ext => Assert.Empty(ext));
         }
 
         [Fact]
@@ -98,8 +98,8 @@ namespace System.Web.WebPages.Test
             string ext2 = PathUtil.GetExtension(path2);
 
             // Assert
-            Assert.Equal(ext1, ".cshtml");
-            Assert.Equal(ext2, ".txt");
+            Assert.Equal(".cshtml", ext1);
+            Assert.Equal(".txt", ext2);
         }
 
         [Fact]

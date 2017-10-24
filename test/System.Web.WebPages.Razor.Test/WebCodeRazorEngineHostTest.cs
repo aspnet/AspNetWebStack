@@ -80,7 +80,7 @@ namespace System.Web.WebPages.Razor.Test
             host.PostProcessGeneratedCode(context);
 
             // Assert
-            Assert.Equal(0, context.GeneratedClass.Members.OfType<CodeMemberMethod>().Count());
+            Assert.Empty(context.GeneratedClass.Members.OfType<CodeMemberMethod>());
         }
 
         [Fact]

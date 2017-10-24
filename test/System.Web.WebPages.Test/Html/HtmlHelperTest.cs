@@ -35,7 +35,7 @@ namespace System.Web.WebPages.Test
             string encodedHtml = htmlHelper.Encode(text);
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace System.Web.WebPages.Test
             string encodedHtml = htmlHelper.Encode(text);
 
             // Assert
-            Assert.Equal(encodedHtml, "&lt;br /&gt;");
+            Assert.Equal("&lt;br /&gt;", encodedHtml);
         }
 
         [Fact]
@@ -195,6 +195,7 @@ namespace System.Web.WebPages.Test
                        };
         }
 
+#pragma warning disable xUnit1013 // Public method should be marked as test
         /// <summary>
         /// Will invoke a helper with overload that accepts custom attribute with a name containing
         /// and underscore as an anonymous object, and will then assert that the resulted html
@@ -202,6 +203,7 @@ namespace System.Web.WebPages.Test
         /// </summary>
         /// <param name="helperInvocation"></param>
         public static void AssertHelperTransformsAttributesUnderscoresToDashs(Func<HtmlHelper, object, IHtmlString> helperInvocation)
+#pragma warning restore xUnit1013 // Public method should be marked as test
         {
             // Arrange
             HtmlHelper helper = HtmlHelperFactory.Create();

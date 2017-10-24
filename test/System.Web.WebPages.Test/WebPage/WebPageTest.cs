@@ -172,14 +172,18 @@ namespace System.Web.WebPages.Test
         public void SessionPropertyTest()
         {
             var page = CreateMockPageWithPostContext().Object;
+#pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
             Assert.Equal(0, page.Session.Count);
+#pragma warning restore xUnit2013 // Do not use equality check to check for collection size.
         }
 
         [Fact]
         public void AppStatePropertyTest()
         {
             var page = CreateMockPageWithPostContext().Object;
+#pragma warning disable xUnit2013 // Do not use equality check to check for collection size.
             Assert.Equal(0, page.AppState.Count);
+#pragma warning restore xUnit2013 // Do not use equality check to check for collection size.
         }
 
         [Fact]

@@ -198,7 +198,7 @@ namespace WebMatrix.WebData.Test
                 "zeke");
 
             // Assert
-            Assert.Equal<int>(999, result);
+            Assert.Equal(999, result);
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace WebMatrix.WebData.Test
                 "zeke");
 
             // Assert
-            Assert.Equal<int>(999, result);
+            Assert.Equal(999, result);
         }
 
         [Theory]

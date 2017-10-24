@@ -159,7 +159,9 @@ namespace System.Web.Razor.Test.Text
             Assert.Equal(expectedRaw, actualLocation.AbsoluteIndex);
             Assert.Equal(expectedChar, actualLocation.CharacterIndex);
             Assert.Equal(expectedLine, actualLocation.LineIndex);
-            Assert.Equal('b', reader.Peek());
+
+            // Workaround xunit/xunit#1502
+            Assert.Equal('b' - '\0', reader.Peek());
             Assert.Equal(read, readMethod(reader));
         }
 
@@ -188,7 +190,9 @@ namespace System.Web.Razor.Test.Text
             Assert.Equal(0, actualLocation.LineIndex);
             Assert.Equal(1, reader.CurrentLocation.CharacterIndex);
             Assert.Equal(0, reader.CurrentLocation.LineIndex);
-            Assert.Equal('b', reader.Peek());
+
+            // Workaround xunit/xunit#1502
+            Assert.Equal('b' - '\0', reader.Peek());
         }
 
         private static void RunAll(Action<StringBuilder, LookaheadTextReader>[] readerCommands, StringBuilder builder, LookaheadTextReader reader)

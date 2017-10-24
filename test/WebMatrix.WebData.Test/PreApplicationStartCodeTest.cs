@@ -25,8 +25,8 @@ namespace WebMatrix.WebData.Test
 
                 // Verify namespaces
                 var imports = WebPageRazorHost.GetGlobalImports();
-                Assert.True(imports.Any(ns => ns.Equals("WebMatrix.Data")));
-                Assert.True(imports.Any(ns => ns.Equals("WebMatrix.WebData")));
+                Assert.Contains(imports, ns => ns.Equals("WebMatrix.Data"));
+                Assert.Contains(imports, ns => ns.Equals("WebMatrix.WebData"));
             });
         }
 

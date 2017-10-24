@@ -9,6 +9,7 @@ namespace System.Web.Razor.Test.Utils
     public static class MiscAssert
     {
         public static void AssertBothNullOrPropertyEqual<T>(T expected, T actual, Expression<Func<T, object>> propertyExpr, string objectName)
+            where T : class
         {
             // Unpack convert expressions
             Expression expr = propertyExpr.Body;

@@ -25,7 +25,7 @@ namespace System.Web.Razor.Test
 
             // Assert
             Assert.True(attribute.AllowMultiple);
-            Assert.True(attribute.ValidOn == AttributeTargets.Class);
+            Assert.Equal(AttributeTargets.Class, attribute.ValidOn);
             Assert.True(attribute.Inherited);
         }
 
