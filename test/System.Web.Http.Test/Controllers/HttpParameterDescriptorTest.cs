@@ -61,7 +61,7 @@ namespace System.Web.Http
             HttpParameterDescriptor parameterDescriptor = new Mock<HttpParameterDescriptor> { CallBase = true }.Object;
             IEnumerable<object> attributes = parameterDescriptor.GetCustomAttributes<object>();
 
-            Assert.Equal(0, attributes.Count());
+            Assert.Empty(attributes);
         }
 
         [Fact]
@@ -70,7 +70,7 @@ namespace System.Web.Http
             HttpParameterDescriptor parameterDescriptor = new Mock<HttpParameterDescriptor> { CallBase = true }.Object;
             IEnumerable<FromBodyAttribute> attributes = parameterDescriptor.GetCustomAttributes<FromBodyAttribute>();
 
-            Assert.Equal(0, attributes.Count());
+            Assert.Empty(attributes);
         }
     }
 }

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Principal;
@@ -150,12 +149,11 @@ namespace System.Web.Http
                     IExceptionLogger exceptionLogger = product.ExceptionLogger;
 
                     // Assert
-                    Assert.IsType<CompositeExceptionLogger>(exceptionLogger);
-                    CompositeExceptionLogger compositeLogger = (CompositeExceptionLogger)exceptionLogger;
+                    CompositeExceptionLogger compositeLogger = Assert.IsType<CompositeExceptionLogger>(exceptionLogger);
                     IEnumerable<IExceptionLogger> loggers = compositeLogger.Loggers;
                     Assert.NotNull(loggers);
-                    Assert.Equal(1, loggers.Count());
-                    Assert.Same(expectedExceptionLogger, loggers.Single());
+                    IExceptionLogger logger = Assert.Single(loggers);
+                    Assert.Same(expectedExceptionLogger, logger);
                 }
             }
         }
@@ -176,8 +174,7 @@ namespace System.Web.Http
                     IExceptionHandler exceptionHandler = product.ExceptionHandler;
 
                     // Assert
-                    Assert.IsType<LastChanceExceptionHandler>(exceptionHandler);
-                    LastChanceExceptionHandler lastChanceHandler = (LastChanceExceptionHandler)exceptionHandler;
+                    LastChanceExceptionHandler lastChanceHandler = Assert.IsType<LastChanceExceptionHandler>(exceptionHandler);
                     Assert.Same(expectedExceptionHandler, lastChanceHandler.InnerHandler);
                 }
             }
@@ -469,7 +466,7 @@ namespace System.Web.Http
 
                 Assert.Same(expectedException, exception);
                 Assert.NotNull(exception.StackTrace);
-                Assert.True(exception.StackTrace.StartsWith(expectedStackTrace));
+                Assert.StartsWith(expectedStackTrace, exception.StackTrace);
             }
         }
 

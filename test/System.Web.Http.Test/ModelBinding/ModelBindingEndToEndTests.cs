@@ -140,8 +140,8 @@ namespace System.Web.Http.ModelBinding
             Assert.Equal("98052", address.ZipCode);
 
             address = result.Addresses[1];
-            Assert.Single(address.AddressLines);
-            Assert.Equal("Street Address 10", address.AddressLines[0].Line);
+            StreetAddress streetAddress= streetAddress = Assert.Single(address.AddressLines);
+            Assert.Equal("Street Address 10", streetAddress.Line);
             Assert.Null(address.ZipCode);
         }
 

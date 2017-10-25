@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http.Controllers;
 using Microsoft.TestCommon;
 using Moq;
@@ -24,10 +23,9 @@ namespace System.Web.Http.ExceptionHandling
                 IExceptionLogger logger = ExceptionServices.GetLogger(services);
 
                 // Assert
-                Assert.IsType<CompositeExceptionLogger>(logger);
-                IEnumerable<IExceptionLogger> loggers = ((CompositeExceptionLogger)logger).Loggers;
-                Assert.Equal(1, loggers.Count());
-                Assert.Same(expectedLogger, loggers.Single());
+                IEnumerable<IExceptionLogger> loggers = Assert.IsType<CompositeExceptionLogger>(logger).Loggers;
+                IExceptionLogger actualLogger = Assert.Single(loggers);
+                Assert.Same(expectedLogger, actualLogger);
             }
         }
 
@@ -71,10 +69,9 @@ namespace System.Web.Http.ExceptionHandling
                 IExceptionLogger logger = ExceptionServices.GetLogger(configuration);
 
                 // Assert
-                Assert.IsType<CompositeExceptionLogger>(logger);
-                IEnumerable<IExceptionLogger> loggers = ((CompositeExceptionLogger)logger).Loggers;
-                Assert.Equal(1, loggers.Count());
-                Assert.Same(expectedLogger, loggers.Single());
+                IEnumerable<IExceptionLogger> loggers = Assert.IsType<CompositeExceptionLogger>(logger).Loggers;
+                IExceptionLogger actualLogger = Assert.Single(loggers);
+                Assert.Same(expectedLogger, actualLogger);
             }
         }
 
@@ -100,8 +97,7 @@ namespace System.Web.Http.ExceptionHandling
                 IExceptionHandler handler = ExceptionServices.GetHandler(services);
 
                 // Assert
-                Assert.IsType<LastChanceExceptionHandler>(handler);
-                IExceptionHandler innerHandler = ((LastChanceExceptionHandler)handler).InnerHandler;
+                IExceptionHandler innerHandler = Assert.IsType<LastChanceExceptionHandler>(handler).InnerHandler;
                 Assert.Same(expectedHandler, innerHandler);
             }
         }
@@ -136,8 +132,7 @@ namespace System.Web.Http.ExceptionHandling
                 IExceptionHandler handler = ExceptionServices.GetHandler(services);
 
                 // Assert
-                Assert.IsType<LastChanceExceptionHandler>(handler);
-                IExceptionHandler innerHandler = ((LastChanceExceptionHandler)handler).InnerHandler;
+                IExceptionHandler innerHandler = Assert.IsType<LastChanceExceptionHandler>(handler).InnerHandler;
                 Assert.IsType<EmptyExceptionHandler>(innerHandler);
             }
         }
@@ -164,8 +159,7 @@ namespace System.Web.Http.ExceptionHandling
                 IExceptionHandler handler = ExceptionServices.GetHandler(configuration);
 
                 // Assert
-                Assert.IsType<LastChanceExceptionHandler>(handler);
-                IExceptionHandler innerHandler = ((LastChanceExceptionHandler)handler).InnerHandler;
+                IExceptionHandler innerHandler = Assert.IsType<LastChanceExceptionHandler>(handler).InnerHandler;
                 Assert.Same(expectedHandler, innerHandler);
             }
         }

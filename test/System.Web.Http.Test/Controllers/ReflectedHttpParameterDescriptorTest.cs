@@ -88,8 +88,8 @@ namespace System.Web.Http
             ReflectedHttpParameterDescriptor parameterDescriptor = new ReflectedHttpParameterDescriptor(actionDescriptor, parameterInfo);
             object[] attributes = parameterDescriptor.GetCustomAttributes<object>().ToArray();
 
-            Assert.Equal(1, attributes.Length);
-            Assert.Equal(typeof(FromBodyAttribute), attributes[0].GetType());
+            object attribute = Assert.Single(attributes);
+            Assert.IsType<FromBodyAttribute>(attribute);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace System.Web.Http
             ReflectedHttpParameterDescriptor parameterDescriptor = new ReflectedHttpParameterDescriptor(actionDescriptor, parameterInfo);
             IEnumerable<FromBodyAttribute> attributes = parameterDescriptor.GetCustomAttributes<FromBodyAttribute>();
 
-            Assert.Equal(1, attributes.Count());
+            Assert.Single(attributes);
         }
     }
 }

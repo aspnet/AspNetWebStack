@@ -125,7 +125,7 @@ namespace System.Web.Http.Dispatcher
             HttpControllerDescriptor descriptor = selector.SelectController(request);
 
             // Assert
-            Assert.IsType(typeof(HttpControllerDescriptor), descriptor);
+            Assert.IsType<HttpControllerDescriptor>(descriptor);
             Assert.Equal(controllerType, descriptor.ControllerType);
         }
 

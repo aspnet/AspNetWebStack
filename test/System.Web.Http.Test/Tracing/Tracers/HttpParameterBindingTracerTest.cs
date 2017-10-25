@@ -103,7 +103,7 @@ namespace System.Web.Http.Tracing.Tracers
             ValueProviderFactory[] actualFactories = tracer.ValueProviderFactories.ToArray();
 
             // Assert
-            Assert.Equal(0, actualFactories.Length);
+            Assert.Empty(actualFactories);
         }
 
         [Fact]

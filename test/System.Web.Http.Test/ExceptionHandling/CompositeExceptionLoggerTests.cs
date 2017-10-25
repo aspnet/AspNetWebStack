@@ -35,8 +35,8 @@ namespace System.Web.Http.ExceptionHandling
 
             // Assert
             Assert.NotNull(loggers);
-            Assert.Equal(1, loggers.Count());
-            Assert.Same(expectedLogger, loggers.Single());
+            IExceptionLogger logger = Assert.Single(loggers);
+            Assert.Same(expectedLogger, logger);
 
         }
 
@@ -54,8 +54,8 @@ namespace System.Web.Http.ExceptionHandling
             expectedLoggers.Clear();
             IEnumerable<IExceptionLogger> loggers = product.Loggers;
             Assert.NotNull(loggers);
-            Assert.Equal(1, loggers.Count());
-            Assert.Same(expectedLogger, loggers.Single());
+            IExceptionLogger logger = Assert.Single(loggers);
+            Assert.Same(expectedLogger, logger);
         }
 
         [Fact]

@@ -123,7 +123,7 @@ namespace System.Web.Http
         [Fact]
         public void Initialize_In_InheritenceHierarchy()
         {
-            // Verifies that initialization is run in order with , and that they all mutate on the same descriptor object 
+            // Verifies that initialization is run in order with , and that they all mutate on the same descriptor object
             HttpConfiguration config = new HttpConfiguration();
 
             // Act.
@@ -139,7 +139,7 @@ namespace System.Web.Http
         [Fact]
         public void Initialize_In_InheritenceHierarchy_Branching()
         {
-            // Verifies that initialization is run in order with, and that they all mutate on the same descriptor object 
+            // Verifies that initialization is run in order with, and that they all mutate on the same descriptor object
             HttpConfiguration config = new HttpConfiguration();
 
             // Act.
@@ -181,7 +181,7 @@ namespace System.Web.Http
 
             var attributes = desc.GetCustomAttributes<MyConfigBaseAttribute>();
 
-            Assert.Equal(1, attributes.Count);
+            Assert.Single(attributes);
         }
 
         [Fact]
@@ -192,7 +192,7 @@ namespace System.Web.Http
 
             var attributes = desc.GetCustomAttributes<MyConfigBaseAttribute>(inherit: true);
 
-            Assert.Equal(1, attributes.Count);
+            Assert.Single(attributes);
         }
 
         [Fact]
@@ -214,7 +214,7 @@ namespace System.Web.Http
 
             var attributes = desc.GetCustomAttributes<MyConfigDerived1Attribute>(inherit: false);
 
-            Assert.Equal(1, attributes.Count);
+            Assert.Single(attributes);
         }
 
         class NoopControllerConfigAttribute : Attribute, IControllerConfiguration
@@ -307,7 +307,7 @@ namespace System.Web.Http
         [Fact]
         public void Initialize_Append_A_Formatter()
         {
-            // Verifies that controller inherit the formatter list from the global config, and can mutate it. 
+            // Verifies that controller inherit the formatter list from the global config, and can mutate it.
             HttpConfiguration config = new HttpConfiguration();
 
             MediaTypeFormatter globalFormatter = new Mock<MediaTypeFormatter>().Object;
@@ -328,8 +328,8 @@ namespace System.Web.Http
         {
             public void Initialize(HttpControllerSettings settings, HttpControllerDescriptor controllerDescriptor)
             {
-                // Appends to existing list. Formatter list has copy-on-write semantics. 
-                Assert.Equal(1, settings.Formatters.Count); // the one we already set 
+                // Appends to existing list. Formatter list has copy-on-write semantics.
+                Assert.Single(settings.Formatters); // the one we already set
                 settings.Formatters.Add(MyControllerWithCustomFormatter.CustomFormatter);
             }
         }

@@ -56,8 +56,7 @@ namespace System.Web.Http.ExceptionHandling
 
                 // Assert
                 IHttpActionResult result = context.Result;
-                Assert.IsType(typeof(ResponseMessageResult), result);
-                ResponseMessageResult typedResult = (ResponseMessageResult)result;
+                ResponseMessageResult typedResult = Assert.IsType<ResponseMessageResult>(result);
                 using (HttpResponseMessage response = typedResult.Response)
                 {
                     Assert.NotNull(response);
@@ -95,14 +94,12 @@ namespace System.Web.Http.ExceptionHandling
         private static void AssertErrorResponse(HttpResponseMessage expected, HttpResponseMessage actual)
         {
             Assert.NotNull(expected); // Guard
-            Assert.IsType(typeof(ObjectContent<HttpError>), expected.Content); // Guard
-            ObjectContent<HttpError> expectedContent = (ObjectContent<HttpError>)expected.Content;
+            ObjectContent<HttpError> expectedContent = Assert.IsType<ObjectContent<HttpError>>(expected.Content); // Guard
             Assert.NotNull(expectedContent.Formatter); // Guard
 
             Assert.NotNull(actual);
             Assert.Equal(expected.StatusCode, actual.StatusCode);
-            Assert.IsType(typeof(ObjectContent<HttpError>), actual.Content);
-            ObjectContent<HttpError> actualContent = (ObjectContent<HttpError>)actual.Content;
+            ObjectContent<HttpError> actualContent = Assert.IsType<ObjectContent<HttpError>>(actual.Content);
             Assert.NotNull(actualContent.Formatter);
             Assert.Same(expectedContent.Formatter.GetType(), actualContent.Formatter.GetType());
             Assert.Equal(expectedContent.Value, actualContent.Value);

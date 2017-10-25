@@ -5,14 +5,14 @@ using Microsoft.TestCommon;
 
 namespace System.Web.Http
 {
-    class HttpErrorKeysTest
+    public class HttpErrorKeysTest
     {
         public static TheoryDataSet<Func<string>, string> ErrorKeys
         {
             get
             {
                 return new TheoryDataSet<Func<string>, string>
-                {       
+                {
                     { () => HttpErrorKeys.MessageKey, "Message" },
                     { () => HttpErrorKeys.MessageDetailKey, "MessageDetail" },
                     { () => HttpErrorKeys.ModelStateKey, "ModelState" },

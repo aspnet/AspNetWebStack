@@ -66,16 +66,22 @@ namespace System.Web.Http.Filters
             Assert.True(flagWhenContinuationInvoked.Value);
         }
 
+        [Fact]
         public async Task ExecuteAuthorizationFilterAsync_IfOnActionExecutingSetsResult_ShortCircuits()
         {
             // Arrange
             HttpActionContext context = ContextUtil.CreateActionContext();
-            Mock<AuthorizationFilterAttribute> filterMock = new Mock<AuthorizationFilterAttribute>();
+            Mock<AuthorizationFilterAttribute> filterMock = new Mock<AuthorizationFilterAttribute>
+            {
+                CallBase = true,
+            };
+
             HttpResponseMessage response = new HttpResponseMessage();
             filterMock.Setup(f => f.OnAuthorization(It.IsAny<HttpActionContext>())).Callback<HttpActionContext>(c =>
             {
                 c.Response = response;
             });
+
             bool continuationCalled = false;
             var filter = (IAuthorizationFilter)filterMock.Object;
 

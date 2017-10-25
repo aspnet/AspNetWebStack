@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -118,8 +117,8 @@ namespace System.Web.Http
             IEnumerable<IFilter> filters = actionDescriptor.GetFilters();
 
             Assert.NotNull(filters);
-            Assert.Equal(1, filters.Count());
-            Assert.Equal(typeof(AuthorizeAttribute), filters.First().GetType());
+            IFilter filter = Assert.Single(filters);
+            Assert.IsType<AuthorizeAttribute>(filter);
         }
 
         [Fact]
@@ -153,10 +152,10 @@ namespace System.Web.Http
             IEnumerable<HttpGetAttribute> httpGet = actionDescriptor.GetCustomAttributes<HttpGetAttribute>();
 
             Assert.NotNull(filters);
-            Assert.Equal(1, filters.Count());
-            Assert.Equal(typeof(AuthorizeAttribute), filters.First().GetType());
+            IFilter filter = Assert.Single(filters);
+            Assert.IsType<AuthorizeAttribute>(filter);
             Assert.NotNull(httpGet);
-            Assert.Equal(1, httpGet.Count());
+            Assert.Single(httpGet);
         }
 
         [Fact]
@@ -168,8 +167,8 @@ namespace System.Web.Http
             Collection<HttpParameterDescriptor> parameterDescriptors = actionDescriptor.GetParameters();
 
             Assert.Equal(2, parameterDescriptors.Count);
-            Assert.NotNull(parameterDescriptors.Where(p => p.ParameterName == "firstName").FirstOrDefault());
-            Assert.NotNull(parameterDescriptors.Where(p => p.ParameterName == "lastName").FirstOrDefault());
+            Assert.Contains(parameterDescriptors, p => p.ParameterName == "firstName");
+            Assert.Contains(parameterDescriptors, p => p.ParameterName == "lastName");
         }
 
         [Fact]

@@ -141,7 +141,7 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(true, shouldLog);
+            Assert.True(shouldLog);
         }
 
         [Fact]
@@ -169,7 +169,7 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(true, shouldLog);
+            Assert.True(shouldLog);
         }
 
         [Fact]
@@ -188,11 +188,11 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(true, shouldLog);
+            Assert.True(shouldLog);
             Assert.True(data.Contains(ExceptionLogger.LoggedByKey));
             object loggedBy = data[ExceptionLogger.LoggedByKey];
-            Assert.IsAssignableFrom<ICollection<object>>(loggedBy);
-            Assert.Contains(product, (ICollection<object>)loggedBy);
+            ICollection<object> loggedByCollection = Assert.IsAssignableFrom<ICollection<object>>(loggedBy);
+            Assert.Contains(product, loggedByCollection);
         }
 
         [Fact]
@@ -213,7 +213,7 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(true, shouldLog);
+            Assert.True(shouldLog);
             Assert.True(data.Contains(ExceptionLogger.LoggedByKey));
             object updatedLoggedBy = data[ExceptionLogger.LoggedByKey];
             Assert.Same(loggedBy, updatedLoggedBy);
@@ -238,7 +238,7 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(false, shouldLog);
+            Assert.False(shouldLog);
             Assert.True(data.Contains(ExceptionLogger.LoggedByKey));
             object updatedLoggedBy = data[ExceptionLogger.LoggedByKey];
             Assert.Same(loggedBy, updatedLoggedBy);
@@ -262,7 +262,7 @@ namespace System.Web.Http.ExceptionHandling
             bool shouldLog = product.ShouldLog(context);
 
             // Assert
-            Assert.Equal(true, shouldLog);
+            Assert.True(shouldLog);
             Assert.True(data.Contains(ExceptionLogger.LoggedByKey));
             object updatedLoggedBy = data[ExceptionLogger.LoggedByKey];
             Assert.Null(updatedLoggedBy);

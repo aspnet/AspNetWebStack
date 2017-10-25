@@ -49,7 +49,7 @@ namespace System.Web.Http.Validation.Providers
 
             // Assert
             provider.Verify();
-            Assert.True(callbackAttributes.Any(a => a is RequiredAttribute));
+            Assert.Contains(callbackAttributes, a => a is RequiredAttribute);
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace System.Web.Http.Validation.Providers
 
             // Assert
             provider.Verify();
-            Assert.True(callbackAttributes.Any(a => a is RangeAttribute));
+            Assert.Contains(callbackAttributes, a => a is RangeAttribute);
         }
 
         [Fact]
@@ -89,8 +89,8 @@ namespace System.Web.Http.Validation.Providers
 
             // Assert
             provider.Verify();
-            Assert.True(callbackAttributes.Any(a => a is RangeAttribute));
-            Assert.True(callbackAttributes.Any(a => a is RequiredAttribute));
+            Assert.Contains(callbackAttributes, a => a is RangeAttribute);
+            Assert.Contains(callbackAttributes, a => a is RequiredAttribute);
         }
 
         [MetadataType(typeof(Metadata))]

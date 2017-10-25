@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
@@ -249,18 +248,16 @@ namespace System.Web.Http.Results
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
                     HttpContent content = response.Content;
-                    Assert.IsType<ObjectContent<HttpError>>(content);
-                    ObjectContent<HttpError> typedContent = (ObjectContent<HttpError>)content;
+                    ObjectContent<HttpError> typedContent = Assert.IsType<ObjectContent<HttpError>>(content);
                     HttpError error = (HttpError)typedContent.Value;
                     Assert.NotNull(error);
                     HttpError modelStateError = error.ModelState;
                     Assert.NotNull(modelStateError);
                     Assert.True(modelState.ContainsKey(expectedModelStateKey));
                     object modelStateValue = modelStateError[expectedModelStateKey];
-                    Assert.IsType(typeof(string[]), modelStateValue);
-                    string[] typedModelStateValue = (string[])modelStateValue;
-                    Assert.Equal(1, typedModelStateValue.Length);
-                    Assert.Same(expectedModelStateExceptionMessage, typedModelStateValue[0]);
+                    string[] typedModelStateValues = Assert.IsType<string[]>(modelStateValue);
+                    string typedModelStateValue = Assert.Single(typedModelStateValues);
+                    Assert.Same(expectedModelStateExceptionMessage, typedModelStateValue);
                     Assert.Same(expectedFormatter, typedContent.Formatter);
                     Assert.NotNull(typedContent.Headers);
                     Assert.Equal(expectedMediaType, typedContent.Headers.ContentType);
@@ -309,18 +306,16 @@ namespace System.Web.Http.Results
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
                     HttpContent content = response.Content;
-                    Assert.IsType<ObjectContent<HttpError>>(content);
-                    ObjectContent<HttpError> typedContent = (ObjectContent<HttpError>)content;
+                    ObjectContent<HttpError> typedContent = Assert.IsType<ObjectContent<HttpError>>(content);
                     HttpError error = (HttpError)typedContent.Value;
                     Assert.NotNull(error);
                     HttpError modelStateError = error.ModelState;
                     Assert.NotNull(modelStateError);
                     Assert.True(modelState.ContainsKey(expectedModelStateKey));
                     object modelStateValue = modelStateError[expectedModelStateKey];
-                    Assert.IsType(typeof(string[]), modelStateValue);
-                    string[] typedModelStateValue = (string[])modelStateValue;
-                    Assert.Equal(1, typedModelStateValue.Length);
-                    Assert.Same(expectedModelStateErrorMessage, typedModelStateValue[0]);
+                    string[] typedModelStateValues = Assert.IsType<string[]>(modelStateValue);
+                    string typedModelStateValue = Assert.Single(typedModelStateValues);
+                    Assert.Same(expectedModelStateErrorMessage, typedModelStateValue);
                     Assert.Same(expectedFormatter, typedContent.Formatter);
                     Assert.NotNull(typedContent.Headers);
                     Assert.Equal(expectedMediaType, typedContent.Headers.ContentType);
@@ -424,18 +419,16 @@ namespace System.Web.Http.Results
                         Assert.NotNull(response);
                         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
                         HttpContent content = response.Content;
-                        Assert.IsType<ObjectContent<HttpError>>(content);
-                        ObjectContent<HttpError> typedContent = (ObjectContent<HttpError>)content;
+                        ObjectContent<HttpError> typedContent = Assert.IsType<ObjectContent<HttpError>>(content);
                         HttpError error = (HttpError)typedContent.Value;
                         Assert.NotNull(error);
                         HttpError modelStateError = error.ModelState;
                         Assert.NotNull(modelStateError);
                         Assert.True(modelState.ContainsKey(expectedModelStateKey));
                         object modelStateValue = modelStateError[expectedModelStateKey];
-                        Assert.IsType(typeof(string[]), modelStateValue);
-                        string[] typedModelStateValue = (string[])modelStateValue;
-                        Assert.Equal(1, typedModelStateValue.Length);
-                        Assert.Same(expectedModelStateExceptionMessage, typedModelStateValue[0]);
+                        string[] typedModelStateValues = Assert.IsType<string[]>(modelStateValue);
+                        string typedModelStateValue = Assert.Single(typedModelStateValues);
+                        Assert.Same(expectedModelStateExceptionMessage, typedModelStateValue);
                         Assert.Same(expectedOutputFormatter, typedContent.Formatter);
                         Assert.NotNull(typedContent.Headers);
                         Assert.Equal(expectedMediaType, typedContent.Headers.ContentType);
@@ -470,7 +463,7 @@ namespace System.Web.Http.Results
                     IContentNegotiator contentNegotiator = result.ContentNegotiator;
 
                     // Assert
-                    Assert.Equal(false, result.IncludeErrorDetail);
+                    Assert.False(result.IncludeErrorDetail);
                 }
             }
         }
@@ -560,8 +553,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(formatters);
-                    Assert.Equal(1, formatters.Count());
-                    Assert.Same(expectedFormatter, formatters.Single());
+                    MediaTypeFormatter formatter = Assert.Single(formatters);
+                    Assert.Same(expectedFormatter, formatter);
                 }
             }
         }
@@ -595,7 +588,7 @@ namespace System.Web.Http.Results
                 bool includeErrorDetail = result.IncludeErrorDetail;
 
                 // Assert
-                Assert.Equal(true, includeErrorDetail);
+                Assert.True(includeErrorDetail);
             }
         }
 
@@ -688,8 +681,8 @@ namespace System.Web.Http.Results
 
                     // Assert
                     Assert.NotNull(formatters);
-                    Assert.Equal(1, formatters.Count());
-                    Assert.Same(expectedFormatter, formatters.Single());
+                    MediaTypeFormatter formatter = Assert.Single(formatters);
+                    Assert.Same(expectedFormatter, formatter);
                 }
             }
         }

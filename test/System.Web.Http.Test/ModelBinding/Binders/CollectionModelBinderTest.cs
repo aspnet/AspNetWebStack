@@ -326,8 +326,7 @@ namespace System.Web.Http.ModelBinding
 
             // Assert
             Assert.True(result);
-            List<Person> boundModel =
-                Assert.IsType<List<Person>>(bindingContext.Model);
+            List<Person> boundModel = Assert.IsType<List<Person>>(bindingContext.Model);
             Person type = Assert.Single(boundModel);
             Assert.Null(type.Name);
         }

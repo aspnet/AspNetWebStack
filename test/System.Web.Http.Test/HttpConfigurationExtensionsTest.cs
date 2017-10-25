@@ -164,8 +164,8 @@ namespace System.Net.Http
             // Assert
             var routes = config.GetAttributeRoutes();
             Assert.Equal(2, routes.Count);
-            Assert.Single(routes.Where(route => route.RouteTemplate == "controller/get1"));
-            Assert.Single(routes.Where(route => route.RouteTemplate == "controller/get2"));
+            Assert.Single(routes, route => route.RouteTemplate == "controller/get1");
+            Assert.Single(routes, route => route.RouteTemplate == "controller/get2");
         }
 
         [Fact]
@@ -179,8 +179,8 @@ namespace System.Net.Http
             config.Services.Clear(typeof(IHttpActionSelector));
             config.Services.Clear(typeof(IActionValueBinder));
 
-            // Call Map, ensure that it's not touching any services yet since all work is deferred. 
-            // This is important since these services aren't ready to be used until after config is finalized. 
+            // Call Map, ensure that it's not touching any services yet since all work is deferred.
+            // This is important since these services aren't ready to be used until after config is finalized.
             // Else we may end up caching objects prematurely.
             config.MapHttpAttributeRoutes();
 

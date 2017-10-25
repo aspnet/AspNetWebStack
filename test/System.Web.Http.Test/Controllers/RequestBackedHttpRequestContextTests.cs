@@ -236,7 +236,7 @@ namespace System.Web.Http.Controllers
             bool includeErrorDetail = context.IncludeErrorDetail;
 
             // Assert
-            Assert.Equal(false, includeErrorDetail);
+            Assert.False(includeErrorDetail);
         }
 
         [Theory]
@@ -305,7 +305,7 @@ namespace System.Web.Http.Controllers
             bool isLocal = context.IsLocal;
 
             // Assert
-            Assert.Equal(false, isLocal);
+            Assert.False(isLocal);
         }
 
         [Theory]
