@@ -6,8 +6,7 @@
     <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
 
     <Target Name="Xunit">
-        <!-- Override AppDomains default (set in xunit.runner.json). Need them with this runner. -->
-        <xunit AppDomains="true" Assemblies="$(TestAssembly)" Xml="$(XmlPath)"/>
+        <xunit Assemblies="$(TestAssembly)" Xml="$(XmlPath)"/>
 
         <!-- Replace potentially illegal escaped characters (if they get through validations done during Save). -->
         <RegexReplace
