@@ -1,5 +1,4 @@
 ﻿{
-  "appDomain": "denied",
-  "preEnumerateTheories": false,
-  "shadowCopy":  false
+  "diagnosticMessages": false,
+  "preEnumerateTheories": false
 }
