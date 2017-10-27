@@ -268,7 +268,9 @@
     <Compile Include="Tracing\Tracers\FormatterLoggerTraceWrapper.cs" />
     <Compile Include="Tracing\Tracers\DefaultHttpControllerTypeResolverTracer.cs" />
     <Compile Include="Tracing\Tracers\OverrideFilterTracer.cs" />
+    <Compile Include="Validation\BodyModelValidatorContext.cs" />
     <Compile Include="Validation\IModelValidatorCache.cs" />
+    <Compile Include="Validation\IBodyModelValidatorKeyBuilder.cs" />
     <Compile Include="Validation\ModelValidatorCache.cs" />
     <Compile Include="Controllers\ResponseMessageResultConverter.cs" />
     <Compile Include="Controllers\ValueResultConverter.cs" />
