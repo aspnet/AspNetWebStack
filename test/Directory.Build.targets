@@ -7,7 +7,6 @@
       <TestAssembly Include="$(TargetPath)"/>
     </ItemGroup>
 
-    <!-- Override AppDomains default (set in xunit.runner.json). Need them with this runner. -->
-    <xunit AppDomains="true" Assemblies="@(TestAssembly)" Condition="$(IsTestProject)"/>
+    <xunit Assemblies="@(TestAssembly)" Condition="$(IsTestProject)"/>
   </Target>
 </Project>
