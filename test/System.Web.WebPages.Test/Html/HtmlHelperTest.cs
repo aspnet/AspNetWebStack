@@ -195,15 +195,13 @@ namespace System.Web.WebPages.Test
                        };
         }
 
-#pragma warning disable xUnit1013 // Public method should be marked as test
         /// <summary>
         /// Will invoke a helper with overload that accepts custom attribute with a name containing
         /// and underscore as an anonymous object, and will then assert that the resulted html
         /// has the attribute name underscore correctly transformed to a dash
         /// </summary>
         /// <param name="helperInvocation"></param>
-        public static void AssertHelperTransformsAttributesUnderscoresToDashs(Func<HtmlHelper, object, IHtmlString> helperInvocation)
-#pragma warning restore xUnit1013 // Public method should be marked as test
+        internal static void AssertHelperTransformsAttributesUnderscoresToDashs(Func<HtmlHelper, object, IHtmlString> helperInvocation)
         {
             // Arrange
             HtmlHelper helper = HtmlHelperFactory.Create();
