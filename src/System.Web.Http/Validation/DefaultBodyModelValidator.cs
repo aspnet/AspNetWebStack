@@ -59,14 +59,11 @@ namespace System.Web.Http.Validation
             }
 
             ModelMetadata metadata = metadataProvider.GetMetadataForType(() => model, type);
-            BodyModelValidatorContext validationContext = new BodyModelValidatorContext
+            BodyModelValidatorContext validationContext = new BodyModelValidatorContext(actionContext.ModelState)
             {
                 MetadataProvider = metadataProvider,
                 ActionContext = actionContext,
                 ValidatorCache = actionContext.GetValidatorCache(),
-                ModelState = actionContext.ModelState,
-                Visited = new HashSet<object>(ReferenceEqualityComparer.Instance),
-                KeyBuilders = new Stack<IBodyModelValidatorKeyBuilder>(),
                 RootPrefix = keyPrefix
             };
             return ValidateNodeAndChildren(metadata, validationContext, container: null, validators: null);
