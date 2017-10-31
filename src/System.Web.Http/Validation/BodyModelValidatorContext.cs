@@ -13,6 +13,18 @@ namespace System.Web.Http.Validation
     /// </summary>
     public class BodyModelValidatorContext
     {
+        public BodyModelValidatorContext(ModelStateDictionary modelState)
+        {
+            if (modelState == null)
+            {
+                throw new ArgumentNullException("modelState");
+            }
+
+            KeyBuilders = new Stack<IBodyModelValidatorKeyBuilder>();
+            ModelState = modelState;
+            Visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+        }
+
         /// <summary>
         /// Gets or sets the <see cref="ModelMetadataProvider"/> used to provide the model metadata.
         /// </summary>
@@ -29,21 +41,21 @@ namespace System.Web.Http.Validation
         public IModelValidatorCache ValidatorCache { get; set; }
 
         /// <summary>
-        /// Gets or sets the current <see cref="ModelStateDictionary"/>.
+        /// Gets the current <see cref="ModelStateDictionary"/>.
         /// </summary>
-        public ModelStateDictionary ModelState { get; set; }
+        public ModelStateDictionary ModelState { get; private set; }
 
         /// <summary>
-        /// Gets or sets the set of model objects visited in this validation. Includes the model being validated in the
+        /// Gets the set of model objects visited in this validation. Includes the model being validated in the
         /// current scope.
         /// </summary>
-        public HashSet<object> Visited { get; set; }
+        public HashSet<object> Visited { get; private set; }
 
         /// <summary>
-        /// Gets or sets the stack of <see cref="IBodyModelValidatorKeyBuilder"/>s used in this validation. Includes
+        /// Gets the stack of <see cref="IBodyModelValidatorKeyBuilder"/>s used in this validation. Includes
         /// the <see cref="IBodyModelValidatorKeyBuilder"/> to generate model state keys for the current scope.
         /// </summary>
-        public Stack<IBodyModelValidatorKeyBuilder> KeyBuilders { get; set; }
+        public Stack<IBodyModelValidatorKeyBuilder> KeyBuilders { get; private set; }
 
         /// <summary>
         /// Gets or sets the model state prefix for the root scope of this validation.
