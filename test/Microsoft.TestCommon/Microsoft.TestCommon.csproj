@@ -9,6 +9,10 @@
     <AssemblyName>Microsoft.TestCommon</AssemblyName>
     <IsTestProject>false</IsTestProject>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
+    <CodeSignEnabled>false</CodeSignEnabled>
+    <EnableGetGitHeadSHA1>false</EnableGetGitHeadSHA1>
+    <ValidateBuildParamsDisabled>true</ValidateBuildParamsDisabled>
+    <VersionFileGenerationEnabled>false</VersionFileGenerationEnabled>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
