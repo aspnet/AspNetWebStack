@@ -11,6 +11,7 @@ namespace Microsoft.TestCommon
     public static class PlatformInfo
     {
         private const string _net45TypeName = "System.IWellKnownStringEqualityComparer, mscorlib, Version=4.0.0.0, PublicKeyToken=b77a5c561934e089";
+        private const string _netCore20TypeName = "System.OrdinalCaseSensitiveComparer, system.private.corelib, Version=4.0.0.0, PublicKeyToken=7cec85d7bea7798e";
         private static Lazy<Platform> _platform = new Lazy<Platform>(GetPlatform, isThreadSafe: true);
 
         /// <summary>
@@ -23,6 +24,12 @@ namespace Microsoft.TestCommon
 
         private static Platform GetPlatform()
         {
+            if (Type.GetType(_netCore20TypeName, throwOnError: false) != null)
+            {
+                // Treat .NET Core 2.0 as a .NET 4.5 superset though internal types are different.
+                return Platform.Net45;
+            }
+
             if (Type.GetType(_net45TypeName, throwOnError: false) != null)
             {
                 return Platform.Net45;

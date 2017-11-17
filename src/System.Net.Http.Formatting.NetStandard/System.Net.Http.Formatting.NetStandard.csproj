@@ -1,38 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>System.Net.Http</RootNamespace>
     <AssemblyName>System.Net.Http.Formatting</AssemblyName>
     <OutputPath>$(OutputPath)NetStandard\</OutputPath>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
-    <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisAdditionalOptions> /assemblycomparemode:StrongNameIgnoringVersion</CodeAnalysisAdditionalOptions>
-    <CodeAnalysisSearchGlobalAssemblyCache>false</CodeAnalysisSearchGlobalAssemblyCache>
-    <DefineConstants>$(DefineConstants);NETFX_CORE;ASPNETMVC;NOT_CLS_COMPLIANT;NETSTANDARD1_1</DefineConstants>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <DefineConstants>$(DefineConstants);ASPNETMVC;NEWTONSOFTJSON10</DefineConstants>
     <NoWarn>1591</NoWarn>
-    <TargetFrameworkVersion></TargetFrameworkVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="System.ComponentModel.EventBasedAsync" Version="4.0.11" />
-    <PackageReference Include="System.Diagnostics.Contracts" Version="4.0.1" />
-    <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.1.1" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.0.11" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+
+    <Compile Include="..\Common\CollectionExtensions.cs">
+      <Link>Common\CollectionExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Error.cs">
       <Link>Common\Error.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ListWrapperCollection.cs">
+      <Link>Common\ListWrapperCollection.cs</Link>
     </Compile>
     <Compile Include="..\Common\TaskHelpers.cs">
       <Link>Common\TaskHelpers.cs</Link>
@@ -43,197 +40,9 @@
     <Compile Include="..\Common\UriQueryUtility.cs">
       <Link>Common\UriQueryUtility.cs</Link>
     </Compile>
-    <Compile Include="..\Common\CollectionExtensions.cs">
-      <Link>Common\CollectionExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Common\ListWrapperCollection.cs">
-      <Link>Common\ListWrapperCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\FormattingUtilities.cs">
-      <Link>FormattingUtilities.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\BaseJsonMediaTypeFormatter.cs">
-      <Link>Formatting\BaseJsonMediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\BsonMediaTypeFormatter.cs">
-      <Link>Formatting\BsonMediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\DelegatingEnumerable.cs">
-      <Link>Formatting\DelegatingEnumerable.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\FormDataCollection.cs">
-      <Link>Formatting\FormDataCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\FormUrlEncodedJson.cs">
-      <Link>Formatting\FormUrlEncodedJson.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\FormUrlEncodedMediaTypeFormatter.cs">
-      <Link>Formatting\FormUrlEncodedMediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\IFormatterLogger.cs">
-      <Link>Formatting\IFormatterLogger.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\JsonMediaTypeFormatter.cs">
-      <Link>Formatting\JsonMediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\MediaTypeConstants.cs">
-      <Link>Formatting\MediaTypeConstants.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\MediaTypeFormatter.cs">
-      <Link>Formatting\MediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\MediaTypeFormatterCollection.cs">
-      <Link>Formatting\MediaTypeFormatterCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\MediaTypeHeaderValueExtensions.cs">
-      <Link>Formatting\MediaTypeHeaderValueExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\MediaTypeHeaderValueRange.cs">
-      <Link>Formatting\MediaTypeHeaderValueRange.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\ParsedMediaTypeHeaderValue.cs">
-      <Link>Formatting\ParsedMediaTypeHeaderValue.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\FormUrlEncodedParser.cs">
-      <Link>Formatting\Parsers\FormUrlEncodedParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\HttpRequestHeaderParser.cs">
-      <Link>Formatting\Parsers\HttpRequestHeaderParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\HttpRequestLineParser.cs">
-      <Link>Formatting\Parsers\HttpRequestLineParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\HttpResponseHeaderParser.cs">
-      <Link>Formatting\Parsers\HttpResponseHeaderParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\HttpStatusLineParser.cs">
-      <Link>Formatting\Parsers\HttpStatusLineParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\InternetMessageFormatHeaderParser.cs">
-      <Link>Formatting\Parsers\InternetMessageFormatHeaderParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\MimeMultipartBodyPartParser.cs">
-      <Link>Formatting\Parsers\MimeMultipartBodyPartParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\MimeMultipartParser.cs">
-      <Link>Formatting\Parsers\MimeMultipartParser.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\Parsers\ParserState.cs">
-      <Link>Formatting\Parsers\ParserState.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\StringComparisonHelper.cs">
-      <Link>Formatting\StringComparisonHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Formatting\XmlMediaTypeFormatter.cs">
-      <Link>Formatting\XmlMediaTypeFormatter.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpContentFormDataExtensions.cs">
-      <Link>HttpContentFormDataExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Internal\HttpValueCollection.cs">
-      <Link>Internal\HttpValueCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\UriExtensions.cs">
-      <Link>UriExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting.NetCore\GlobalSuppressions.cs">
-      <Link>GlobalSuppressions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Handlers\HttpProgressEventArgs.cs">
-      <Link>Handlers\HttpProgressEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Handlers\ProgressContent.cs">
-      <Link>Handlers\ProgressContent.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Handlers\ProgressMessageHandler.cs">
-      <Link>Handlers\ProgressMessageHandler.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Handlers\ProgressStream.cs">
-      <Link>Handlers\ProgressStream.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpClientExtensions.cs">
-      <Link>HttpClientExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpClientFactory.cs">
-      <Link>HttpClientFactory.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpContentExtensions.cs">
-      <Link>HttpContentExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpContentMessageExtensions.cs">
-      <Link>HttpContentMessageExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpContentMultipartExtensions.cs">
-      <Link>HttpContentMultipartExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpHeaderExtensions.cs">
-      <Link>HttpHeaderExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpMessageContent.cs">
-      <Link>HttpMessageContent.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpUnsortedHeaders.cs">
-      <Link>HttpUnsortedHeaders.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpUnsortedRequest.cs">
-      <Link>HttpUnsortedRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\HttpUnsortedResponse.cs">
-      <Link>HttpUnsortedResponse.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Internal\AsyncResult.cs">
-      <Link>Internal\AsyncResult.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Internal\DelegatingStream.cs">
-      <Link>Internal\DelegatingStream.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Internal\ReadOnlyStreamWithEncodingPreamble.cs">
-      <Link>Internal\ReadOnlyStreamWithEncodingPreamble.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Internal\TypeExtensions.cs">
-      <Link>Internal\TypeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\MimeBodyPart.cs">
-      <Link>MimeBodyPart.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\MultipartFileData.cs">
-      <Link>MultipartFileData.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\MultipartMemoryStreamProvider.cs">
-      <Link>MultipartMemoryStreamProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\MultipartRelatedStreamProvider.cs">
-      <Link>MultipartRelatedStreamProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\MultipartStreamProvider.cs">
-      <Link>MultipartStreamProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\ObjectContent.cs">
-      <Link>ObjectContent.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\ObjectContentOfT.cs">
-      <Link>ObjectContentOfT.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\PushStreamContent.cs">
-      <Link>PushStreamContent.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\Properties\Resources.Designer.cs">
-      <Link>Properties\Resources.Designer.cs</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting\UnsupportedMediaTypeException.cs">
-      <Link>UnsupportedMediaTypeException.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting.NetCore\Internal\ConcurrentDictionary.cs">
-      <Link>Internal\ConcurrentDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Net.Http.Formatting.NetCore\MediaTypeHeaderValueExtensions.cs">
-      <Link>MediaTypeHeaderValueExtensions.cs</Link>
+
+    <Compile Include="..\System.Net.Http.Formatting\**\*.cs">
+      <Link>%(RecursiveDir)\%(Filename).cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -243,8 +52,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonWebApiResources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Common\CommonWebApiResources.resx">
       <Link>Properties\CommonWebApiResources.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -252,6 +59,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="..\System.Net.Http.Formatting\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="..\System.Net.Http.Formatting\Properties\Resources.resx">
       <Link>Properties\Resources.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>

@@ -11,7 +11,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
+#if NEWTONSOFTJSON10
+using BsonReader = Newtonsoft.Json.Bson.BsonDataReader;
+using BsonWriter = Newtonsoft.Json.Bson.BsonDataWriter;
+#else
 using Newtonsoft.Json.Bson;
+#endif
 
 namespace System.Net.Http.Formatting
 {

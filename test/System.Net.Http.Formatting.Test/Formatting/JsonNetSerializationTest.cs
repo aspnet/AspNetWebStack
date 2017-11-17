@@ -258,7 +258,11 @@ namespace System.Net.Http.Formatting
         // low surrogate not preceded by high surrogate
         [InlineData("ABC \\udc00\\ud800 DEF", "ABC \ufffd\ufffd DEF")]
         // make sure unencoded invalid surrogate characters don't make it through
+#if NETCOREAPP2_0 // Json.NET uses its regular invalid Unicode character on .NET Core 2.0; '?' elsewhere.
+        [InlineData("\udc00\ud800\ud800", "\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd")]
+#else
         [InlineData("\udc00\ud800\ud800", "??????")]
+#endif
         public async Task InvalidUnicodeStringsAreFixedUp(string input, string expectedString)
         {
             string json = "\"" + input + "\"";
@@ -458,6 +462,7 @@ namespace System.Net.Http.Formatting
     [Serializable]
     class SerializableType : IEquatable<SerializableType>
     {
+        [JsonConstructor]
         public SerializableType(string protectedFieldValue)
         {
             this.protectedField = protectedFieldValue;

@@ -100,8 +100,7 @@
     <ItemGroup>
       <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll" />
       <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.*.dll" />
-      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetCore\*.Test.dll" />
-      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetStandard\*.Test.dll" />
+      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetCore\*.Test.dll" Condition="'$(BuildPortable)' == 'true'" />
       <_XunitProject Include="tools\WebStack.xunit.targets">
         <Properties>TestAssembly=%(_TestDLLsXunit.FullPath);XmlPath=$(TestResultsDirectory)%(_TestDLLsXunit.FileName)-XunitResults.xml</Properties>
       </_XunitProject>
@@ -112,6 +111,12 @@
     <MakeDir Directories="$(TestResultsDirectory)" />
 
     <MSBuild Projects="@(_XunitProject)" BuildInParallel="$(TestInParallel)" Targets="Xunit" />
+
+    <!-- Failures in this project will fail build. But, results will not be included in test run summary. -->
+    <MSBuild
+      Projects="test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj"
+      Targets="Test"
+      Condition="'$(BuildPortable)' == 'true'" />
   </Target>
 
   <Target Name="CheckSkipStrongNames" DependsOnTargets="RestoreSkipStrongNames">

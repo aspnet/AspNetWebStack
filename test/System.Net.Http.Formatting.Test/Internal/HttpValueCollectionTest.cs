@@ -14,7 +14,9 @@ namespace System.Net.Http.Internal
 {
     public class HttpValueCollectionTest
     {
+#if !NETCOREAPP2_0 // Unused on .NET Core 2.0.
         private static readonly int _maxCollectionKeys = 1000;
+#endif
 
         private static HttpValueCollection CreateInstance()
         {
@@ -146,6 +148,7 @@ namespace System.Net.Http.Internal
             Assert.Empty(nvc);
         }
 
+#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0.
         // This set of tests requires running on a separate appdomain so we don't
         // touch the static property MediaTypeFormatter.MaxHttpCollectionKeys.
         [Fact]
@@ -202,29 +205,24 @@ namespace System.Net.Http.Internal
         [Fact]
         public void AddTooManyKeysThrows()
         {
-            RunInIsolation(Create_CreateDoesntThrowTooManyValuesPrivate);
+            RunInIsolation(AddTooManyKeysThrowsPrivate);
         }
 
-        private void AddTooManyKeysThrowsPrivate()
+        private static void AddTooManyKeysThrowsPrivate()
         {
             // Note this is static, but also the expected type in a real run.
             MediaTypeFormatter.MaxHttpCollectionKeys = _maxCollectionKeys;
 
             HttpValueCollection collection = CreateInstance();
-
-            int i = 0;
+            for (int i = 0; i < _maxCollectionKeys; i++)
+            {
+                collection.Add(i.ToString(), i.ToString());
+            }
 
             // Act && Assert
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                for (; i < 1001; i++)
-                {
-                    collection.Add(i.ToString(), i.ToString());
-                }
-            }, TooManyKeysError);
-
-
-            Assert.Equal(1000, i);
+            Assert.Throws<InvalidOperationException>(
+                () => collection.Add(_maxCollectionKeys.ToString(), _maxCollectionKeys.ToString()),
+                TooManyKeysError);
         }
 
         [Fact]
@@ -249,6 +247,7 @@ namespace System.Net.Http.Internal
                 }
             });
         }
+#endif
 
         [Theory]
         [PropertyData("KeyValuePairs")]

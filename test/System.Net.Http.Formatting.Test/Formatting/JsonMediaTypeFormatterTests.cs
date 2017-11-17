@@ -374,6 +374,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0.
         // Test alternate null value; always serialized as "null"
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AllSingleInstances)]
@@ -491,6 +492,7 @@ namespace System.Net.Http.Formatting
             // Only JSON case where DBNull.Value round-trips
             Assert.Equal(testData, readObj);
         }
+#endif
 
         [Fact]
         public async Task UseDataContractJsonSerializer_False()

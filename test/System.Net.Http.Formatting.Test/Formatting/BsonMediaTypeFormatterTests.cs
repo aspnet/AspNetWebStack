@@ -262,12 +262,20 @@ namespace System.Net.Http.Formatting
             BsonMediaTypeFormatter formatter = new BsonMediaTypeFormatter();
             HttpContent content = new StringContent(String.Empty);
             MemoryStream stream = new MemoryStream();
+#if NEWTONSOFTJSON10 // Json.NET 10's Bson package calculates the path in some exceptions differently.
+            string expectedPath = "Value";
+#else
+            string expectedPath = string.Empty;
+#endif
+            string expectedMessage = string.Format(
+                "Value is too large to fit in a signed 32 bit integer. BSON does not support unsigned values. Path '{0}'.",
+                expectedPath);
 
             // Act & Assert
             // Note error message is not quite correct: BSON supports byte, ushort, and smaller uint / ulong values.
             await Assert.ThrowsAsync<JsonWriterException>(
                 () => formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null),
-                "Value is too large to fit in a signed 32 bit integer. BSON does not support unsigned values. Path ''.");
+                expectedMessage);
         }
 
         [Fact]
@@ -407,6 +415,7 @@ namespace System.Net.Http.Formatting
             Assert.Null(readObj);
         }
 
+#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0 except at top level (using BsonMediaTypeformatter special case).
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AsDictionary)]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
@@ -479,6 +488,7 @@ namespace System.Net.Http.Formatting
             TestDataHolder<object> readDataHolder = (TestDataHolder<object>)readObj;
             Assert.Null(readDataHolder.V1);
         }
+#endif
 
         [Fact]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNullString()
