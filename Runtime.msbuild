@@ -114,6 +114,7 @@
 
     <!-- Failures in this project will fail build. But, results will not be included in test run summary. -->
     <MSBuild
+      Properties="Configuration=$(Configuration)"
       Projects="test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj"
       Targets="Test"
       Condition="'$(BuildPortable)' == 'true'" />
