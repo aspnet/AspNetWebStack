@@ -157,6 +157,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0.
         // Test alternate null value
         [Fact]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNull()
@@ -187,6 +188,7 @@ namespace System.Net.Http.Formatting
             // Lower levels convert DBNull.Value to empty string on read
             Assert.Equal(String.Empty, readObj);
         }
+#endif
 
         [Fact]
         public async Task UseDataContractJsonSerializer_Default()
