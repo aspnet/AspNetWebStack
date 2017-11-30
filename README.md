@@ -20,11 +20,11 @@ The latest built and tested packages from this repo are available on this MyGet 
 
 ### Tags and releases
 
-Git tag|Git branch|Products|MVC package|Web API package|Web Pages package
+Git tag|Git branch|Other products|MVC package versions|Web API package (product) versions|Web Pages package versions
 --------|--------------|------------|------------|------------|------------
-[v2.0.4](https://github.com/aspnet/AspNetWebStack/tree/v2.0.4)|[v2.0-rtm](https://github.com/aspnet/AspNetWebStack/tree/v2.0-rtm)|ASP.NET MVC 4.0.4|4.0.40804|4.0.30506|2.0.30506
+[v2.0.4](https://github.com/aspnet/AspNetWebStack/tree/v2.0.4)|[v2.0-rtm](https://github.com/aspnet/AspNetWebStack/tree/v2.0-rtm)||4.0.40804|4.0.30506|2.0.30506
 [v2.1](https://github.com/aspnet/AspNetWebStack/tree/v2.1)||ASP.NET and Web Tools 2012.2, VS 2012 Update 2 (not on http://nuget.org)|v4 2012.2 Update RTM|v1 2012.2 Update RTM|v2 2012.2 Update RTM
-[v3.0.2](https://github.com/aspnet/AspNetWebStack/tree/v3.0.2)|[v3-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3-rtm)|ASP.NET MVC 5.0.2|5.0.2|5.0.1|3.0.1
-[v3.1.3](https://github.com/aspnet/AspNetWebStack/tree/v3.1.3)|[v3.1-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3.1-rtm)|ASP.NET MVC 5.1.3|5.1.3|5.1.2|3.1.2
-[v3.2.3](https://github.com/aspnet/AspNetWebStack/tree/v3.2.3)||ASP.NET MVC 5.2.3 / Web API 2.2.3 / Web Pages 3.2.3 |5.2.3|5.2.3|3.2.3
+[v3.0.2](https://github.com/aspnet/AspNetWebStack/tree/v3.0.2)|[v3-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3-rtm)||5.0.2|5.0.1 (3.0.1)|3.0.1
+[v3.1.3](https://github.com/aspnet/AspNetWebStack/tree/v3.1.3)|[v3.1-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3.1-rtm)||5.1.3|5.1.2 (3.1.2)|3.1.2
+[v3.2.3](https://github.com/aspnet/AspNetWebStack/tree/v3.2.3)|||5.2.3|5.2.3 (3.2.3)|3.2.3
 ||[master](https://github.com/aspnet/AspNetWebStack/tree/master)|New work e.g. Web API 2.2.4-preview1|||
