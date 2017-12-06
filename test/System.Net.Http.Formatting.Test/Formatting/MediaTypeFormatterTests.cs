@@ -16,6 +16,8 @@ using Moq;
 
 namespace System.Net.Http.Formatting
 {
+    [Xunit.Collection("MediaTypeFormatterTests")] // Isolate MaxCollectionKeySize_RoundTrips.
+    [Xunit.CollectionDefinition("MediaTypeFormatterTests", DisableParallelization = true)]
     public class MediaTypeFormatterTests
     {
         private const string TestMediaType = "text/test";
@@ -79,15 +81,23 @@ namespace System.Net.Http.Formatting
         [Fact]
         public void MaxCollectionKeySize_RoundTrips()
         {
-            Assert.Reflection.IntegerProperty<MediaTypeFormatter, int>(
-                null,
-                c => MediaTypeFormatter.MaxHttpCollectionKeys,
-                expectedDefaultValue: PlatformInfo.Platform == Platform.Net40 ? 1000 : Int32.MaxValue,
-                minLegalValue: 1,
-                illegalLowerValue: 0,
-                maxLegalValue: null,
-                illegalUpperValue: null,
-                roundTripTestValue: 125);
+            var defaultMaxKeys = MediaTypeFormatter.MaxHttpCollectionKeys;
+            try
+            {
+                Assert.Reflection.IntegerProperty<MediaTypeFormatter, int>(
+                    null,
+                    c => MediaTypeFormatter.MaxHttpCollectionKeys,
+                    expectedDefaultValue: PlatformInfo.Platform == Platform.Net40 ? 1000 : Int32.MaxValue,
+                    minLegalValue: 1,
+                    illegalLowerValue: 0,
+                    maxLegalValue: null,
+                    illegalUpperValue: null,
+                    roundTripTestValue: 125);
+            }
+            finally
+            {
+                MediaTypeFormatter.MaxHttpCollectionKeys = defaultMaxKeys;
+            }
         }
 
         [Fact]
