@@ -59,7 +59,7 @@ namespace System.Web.Http.Validation.Validators
                     },
                     {
                         _metadataProvider.GetMetadataForType(() => new object(), typeof(SampleModel)),
-                        "SampleModel"
+                        null
                     }
                 };
             }
