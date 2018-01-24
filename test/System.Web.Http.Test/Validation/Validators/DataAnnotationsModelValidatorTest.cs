@@ -58,9 +58,13 @@ namespace System.Web.Http.Validation.Validators
                         "Length"
                     },
                     {
+                        _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name"),
+                        "Name"
+                    },
+                    {
                         _metadataProvider.GetMetadataForType(() => new object(), typeof(SampleModel)),
                         null
-                    }
+                    },
                 };
             }
         }
@@ -80,6 +84,58 @@ namespace System.Web.Http.Validation.Validators
                      .Returns(ValidationResult.Success)
                      .Verifiable();
             DataAnnotationsModelValidator validator = new DataAnnotationsModelValidator(_noValidatorProviders, attribute.Object);
+
+            // Act
+            IEnumerable<ModelValidationResult> results = validator.Validate(metadata, container: null);
+
+            // Assert
+            Assert.Empty(results);
+            attribute.VerifyAll();
+        }
+
+        public static TheoryDataSet<ModelMetadata, string> ValidateSetsDisplayNamePropertyDataSet
+        {
+            get
+            {
+                return new TheoryDataSet<ModelMetadata, string>
+                {
+                    {
+                        _metadataProvider.GetMetadataForProperty(() => 15, typeof(string), "Length"),
+                        "Length"
+                    },
+                    {
+                        _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name"),
+                        "Annotated Name"
+                    },
+                    {
+                        _metadataProvider.GetMetadataForType(() => new object(), typeof(SampleModel)),
+                        "SampleModel"
+                    },
+                };
+            }
+        }
+
+        [Theory]
+        [PropertyData("ValidateSetsDisplayNamePropertyDataSet")]
+        public void ValidateSetsDisplayNamePropertyOfValidationContextAsExpected(
+            ModelMetadata metadata,
+            string expectedDisplayName)
+        {
+            // Arrange
+            var attribute = new Mock<ValidationAttribute>
+            {
+                CallBase = true,
+            };
+            attribute
+                .Protected()
+                .Setup<ValidationResult>("IsValid", ItExpr.IsAny<object>(), ItExpr.IsAny<ValidationContext>())
+                .Callback(
+                    (object o, ValidationContext context) => Assert.Equal(expectedDisplayName, context.DisplayName))
+                .Returns(ValidationResult.Success)
+                .Verifiable();
+            DataAnnotationsModelValidator validator = new DataAnnotationsModelValidator(
+                _noValidatorProviders,
+                attribute.Object);
 
             // Act
             IEnumerable<ModelValidationResult> results = validator.Validate(metadata, container: null);
@@ -220,6 +276,12 @@ namespace System.Web.Http.Validation.Validators
 
         class SampleModel
         {
+            public string Name { get; set; }
+        }
+
+        private class AnnotatedModel
+        {
+            [Display(Name = "Annotated Name")]
             public string Name { get; set; }
         }
     }
