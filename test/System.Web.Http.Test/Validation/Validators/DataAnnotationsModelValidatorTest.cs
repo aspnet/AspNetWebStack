@@ -2,10 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Http.Metadata;
 using System.Web.Http.Metadata.Providers;
+using System.Web.WebPages.TestUtils;
 using Microsoft.TestCommon;
 using Moq;
 using Moq.Protected;
@@ -47,6 +49,90 @@ namespace System.Web.Http.Validation.Validators
             Assert.Same(attribute, validator.Attribute);
         }
 
+        public static TheoryDataSet<NameValueCollection> FalseAppSettingsData
+        {
+            get
+            {
+                return new TheoryDataSet<NameValueCollection>
+                {
+                    new NameValueCollection(),
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "false" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "False" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "false" },
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "true" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "garbage" },
+                    },
+                };
+            }
+        }
+
+        [Theory]
+        [PropertyData("FalseAppSettingsData")]
+        public void GetUseLegacyValidationMemberName_ReturnsFalse(NameValueCollection appSettings)
+        {
+            // Arrange & Act
+            var result = DataAnnotationsModelValidator.GetUseLegacyValidationMemberName(appSettings);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        public static TheoryDataSet<NameValueCollection> TrueAppSettingsData
+        {
+            get
+            {
+                return new TheoryDataSet<NameValueCollection>
+                {
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "true" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "True" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "true" },
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "false" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "true" },
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "false" },
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "garbage" },
+                    },
+                    new NameValueCollection
+                    {
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "True" },
+                        { DataAnnotationsModelValidator.UseLegacyValidationMemberNameKey, "garbage" },
+                    },
+                };
+            }
+        }
+
+        [Theory]
+        [PropertyData("TrueAppSettingsData")]
+        public void GetUseLegacyValidationMemberName_ReturnsTrue(NameValueCollection appSettings)
+        {
+            // Arrange & Act
+            var result = DataAnnotationsModelValidator.GetUseLegacyValidationMemberName(appSettings);
+
+            // Assert
+            Assert.True(result);
+        }
+
         public static TheoryDataSet<ModelMetadata, string> ValidateSetsMemberNamePropertyDataSet
         {
             get
@@ -58,9 +144,13 @@ namespace System.Web.Http.Validation.Validators
                         "Length"
                     },
                     {
+                        _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name"),
+                        "Name"
+                    },
+                    {
                         _metadataProvider.GetMetadataForType(() => new object(), typeof(SampleModel)),
                         "SampleModel"
-                    }
+                    },
                 };
             }
         }
@@ -80,6 +170,123 @@ namespace System.Web.Http.Validation.Validators
                      .Returns(ValidationResult.Success)
                      .Verifiable();
             DataAnnotationsModelValidator validator = new DataAnnotationsModelValidator(_noValidatorProviders, attribute.Object);
+
+            // Act
+            IEnumerable<ModelValidationResult> results = validator.Validate(metadata, container: null);
+
+            // Assert
+            Assert.Empty(results);
+            attribute.VerifyAll();
+        }
+
+        [Fact]
+        public void ValidateSetsMemberNameProperty_UsingDisplayName()
+        {
+            AppDomainUtils.RunInSeparateAppDomain(ValidateSetsMemberNameProperty_UsingDisplayName_Inner);
+        }
+
+        private static void ValidateSetsMemberNameProperty_UsingDisplayName_Inner()
+        {
+            // Arrange
+            DataAnnotationsModelValidator.UseLegacyValidationMemberName = true;
+            var expectedMemberName = "Annotated Name";
+            var attribute = new Mock<ValidationAttribute> { CallBase = true };
+            attribute
+                .Protected()
+                .Setup<ValidationResult>("IsValid", ItExpr.IsAny<object>(), ItExpr.IsAny<ValidationContext>())
+                .Callback((object o, ValidationContext context) =>
+                {
+                    Assert.Equal(expectedMemberName, context.MemberName);
+                })
+                .Returns(ValidationResult.Success)
+                .Verifiable();
+            var validator = new DataAnnotationsModelValidator(_noValidatorProviders, attribute.Object);
+            var metadata = _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name");
+
+            // Act
+            var results = validator.Validate(metadata, container: null);
+
+            // Assert
+            Assert.Empty(results);
+            attribute.VerifyAll();
+        }
+
+        // Confirm explicit false setting does not change Validate(...)'s behavior from its default.
+        [Fact]
+        public void ValidateSetsMemberNameProperty_NotUsingDisplayName()
+        {
+            AppDomainUtils.RunInSeparateAppDomain(ValidateSetsMemberNameProperty_NotUsingDisplayName_Inner);
+        }
+
+        private static void ValidateSetsMemberNameProperty_NotUsingDisplayName_Inner()
+        {
+            // Arrange
+            DataAnnotationsModelValidator.UseLegacyValidationMemberName = false;
+            var expectedMemberName = "Name";
+            var attribute = new Mock<ValidationAttribute> { CallBase = true };
+            attribute
+                .Protected()
+                .Setup<ValidationResult>("IsValid", ItExpr.IsAny<object>(), ItExpr.IsAny<ValidationContext>())
+                .Callback((object o, ValidationContext context) =>
+                {
+                    Assert.Equal(expectedMemberName, context.MemberName);
+                })
+                .Returns(ValidationResult.Success)
+                .Verifiable();
+            var validator = new DataAnnotationsModelValidator(_noValidatorProviders, attribute.Object);
+            var metadata = _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name");
+
+            // Act
+            var results = validator.Validate(metadata, container: null);
+
+            // Assert
+            Assert.Empty(results);
+            attribute.VerifyAll();
+        }
+
+        public static TheoryDataSet<ModelMetadata, string> ValidateSetsDisplayNamePropertyDataSet
+        {
+            get
+            {
+                return new TheoryDataSet<ModelMetadata, string>
+                {
+                    {
+                        _metadataProvider.GetMetadataForProperty(() => 15, typeof(string), "Length"),
+                        "Length"
+                    },
+                    {
+                        _metadataProvider.GetMetadataForProperty(() => string.Empty, typeof(AnnotatedModel), "Name"),
+                        "Annotated Name"
+                    },
+                    {
+                        _metadataProvider.GetMetadataForType(() => new object(), typeof(SampleModel)),
+                        "SampleModel"
+                    },
+                };
+            }
+        }
+
+        [Theory]
+        [PropertyData("ValidateSetsDisplayNamePropertyDataSet")]
+        public void ValidateSetsDisplayNamePropertyOfValidationContextAsExpected(
+            ModelMetadata metadata,
+            string expectedDisplayName)
+        {
+            // Arrange
+            var attribute = new Mock<ValidationAttribute>
+            {
+                CallBase = true,
+            };
+            attribute
+                .Protected()
+                .Setup<ValidationResult>("IsValid", ItExpr.IsAny<object>(), ItExpr.IsAny<ValidationContext>())
+                .Callback(
+                    (object o, ValidationContext context) => Assert.Equal(expectedDisplayName, context.DisplayName))
+                .Returns(ValidationResult.Success)
+                .Verifiable();
+            DataAnnotationsModelValidator validator = new DataAnnotationsModelValidator(
+                _noValidatorProviders,
+                attribute.Object);
 
             // Act
             IEnumerable<ModelValidationResult> results = validator.Validate(metadata, container: null);
@@ -220,6 +427,12 @@ namespace System.Web.Http.Validation.Validators
 
         class SampleModel
         {
+            public string Name { get; set; }
+        }
+
+        private class AnnotatedModel
+        {
+            [Display(Name = "Annotated Name")]
             public string Name { get; set; }
         }
     }
