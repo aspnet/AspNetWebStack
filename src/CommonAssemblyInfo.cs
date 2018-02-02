@@ -34,14 +34,14 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Microsoft ASP.NET MVC")]
 #elif ASPNETWEBPAGES
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("3.2.5.0")] // ASPNETWEBPAGES
-[assembly: AssemblyFileVersion("3.2.5.0")] // ASPNETWEBPAGES
+[assembly: AssemblyVersion("3.0.0.0")] // ASPNETWEBPAGES
+[assembly: AssemblyFileVersion("3.0.0.0")] // ASPNETWEBPAGES
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET Web Pages")]
 #elif ASPNETFACEBOOK
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("1.1.1.0")] // ASPNETFACEBOOK
-[assembly: AssemblyFileVersion("1.1.1.0")] // ASPNETFACEBOOK
+[assembly: AssemblyVersion("1.1.0.0")] // ASPNETFACEBOOK
+[assembly: AssemblyFileVersion("1.1.0.0")] // ASPNETFACEBOOK
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET Facebook")]
 #else
