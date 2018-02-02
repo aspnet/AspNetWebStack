@@ -19,31 +19,31 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 [assembly: AssemblyMetadata("Serviceable", "True")]
 
-// ===========================================================================
-//  DO NOT EDIT OR REMOVE ANYTHING BELOW THIS COMMENT.
-//  Version numbers are automatically generated based on regular expressions.
-// ===========================================================================
+// ===================================================================================
+//  TAKE CARE WHEN EDITING OR REMOVING ANYTHING BELOW THIS COMMENT.
+//  BUILD_GENERATED_VERSION will be set in any CI build. Versions below are not used.
+// ===================================================================================
 
-#if ASPNETMVC && ASPNETWEBPAGES
-#error Runtime projects cannot define both ASPNETMVC and ASPNETWEBPAGES
+#if (ASPNETMVC && ASPNETWEBPAGES) || (ASPNETMVC && ASPNETFACEBOOK) || (ASPNETWEBPAGES && ASPNETFACEBOOK)
+#error Runtime projects cannot define more than one of ASPNETMVC, ASPNETWEBPAGES or ASPNETFACEBOOK
 #elif ASPNETMVC
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("5.2.4.0")] // ASPNETMVC
-[assembly: AssemblyFileVersion("5.2.4.0")] // ASPNETMVC
+[assembly: AssemblyVersion("5.2.5.0")] // ASPNETMVC
+[assembly: AssemblyFileVersion("5.2.5.0")] // ASPNETMVC
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET MVC")]
 #elif ASPNETWEBPAGES
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("3.0.0.0")] // ASPNETWEBPAGES
-[assembly: AssemblyFileVersion("3.0.0.0")] // ASPNETWEBPAGES
+[assembly: AssemblyVersion("3.2.5.0")] // ASPNETWEBPAGES
+[assembly: AssemblyFileVersion("3.2.5.0")] // ASPNETWEBPAGES
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET Web Pages")]
 #elif ASPNETFACEBOOK
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("1.1.0.0")] // ASPNETFACEBOOK
-[assembly: AssemblyFileVersion("1.1.0.0")] // ASPNETFACEBOOK
+[assembly: AssemblyVersion("1.1.1.0")] // ASPNETFACEBOOK
+[assembly: AssemblyFileVersion("1.1.1.0")] // ASPNETFACEBOOK
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET Facebook")]
 #else
-#error Runtime projects must define either ASPNETMVC or ASPNETWEBPAGES
+#error Runtime projects must define either ASPNETMVC, ASPNETWEBPAGES or ASPNETFACEBOOK
 #endif
