@@ -104,11 +104,28 @@ namespace System.Web.Http.Owin
         public async Task SendAsync_SetsRequestContextPrincipalToAnonymous_BeforeCallingInnerHandler()
         {
             // Arrange
+            var requestContextMock = new Mock<HttpRequestContext>(MockBehavior.Strict);
+            var sequence = new MockSequence();
+            var initialPrincipal = new GenericPrincipal(new GenericIdentity("generic user"), new[] { "generic role" });
             IPrincipal requestContextPrincipal = null;
-            Mock<HttpRequestContext> requestContextMock = new Mock<HttpRequestContext>(MockBehavior.Strict);
             requestContextMock
+                .InSequence(sequence)
+                .SetupGet(c => c.Principal)
+                .Returns(initialPrincipal);
+            requestContextMock
+                .InSequence(sequence)
                 .SetupSet(c => c.Principal = It.IsAny<IPrincipal>())
-                .Callback<IPrincipal>((value) => requestContextPrincipal = value);
+                .Callback<IPrincipal>(value => requestContextPrincipal = value);
+
+            // SendAsync also restores the old principal.
+            requestContextMock
+                .InSequence(sequence)
+                .SetupGet(c => c.Principal)
+                .Returns(requestContextPrincipal);
+            requestContextMock
+                .InSequence(sequence)
+                .SetupSet(c => c.Principal = initialPrincipal);
+
             IPrincipal principalBeforeInnerHandler = null;
             HttpMessageHandler inner = new LambdaHttpMessageHandler((ignore1, ignore2) =>
             {
@@ -116,20 +133,21 @@ namespace System.Web.Http.Owin
                 return Task.FromResult<HttpResponseMessage>(null);
             });
             HttpMessageHandler handler = CreateProductUnderTest(inner);
-            IOwinContext context = CreateOwinContext();
+            var context = CreateOwinContext();
 
-            using (HttpRequestMessage request = new HttpRequestMessage())
+            using (var request = new HttpRequestMessage())
             {
                 request.SetOwinContext(context);
                 request.SetRequestContext(requestContextMock.Object);
 
                 // Act
-                HttpResponseMessage ignore = await handler.SendAsync(request, CancellationToken.None);
+                await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
+            Assert.Equal(requestContextPrincipal, principalBeforeInnerHandler);
             Assert.NotNull(principalBeforeInnerHandler);
-            IIdentity identity = principalBeforeInnerHandler.Identity;
+            var identity = principalBeforeInnerHandler.Identity;
             Assert.NotNull(identity);
             Assert.False(identity.IsAuthenticated);
             Assert.Null(identity.Name);

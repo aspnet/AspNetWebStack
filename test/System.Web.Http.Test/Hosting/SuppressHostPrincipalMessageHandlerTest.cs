@@ -14,30 +14,29 @@ namespace System.Web.Http.Hosting
     public class SuppressHostPrincipalMessageHandlerTest
     {
         [Fact]
-        public void SendAsync_DelegatesToInnerHandler()
+        public async Task SendAsync_DelegatesToInnerHandler()
         {
             // Arrange
             HttpRequestMessage request = null;
-            CancellationToken cancellationToken = default(CancellationToken);
-            Task<HttpResponseMessage> expectedResult = new Task<HttpResponseMessage>(() => null);
+            var cancellationToken = default(CancellationToken);
             HttpMessageHandler innerHandler = new LambdaHttpMessageHandler((r, c) =>
             {
                 request = r;
                 cancellationToken = c;
-                return expectedResult;
+                return Task.FromResult<HttpResponseMessage>(null);
             });
             HttpMessageHandler handler = CreateProductUnderTest(innerHandler);
-            CancellationToken expectedCancellationToken = new CancellationToken(true);
+            var expectedCancellationToken = new CancellationToken(true);
 
-            using (HttpRequestMessage expectedRequest = CreateRequestWithContext())
+            using (var expectedRequest = CreateRequestWithContext())
             {
                 // Act
-                Task<HttpResponseMessage> result = handler.SendAsync(expectedRequest, expectedCancellationToken);
+                var result = await handler.SendAsync(expectedRequest, expectedCancellationToken);
 
                 // Assert
                 Assert.Same(expectedRequest, request);
                 Assert.Equal(expectedCancellationToken, cancellationToken);
-                Assert.Same(expectedResult, result);
+                Assert.Null(result);
             }
         }
 
@@ -59,14 +58,31 @@ namespace System.Web.Http.Hosting
         }
 
         [Fact]
-        public void SendAsync_SetsCurrentPrincipalToAnonymous_BeforeCallingInnerHandler()
+        public async Task SendAsync_SetsCurrentPrincipalToAnonymous_BeforeCallingInnerHandler()
         {
             // Arrange
+            var requestContextMock = new Mock<HttpRequestContext>(MockBehavior.Strict);
+            var sequence = new MockSequence();
+            var initialPrincipal = new GenericPrincipal(new GenericIdentity("generic user"), new[] { "generic role" });
             IPrincipal requestContextPrincipal = null;
-            Mock<HttpRequestContext> requestContextMock = new Mock<HttpRequestContext>();
             requestContextMock
+                .InSequence(sequence)
+                .SetupGet(c => c.Principal)
+                .Returns(initialPrincipal);
+            requestContextMock
+                .InSequence(sequence)
                 .SetupSet(c => c.Principal = It.IsAny<IPrincipal>())
-                .Callback<IPrincipal>((value) => requestContextPrincipal = value);
+                .Callback<IPrincipal>(value => requestContextPrincipal = value);
+
+            // SendAsync also restores the old principal.
+            requestContextMock
+                .InSequence(sequence)
+                .SetupGet(c => c.Principal)
+                .Returns(requestContextPrincipal);
+            requestContextMock
+                .InSequence(sequence)
+                .SetupSet(c => c.Principal = initialPrincipal);
+
             IPrincipal principalBeforeInnerHandler = null;
             HttpMessageHandler inner = new LambdaHttpMessageHandler((ignore1, ignore2) =>
             {
@@ -75,17 +91,18 @@ namespace System.Web.Http.Hosting
             });
             HttpMessageHandler handler = CreateProductUnderTest(inner);
 
-            using (HttpRequestMessage request = new HttpRequestMessage())
+            using (var request = new HttpRequestMessage())
             {
                 request.SetRequestContext(requestContextMock.Object);
 
                 // Act
-                handler.SendAsync(request, CancellationToken.None);
+                await handler.SendAsync(request, CancellationToken.None);
             }
 
             // Assert
+            Assert.Equal(requestContextPrincipal, principalBeforeInnerHandler);
             Assert.NotNull(principalBeforeInnerHandler);
-            IIdentity identity = principalBeforeInnerHandler.Identity;
+            var identity = principalBeforeInnerHandler.Identity;
             Assert.NotNull(identity);
             Assert.False(identity.IsAuthenticated);
             Assert.Null(identity.Name);

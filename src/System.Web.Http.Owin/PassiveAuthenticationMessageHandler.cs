@@ -9,9 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-using System.Web.Http.Hosting;
 using System.Web.Http.Owin.Properties;
-using Microsoft.Owin;
 using Microsoft.Owin.Security;
 
 namespace System.Web.Http.Owin
@@ -37,27 +35,36 @@ namespace System.Web.Http.Owin
                 throw new ArgumentNullException("request");
             }
 
-            SetCurrentPrincipalToAnonymous(request);
-
-            HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage response;
+            var previousPrincipal = SetCurrentPrincipal(request, _anonymousPrincipal.Value);
+            try
+            {
+                response = await base.SendAsync(request, cancellationToken);
+            }
+            finally
+            {
+                SetCurrentPrincipal(request, previousPrincipal);
+            }
 
             SuppressDefaultAuthenticationChallenges(request);
 
             return response;
         }
 
-        private static void SetCurrentPrincipalToAnonymous(HttpRequestMessage request)
+        private static IPrincipal SetCurrentPrincipal(HttpRequestMessage request, IPrincipal principal)
         {
             Contract.Assert(request != null);
 
             HttpRequestContext requestContext = request.GetRequestContext();
-
             if (requestContext == null)
             {
                 throw new ArgumentException(OwinResources.Request_RequestContextMustNotBeNull, "request");
             }
 
-            requestContext.Principal = _anonymousPrincipal.Value;
+            var previousPrincipal = requestContext.Principal;
+            requestContext.Principal = principal;
+
+            return previousPrincipal;
         }
 
         private static void SuppressDefaultAuthenticationChallenges(HttpRequestMessage request)
