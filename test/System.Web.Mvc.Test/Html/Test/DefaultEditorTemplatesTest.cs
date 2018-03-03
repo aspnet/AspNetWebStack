@@ -731,12 +731,61 @@ namespace System.Web.Mvc.Html.Test
         public void PasswordTemplateTests()
         {
             Assert.Equal(
-                "<input class=\"text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" value=\"Value\" />",
+                "<input class=\"text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" />",
                 DefaultEditorTemplates.PasswordTemplate(MakeHtmlHelper<string>("Value")));
 
             Assert.Equal(
-                "<input class=\"text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" value=\"&lt;script>alert(&#39;XSS!&#39;)&lt;/script>\" />",
+                "<input class=\"text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" />",
                 DefaultEditorTemplates.PasswordTemplate(MakeHtmlHelper<string>("<script>alert('XSS!')</script>")));
+        }
+
+        [Fact]
+        public void PasswordTemplate_ReturnsInputElement_IgnoresValues()
+        {
+            // Arrange
+            var expected = "<input class=\"text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" " +
+                "type=\"password\" />";
+
+            // Template ignores Model and FormattedModelValue.
+            var helper = MakeHtmlHelper<string>(model: "Model string", formattedModelValue: "Formatted string");
+
+            var viewData = helper.ViewData;
+            var templateInfo = viewData.TemplateInfo;
+            templateInfo.HtmlFieldPrefix = "FieldPrefix";
+
+            // Template ignores ModelState and ViewData.
+            var valueProviderResult = new ValueProviderResult(
+                "Raw model string",
+                "Attempted model string",
+                CultureInfo.InvariantCulture);
+            viewData.ModelState.SetModelValue("FieldPrefix", valueProviderResult);
+            viewData["FieldPrefix"] = "ViewData string";
+
+            // Act
+            var result = DefaultEditorTemplates.PasswordTemplate(helper);
+
+            // Assert
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PasswordTemplate_ReturnsInputElement_UsesHtmlAttributes()
+        {
+            // Arrange
+            var expected = "<input class=\"super text-box single-line password\" id=\"FieldPrefix\" " +
+                "name=\"FieldPrefix\" type=\"password\" value=\"Html attributes string\" />";
+            var helper = MakeHtmlHelper<string>(model: null);
+            var viewData = helper.ViewData;
+            var templateInfo = viewData.TemplateInfo;
+            templateInfo.HtmlFieldPrefix = "FieldPrefix";
+
+            viewData["htmlAttributes"] = new { @class = "super", value = "Html attributes string" };
+
+            // Act
+            var result = DefaultEditorTemplates.PasswordTemplate(helper);
+
+            // Assert
+            Assert.Equal(expected, result);
         }
 
         public static TheoryDataSet<object, string> PasswordTemplateHtmlAttributeData
@@ -747,11 +796,11 @@ namespace System.Web.Mvc.Html.Test
                 {
                     {
                         new { @class = "form-control" },
-                        "<input class=\"form-control text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" value=\"Value\" />"
+                        "<input class=\"form-control text-box single-line password\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" />"
                     },
                     {
                         new { @class = "form-control", custom = "foo" },
-                        "<input class=\"form-control text-box single-line password\" custom=\"foo\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" value=\"Value\" />"
+                        "<input class=\"form-control text-box single-line password\" custom=\"foo\" id=\"FieldPrefix\" name=\"FieldPrefix\" type=\"password\" />"
                     }
                 };
             }

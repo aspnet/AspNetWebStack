@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Web.Configuration;
 using System.Web.Mvc.Properties;
 using System.Web.Routing;
 using System.Web.UI.WebControls;
@@ -18,6 +19,7 @@ namespace System.Web.Mvc.Html
     internal static class DefaultEditorTemplates
     {
         private const string HtmlAttributeKey = "htmlAttributes";
+        private const string UsePasswordValue = "Switch.System.Web.Mvc.UsePasswordValue";
 
         internal static string BooleanTemplate(HtmlHelper html)
         {
@@ -149,11 +151,11 @@ namespace System.Web.Mvc.Html
 
             MvcHtmlString hiddenResult;
 
-            if (htmlAttributesDict != null) 
+            if (htmlAttributesDict != null)
             {
                 hiddenResult = html.Hidden(String.Empty, model, htmlAttributesDict);
-            } 
-            else 
+            }
+            else
             {
                 hiddenResult = html.Hidden(String.Empty, model, htmlAttributesObject);
             }
@@ -178,9 +180,9 @@ namespace System.Web.Mvc.Html
             {
                 return MergeHtmlAttributes(htmlAttributesObject, className, inputType);
             }
-            
+
             var htmlAttributes = new Dictionary<string, object>()
-            { 
+            {
                 { "class", className }
             };
             if (inputType != null)
@@ -274,9 +276,21 @@ namespace System.Web.Mvc.Html
 
         internal static string PasswordTemplate(HtmlHelper html)
         {
-            return html.Password(String.Empty,
-                                 html.ViewContext.ViewData.TemplateInfo.FormattedModelValue,
-                                 CreateHtmlAttributes(html, "text-box single-line password")).ToHtmlString();
+            object value = null;
+            var usePasswordStrings = WebConfigurationManager.AppSettings.GetValues(UsePasswordValue);
+            bool usePasswordValue;
+            if (usePasswordStrings != null &&
+                usePasswordStrings.Length > 0 &&
+                bool.TryParse(usePasswordStrings[0], out usePasswordValue) &&
+                usePasswordValue)
+            {
+                value = html.ViewContext.ViewData.TemplateInfo.FormattedModelValue;
+            }
+
+            return html.Password(
+                name: String.Empty,
+                value: value,
+                htmlAttributes: CreateHtmlAttributes(html, "text-box single-line password")).ToHtmlString();
         }
 
         private static bool ShouldShow(ModelMetadata metadata, TemplateInfo templateInfo)
