@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.TestCommon;
 
@@ -78,9 +79,83 @@ namespace System.Web.Mvc.Test
                 "The expression compiler was unable to evaluate the indexer expression '(s.Length - 4)' because it references the model parameter 's' which is unavailable.");
         }
 
+        public static TheoryDataSet<LambdaExpression, string> ComplicatedLambdaExpressions
+        {
+            get
+            {
+                var collection = new List<DummyModelContainer>();
+                var index = 20;
+                var data = new TheoryDataSet<LambdaExpression, string>
+                {
+
+                    {
+                        Lambda((List<DummyModelContainer> m) => collection[10].Model.FirstName),
+                        "collection[10].Model.FirstName"
+                    },
+                    {
+                        Lambda((List<DummyModelContainer> m) => m[10].Model.FirstName),
+                        "[10].Model.FirstName"
+                    },
+                    {
+                        Lambda((List<DummyModelContainer> m) => collection[index].Model.FirstName),
+                        "collection[20].Model.FirstName"
+                    },
+                    {
+                        Lambda((List<DummyModelContainer> m) => m[index].Model.FirstName),
+                        "[20].Model.FirstName"
+                    },
+                };
+
+                return data;
+            }
+        }
+
+        [Theory]
+        [PropertyData("ComplicatedLambdaExpressions")]
+        public void GetExpressionText_WithComplicatedLambdaExpressions_ReturnsExpectedText(
+            LambdaExpression expression,
+            string expectedText)
+        {
+            // Arrange & Act
+            var result = ExpressionHelper.GetExpressionText(expression);
+
+            // Assert
+            Assert.Equal(expectedText, result);
+        }
+
+        [Fact]
+        public void GetExpressionText_WithinALoop_ReturnsExpectedText()
+        {
+            // Arrange 0
+            var collection = new List<DummyModelContainer>();
+
+            for (var i = 0; i < 2; i++)
+            {
+                // Arrange 1
+                var expectedText = string.Format("collection[{0}].Model.FirstName", i);
+
+                // Act 1
+                var result = ExpressionHelper.GetExpressionText(Lambda(
+                    (List<DummyModelContainer> m) => collection[i].Model.FirstName));
+
+                // Assert 1
+                Assert.Equal(expectedText, result);
+
+                // Arrange 2
+                expectedText = string.Format("[{0}].Model.FirstName", i);
+
+                // Act 2
+                result = ExpressionHelper.GetExpressionText(Lambda(
+                    (List<DummyModelContainer> m) => m[i].Model.FirstName));
+
+                // Assert 2
+                Assert.Equal(expectedText, result);
+            }
+        }
+
         // Helpers
 
-        private LambdaExpression Lambda<T1, T2>(Expression<Func<T1, T2>> expression)
+        private static LambdaExpression Lambda<T1, T2>(Expression<Func<T1, T2>> expression)
         {
             return expression;
         }
