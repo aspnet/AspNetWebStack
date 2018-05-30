@@ -358,7 +358,7 @@ namespace System.Web.Mvc.Html
             {
                 string valueString = Convert.ToString(value, CultureInfo.CurrentCulture);
                 isChecked = model != null &&
-                            !String.IsNullOrEmpty(name) &&
+                            !String.IsNullOrEmpty(htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name)) &&
                             String.Equals(model.ToString(), valueString, StringComparison.OrdinalIgnoreCase);
             }
 
