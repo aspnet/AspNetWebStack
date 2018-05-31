@@ -285,7 +285,7 @@ namespace System.Web.Mvc.Html
         private static IEnumerable<SelectListItem> GetSelectData(this HtmlHelper htmlHelper, string name)
         {
             object o = null;
-            if (htmlHelper.ViewData != null)
+            if (htmlHelper.ViewData != null && !String.IsNullOrEmpty(name))
             {
                 o = htmlHelper.ViewData.Eval(name);
             }
@@ -396,9 +396,9 @@ namespace System.Web.Mvc.Html
 
             // If we haven't already used ViewData to get the entire list of items then we need to
             // use the ViewData-supplied value before using the parameter-supplied value.
-            if (defaultValue == null && !String.IsNullOrEmpty(name))
+            if (defaultValue == null)
             {
-                if (!usedViewData)
+                if (!usedViewData && !String.IsNullOrEmpty(name))
                 {
                     defaultValue = htmlHelper.ViewData.Eval(name);
                 }
