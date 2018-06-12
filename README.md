@@ -5,8 +5,6 @@ AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/aspnet
 
 ## Note: This repo is for ASP.NET MVC 5.x, Web API 5.x, and Web Pages 3.x. For ASP.NET Core MVC, check the [MVC repo](https://github.com/aspnet/Mvc).
 
-**Due to other priorities this project is currently in maintenance mode only. There are no planned releases at this time. No new features are planned and we are only addressing critical issues as required.**
-
 ASP.NET MVC is a web framework that gives you a powerful, patterns-based way to build dynamic websites and Web APIs. ASP.NET MVC enables a clean separation of concerns and gives you full control over markup.
 
 This repo includes:
