@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq.Expressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -150,6 +151,25 @@ namespace Microsoft.Web.UnitTestUtil
         public static HttpContextBase GetHttpContext(string appPath, string requestPath, string httpMethod)
         {
             return GetHttpContext(appPath, requestPath, httpMethod, Uri.UriSchemeHttp.ToString(), -1);
+        }
+
+        public static ViewDataDictionary<TValue> GetNestedViewData<TModel, TValue>(ViewDataDictionary<TModel> viewData, Expression<Func<TModel, TValue>> expression)
+        {
+            var metadata = ModelMetadata.FromLambdaExpression(expression, viewData);
+            var htmlFieldName = ExpressionHelper.GetExpressionText(expression);
+
+
+            ViewDataDictionary nestedViewData = new ViewDataDictionary(viewData)
+            {
+                Model = metadata.Model,
+                ModelMetadata = metadata,
+                TemplateInfo = new TemplateInfo
+                {
+                    HtmlFieldPrefix = viewData.TemplateInfo.GetFullHtmlFieldName(htmlFieldName),
+                }
+            };
+
+            return new ViewDataDictionary<TValue>(nestedViewData);
         }
 
         public static ViewContext GetViewContextWithPath(string appPath, ViewDataDictionary viewData)

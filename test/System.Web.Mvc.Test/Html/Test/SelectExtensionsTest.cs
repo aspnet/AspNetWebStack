@@ -19,6 +19,7 @@ namespace System.Web.Mvc.Html.Test
     {
         private static readonly ViewDataDictionary<FooModel> _listBoxViewData = new ViewDataDictionary<FooModel> { { "foo", new[] { "Bravo" } } };
         private static readonly ViewDataDictionary<FooModel> _dropDownListViewData = new ViewDataDictionary<FooModel> { { "foo", "Bravo" } };
+        private static readonly ViewDataDictionary<FooContainerModel> _nestedDropDownListViewData = new ViewDataDictionary<FooContainerModel> { { "foo", "Bravo" } };
         private static readonly ViewDataDictionary<NonIEnumerableModel> _nonIEnumerableViewData = new ViewDataDictionary<NonIEnumerableModel> { { "foo", 1 } };
         private static readonly ViewDataDictionary<EnumModel> _enumDropDownListViewData = new ViewDataDictionary<EnumModel>
         {
@@ -1191,6 +1192,48 @@ namespace System.Web.Mvc.Html.Test
               + "</select>",
                 html.ToHtmlString());
         }
+        
+        [Fact]
+        public void DropDownListForUsesLambdaDefaultValueWhenNested()
+        {
+            // Arrange
+            FooModel model = new FooModel { foo = "Bravo" };
+            ViewDataDictionary<FooModel> viewData = new ViewDataDictionary<FooModel>(model);
+            ViewDataDictionary<string> nestedViewData = MvcHelper.GetNestedViewData(viewData, m => m.foo);
+            HtmlHelper<string> helper = MvcHelper.GetHtmlHelper(nestedViewData);
+            SelectList selectList = new SelectList(MultiSelectListTest.GetSampleStrings());
+
+            // Act
+            MvcHtmlString html = helper.DropDownListFor(m => m, selectList);
+
+            // Assert
+            Assert.Equal(
+                "<select id=\"foo\" name=\"foo\"><option>Alpha</option>" + Environment.NewLine
+              + "<option selected=\"selected\">Bravo</option>" + Environment.NewLine
+              + "<option>Charlie</option>" + Environment.NewLine
+              + "</select>",
+                html.ToHtmlString());
+        }
+
+        [Fact]
+        public void DropDownListForUsesLambdaDefaultValueFromViewDataWhenNested()
+        {
+            // Arrange
+            ViewDataDictionary<FooModel> nestedViewData = MvcHelper.GetNestedViewData(_nestedDropDownListViewData, m => m.inner);
+            HtmlHelper<FooModel> helper = MvcHelper.GetHtmlHelper(nestedViewData);
+            SelectList selectList = new SelectList(MultiSelectListTest.GetSampleStrings());
+
+            // Act
+            MvcHtmlString html = helper.DropDownListFor(m => m.foo, selectList);
+
+            // Assert
+            Assert.Equal(
+                "<select id=\"inner_foo\" name=\"inner.foo\"><option>Alpha</option>" + Environment.NewLine
+              + "<option selected=\"selected\">Bravo</option>" + Environment.NewLine
+              + "<option>Charlie</option>" + Environment.NewLine
+              + "</select>",
+                html.ToHtmlString());
+        }
 
         [Fact]
         public void DropDownListForUsesLambdaDefaultValueWithNullSelectListUsesViewData()
@@ -1209,6 +1252,33 @@ namespace System.Web.Mvc.Html.Test
             // Assert
             Assert.Equal(
                 "<select id=\"foo\" name=\"foo\"><option>Alpha</option>" + Environment.NewLine
+              + "<option selected=\"selected\">Bravo</option>" + Environment.NewLine
+              + "<option>Charlie</option>" + Environment.NewLine
+              + "</select>",
+                html.ToHtmlString());
+        }
+
+        [Fact]
+        public void DropDownListForUsesLambdaDefaultValueWithNullSelectListUsesViewDataWhenNested()
+        {
+            // Arrange
+            FooContainerModel model = new FooContainerModel { inner = new FooModel { foo = "Bravo" } };
+            ViewDataDictionary<FooContainerModel> vdd = new ViewDataDictionary<FooContainerModel>(model)
+            {
+                { "foo", new SelectList(MultiSelectListTest.GetSampleStrings()) }
+            };
+
+            ViewDataDictionary<FooModel> nestedViewData = MvcHelper.GetNestedViewData(vdd, m => m.inner);
+
+
+            HtmlHelper<FooModel> helper = MvcHelper.GetHtmlHelper(nestedViewData);
+
+            // Act
+            MvcHtmlString html = helper.DropDownListFor(m => m.foo, selectList: null);
+
+            // Assert
+            Assert.Equal(
+                "<select id=\"inner_foo\" name=\"inner.foo\"><option>Alpha</option>" + Environment.NewLine
               + "<option selected=\"selected\">Bravo</option>" + Environment.NewLine
               + "<option>Charlie</option>" + Environment.NewLine
               + "</select>",
@@ -3330,6 +3400,10 @@ namespace System.Web.Mvc.Html.Test
             return selectList;
         }
 
+        private class FooContainerModel
+        {
+            public FooModel inner { get; set; }
+        }
         private class FooModel
         {
             public string foo { get; set; }
