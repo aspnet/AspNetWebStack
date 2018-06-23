@@ -3,6 +3,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Data.Linq;
+using System.Linq.Expressions;
 using System.Web.Mvc.Test;
 using System.Web.Routing;
 using System.Web.WebPages.Scope;
@@ -2148,6 +2149,19 @@ namespace System.Web.Mvc.Html.Test
         }
 
         [Fact]
+        public void RadioButtonForWithNestedNameAndValue()
+        {
+            // Arrange
+            HtmlHelper<string> helper = MvcHelper.GetHtmlHelper(GetRadioButtonNestedAndUnsetViewData());
+
+            // Act
+            MvcHtmlString html = helper.RadioButtonFor(m => m, "ViewItemFoo");
+
+            // Assert
+            Assert.Equal(@"<input checked=""checked"" id=""foo"" name=""foo"" type=""radio"" value=""ViewItemFoo"" />", html.ToHtmlString());
+        }
+
+        [Fact]
         public void RadioButtonForWithNameAndValue_Unobtrusive()
         {
             // Arrange
@@ -3054,6 +3068,31 @@ namespace System.Web.Mvc.Html.Test
             viewData.ModelState["foo"] = modelState;
 
             return viewData;
+        }
+
+        private static ViewDataDictionary<string> GetRadioButtonNestedAndUnsetViewData()
+        {
+            ViewDataDictionary<FooBarModel> viewData = new ViewDataDictionary<FooBarModel> { };
+            viewData.Model = new FooBarModel { foo = "ViewItemFoo", bar = "ViewItemBar" };
+
+
+            Expression<Func<FooBarModel, string>> containedExpression = m => m.foo;
+
+            var metadata = ModelMetadata.FromLambdaExpression(containedExpression, viewData);
+            var htmlFieldName = ExpressionHelper.GetExpressionText(containedExpression);
+
+
+            ViewDataDictionary nestedViewData = new ViewDataDictionary(viewData)
+            {
+                Model = metadata.Model,
+                ModelMetadata = metadata,
+                TemplateInfo = new TemplateInfo
+                {
+                    HtmlFieldPrefix = viewData.TemplateInfo.GetFullHtmlFieldName(htmlFieldName),
+                }
+            };
+
+            return new ViewDataDictionary<string>(nestedViewData);
         }
 
         // TEXTBOX
