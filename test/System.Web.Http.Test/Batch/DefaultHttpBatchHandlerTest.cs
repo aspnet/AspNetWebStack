@@ -102,7 +102,8 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.org/"))
-                }
+                },
+                RequestUri = new Uri("http://example.com/")
             };
 
             var response = await batchHandler.ProcessBatchAsync(batchRequest, CancellationToken.None);
@@ -269,7 +270,8 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.com/values"))
-                }
+                },
+                RequestUri = new Uri("http://example.com/")
             };
 
             IList<HttpRequestMessage> requests = await batchHandler.ParseBatchRequestsAsync(request, CancellationToken.None);
@@ -282,6 +284,29 @@ namespace System.Web.Http
         }
 
         [Fact]
+        public async Task ParseBatchRequestsAsync_Returns_RequestsFromMultipartContent_WithUriSchemeSet_FromRequest()
+        {
+            DefaultHttpBatchHandler batchHandler = new DefaultHttpBatchHandler(new HttpServer());
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Content = new MultipartContent("mixed")
+                {
+                    new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
+                    new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "https://example.com/values"))
+                },
+                RequestUri = new Uri("https://example.com/")
+            };
+
+            IList<HttpRequestMessage> requests = await batchHandler.ParseBatchRequestsAsync(request, CancellationToken.None);
+
+            Assert.Equal(2, requests.Count);
+            Assert.Equal(HttpMethod.Get, requests[0].Method);
+            Assert.Equal("https://example.com/", requests[0].RequestUri.AbsoluteUri);
+            Assert.Equal(HttpMethod.Post, requests[1].Method);
+            Assert.Equal("https://example.com/values", requests[1].RequestUri.AbsoluteUri);
+        }
+
+        [Fact]
         public async Task ParseBatchRequestsAsync_CopiesPropertiesFromRequest_WithoutExcludedProperties()
         {
             DefaultHttpBatchHandler batchHandler = new DefaultHttpBatchHandler(new HttpServer());
@@ -291,7 +316,8 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.com/values"))
-                }
+                },
+                RequestUri = new Uri("http://example.com/")
             };
             request.Properties.Add("foo", "bar");
             request.SetRouteData(new HttpRouteData(new HttpRoute()));
