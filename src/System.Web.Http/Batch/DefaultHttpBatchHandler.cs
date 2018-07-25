@@ -187,7 +187,7 @@ namespace System.Web.Http.Batch
             foreach (HttpContent httpContent in streamProvider.Contents)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                HttpRequestMessage innerRequest = await httpContent.ReadAsHttpRequestMessageAsync();
+                HttpRequestMessage innerRequest = request.RequestUri == null ? await httpContent.ReadAsHttpRequestMessageAsync() : await httpContent.ReadAsHttpRequestMessageAsync(request.RequestUri.Scheme);
                 innerRequest.CopyBatchRequestProperties(request);
                 requests.Add(innerRequest);
             }
