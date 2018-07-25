@@ -102,8 +102,7 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.org/"))
-                },
-                RequestUri = new Uri("http://example.com/")
+                }
             };
 
             var response = await batchHandler.ProcessBatchAsync(batchRequest, CancellationToken.None);
@@ -270,8 +269,7 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.com/values"))
-                },
-                RequestUri = new Uri("http://example.com/")
+                }
             };
 
             IList<HttpRequestMessage> requests = await batchHandler.ParseBatchRequestsAsync(request, CancellationToken.None);
@@ -316,8 +314,7 @@ namespace System.Web.Http
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Get, "http://example.com/")),
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://example.com/values"))
-                },
-                RequestUri = new Uri("http://example.com/")
+                }
             };
             request.Properties.Add("foo", "bar");
             request.SetRouteData(new HttpRouteData(new HttpRoute()));

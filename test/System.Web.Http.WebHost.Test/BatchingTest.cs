@@ -43,8 +43,7 @@ namespace System.Web.Http.WebHost
                 Content = new MultipartContent("mixed")
                 {
                     new HttpMessageContent(new HttpRequestMessage(HttpMethod.Post, "http://contoso.com/values/  space"))
-                },
-                RequestUri = new Uri("http://contoso.com/")
+                }
             };
 
             // Arrange
