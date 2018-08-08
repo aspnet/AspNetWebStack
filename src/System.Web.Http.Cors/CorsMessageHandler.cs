@@ -47,21 +47,25 @@ namespace System.Web.Http.Cors
             CorsRequestContext corsRequestContext = request.GetCorsRequestContext();
             if (corsRequestContext != null)
             {
-                CorsPolicy corsPolicy = await GetCorsPolicyAsync(request, cancellationToken);
+                CorsPolicy corsPolicy = null;
                 try
                 {
+                    HttpResponseMessage responseMessage;
                     if (corsRequestContext.IsPreflight)
                     {
-                        return await HandleCorsPreflightRequestAsync(request, corsRequestContext, cancellationToken);
+                        responseMessage = await HandleCorsPreflightRequestAsync(request, corsRequestContext, cancellationToken);
                     }
                     else
                     {
-                        return await HandleCorsRequestAsync(request, corsRequestContext, cancellationToken);
+                        responseMessage = await HandleCorsRequestAsync(request, corsRequestContext, cancellationToken);
                     }
+
+                    corsPolicy = await GetCorsPolicyAsync(request, cancellationToken);
+                    return responseMessage;
                 }
                 catch (Exception exception)
                 {
-                    if (corsPolicy.RethrowExceptions)
+                    if (corsPolicy != null && corsPolicy.RethrowExceptions)
                         throw;
 
                     return HandleException(request, exception);
