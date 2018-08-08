@@ -47,6 +47,7 @@ namespace System.Web.Http.Cors
             CorsRequestContext corsRequestContext = request.GetCorsRequestContext();
             if (corsRequestContext != null)
             {
+                CorsPolicy corsPolicy = await GetCorsPolicyAsync(request, cancellationToken);
                 try
                 {
                     if (corsRequestContext.IsPreflight)
@@ -60,6 +61,9 @@ namespace System.Web.Http.Cors
                 }
                 catch (Exception exception)
                 {
+                    if (corsPolicy.RethrowExceptions)
+                        throw;
+
                     return HandleException(request, exception);
                 }
             }

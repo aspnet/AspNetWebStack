@@ -86,6 +86,11 @@ namespace System.Web.Cors
         public bool SupportsCredentials { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether upstream exceptions should be rethrown.
+        /// </summary>
+        public bool RethrowExceptions { get; set; }
+
+        /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>
