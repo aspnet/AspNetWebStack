@@ -24,10 +24,29 @@ namespace System.Web.Http
         /// Enables the support for CORS.
         /// </summary>
         /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
+        public static void EnableCors(this HttpConfiguration httpConfiguration)
+        {
+            EnableCors(httpConfiguration, null, false);
+        }
+        
+        /// <summary>
+        /// Enables the support for CORS.
+        /// </summary>
+        /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
         /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
-        public static void EnableCors(this HttpConfiguration httpConfiguration, bool rethrowExceptions = false)
+        public static void EnableCors(this HttpConfiguration httpConfiguration, bool rethrowExceptions)
         {
             EnableCors(httpConfiguration, null, rethrowExceptions);
+        }
+
+        /// <summary>
+        /// Enables the support for CORS.
+        /// </summary>
+        /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
+        /// <param name="defaultPolicyProvider">The default <see cref="ICorsPolicyProvider"/>.</param>
+        public static void EnableCors(this HttpConfiguration httpConfiguration, ICorsPolicyProvider defaultPolicyProvider)
+        {
+            EnableCors(httpConfiguration, defaultPolicyProvider, false);
         }
 
         /// <summary>
@@ -38,7 +57,7 @@ namespace System.Web.Http
         /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
         /// <exception cref="System.ArgumentNullException">httpConfiguration</exception>
         public static void EnableCors(this HttpConfiguration httpConfiguration, ICorsPolicyProvider defaultPolicyProvider,
-            bool rethrowExceptions = false)
+            bool rethrowExceptions)
         {
             if (httpConfiguration == null)
             {
