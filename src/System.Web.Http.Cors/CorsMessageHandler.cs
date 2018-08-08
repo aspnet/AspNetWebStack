@@ -18,13 +18,15 @@ namespace System.Web.Http.Cors
     public class CorsMessageHandler : DelegatingHandler
     {
         private HttpConfiguration _httpConfiguration;
+        private bool _rethrowExceptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CorsMessageHandler"/> class.
         /// </summary>
         /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
+        /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
         /// <exception cref="System.ArgumentNullException">httpConfiguration</exception>
-        public CorsMessageHandler(HttpConfiguration httpConfiguration)
+        public CorsMessageHandler(HttpConfiguration httpConfiguration, bool rethrowExceptions = false)
         {
             if (httpConfiguration == null)
             {
@@ -32,6 +34,7 @@ namespace System.Web.Http.Cors
             }
 
             _httpConfiguration = httpConfiguration;
+            _rethrowExceptions = rethrowExceptions;
         }
 
         /// <summary>
@@ -47,25 +50,20 @@ namespace System.Web.Http.Cors
             CorsRequestContext corsRequestContext = request.GetCorsRequestContext();
             if (corsRequestContext != null)
             {
-                CorsPolicy corsPolicy = null;
                 try
                 {
-                    HttpResponseMessage responseMessage;
                     if (corsRequestContext.IsPreflight)
                     {
-                        responseMessage = await HandleCorsPreflightRequestAsync(request, corsRequestContext, cancellationToken);
+                        return await HandleCorsPreflightRequestAsync(request, corsRequestContext, cancellationToken);
                     }
                     else
                     {
-                        responseMessage = await HandleCorsRequestAsync(request, corsRequestContext, cancellationToken);
+                        return await HandleCorsRequestAsync(request, corsRequestContext, cancellationToken);
                     }
-
-                    corsPolicy = await GetCorsPolicyAsync(request, cancellationToken);
-                    return responseMessage;
                 }
                 catch (Exception exception)
                 {
-                    if (corsPolicy != null && corsPolicy.RethrowExceptions)
+                    if (_rethrowExceptions)
                         throw;
 
                     return HandleException(request, exception);

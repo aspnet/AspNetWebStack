@@ -24,9 +24,10 @@ namespace System.Web.Http
         /// Enables the support for CORS.
         /// </summary>
         /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
-        public static void EnableCors(this HttpConfiguration httpConfiguration)
+        /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
+        public static void EnableCors(this HttpConfiguration httpConfiguration, bool rethrowExceptions = false)
         {
-            EnableCors(httpConfiguration, null);
+            EnableCors(httpConfiguration, null, rethrowExceptions);
         }
 
         /// <summary>
@@ -34,8 +35,10 @@ namespace System.Web.Http
         /// </summary>
         /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
         /// <param name="defaultPolicyProvider">The default <see cref="ICorsPolicyProvider"/>.</param>
+        /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
         /// <exception cref="System.ArgumentNullException">httpConfiguration</exception>
-        public static void EnableCors(this HttpConfiguration httpConfiguration, ICorsPolicyProvider defaultPolicyProvider)
+        public static void EnableCors(this HttpConfiguration httpConfiguration, ICorsPolicyProvider defaultPolicyProvider,
+            bool rethrowExceptions = false)
         {
             if (httpConfiguration == null)
             {
@@ -49,11 +52,11 @@ namespace System.Web.Http
                 httpConfiguration.SetCorsPolicyProviderFactory(policyProviderFactory);
             }
 
-            AddCorsMessageHandler(httpConfiguration);
+            AddCorsMessageHandler(httpConfiguration, rethrowExceptions);
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Caller owns the disposable object")]
-        private static void AddCorsMessageHandler(this HttpConfiguration httpConfiguration)
+        private static void AddCorsMessageHandler(this HttpConfiguration httpConfiguration, bool rethrowExceptions)
         {
             object corsEnabled;
             if (!httpConfiguration.Properties.TryGetValue(CorsEnabledKey, out corsEnabled))
@@ -64,7 +67,7 @@ namespace System.Web.Http
                     if (!config.Properties.TryGetValue(CorsEnabledKey, out corsEnabled))
                     {
                         // Execute this in the Initializer to ensure that the CorsMessageHandler is added last.
-                        config.MessageHandlers.Add(new CorsMessageHandler(config));
+                        config.MessageHandlers.Add(new CorsMessageHandler(config, rethrowExceptions));
 
                         ITraceWriter traceWriter = config.Services.GetTraceWriter();
 
