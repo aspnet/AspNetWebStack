@@ -15,14 +15,6 @@ namespace System.Web.Http.Cors
 {
     public class CorsMessageHandlerTest
     {
-        private class PassthroughExceptionHandler : IExceptionHandler
-        {
-            public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
-            {
-                throw context.Exception;
-            }
-        }
-
         [Fact]
         public void Constructor_NullConfig_Throws()
         {
@@ -280,6 +272,14 @@ namespace System.Web.Http.Cors
             return Assert.ThrowsArgumentNullAsync(
                 () => corsHandler.HandleCorsPreflightRequestAsync(new HttpRequestMessage(), null, CancellationToken.None),
                 "corsRequestContext");
+        }
+
+        private class PassthroughExceptionHandler : IExceptionHandler
+        {
+            public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
+            {
+                throw context.Exception;
+            }
         }
     }
 }
