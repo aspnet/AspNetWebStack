@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Cors;
+using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Hosting;
 using Microsoft.TestCommon;
 
@@ -14,6 +15,14 @@ namespace System.Web.Http.Cors
 {
     public class CorsMessageHandlerTest
     {
+        private class PassthroughExceptionHandler : IExceptionHandler
+        {
+            public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
+            {
+                throw context.Exception;
+            }
+        }
+
         [Fact]
         public void Constructor_NullConfig_Throws()
         {
@@ -178,6 +187,40 @@ namespace System.Web.Http.Cors
             HttpResponseMessage response = await invoker.SendAsync(request, CancellationToken.None);
 
             Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task SendAsync_Preflight_RethrowsExceptions_WhenRethrowFlagIsTrue()
+        {
+            HttpConfiguration config = new HttpConfiguration();
+            config.Routes.MapHttpRoute("default", "{controller}");
+            HttpServer server = new HttpServer(config);
+            CorsMessageHandler corsHandler = new CorsMessageHandler(config, true);
+            corsHandler.InnerHandler = server;
+            HttpMessageInvoker invoker = new HttpMessageInvoker(corsHandler);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Options, "http://localhost/sample");
+            request.SetConfiguration(config);
+            request.Headers.Add(CorsConstants.Origin, "http://localhost");
+            request.Headers.Add(CorsConstants.AccessControlRequestMethod, "RandomMethod");
+
+            await Assert.ThrowsAsync<HttpResponseException>(() => invoker.SendAsync(request, CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task SendAsync_RethrowsExceptions_WhenRethrowFlagIsTrue()
+        {
+            HttpConfiguration config = new HttpConfiguration();
+            config.Routes.MapHttpRoute("default", "{controller}");
+            config.Services.Replace(typeof(IExceptionHandler), new PassthroughExceptionHandler());
+            HttpServer server = new HttpServer(config);
+            CorsMessageHandler corsHandler = new CorsMessageHandler(config, true);
+            corsHandler.InnerHandler = server;
+            HttpMessageInvoker invoker = new HttpMessageInvoker(corsHandler);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost/throwing");
+            request.SetConfiguration(config);
+            request.Headers.Add(CorsConstants.Origin, "http://localhost");
+
+            await Assert.ThrowsAsync<Exception>(() => invoker.SendAsync(request, CancellationToken.None));
         }
 
         [Fact]

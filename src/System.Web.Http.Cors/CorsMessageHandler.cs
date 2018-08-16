@@ -73,7 +73,9 @@ namespace System.Web.Http.Cors
                 catch (Exception exception)
                 {
                     if (_rethrowExceptions)
+                    {
                         throw;
+                    }
 
                     return HandleException(request, exception);
                 }

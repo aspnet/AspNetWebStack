@@ -82,6 +82,7 @@
     <Compile Include="Controllers\PerControllerConfigController.cs" />
     <Compile Include="Controllers\SampleController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\ThrowingController.cs" />
     <Compile Include="CorsMessageHandlerTest.cs" />
     <Compile Include="DisableCorsAttributeTest.cs" />
     <Compile Include="EnableCorsAttributeTest.cs" />
