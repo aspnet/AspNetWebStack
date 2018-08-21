@@ -18,13 +18,24 @@ namespace System.Web.Http.Cors
     public class CorsMessageHandler : DelegatingHandler
     {
         private HttpConfiguration _httpConfiguration;
+        private bool _rethrowExceptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CorsMessageHandler"/> class.
         /// </summary>
         /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
         /// <exception cref="System.ArgumentNullException">httpConfiguration</exception>
-        public CorsMessageHandler(HttpConfiguration httpConfiguration)
+        public CorsMessageHandler(HttpConfiguration httpConfiguration) : this(httpConfiguration, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CorsMessageHandler"/> class.
+        /// </summary>
+        /// <param name="httpConfiguration">The <see cref="HttpConfiguration"/>.</param>
+        /// <param name="rethrowExceptions">Indicates whether upstream exceptions should be rethrown</param>
+        /// <exception cref="System.ArgumentNullException">httpConfiguration</exception>
+        public CorsMessageHandler(HttpConfiguration httpConfiguration, bool rethrowExceptions)
         {
             if (httpConfiguration == null)
             {
@@ -32,6 +43,7 @@ namespace System.Web.Http.Cors
             }
 
             _httpConfiguration = httpConfiguration;
+            _rethrowExceptions = rethrowExceptions;
         }
 
         /// <summary>
@@ -60,6 +72,11 @@ namespace System.Web.Http.Cors
                 }
                 catch (Exception exception)
                 {
+                    if (_rethrowExceptions)
+                    {
+                        throw;
+                    }
+
                     return HandleException(request, exception);
                 }
             }
