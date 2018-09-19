@@ -100,6 +100,7 @@ namespace System.Net.Http
                     // RFC850 date/time value
                     { "Sunday, 06-Nov-94 08:49:37 GMT",  new DateTimeOffset(1994, 11, 6, 8, 49, 37, TimeSpan.Zero) },
                     { "Sunday, 6-Nov-94 8:49:37",  new DateTimeOffset(1994, 11, 6, 8, 49, 37, TimeSpan.Zero) },
+                    { "Sun, 6-Nov-1994 8:49:37 GMT", new DateTimeOffset(1994, 11, 6, 8, 49, 37, TimeSpan.Zero) },
 
                     // ANSI C's asctime() format
                     { "Sun Nov  06 08:49:37 1994",  new DateTimeOffset(1994, 11, 6, 8, 49, 37, TimeSpan.Zero) },

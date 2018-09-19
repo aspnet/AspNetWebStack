@@ -30,8 +30,9 @@ namespace System.Net.Http
             "d MMM yy H:m:s 'GMT'", // RFC 1123, no day-of-week, short year
             "d MMM yy H:m:s", // RFC 1123, no day-of-week, short year, no zone
 
-            "dddd, d'-'MMM'-'yy H:m:s 'GMT'", // RFC 850
+            "dddd, d'-'MMM'-'yy H:m:s 'GMT'", // RFC 850, short year
             "dddd, d'-'MMM'-'yy H:m:s", // RFC 850 no zone
+            "ddd, d'-'MMM'-'yyyy H:m:s 'GMT'", // RFC 850, long year
             "ddd MMM d H:m:s yyyy", // ANSI C's asctime() format
 
             "ddd, d MMM yyyy H:m:s zzz", // RFC 5322
