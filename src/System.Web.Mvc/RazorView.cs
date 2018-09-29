@@ -17,16 +17,20 @@ namespace System.Web.Mvc
             : this(controllerContext, viewPath, layoutPath, runViewStartPages, viewStartFileExtensions, null)
         {
         }
-
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         public RazorView(ControllerContext controllerContext, string viewPath, string layoutPath, bool runViewStartPages, IEnumerable<string> viewStartFileExtensions, IViewPageActivator viewPageActivator)
-            : base(controllerContext, viewPath, viewPageActivator)
+            : this(controllerContext, viewPath, layoutPath, runViewStartPages, viewStartFileExtensions, viewPageActivator, null)
+        {
+        }
+        public RazorView(ControllerContext controllerContext, string viewPath, string layoutPath, bool runViewStartPages, IEnumerable<string> viewStartFileExtensions, IViewPageActivator viewPageActivator, Type[] genericTypes)
+            : base(controllerContext, viewPath, viewPageActivator, genericTypes)
         {
             LayoutPath = layoutPath ?? String.Empty;
             RunViewStartPages = runViewStartPages;
             StartPageLookup = StartPage.GetStartPage;
             ViewStartFileExtensions = viewStartFileExtensions ?? Enumerable.Empty<string>();
         }
-
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         public string LayoutPath { get; private set; }
 
         public bool RunViewStartPages { get; private set; }

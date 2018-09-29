@@ -74,7 +74,6 @@ namespace System.Web.Mvc
                 DisplayModeProvider = DisplayModeProvider
             };
         }
-
         protected override IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath)
         {
             var view = new RazorView(controllerContext, viewPath,
@@ -84,5 +83,24 @@ namespace System.Web.Mvc
             };
             return view;
         }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        protected override IView CreatePartialView(ControllerContext controllerContext, string partialPath, Type[] genericTypes)
+        {
+            return new RazorView(controllerContext, partialPath,
+                                 layoutPath: null, runViewStartPages: false, viewStartFileExtensions: FileExtensions, viewPageActivator: ViewPageActivator, genericTypes: genericTypes)
+            {
+                DisplayModeProvider = DisplayModeProvider
+            };
+        }
+        protected override IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath, Type[] genericTypes)
+        {
+            var view = new RazorView(controllerContext, viewPath,
+                                     layoutPath: masterPath, runViewStartPages: true, viewStartFileExtensions: FileExtensions, viewPageActivator: ViewPageActivator, genericTypes: genericTypes)
+            {
+                DisplayModeProvider = DisplayModeProvider
+            };
+            return view;
+        }
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }

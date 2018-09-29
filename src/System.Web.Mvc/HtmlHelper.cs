@@ -298,7 +298,48 @@ namespace System.Web.Mvc
             throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture,
                                                               MvcResources.Common_PartialViewNotFound, partialViewName, locationsText));
         }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        internal static IView FindPartialView(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection, Type[] genericTypes)
+        {
+            ViewEngineResult result = viewEngineCollection.FindPartialView(viewContext, partialViewName, genericTypes);
+            if (result.View != null)
+            {
+                return result.View;
+            }
 
+            StringBuilder locationsText = new StringBuilder();
+            foreach (string location in result.SearchedLocations)
+            {
+                locationsText.AppendLine();
+                locationsText.Append(location);
+            }
+
+            throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture,
+                                                              MvcResources.Common_PartialViewNotFound, partialViewName, locationsText));
+        }
+        #region generic methods
+        internal static IView FindPartialView<T>(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection)
+        {
+            return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T) });
+        }
+        internal static IView FindPartialView<T1, T2>(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection)
+        {
+            return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T1), typeof(T2) });
+        }
+        internal static IView FindPartialView<T1, T2, T3>(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection)
+        {
+            return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3) });
+        }
+        internal static IView FindPartialView<T1, T2, T3, T4>(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection)
+        {
+            return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+        }
+        internal static IView FindPartialView<T1, T2, T3, T4, T5>(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection)
+        {
+            return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+        }
+        #endregion
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         public static string GenerateIdFromName(string name)
         {
             return GenerateIdFromName(name, IdAttributeDotReplacement);
@@ -548,7 +589,66 @@ namespace System.Web.Mvc
             IView view = FindPartialView(newViewContext, partialViewName, viewEngineCollection);
             view.Render(newViewContext, writer);
         }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        internal virtual void RenderPartialInternal(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection, Type[] genericTypes)
+        {
+            if (String.IsNullOrEmpty(partialViewName))
+            {
+                throw new ArgumentException(MvcResources.Common_NullOrEmpty, "partialViewName");
+            }
 
+            ViewDataDictionary newViewData = null;
+
+            if (model == null)
+            {
+                if (viewData == null)
+                {
+                    newViewData = new ViewDataDictionary(ViewData);
+                }
+                else
+                {
+                    newViewData = new ViewDataDictionary(viewData);
+                }
+            }
+            else
+            {
+                if (viewData == null)
+                {
+                    newViewData = new ViewDataDictionary(model);
+                }
+                else
+                {
+                    newViewData = new ViewDataDictionary(viewData) { Model = model };
+                }
+            }
+
+            ViewContext newViewContext = new ViewContext(ViewContext, ViewContext.View, newViewData, ViewContext.TempData, writer);
+            IView view = FindPartialView(newViewContext, partialViewName, viewEngineCollection, genericTypes);
+            view.Render(newViewContext, writer);
+        }
+        #region generic methods
+        internal virtual void RenderPartialInternal<T>(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T) });
+        }
+        internal virtual void RenderPartialInternal<T1, T2>(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T1), typeof(T2) });
+        }
+        internal virtual void RenderPartialInternal<T1, T2, T3>(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3) });
+        }
+        internal virtual void RenderPartialInternal<T1, T2, T3, T4>(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+        }
+        internal virtual void RenderPartialInternal<T1, T2, T3, T4, T5>(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection)
+        {
+            RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+        }
+        #endregion
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         /// <summary>
         /// Set element name used to wrap a top-level message in
         /// <see cref="ValidationExtensions.ValidationSummary(HtmlHelper)"/> and other overloads.

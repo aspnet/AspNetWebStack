@@ -12,18 +12,32 @@ namespace System.Web.Mvc
         internal IViewPageActivator ViewPageActivator;
         private IBuildManager _buildManager;
         private ControllerContext _controllerContext;
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        private Type[] _genericTypes;
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
+        // we need to give access to _controllerContext to BuildManagerCompiledView<T>
+        // so that it can use it in its Render() method.
+        // we add the following protected readonly property for this reason
+        protected ControllerContext ControllerContext
+        {
+            get { return _controllerContext; }
+        }
 
         protected BuildManagerCompiledView(ControllerContext controllerContext, string viewPath)
             : this(controllerContext, viewPath, null)
         {
         }
-
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator)
-            : this(controllerContext, viewPath, viewPageActivator, null)
+            : this(controllerContext: controllerContext, viewPath: viewPath, viewPageActivator: viewPageActivator, genericTypes: null)
         {
         }
-
-        internal BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator, IDependencyResolver dependencyResolver)
+        protected BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator, Type[] genericTypes)
+            : this(controllerContext, viewPath, viewPageActivator, null, genericTypes)
+        {
+        }
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
+        internal BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator, IDependencyResolver dependencyResolver, Type[] genericTypes)
         {
             if (controllerContext == null)
             {
@@ -35,6 +49,7 @@ namespace System.Web.Mvc
             }
 
             _controllerContext = controllerContext;
+            _genericTypes = genericTypes;
 
             ViewPath = viewPath;
 
@@ -68,7 +83,10 @@ namespace System.Web.Mvc
             Type type = BuildManager.GetCompiledType(ViewPath);
             if (type != null)
             {
-                instance = ViewPageActivator.Create(_controllerContext, type);
+                if (_genericTypes != null)
+                    instance = ViewPageActivator.Create(_controllerContext, type, _genericTypes);
+                else
+                    instance = ViewPageActivator.Create(_controllerContext, type);
             }
 
             if (instance == null)

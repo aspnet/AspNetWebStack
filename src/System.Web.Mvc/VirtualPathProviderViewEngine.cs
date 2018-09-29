@@ -127,8 +127,11 @@ namespace System.Web.Mvc
         }
 
         protected abstract IView CreatePartialView(ControllerContext controllerContext, string partialPath);
-
         protected abstract IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath);
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        protected abstract IView CreatePartialView(ControllerContext controllerContext, string partialPath, Type[] genericTypes);
+        protected abstract IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath, Type[] genericTypes);
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
 
         protected virtual bool FileExists(ControllerContext controllerContext, string virtualPath)
         {
@@ -157,7 +160,6 @@ namespace System.Web.Mvc
 
             return new ViewEngineResult(CreatePartialView(controllerContext, partialPath), this);
         }
-
         public virtual ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache)
         {
             if (controllerContext == null)
@@ -183,7 +185,82 @@ namespace System.Web.Mvc
 
             return new ViewEngineResult(CreateView(controllerContext, viewPath, masterPath), this);
         }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        private string GetPartialViewName(string partialViewName, Type[] genericTypes)
+        {
+            if (genericTypes != null && !string.IsNullOrEmpty(partialViewName))
+            {
+                var result = partialViewName;
+                var dotIndex = partialViewName.LastIndexOf('.');
 
+                if (dotIndex > 0)
+                {
+                    result = partialViewName.Substring(0, dotIndex);
+                }
+
+                foreach (var type in genericTypes)
+                {
+                    result += "." + type.Name;
+                }
+
+                if (dotIndex > 0)
+                {
+                    result += partialViewName.Substring(dotIndex + 1);
+                }
+
+                return result;
+            }
+
+            return partialViewName;
+        }
+        public virtual ViewEngineResult FindPartialView(ControllerContext controllerContext, string partialViewName, bool useCache, Type[] genericTypes)
+        {
+            if (controllerContext == null)
+            {
+                throw new ArgumentNullException("controllerContext");
+            }
+            if (String.IsNullOrEmpty(partialViewName))
+            {
+                throw new ArgumentException(MvcResources.Common_NullOrEmpty, "partialViewName");
+            }
+
+            string[] searched;
+            string controllerName = controllerContext.RouteData.GetRequiredString("controller");
+            string partialPath = GetPath(controllerContext, PartialViewLocationFormats, AreaPartialViewLocationFormats, "PartialViewLocationFormats", GetPartialViewName(partialViewName, genericTypes), controllerName, CacheKeyPrefixPartial, useCache, out searched, genericTypes);
+
+            if (String.IsNullOrEmpty(partialPath))
+            {
+                return new ViewEngineResult(searched);
+            }
+
+            return new ViewEngineResult(CreatePartialView(controllerContext, partialPath, genericTypes), this);
+        }
+        public virtual ViewEngineResult FindView(ControllerContext controllerContext, string viewName, string masterName, bool useCache, Type[] genericTypes)
+        {
+            if (controllerContext == null)
+            {
+                throw new ArgumentNullException("controllerContext");
+            }
+            if (String.IsNullOrEmpty(viewName))
+            {
+                throw new ArgumentException(MvcResources.Common_NullOrEmpty, "viewName");
+            }
+
+            string[] viewLocationsSearched;
+            string[] masterLocationsSearched;
+
+            string controllerName = controllerContext.RouteData.GetRequiredString("controller");
+            string viewPath = GetPath(controllerContext, ViewLocationFormats, AreaViewLocationFormats, "ViewLocationFormats", viewName, controllerName, CacheKeyPrefixView, useCache, out viewLocationsSearched, genericTypes);
+            string masterPath = GetPath(controllerContext, MasterLocationFormats, AreaMasterLocationFormats, "MasterLocationFormats", masterName, controllerName, CacheKeyPrefixMaster, useCache, out masterLocationsSearched, genericTypes);
+
+            if (String.IsNullOrEmpty(viewPath) || (String.IsNullOrEmpty(masterPath) && !String.IsNullOrEmpty(masterName)))
+            {
+                return new ViewEngineResult(viewLocationsSearched.Union(masterLocationsSearched));
+            }
+
+            return new ViewEngineResult(CreateView(controllerContext, viewPath, masterPath, genericTypes), this);
+        }
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         private string GetPath(ControllerContext controllerContext, string[] locations, string[] areaLocations, string locationsPropertyName, string name, string controllerName, string cacheKeyPrefix, bool useCache, out string[] searchedLocations)
         {
             searchedLocations = _emptyLocations;
@@ -243,7 +320,67 @@ namespace System.Web.Mvc
                     : GetPathFromGeneralName(controllerContext, viewLocations, name, controllerName, areaName, cacheKey, ref searchedLocations);
             }
         }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        private string GetPath(ControllerContext controllerContext, string[] locations, string[] areaLocations, string locationsPropertyName, string name, string controllerName, string cacheKeyPrefix, bool useCache, out string[] searchedLocations, Type[] genericTypes)
+        {
+            searchedLocations = _emptyLocations;
 
+            if (String.IsNullOrEmpty(name))
+            {
+                return String.Empty;
+            }
+
+            string areaName = AreaHelpers.GetAreaName(controllerContext.RouteData);
+            bool usingAreas = !String.IsNullOrEmpty(areaName);
+            List<ViewLocation> viewLocations = GetViewLocations(locations, (usingAreas) ? areaLocations : null);
+
+            if (viewLocations.Count == 0)
+            {
+                throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture,
+                                                                  MvcResources.Common_PropertyCannotBeNullOrEmpty, locationsPropertyName));
+            }
+
+            bool nameRepresentsPath = IsSpecificPath(name);
+            string cacheKey = CreateCacheKey(cacheKeyPrefix, name, (nameRepresentsPath) ? String.Empty : controllerName, areaName);
+
+            if (useCache)
+            {
+                // Only look at cached display modes that can handle the context.
+                IEnumerable<IDisplayMode> possibleDisplayModes = DisplayModeProvider.GetAvailableDisplayModesForContext(controllerContext.HttpContext, controllerContext.DisplayMode);
+                foreach (IDisplayMode displayMode in possibleDisplayModes)
+                {
+                    string cachedLocation = ViewLocationCache.GetViewLocation(controllerContext.HttpContext, AppendDisplayModeToCacheKey(cacheKey, displayMode.DisplayModeId));
+
+                    if (cachedLocation == null)
+                    {
+                        // If any matching display mode location is not in the cache, fall back to the uncached behavior, which will repopulate all of our caches.
+                        return null;
+                    }
+
+                    // A non-empty cachedLocation indicates that we have a matching file on disk. Return that result.
+                    if (cachedLocation.Length > 0)
+                    {
+                        if (controllerContext.DisplayMode == null)
+                        {
+                            controllerContext.DisplayMode = displayMode;
+                        }
+
+                        return cachedLocation;
+                    }
+                    // An empty cachedLocation value indicates that we don't have a matching file on disk. Keep going down the list of possible display modes.
+                }
+
+                // GetPath is called again without using the cache.
+                return null;
+            }
+            else
+            {
+                return nameRepresentsPath
+                    ? GetPathFromSpecificName(controllerContext, name, cacheKey, ref searchedLocations)
+                    : GetPathFromGeneralName(controllerContext, viewLocations, name, controllerName, areaName, cacheKey, ref searchedLocations);
+            }
+        }
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         private string GetPathFromGeneralName(ControllerContext controllerContext, List<ViewLocation> locations, string name, string controllerName, string areaName, string cacheKey, ref string[] searchedLocations)
         {
             string result = String.Empty;

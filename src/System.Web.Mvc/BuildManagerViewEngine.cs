@@ -158,6 +158,34 @@ namespace System.Web.Mvc
                     throw;
                 }
             }
+            // ------------------- Branch: support_generic_models_in_views (start) -------------------
+            public object Create(ControllerContext controllerContext, Type type, Type[] genericTypes)
+            {
+                try
+                {
+                    // here after along path that the generic T parameter was carrying through various method calls,
+                    // we fianlly are able to use the generic T type when instantiating from the View from its generic class
+                    // Currently, IDependencyResolver does not support resolving generic classes. So, our only choice is
+                    // using Activator.CreateInstance()
+                    // return _resolverThunk().GetService(type) ?? Activator.CreateInstance(type);
+
+                    var genericType = type.MakeGenericType(genericTypes);
+                    return Activator.CreateInstance(genericType);
+                }
+                catch (MissingMethodException exception)
+                {
+                    // Ensure thrown exception contains the type name.  Might be down a few levels.
+                    MissingMethodException replacementException =
+                        TypeHelpers.EnsureDebuggableException(exception, type.FullName);
+                    if (replacementException != null)
+                    {
+                        throw replacementException;
+                    }
+
+                    throw;
+                }
+            }
+            // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         }
     }
 }

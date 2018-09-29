@@ -14,6 +14,12 @@
     <NoWarn>1591</NoWarn>
     <BaseAddress>1609891840</BaseAddress>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -163,6 +169,7 @@
     <Compile Include="ITempDataProviderFactory.cs" />
     <Compile Include="JQueryFormValueProvider.cs" />
     <Compile Include="JQueryFormValueProviderFactory.cs" />
+    <Compile Include="ViewPageActivatorExtensions.cs" />
     <Compile Include="Routing\DefaultDirectRouteProvider.cs" />
     <Compile Include="Routing\IDirectRouteProvider.cs" />
     <Compile Include="SelectListGroup.cs" />
@@ -307,6 +314,7 @@
     <Compile Include="SingleServiceResolver.cs" />
     <Compile Include="Razor\StartPageLookupDelegate.cs" />
     <Compile Include="TagBuilderExtensions.cs" />
+    <Compile Include="ViewEngineExtensions.cs" />
     <Compile Include="ViewStartPage.cs" />
     <Compile Include="WebViewPage.cs" />
     <Compile Include="WebViewPageOfTModel.cs" />
@@ -609,6 +617,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="35MSSharedLib1024.snk" />
     <None Include="JavaScript\jquery.unobtrusive-ajax.js" />
     <None Include="JavaScript\jquery.validate.unobtrusive.js" />
     <None Include="packages.config" />

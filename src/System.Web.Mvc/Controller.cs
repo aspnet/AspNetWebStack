@@ -794,6 +794,11 @@ namespace System.Web.Mvc
 
         protected internal virtual ViewResult View(string viewName, string masterName, object model)
         {
+            return View(viewName, masterName, model, null);
+        }
+        // ------------------- Branch: support_generic_models_in_views (start) -------------------
+        protected internal virtual ViewResult View(string viewName, string masterName, object model, Type[] genericTypes)
+        {
             if (model != null)
             {
                 ViewData.Model = model;
@@ -805,10 +810,139 @@ namespace System.Web.Mvc
                 MasterName = masterName,
                 ViewData = ViewData,
                 TempData = TempData,
-                ViewEngineCollection = ViewEngineCollection
+                ViewEngineCollection = ViewEngineCollection,
+                GenericTypes = genericTypes
             };
         }
-
+        #region Generic Methods
+        // ----------- View<...>()
+        protected internal ViewResult View<T>()
+        {
+            return View<T>(viewName: null, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2>()
+        {
+            return View<T1, T2>(viewName: null, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3>()
+        {
+            return View<T1, T2, T3>(viewName: null, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4>()
+        {
+            return View<T1, T2, T3, T4>(viewName: null, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4, T5>()
+        {
+            return View<T1, T2, T3, T4, T5>(viewName: null, masterName: null, model: null);
+        }
+        // ----------- View<...>(object model)
+        protected internal ViewResult View<T>(object model)
+        {
+            return View<T>(null /* viewName */, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2>(object model)
+        {
+            return View<T1, T2>(null /* viewName */, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3>(object model)
+        {
+            return View<T1, T2, T3>(null /* viewName */, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4>(object model)
+        {
+            return View<T1, T2, T3, T4>(null /* viewName */, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4, T5>(object model)
+        {
+            return View<T1, T2, T3, T4, T5>(null /* viewName */, null /* masterName */, model);
+        }
+        // ----------- View<...>(string viewName)
+        protected internal ViewResult View<T>(string viewName)
+        {
+            return View<T>(viewName, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2>(string viewName)
+        {
+            return View<T1, T2>(viewName, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3>(string viewName)
+        {
+            return View<T1, T2, T3>(viewName, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4>(string viewName)
+        {
+            return View<T1, T2, T3, T4>(viewName, masterName: null, model: null);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4, T5>(string viewName)
+        {
+            return View<T1, T2, T3, T4, T5>(viewName, masterName: null, model: null);
+        }
+        // ----------- View<...>(string viewName, string masterName)
+        protected internal ViewResult View<T>(string viewName, string masterName)
+        {
+            return View<T>(viewName, masterName, null /* model */);
+        }
+        protected internal ViewResult View<T1, T2>(string viewName, string masterName)
+        {
+            return View<T1, T2>(viewName, masterName, null /* model */);
+        }
+        protected internal ViewResult View<T1, T2, T3>(string viewName, string masterName)
+        {
+            return View<T1, T2, T3>(viewName, masterName, null /* model */);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4>(string viewName, string masterName)
+        {
+            return View<T1, T2, T3, T4>(viewName, masterName, null /* model */);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4, T5>(string viewName, string masterName)
+        {
+            return View<T1, T2, T3, T4, T5>(viewName, masterName, null /* model */);
+        }
+        // ----------- View<...>(string viewName, object model)
+        protected internal ViewResult View<T>(string viewName, object model)
+        {
+            return View<T>(viewName, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2>(string viewName, object model)
+        {
+            return View<T1, T2>(viewName, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3>(string viewName, object model)
+        {
+            return View<T1, T2, T3>(viewName, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4>(string viewName, object model)
+        {
+            return View<T1, T2, T3, T4>(viewName, null /* masterName */, model);
+        }
+        protected internal ViewResult View<T1, T2, T3, T4, T5>(string viewName, object model)
+        {
+            return View<T1, T2, T3, T4, T5>(viewName, null /* masterName */, model);
+        }
+        // 
+        protected internal virtual ViewResult View<T>(string viewName, string masterName, object model)
+        {
+            return View(viewName, masterName, model, new Type[] { typeof(T) });
+        }
+        protected internal virtual ViewResult View<T1, T2>(string viewName, string masterName, object model)
+        {
+            return View(viewName, masterName, model, new Type[] { typeof(T1), typeof(T2) });
+        }
+        protected internal virtual ViewResult View<T1, T2, T3>(string viewName, string masterName, object model)
+        {
+            return View(viewName, masterName, model, new Type[] { typeof(T1), typeof(T2), typeof(T3) });
+        }
+        protected internal virtual ViewResult View<T1, T2, T3, T4>(string viewName, string masterName, object model)
+        {
+            return View(viewName, masterName, model, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) });
+        }
+        protected internal virtual ViewResult View<T1, T2, T3, T4, T5>(string viewName, string masterName, object model)
+        {
+            return View(viewName, masterName, model, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
+        }
+        #endregion
+        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames", MessageId = "0#", Justification = "The method name 'View' is a convenient shorthand for 'CreateViewResult'.")]
         protected internal ViewResult View(IView view)
         {

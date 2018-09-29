@@ -13,6 +13,12 @@
     <DefineConstants>$(DefineConstants);ASPNETWEBPAGES</DefineConstants>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -241,6 +247,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="35MSSharedLib1024.snk" />
     <None Include="Instrumentation\HttpContextAdapter.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>HttpContextAdapter.generated.cs</LastGenOutput>

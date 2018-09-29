@@ -19,7 +19,13 @@ namespace System.Web.Mvc
 
         protected override ViewEngineResult FindView(ControllerContext context)
         {
-            ViewEngineResult result = ViewEngineCollection.FindView(context, ViewName, MasterName);
+            ViewEngineResult result;
+
+            if (GenericTypes != null)
+                result = ViewEngineCollection.FindView(context, ViewName, MasterName, GenericTypes);
+            else
+                result = ViewEngineCollection.FindView(context, ViewName, MasterName);
+
             if (result.View != null)
             {
                 return result;
