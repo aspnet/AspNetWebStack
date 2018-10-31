@@ -14,14 +14,14 @@ namespace System.Web.Http.Results
     {
         private readonly StatusCodeResult.IDependencyProvider _dependencies;
 
-        /// <summary>Initializes a new instance of the <see cref="NotFoundResult"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="OkResult"/> class.</summary>
         /// <param name="request">The request message which led to this result.</param>
         public OkResult(HttpRequestMessage request)
             : this(new StatusCodeResult.DirectDependencyProvider(request))
         {
         }
 
-        /// <summary>Initializes a new instance of the <see cref="NotFoundResult"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="OkResult"/> class.</summary>
         /// <param name="controller">The controller from which to obtain the dependencies needed for execution.</param>
         public OkResult(ApiController controller)
             : this(new StatusCodeResult.ApiControllerDependencyProvider(controller))
