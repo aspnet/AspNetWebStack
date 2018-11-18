@@ -753,6 +753,31 @@ namespace System.Web.Http.WebHost
             }
         }
 
+        [Theory]
+        [InlineData("a b")]
+        [InlineData("/a b")]
+        [InlineData("/a%20b")]
+        public void VirtualPathRootGet_ReturnsUnescapedConfigurationVirtualPathRoot(string configurationVirtualPathRoot)
+        {
+            // Arrange
+            var expectedVirtualPathRoot = "/a b";
+            var webContext = CreateDummyWebContext();
+            var webRequest = CreateDummyWebRequest();
+
+            using (var request = CreateRequest())
+            using (var configuration = CreateConfiguration(configurationVirtualPathRoot))
+            {
+                var context = CreateProductUnderTest(webContext, webRequest, request);
+                context.Configuration = configuration;
+
+                // Act
+                var virtualPathRoot = context.VirtualPathRoot;
+
+                // Assert
+                Assert.Equal(expectedVirtualPathRoot, virtualPathRoot);
+            }
+        }
+
         [Fact]
         public void VirtualPathRootSet_UpdatesVirtualPathRoot()
         {

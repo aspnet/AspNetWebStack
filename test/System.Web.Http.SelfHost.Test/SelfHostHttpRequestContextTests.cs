@@ -580,6 +580,28 @@ namespace System.Web.Http.SelfHost
             }
         }
 
+        [Theory]
+        [InlineData("a b")]
+        [InlineData("/a b")]
+        [InlineData("/a%20b")]
+        public void VirtualPathRootGet_ReturnsUnescapedConfigurationVirtualPathRoot(string configurationVirtualPathRoot)
+        {
+            // Arrange
+            var expectedVirtualPathRoot = "/a b";
+            using (var serviceModelContext = CreateStubServiceModelContext())
+            using (var configuration = CreateConfiguration(configurationVirtualPathRoot))
+            using (var request = CreateRequest())
+            {
+                var context = CreateProductUnderTest(serviceModelContext, configuration, request);
+
+                // Act
+                var virtualPathRoot = context.VirtualPathRoot;
+
+                // Assert
+                Assert.Equal(expectedVirtualPathRoot, virtualPathRoot);
+            }
+        }
+
         [Fact]
         public void VirtualPathRootSet_UpdatesVirtualPathRoot()
         {

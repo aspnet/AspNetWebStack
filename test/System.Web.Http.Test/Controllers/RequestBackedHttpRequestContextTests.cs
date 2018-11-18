@@ -609,7 +609,7 @@ namespace System.Web.Http.Controllers
         {
             // Arrange
             string expectedVirtualPathRoot = "/";
-            
+
             using (HttpConfiguration configuration = new HttpConfiguration(new HttpRouteCollection(
                 expectedVirtualPathRoot)))
             {
@@ -621,6 +621,28 @@ namespace System.Web.Http.Controllers
 
                 // Assert
                 Assert.Same(expectedVirtualPathRoot, virtualPathRoot);
+            }
+        }
+
+        [Theory]
+        [InlineData("a b")]
+        [InlineData("/a b")]
+        [InlineData("/a%20b")]
+        public void VirtualPathRootGet_ReturnsUnescapedConfigurationVirtualPathRoot(string configurationVirtualPathRoot)
+        {
+            // Arrange
+            var expectedVirtualPathRoot = "/a b";
+            using (var routeCollection = new HttpRouteCollection(configurationVirtualPathRoot))
+            using (var configuration = new HttpConfiguration(routeCollection))
+            {
+                var context = CreateProductUnderTest();
+                context.Configuration = configuration;
+
+                // Act
+                var virtualPathRoot = context.VirtualPathRoot;
+
+                // Assert
+                Assert.Equal(expectedVirtualPathRoot, virtualPathRoot);
             }
         }
 

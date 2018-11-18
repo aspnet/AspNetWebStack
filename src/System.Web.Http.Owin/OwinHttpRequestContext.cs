@@ -182,7 +182,7 @@ namespace System.Web.Http.Owin
                 {
                     // Set the virtual path root for link resolution and link generation to work
                     // OWIN spec requires request path base to be either the empty string or start with "/"
-                    string requestPathBase = _context.Request.PathBase.ToString();
+                    string requestPathBase = _context.Request.PathBase.Value;
                     _virtualPathRoot = String.IsNullOrEmpty(requestPathBase) ? "/" : requestPathBase;
                     _virtualPathRootSet = true;
                 }
