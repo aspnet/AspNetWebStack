@@ -564,6 +564,30 @@ namespace System.Web.Http.Owin
             }
         }
 
+        // Regression test for #203.
+        [Fact]
+        public void VirtualPathRootGet_ReturnsUnescapedContextRequestPathBase()
+        {
+            // Arrange
+            var expectedVirtualPathRoot = "/a b";
+            var owinRequestMock = new Mock<IOwinRequest>(MockBehavior.Strict);
+            owinRequestMock
+                .Setup(r => r.PathBase)
+                .Returns(new PathString(expectedVirtualPathRoot));
+
+            var owinContext = CreateStubOwinContext(owinRequestMock.Object);
+            using (var request = CreateRequest())
+            {
+                var context = CreateProductUnderTest(owinContext, request);
+
+                // Act
+                var virtualPathRoot = context.VirtualPathRoot;
+
+                // Assert
+                Assert.Equal(expectedVirtualPathRoot, virtualPathRoot);
+            }
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData("")]
