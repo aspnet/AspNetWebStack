@@ -339,4 +339,7 @@
   <data name="RemoteStreamInfoCannotBeNull" xml:space="preserve">
     <value>The '{0}' method in '{1}' returned null. It must return a RemoteStreamResult instance containing a writable stream and a valid URL.</value>
   </data>
+  <data name="ByteRangeStreamInvalidOffset" xml:space="preserve">
+    <value>An attempt was made to move the position before the beginning of the stream.</value>
+  </data>
 </root>
