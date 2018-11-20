@@ -1,11 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -21,6 +18,40 @@ namespace System.Web.Http.WebHost
         /// Chosen to require multiple reads.
         /// </summary>
         private const int BufferSize = 3;
+
+        [Fact]
+        public void Length_DoesNotSwapStreams_IfNonSeekableLengthIsNotZero()
+        {
+            // Arrange
+            var nonSeekable = CreateNonSeekableStream(Content);
+            var seekable = CreateSeekableStream(Content);
+            var stream = CreateStream(nonSeekable, seekable);
+
+            // Act
+            var length = stream.Length;
+
+            // Assert
+            Assert.Same(nonSeekable, stream.InnerStream);
+            Assert.Equal(Content.Length, length);
+            Assert.Equal(0L, stream.Position);
+        }
+
+        [Fact]
+        public void Length_SwapsStreams_IfNonSeekableLengthZero()
+        {
+            // Arrange
+            var nonSeekable = CreateNonSeekableStreamWithZeroLength(Content);
+            var seekable = CreateSeekableStream(Content);
+            var stream = CreateStream(nonSeekable, seekable);
+
+            // Act
+            var length = stream.Length;
+
+            // Assert
+            Assert.Same(seekable, stream.InnerStream);
+            Assert.Equal(Content.Length, length);
+            Assert.Equal(0L, stream.Position);
+        }
 
         [Fact]
         public void ReadToEnd_WithRead_SwapsStreams()
@@ -227,7 +258,7 @@ namespace System.Web.Http.WebHost
 
             var origin = (SeekOrigin)5;
 
-            var message = 
+            var message =
                 "The value of argument 'origin' (" + (int)origin + ") is invalid for Enum type " +
                 "'SeekOrigin'." + Environment.NewLine +
                 "Parameter name: origin";
@@ -244,6 +275,11 @@ namespace System.Web.Http.WebHost
         private Stream CreateNonSeekableStream(string content)
         {
             return new NonSeekableStream(Encoding.UTF8.GetBytes(content));
+        }
+
+        private Stream CreateNonSeekableStreamWithZeroLength(string content)
+        {
+            return new NonSeekableStream(Encoding.UTF8.GetBytes(content), hasZeroLength: true);
         }
 
         private AccessibleStreamWrapper CreateStream(Stream stream1, Stream stream2)
@@ -277,13 +313,17 @@ namespace System.Web.Http.WebHost
 
         private class NonSeekableStream : MemoryStream
         {
-            public NonSeekableStream()
+            private readonly bool _hasZeroLength;
+
+            public NonSeekableStream(byte[] bytes)
+                : this(bytes, hasZeroLength: false)
             {
             }
 
-            public NonSeekableStream(byte[] bytes)
+            public NonSeekableStream(byte[] bytes, bool hasZeroLength)
                 : base(bytes)
             {
+                _hasZeroLength = hasZeroLength;
             }
 
             public override bool CanSeek
@@ -291,6 +331,19 @@ namespace System.Web.Http.WebHost
                 get
                 {
                     return false;
+                }
+            }
+
+            public override long Length
+            {
+                get
+                {
+                    if (_hasZeroLength)
+                    {
+                        return 0L;
+                    }
+
+                    return base.Length;
                 }
             }
         }
