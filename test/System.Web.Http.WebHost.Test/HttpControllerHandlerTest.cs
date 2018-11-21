@@ -74,6 +74,24 @@ namespace System.Web.Http.WebHost
         }
 
         [Fact]
+        public void ConvertRequest_DoesNotAddContentLength()
+        {
+            // Arrange
+            HttpContextBase contextBase = CreateStubContextBase("Get", new MemoryStream());
+
+            // Act
+            HttpRequestMessage request = HttpControllerHandler.ConvertRequest(contextBase);
+
+            // Assert
+            var headers = request.Content.Headers;
+            Assert.NotNull(headers);
+            Assert.Null(headers.ContentLength);
+
+            IEnumerable<string> unused;
+            Assert.False(headers.TryGetValues("Content-Length", out unused));
+        }
+
+        [Fact]
         public void ConvertRequest_Copies_Headers_And_Content_Headers()
         {
             // Arrange
@@ -130,8 +148,10 @@ namespace System.Web.Http.WebHost
             {
                 HttpRequestBase stubRequest = CreateStubRequestBase("IgnoreMethod", ignoreStream);
                 IDictionary<string, object> expectedEnvironment = new Dictionary<string, object>();
-                IDictionary items = new Hashtable();
-                items.Add(HttpControllerHandler.OwinEnvironmentHttpContextKey, expectedEnvironment);
+                IDictionary items = new Hashtable
+                {
+                    { HttpControllerHandler.OwinEnvironmentHttpContextKey, expectedEnvironment }
+                };
                 HttpContextBase context = CreateStubContextBase(stubRequest, items);
 
                 // Act
@@ -1944,13 +1964,6 @@ namespace System.Web.Http.WebHost
         private static HttpResponseBase CreateStubResponseBase()
         {
             return new Mock<HttpResponseBase>().Object;
-        }
-
-        private static HttpResponseBase CreateStubResponseBase(CancellationToken clientDisconnectedToken)
-        {
-            Mock<HttpResponseBase> mock = new Mock<HttpResponseBase>();
-            mock.Setup(r => r.ClientDisconnectedToken).Returns(clientDisconnectedToken);
-            return mock.Object;
         }
 
         private static HttpResponseBase CreateStubResponseBase(Stream outputStream)
