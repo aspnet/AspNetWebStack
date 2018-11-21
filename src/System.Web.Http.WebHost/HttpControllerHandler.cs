@@ -717,14 +717,17 @@ namespace System.Web.Http.WebHost
                 return SerializeToStreamAsync(stream, context);
             }
 
-            public bool TryCalculateLength(out long length)
-            {
-                return TryComputeLength(out length);
-            }
-
             public Task<Stream> GetContentReadStreamAsync()
             {
                 return CreateContentReadStreamAsync();
+            }
+
+            protected override bool TryComputeLength(out long length)
+            {
+                // Do not attempt to calculate length because SeekableBufferedRequestStream (for example)
+                // may report 0 until the underlying Stream has been read to end.
+                length = 0L;
+                return false;
             }
         }
 
@@ -762,7 +765,10 @@ namespace System.Web.Http.WebHost
 
             protected override bool TryComputeLength(out long length)
             {
-                return StreamContent.TryCalculateLength(out length);
+                // Do not attempt to calculate length because SeekableBufferedRequestStream (for example)
+                // may report 0 until the underlying Stream has been read to end.
+                length = 0L;
+                return false;
             }
         }
     }
