@@ -36,26 +36,6 @@ namespace System.Web.Http.WebHost
             }
         }
 
-        public override long Length
-        {
-            get
-            {
-                ThrowIfDisposed();
-                if (!_isReadToEndComplete && base.Length == 0)
-                {
-                    // Because CanSeek is true, HttpContent subclasses assume this property can be used. But,
-                    // InnerStream is initially non-seekable and InnerStream.Length may be incorrect (0). Force
-                    // draining the original Stream (swapping the streams) to make HttpContent assumptions valid.
-                    Seek(1L, SeekOrigin.Current);
-
-                    // Leave the stream where it started.
-                    Seek(-1L, SeekOrigin.Current);
-                }
-
-                return base.Length;
-            }
-        }
-
         public override long Position
         {
             get
@@ -137,9 +117,8 @@ namespace System.Web.Http.WebHost
                     newPosition = currentPosition + offset;
                     break;
                 case SeekOrigin.End:
-                    // We have to check Length here because we might not know the length in some scenarios.
-                    // If we don't know, then we just do the safe thing and force a read to end. Length may
-                    // call Seek but only when we haven't already read to end and not with this SeekOrigin.
+                    // We have to check Length here because we might not know the length in some scenarios. 
+                    // If we don't know, then we just do the safe thing and force a read to end.
                     if (Length >= 0)
                     {
                         newPosition = Length + offset;
