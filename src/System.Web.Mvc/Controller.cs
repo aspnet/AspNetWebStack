@@ -796,7 +796,6 @@ namespace System.Web.Mvc
         {
             return View(viewName, masterName, model, null);
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected internal virtual ViewResult View(string viewName, string masterName, object model, Type[] genericTypes)
         {
             if (model != null)
@@ -942,7 +941,6 @@ namespace System.Web.Mvc
             return View(viewName, masterName, model, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
         }
         #endregion
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames", MessageId = "0#", Justification = "The method name 'View' is a convenient shorthand for 'CreateViewResult'.")]
         protected internal ViewResult View(IView view)
         {
