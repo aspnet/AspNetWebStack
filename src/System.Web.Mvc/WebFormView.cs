@@ -18,7 +18,6 @@ namespace System.Web.Mvc
             : this(controllerContext, viewPath, masterPath, null)
         {
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         public WebFormView(ControllerContext controllerContext, string viewPath, string masterPath, IViewPageActivator viewPageActivator)
             : this(controllerContext, viewPath, masterPath, viewPageActivator, null)
         {
@@ -29,7 +28,6 @@ namespace System.Web.Mvc
         {
             MasterPath = masterPath ?? String.Empty;
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         public string MasterPath { get; private set; }
 
         protected override void RenderView(ViewContext viewContext, TextWriter writer, object instance)
