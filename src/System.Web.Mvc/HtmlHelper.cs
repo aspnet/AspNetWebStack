@@ -298,7 +298,6 @@ namespace System.Web.Mvc
             throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture,
                                                               MvcResources.Common_PartialViewNotFound, partialViewName, locationsText));
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         internal static IView FindPartialView(ViewContext viewContext, string partialViewName, ViewEngineCollection viewEngineCollection, Type[] genericTypes)
         {
             ViewEngineResult result = viewEngineCollection.FindPartialView(viewContext, partialViewName, genericTypes);
@@ -339,7 +338,6 @@ namespace System.Web.Mvc
             return FindPartialView(viewContext, partialViewName, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
         }
         #endregion
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         public static string GenerateIdFromName(string name)
         {
             return GenerateIdFromName(name, IdAttributeDotReplacement);
@@ -589,7 +587,6 @@ namespace System.Web.Mvc
             IView view = FindPartialView(newViewContext, partialViewName, viewEngineCollection);
             view.Render(newViewContext, writer);
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         internal virtual void RenderPartialInternal(string partialViewName, ViewDataDictionary viewData, object model, TextWriter writer, ViewEngineCollection viewEngineCollection, Type[] genericTypes)
         {
             if (String.IsNullOrEmpty(partialViewName))
@@ -648,7 +645,6 @@ namespace System.Web.Mvc
             RenderPartialInternal(partialViewName, viewData, model, writer, viewEngineCollection, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
         }
         #endregion
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         /// <summary>
         /// Set element name used to wrap a top-level message in
         /// <see cref="ValidationExtensions.ValidationSummary(HtmlHelper)"/> and other overloads.
