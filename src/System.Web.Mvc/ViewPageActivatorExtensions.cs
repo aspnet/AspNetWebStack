@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace System.Web.Mvc
 {
-    // ------------------- Branch: support_generic_models_in_views (start) -------------------
     public static class ViewPageActivatorExtensions
     {
         public static object Create<T>(this IViewPageActivator viewPageActivator, ControllerContext controllerContext, Type type)
@@ -31,5 +30,4 @@ namespace System.Web.Mvc
         }
 
     }
-    // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
 }
