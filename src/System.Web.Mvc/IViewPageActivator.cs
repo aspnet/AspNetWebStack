@@ -6,8 +6,6 @@ namespace System.Web.Mvc
     public interface IViewPageActivator
     {
         object Create(ControllerContext controllerContext, Type type);
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         object Create(ControllerContext controllerContext, Type type, Type[] genericTypes);
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
