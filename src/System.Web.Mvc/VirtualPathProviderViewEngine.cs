@@ -128,10 +128,8 @@ namespace System.Web.Mvc
 
         protected abstract IView CreatePartialView(ControllerContext controllerContext, string partialPath);
         protected abstract IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath);
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected abstract IView CreatePartialView(ControllerContext controllerContext, string partialPath, Type[] genericTypes);
         protected abstract IView CreateView(ControllerContext controllerContext, string viewPath, string masterPath, Type[] genericTypes);
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
 
         protected virtual bool FileExists(ControllerContext controllerContext, string virtualPath)
         {
@@ -185,7 +183,6 @@ namespace System.Web.Mvc
 
             return new ViewEngineResult(CreateView(controllerContext, viewPath, masterPath), this);
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         private string GetPartialViewName(string partialViewName, Type[] genericTypes)
         {
             if (genericTypes != null && !string.IsNullOrEmpty(partialViewName))
@@ -260,7 +257,6 @@ namespace System.Web.Mvc
 
             return new ViewEngineResult(CreateView(controllerContext, viewPath, masterPath, genericTypes), this);
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         private string GetPath(ControllerContext controllerContext, string[] locations, string[] areaLocations, string locationsPropertyName, string name, string controllerName, string cacheKeyPrefix, bool useCache, out string[] searchedLocations)
         {
             searchedLocations = _emptyLocations;
@@ -320,7 +316,6 @@ namespace System.Web.Mvc
                     : GetPathFromGeneralName(controllerContext, viewLocations, name, controllerName, areaName, cacheKey, ref searchedLocations);
             }
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         private string GetPath(ControllerContext controllerContext, string[] locations, string[] areaLocations, string locationsPropertyName, string name, string controllerName, string cacheKeyPrefix, bool useCache, out string[] searchedLocations, Type[] genericTypes)
         {
             searchedLocations = _emptyLocations;
@@ -380,7 +375,6 @@ namespace System.Web.Mvc
                     : GetPathFromGeneralName(controllerContext, viewLocations, name, controllerName, areaName, cacheKey, ref searchedLocations);
             }
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         private string GetPathFromGeneralName(ControllerContext controllerContext, List<ViewLocation> locations, string name, string controllerName, string areaName, string cacheKey, ref string[] searchedLocations)
         {
             string result = String.Empty;
