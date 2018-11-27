@@ -32,7 +32,6 @@ namespace System.Web.Mvc.Html
             }
         }
 
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         public static MvcHtmlString Partial(this HtmlHelper htmlHelper, string partialViewName, Type[] genericTypes)
         {
             return Partial(htmlHelper, partialViewName, null /* model */, htmlHelper.ViewData, genericTypes);
@@ -178,6 +177,5 @@ namespace System.Web.Mvc.Html
             }
         }
         #endregion
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
