@@ -83,7 +83,6 @@ namespace System.Web.Mvc
             };
             return view;
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected override IView CreatePartialView(ControllerContext controllerContext, string partialPath, Type[] genericTypes)
         {
             return new RazorView(controllerContext, partialPath,
@@ -101,6 +100,5 @@ namespace System.Web.Mvc
             };
             return view;
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
