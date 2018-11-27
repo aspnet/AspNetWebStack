@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace System.Web.Mvc
 {
-    // ------------------- Branch: support_generic_models_in_views (start) -------------------
     public static class ViewEngineExtensions
     {
         public static ViewEngineResult FindPartialView<T>(this IViewEngine viewEngine, ControllerContext controllerContext, string partialViewName, bool useCache)
@@ -50,5 +49,4 @@ namespace System.Web.Mvc
             return viewEngine.FindView(controllerContext, viewName, masterName, useCache, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
         }
     }
-    // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
 }
