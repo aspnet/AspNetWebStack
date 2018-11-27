@@ -12,9 +12,7 @@ namespace System.Web.Mvc
         internal IViewPageActivator ViewPageActivator;
         private IBuildManager _buildManager;
         private ControllerContext _controllerContext;
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         private Type[] _genericTypes;
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         // we need to give access to _controllerContext to BuildManagerCompiledView<T>
         // so that it can use it in its Render() method.
         // we add the following protected readonly property for this reason
@@ -27,7 +25,6 @@ namespace System.Web.Mvc
             : this(controllerContext, viewPath, null)
         {
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator)
             : this(controllerContext: controllerContext, viewPath: viewPath, viewPageActivator: viewPageActivator, genericTypes: null)
         {
@@ -36,7 +33,6 @@ namespace System.Web.Mvc
             : this(controllerContext, viewPath, viewPageActivator, null, genericTypes)
         {
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         internal BuildManagerCompiledView(ControllerContext controllerContext, string viewPath, IViewPageActivator viewPageActivator, IDependencyResolver dependencyResolver, Type[] genericTypes)
         {
             if (controllerContext == null)
