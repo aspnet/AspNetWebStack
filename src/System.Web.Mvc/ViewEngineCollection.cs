@@ -151,7 +151,6 @@ namespace System.Web.Mvc
             return Find(e => e.FindView(controllerContext, viewName, masterName, true),
                         e => e.FindView(controllerContext, viewName, masterName, false));
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         private ViewEngineResult Find(Func<IViewEngine, ViewEngineResult> cacheLocator, Func<IViewEngine, ViewEngineResult> locator, Type[] genericTypes)
         {
             // First, look up using the cacheLocator and do not track the searched paths in non-matching view engines
@@ -316,6 +315,5 @@ namespace System.Web.Mvc
             return FindView(controllerContext, viewName, masterName, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) });
         }
         #endregion
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
