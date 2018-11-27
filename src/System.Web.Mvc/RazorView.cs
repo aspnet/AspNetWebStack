@@ -17,7 +17,6 @@ namespace System.Web.Mvc
             : this(controllerContext, viewPath, layoutPath, runViewStartPages, viewStartFileExtensions, null)
         {
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         public RazorView(ControllerContext controllerContext, string viewPath, string layoutPath, bool runViewStartPages, IEnumerable<string> viewStartFileExtensions, IViewPageActivator viewPageActivator)
             : this(controllerContext, viewPath, layoutPath, runViewStartPages, viewStartFileExtensions, viewPageActivator, null)
         {
@@ -30,7 +29,6 @@ namespace System.Web.Mvc
             StartPageLookup = StartPage.GetStartPage;
             ViewStartFileExtensions = viewStartFileExtensions ?? Enumerable.Empty<string>();
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         public string LayoutPath { get; private set; }
 
         public bool RunViewStartPages { get; private set; }
