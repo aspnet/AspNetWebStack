@@ -105,8 +105,6 @@ namespace System.Web.Mvc
 
         protected abstract ViewEngineResult FindView(ControllerContext context);
 
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         public Type[] GenericTypes { get; set; }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
