@@ -60,7 +60,6 @@ namespace System.Web.Mvc
         {
             return new WebFormView(controllerContext, viewPath, masterPath, ViewPageActivator);
         }
-        // ------------------- Branch: support_generic_models_in_views (start) -------------------
         protected override IView CreatePartialView(ControllerContext controllerContext, string partialPath, Type[] genericTypes)
         {
             return new WebFormView(controllerContext, partialPath, null, ViewPageActivator, genericTypes);
@@ -69,6 +68,5 @@ namespace System.Web.Mvc
         {
             return new WebFormView(controllerContext, viewPath, masterPath, ViewPageActivator, genericTypes);
         }
-        // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
     }
 }
