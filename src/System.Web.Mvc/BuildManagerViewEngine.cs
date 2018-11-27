@@ -158,7 +158,6 @@ namespace System.Web.Mvc
                     throw;
                 }
             }
-            // ------------------- Branch: support_generic_models_in_views (start) -------------------
             public object Create(ControllerContext controllerContext, Type type, Type[] genericTypes)
             {
                 try
@@ -185,7 +184,6 @@ namespace System.Web.Mvc
                     throw;
                 }
             }
-            // ------------------- Branch: support_generic_models_in_views ( end ) -------------------
         }
     }
 }
