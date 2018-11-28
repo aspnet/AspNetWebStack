@@ -3,12 +3,14 @@
 
 using System.IO;
 using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace System.Net.Http.Internal
 {
     /// <summary>
-    /// Stream which only exposes a read-only only range view of an 
+    /// Stream which only exposes a read-only only range view of an
     /// inner stream.
     /// </summary>
     internal class ByteRangeStream : DelegatingStream
@@ -16,7 +18,7 @@ namespace System.Net.Http.Internal
         // The offset stream position at which the range starts.
         private readonly long _lowerbounds;
 
-        // The total number of bytes within the range. 
+        // The total number of bytes within the range.
         private readonly long _totalCount;
 
         // The current number of bytes read into the range
@@ -92,6 +94,23 @@ namespace System.Net.Http.Internal
             get { return false; }
         }
 
+        public override long Position
+        {
+            get
+            {
+                return _currentCount;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    throw Error.ArgumentMustBeGreaterThanOrEqualTo("value", value, 0L);
+                }
+
+                _currentCount = value;
+            }
+        }
+
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return base.BeginRead(buffer, offset, PrepareStreamForRangeRead(count), callback, state);
@@ -102,6 +121,11 @@ namespace System.Net.Http.Internal
             return base.Read(buffer, offset, PrepareStreamForRangeRead(count));
         }
 
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            return base.ReadAsync(buffer, offset, PrepareStreamForRangeRead(count), cancellationToken);
+        }
+
         public override int ReadByte()
         {
             int effectiveCount = PrepareStreamForRangeRead(1);
@@ -109,7 +133,33 @@ namespace System.Net.Http.Internal
             {
                 return -1;
             }
+
             return base.ReadByte();
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    _currentCount = offset;
+                    break;
+                case SeekOrigin.Current:
+                    _currentCount = _currentCount + offset;
+                    break;
+                case SeekOrigin.End:
+                    _currentCount = _totalCount + offset;
+                    break;
+                default:
+                    throw Error.InvalidEnumArgument("origin", (int)origin, typeof(SeekOrigin));
+            }
+
+            if (_currentCount < 0L)
+            {
+                throw new IOException(Properties.Resources.ByteRangeStreamInvalidOffset);
+            }
+
+            return _currentCount;
         }
 
         public override void SetLength(long value)
@@ -132,33 +182,49 @@ namespace System.Net.Http.Internal
             throw Error.NotSupported(Properties.Resources.ByteRangeStreamReadOnly);
         }
 
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            throw Error.NotSupported(Properties.Resources.ByteRangeStreamReadOnly);
+        }
+
         public override void WriteByte(byte value)
         {
             throw Error.NotSupported(Properties.Resources.ByteRangeStreamReadOnly);
         }
 
         /// <summary>
-        /// Gets the 
+        /// Gets the correct count for the next read operation.
         /// </summary>
         /// <param name="count">The count requested to be read by the caller.</param>
         /// <returns>The remaining bytes to read within the range defined for this stream.</returns>
         private int PrepareStreamForRangeRead(int count)
         {
-            long effectiveCount = Math.Min(count, _totalCount - _currentCount);
-            if (effectiveCount > 0)
+            // A negative count causes base.Raad* methods to throw an ArgumentOutOfRangeException.
+            if (count <= 0)
             {
-                // Check if we should update the stream position
-                long position = InnerStream.Position;
-                if (_lowerbounds + _currentCount != position)
-                {
-                    InnerStream.Position = _lowerbounds + _currentCount;
-                }
-
-                // Update current number of bytes read
-                _currentCount += effectiveCount;
+                return count;
             }
 
-            // Effective count can never be bigger than int
+            // Reading past the end simply does nothing.
+            if (_currentCount >= _totalCount)
+            {
+                return 0;
+            }
+
+            long effectiveCount = Math.Min(count, _totalCount - _currentCount);
+
+            // Check if we should update the inner stream's position.
+            var newPosition = _lowerbounds + _currentCount;
+            var position = InnerStream.Position;
+            if (newPosition != position)
+            {
+                InnerStream.Position = newPosition;
+            }
+
+            // Update current number of bytes read.
+            _currentCount += effectiveCount;
+
+            // Effective count can never be bigger than int.
             return (int)effectiveCount;
         }
     }

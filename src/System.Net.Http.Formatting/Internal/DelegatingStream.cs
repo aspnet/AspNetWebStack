@@ -9,12 +9,12 @@ using System.Web.Http;
 namespace System.Net.Http.Internal
 {
     /// <summary>
-    /// Stream that delegates to inner stream. 
+    /// Stream that delegates to inner stream.
     /// This is taken from System.Net.Http
     /// </summary>
     internal abstract class DelegatingStream : Stream
     {
-        private Stream _innerStream;
+        private readonly Stream _innerStream;
 
         protected DelegatingStream(Stream innerStream)
         {
@@ -117,11 +117,6 @@ namespace System.Net.Http.Internal
         public override void Flush()
         {
             _innerStream.Flush();
-        }
-
-        public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
-        {
-            return _innerStream.CopyToAsync(destination, bufferSize, cancellationToken);
         }
 
         public override Task FlushAsync(CancellationToken cancellationToken)
