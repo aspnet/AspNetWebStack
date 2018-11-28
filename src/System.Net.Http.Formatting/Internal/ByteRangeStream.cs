@@ -145,10 +145,10 @@ namespace System.Net.Http.Internal
                     _currentCount = offset;
                     break;
                 case SeekOrigin.Current:
-                    _currentCount = unchecked(_currentCount + offset);
+                    _currentCount = _currentCount + offset;
                     break;
                 case SeekOrigin.End:
-                    _currentCount = unchecked(_totalCount + offset);
+                    _currentCount = _totalCount + offset;
                     break;
                 default:
                     throw Error.InvalidEnumArgument("origin", (int)origin, typeof(SeekOrigin));
