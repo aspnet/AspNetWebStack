@@ -2,7 +2,6 @@
 
 One of the easiest ways to contribute is to participate in discussions and discuss issues. You can also contribute by submitting pull requests with code changes.
 
-
 ## Bugs and feature requests?
 For non-security related bugs please log a new issue in this repo.
 
@@ -12,10 +11,10 @@ Security issues and bugs should be reported privately, via email, to the Microso
 ## Other discussions
 Our team members also monitor several other discussion forums:
 
-* [ASP.NET Core forum](https://forums.asp.net/1255.aspx/1?ASP+NET+5)
-* [StackOverflow](https://stackoverflow.com/) with the [`asp.net-core`](https://stackoverflow.com/questions/tagged/asp.net-core), [`asp.net-core-mvc`](https://stackoverflow.com/questions/tagged/asp.net-core-mvc), or [`entity-framework-core`](https://stackoverflow.com/questions/tagged/entity-framework-core) tags.
-* [JabbR chat room](https://jabbr.net/#/rooms/AspNetCore) for real-time discussions with the community and the people who work on the project
-
+* [ASP.NET MVC forum](https://forums.asp.net/1146.aspx/1?MVC)
+* [ASP.NET Web API forum](hhttps://forums.asp.net/1246.aspx/1?Web+API)
+* [ASP.NET Web Pages forum](https://forums.asp.net/1224.aspx/1?ASP+NET+Web+Pages)
+* [StackOverflow](https://stackoverflow.com/) with the [`asp.net`](https://stackoverflow.com/questions/tagged/asp.net), [`asp.net-mvc`](https://stackoverflow.com/questions/tagged/asp.net-mvc), [`asp.net-web-api`](https://stackoverflow.com/questions/tagged/asp.net-web-api), [`asp.net-webpages`](https://stackoverflow.com/questions/tagged/asp.net-webpages) or [`razor`](https://stackoverflow.com/questions/tagged/razor) tags.
 
 ## Filing issues
 When filing issues, please use our [bug filing templates](https://github.com/aspnet/Home/wiki/Functional-bug-template).
@@ -31,7 +30,6 @@ Here are questions you can answer before you file a bug to make sure you're not 
 6. What version of IIS are you using?
 
 GitHub supports [markdown](https://help.github.com/articles/github-flavored-markdown/), so when filing bugs make sure you check the formatting before clicking submit.
-
 
 ## Contributing code and content
 You will need to sign a [Contributor License Agreement](https://cla2.dotnetfoundation.org/) before submitting your pull request. To complete the Contributor License Agreement (CLA), you will need to submit a request via the form and then electronically sign the Contributor License Agreement when you receive the email containing the link to the document. This needs to only be done once for any .NET Foundation OSS project.
@@ -58,4 +56,3 @@ Addresses #bugnumber (in this specific format)
 -  Tests only need to be present for issues that need to be verified by QA (e.g. not tasks)
 -  If there is a scenario that is far too hard to test there does not need to be a test for it.
   - "Too hard" is determined by the team as a whole.
-  

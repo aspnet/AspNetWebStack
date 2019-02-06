@@ -18,6 +18,10 @@ This repo includes:
 
 The latest built and tested packages from this repo are available on this MyGet feed: https://dotnet.myget.org/gallery/aspnetwebstack-dev
 
+### Contributing
+
+Check out the [contributing](CONTRIBUTING.md) page to see the best places to log issues and start discussions.
+
 ### Tags and releases
 
 Git tag|Git branch|Other products|MVC package versions|Web API package (product) versions|Web Pages package versions
