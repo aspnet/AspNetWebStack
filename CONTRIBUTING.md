@@ -12,7 +12,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Our team members also monitor several other discussion forums:
 
 * [ASP.NET MVC forum](https://forums.asp.net/1146.aspx/1?MVC)
-* [ASP.NET Web API forum](hhttps://forums.asp.net/1246.aspx/1?Web+API)
+* [ASP.NET Web API forum](https://forums.asp.net/1246.aspx/1?Web+API)
 * [ASP.NET Web Pages forum](https://forums.asp.net/1224.aspx/1?ASP+NET+Web+Pages)
 * [StackOverflow](https://stackoverflow.com/) with the [`asp.net`](https://stackoverflow.com/questions/tagged/asp.net), [`asp.net-mvc`](https://stackoverflow.com/questions/tagged/asp.net-mvc), [`asp.net-web-api`](https://stackoverflow.com/questions/tagged/asp.net-web-api), [`asp.net-webpages`](https://stackoverflow.com/questions/tagged/asp.net-webpages) or [`razor`](https://stackoverflow.com/questions/tagged/razor) tags.
 
