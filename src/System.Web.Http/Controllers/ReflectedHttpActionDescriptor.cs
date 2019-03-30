@@ -400,7 +400,7 @@ namespace System.Web.Http.Controllers
 
                 // Call method
                 UnaryExpression instanceCast = (!methodInfo.IsStatic) ? Expression.Convert(instanceParameter, methodInfo.ReflectedType) : null;
-                MethodCallExpression methodCall = methodCall = Expression.Call(instanceCast, methodInfo, parameters);
+                MethodCallExpression methodCall = Expression.Call(instanceCast, methodInfo, parameters);
 
                 // methodCall is "((MethodInstanceType) instance).method((T0) parameters[0], (T1) parameters[1], ...)"
                 // Create function
