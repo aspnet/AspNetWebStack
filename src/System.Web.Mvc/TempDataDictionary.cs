@@ -47,7 +47,6 @@ namespace System.Web.Mvc
                 object value;
                 if (TryGetValue(key, out value))
                 {
-                    _initialKeys.Remove(key);
                     return value;
                 }
                 return null;
