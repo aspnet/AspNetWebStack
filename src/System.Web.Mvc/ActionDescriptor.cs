@@ -70,7 +70,7 @@ namespace System.Web.Mvc
                 // the key should always be present, even if the parameter value is null
                 string message = String.Format(CultureInfo.CurrentCulture, MvcResources.ReflectedActionDescriptor_ParameterNotInDictionary,
                                                parameterInfo.Name, parameterInfo.ParameterType, methodInfo, methodInfo.DeclaringType);
-                throw new ArgumentException(message, "parameters");
+                throw new ArgumentException(message, parameterInfo.Name);
             }
 
             if (value == null && !TypeHelpers.TypeAllowsNullValue(parameterInfo.ParameterType))
@@ -78,7 +78,7 @@ namespace System.Web.Mvc
                 // tried to pass a null value for a non-nullable parameter type
                 string message = String.Format(CultureInfo.CurrentCulture, MvcResources.ReflectedActionDescriptor_ParameterCannotBeNull,
                                                parameterInfo.Name, parameterInfo.ParameterType, methodInfo, methodInfo.DeclaringType);
-                throw new ArgumentException(message, "parameters");
+                throw new ArgumentException(message, parameterInfo.Name);
             }
 
             if (value != null && !parameterInfo.ParameterType.IsInstanceOfType(value))
@@ -86,7 +86,7 @@ namespace System.Web.Mvc
                 // value was supplied but is not of the proper type
                 string message = String.Format(CultureInfo.CurrentCulture, MvcResources.ReflectedActionDescriptor_ParameterValueHasWrongType,
                                                parameterInfo.Name, methodInfo, methodInfo.DeclaringType, value.GetType(), parameterInfo.ParameterType);
-                throw new ArgumentException(message, "parameters");
+                throw new ArgumentException(message, parameterInfo.Name);
             }
 
             return value;
