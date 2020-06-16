@@ -309,6 +309,7 @@ namespace ROOT_PROJECT_NAMESPACE.Areas.HelpPage
                     ms.Position = 0;
                     StreamReader reader = new StreamReader(ms);
                     string serializedSampleString = reader.ReadToEnd();
+                    reader.Dispose();
                     if (mediaType.MediaType.ToUpperInvariant().Contains("XML"))
                     {
                         serializedSampleString = TryFormatXml(serializedSampleString);
