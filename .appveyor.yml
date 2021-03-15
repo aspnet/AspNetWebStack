@@ -2,7 +2,7 @@
   - git config --global core.autocrlf true
 branches:
   only:
-    - master
+    - main
     - /^(.*\/)?ci-.*$/
     - /^rel\/.*/
 configuration:

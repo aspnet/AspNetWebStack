@@ -1,7 +1,7 @@
 ASP.NET MVC, Web API, Web Pages, and Razor
 ===
 
-AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/aspnet/aspnetwebstack?branch=master&svg=true)](https://ci.appveyor.com/project/aspnetci/aspnetwebstack/branch/master)
+AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/aspnet/aspnetwebstack?branch=main&svg=true)](https://ci.appveyor.com/project/aspnetci/aspnetwebstack/branch/main)
 
 ## Note: This repo is for ASP.NET MVC 5.x, Web API 2.x, and Web Pages 3.x. For ASP.NET Core MVC, check the [AspNetCore repo](https://github.com/aspnet/AspNetCore).
 
