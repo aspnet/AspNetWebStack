@@ -24,12 +24,13 @@ Check out the [contributing](CONTRIBUTING.md) page to see the best places to log
 
 ### Tags and releases
 
-Git tag|Git branch|Other products|MVC package versions|Web API package (product) versions|Web Pages package versions
---------|--------------|------------|------------|------------|------------
-[v2.0.4](https://github.com/aspnet/AspNetWebStack/tree/v2.0.4)|[v2.0-rtm](https://github.com/aspnet/AspNetWebStack/tree/v2.0-rtm)||4.0.40804|4.0.30506|2.0.30506
-[v2.1](https://github.com/aspnet/AspNetWebStack/tree/v2.1)||ASP.NET and Web Tools 2012.2, VS 2012 Update 2 (not on http://nuget.org)|v4 2012.2 Update RTM|v1 2012.2 Update RTM|v2 2012.2 Update RTM
-[v3.0.2](https://github.com/aspnet/AspNetWebStack/tree/v3.0.2)|[v3-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3-rtm)||5.0.2|5.0.1 (2.0.1)|3.0.1
-[v3.1.3](https://github.com/aspnet/AspNetWebStack/tree/v3.1.3)|[v3.1-rtm](https://github.com/aspnet/AspNetWebStack/tree/v3.1-rtm)||5.1.3|5.1.2 (2.1.2)|3.1.2
-[v3.2.4](https://github.com/aspnet/AspNetWebStack/tree/v3.2.4)|||5.2.4|5.2.4 (2.2.4)|3.2.4
-[v3.2.6](https://github.com/aspnet/AspNetWebStack/tree/v3.2.6)|||5.2.6|5.2.6|3.2.6
-||[master](https://github.com/aspnet/AspNetWebStack/tree/master)|New work e.g. MVC 5.2.7-preview1|||
+Git tag or branch|Other products|MVC package versions|Web API package (product) versions|Web Pages package versions
+--------|--------------|------------|------------|------------
+[v2.0.4](https://github.com/aspnet/AspNetWebStack/tree/v2.0.4)||4.0.40804|4.0.30506|2.0.30506
+[v2.1](https://github.com/aspnet/AspNetWebStack/tree/v2.1)|ASP.NET and Web Tools 2012.2, VS 2012 Update 2 (not on http://nuget.org)|v4 2012.2 Update RTM|v1 2012.2 Update RTM|v2 2012.2 Update RTM
+[v3.0.2](https://github.com/aspnet/AspNetWebStack/tree/v3.0.2)||5.0.2|5.0.1 (2.0.1)|3.0.1
+[v3.1.3](https://github.com/aspnet/AspNetWebStack/tree/v3.1.3)||5.1.3|5.1.2 (2.1.2)|3.1.2
+[v3.2.6](https://github.com/aspnet/AspNetWebStack/tree/v3.2.6)||5.2.6|5.2.6|3.2.6
+[v3.2.7](https://github.com/aspnet/AspNetWebStack/tree/v3.2.7)||5.2.7|5.2.7|3.2.7
+[release/3.2.8](https://github.com/aspnet/AspNetWebStack/tree/release/3.2.8)|Work in progress on 5.2.8/3.2.8||||
+[main](https://github.com/aspnet/AspNetWebStack/tree/main)|New work e.g. MVC 5.2.9-preview1||||
