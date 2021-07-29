@@ -13,6 +13,8 @@
     <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
     <DefineConstants>$(DefineConstants);ASPNETMVC</DefineConstants>
     <NoWarn>1591</NoWarn>
+    <!-- Ignore warning about deprecated <licenseUrl> in the .nuspec. -->
+    <NoWarn Condition=" '$(MSBuildRuntimeType)' == 'core' ">$(NoWarn);NU5125</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

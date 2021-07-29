@@ -157,7 +157,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0.
+#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1.
         // Test alternate null value
         [Fact]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNull()

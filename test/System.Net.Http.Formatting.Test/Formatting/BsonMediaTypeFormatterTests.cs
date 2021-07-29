@@ -415,7 +415,7 @@ namespace System.Net.Http.Formatting
             Assert.Null(readObj);
         }
 
-#if !NETCOREAPP2_0 // DBNull not serializable on .NET Core 2.0 except at top level (using BsonMediaTypeformatter special case).
+#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1 except at top level (using BsonMediaTypeformatter special case).
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AsDictionary)]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
