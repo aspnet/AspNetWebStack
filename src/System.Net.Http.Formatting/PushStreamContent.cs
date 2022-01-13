@@ -14,7 +14,7 @@ namespace System.Net.Http
 {
     /// <summary>
     /// Provides an <see cref="HttpContent"/> implementation that exposes an output <see cref="Stream"/>
-    /// which can be written to directly. The ability to push data to the output stream differs from the 
+    /// which can be written to directly. The ability to push data to the output stream differs from the
     /// <see cref="StreamContent"/> where data is pulled and not pushed.
     /// </summary>
     public class PushStreamContent : HttpContent
@@ -24,8 +24,8 @@ namespace System.Net.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="PushStreamContent"/> class. The
         /// <paramref name="onStreamAvailable"/> action is called when an output stream
-        /// has become available allowing the action to write to it directly. When the 
-        /// stream is closed, it will signal to the content that is has completed and the 
+        /// has become available allowing the action to write to it directly. When the
+        /// stream is closed, it will signal to the content that it has completed and the
         /// HTTP request or response will be completed.
         /// </summary>
         /// <param name="onStreamAvailable">The action to call when an output stream is available.</param>
@@ -35,10 +35,11 @@ namespace System.Net.Http
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PushStreamContent"/> class. 
+        /// Initializes a new instance of the <see cref="PushStreamContent"/> class.
         /// </summary>
-        /// <param name="onStreamAvailable">The action to call when an output stream is available. The stream is automatically
-        /// closed when the return task is completed.</param>
+        /// <param name="onStreamAvailable">The action to call when an output stream is available. When the
+        /// output stream is closed or disposed, it will signal to the content that it has completed and the
+        /// HTTP request or response will be completed.</param>
         public PushStreamContent(Func<Stream, HttpContent, TransportContext, Task> onStreamAvailable)
             : this(onStreamAvailable, (MediaTypeHeaderValue)null)
         {
@@ -47,6 +48,8 @@ namespace System.Net.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="PushStreamContent"/> class with the given media type.
         /// </summary>
+        /// <param name="onStreamAvailable">The action to call when an output stream is available.</param>
+        /// <param name="mediaType">The value of the Content-Type content header on an HTTP response.</param>
         public PushStreamContent(Action<Stream, HttpContent, TransportContext> onStreamAvailable, string mediaType)
             : this(Taskify(onStreamAvailable), new MediaTypeHeaderValue(mediaType))
         {
@@ -55,6 +58,10 @@ namespace System.Net.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="PushStreamContent"/> class with the given media type.
         /// </summary>
+        /// <param name="onStreamAvailable">The action to call when an output stream is available. When the
+        /// output stream is closed or disposed, it will signal to the content that it has completed and the
+        /// HTTP request or response will be completed.</param>
+        /// <param name="mediaType">The value of the Content-Type content header on an HTTP response.</param>
         public PushStreamContent(Func<Stream, HttpContent, TransportContext, Task> onStreamAvailable, string mediaType)
             : this(onStreamAvailable, new MediaTypeHeaderValue(mediaType))
         {
@@ -63,6 +70,8 @@ namespace System.Net.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="PushStreamContent"/> class with the given <see cref="MediaTypeHeaderValue"/>.
         /// </summary>
+        /// <param name="onStreamAvailable">The action to call when an output stream is available.</param>
+        /// <param name="mediaType">The value of the Content-Type content header on an HTTP response.</param>
         public PushStreamContent(Action<Stream, HttpContent, TransportContext> onStreamAvailable, MediaTypeHeaderValue mediaType)
             : this(Taskify(onStreamAvailable), mediaType)
         {
@@ -71,6 +80,10 @@ namespace System.Net.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="PushStreamContent"/> class with the given <see cref="MediaTypeHeaderValue"/>.
         /// </summary>
+        /// <param name="onStreamAvailable">The action to call when an output stream is available. When the
+        /// output stream is closed or disposed, it will signal to the content that it has completed and the
+        /// HTTP request or response will be completed.</param>
+        /// <param name="mediaType">The value of the Content-Type content header on an HTTP response.</param>
         public PushStreamContent(Func<Stream, HttpContent, TransportContext, Task> onStreamAvailable, MediaTypeHeaderValue mediaType)
         {
             if (onStreamAvailable == null)
@@ -98,8 +111,8 @@ namespace System.Net.Http
         }
 
         /// <summary>
-        /// When this method is called, it calls the action provided in the constructor with the output 
-        /// stream to write to. Once the action has completed its work it closes the stream which will 
+        /// When this method is called, it calls the action provided in the constructor with the output
+        /// stream to write to. Once the action has completed its work it closes the stream which will
         /// close this content instance and complete the HTTP request or response.
         /// </summary>
         /// <param name="stream">The <see cref="Stream"/> to which to write.</param>
@@ -142,8 +155,8 @@ namespace System.Net.Http
 
 #if NETFX_CORE
             [SuppressMessage(
-                "Microsoft.Usage", 
-                "CA2215:Dispose methods should call base class dispose", 
+                "Microsoft.Usage",
+                "CA2215:Dispose methods should call base class dispose",
                 Justification = "See comments, this is intentional.")]
             protected override void Dispose(bool disposing)
             {
