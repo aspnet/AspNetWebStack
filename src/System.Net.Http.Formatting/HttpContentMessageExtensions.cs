@@ -223,7 +223,7 @@ namespace System.Net.Http
 
             HttpUnsortedRequest httpRequest = new HttpUnsortedRequest();
             HttpRequestHeaderParser parser = new HttpRequestHeaderParser(httpRequest,
-                HttpRequestHeaderParser.DefaultMaxRequestLineSize, maxHeaderSize);
+                maxHeaderSize, maxHeaderSize);
             ParserState parseStatus;
 
             byte[] buffer = new byte[bufferSize];
