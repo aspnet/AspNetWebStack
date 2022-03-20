@@ -11,8 +11,6 @@
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\..\Strict.ruleset</CodeAnalysisRuleSet>
     <MyType>Windows</MyType>
-    <!-- Ignore warning about deprecated <licenseUrl> in the .nuspec. -->
-    <NoWarn Condition=" '$(MSBuildRuntimeType)' == 'core' ">$(NoWarn);NU5125</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineDebug>true</DefineDebug>
