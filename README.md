@@ -1,7 +1,4 @@
-ASP.NET MVC, Web API, Web Pages, and Razor
-===
-
-AppVeyor: [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/aspnet/aspnetwebstack?branch=main&svg=true)](https://ci.appveyor.com/project/aspnetci/aspnetwebstack/branch/main)
+# ASP.NET MVC, Web API, Web Pages, and Razor
 
 ## Note: This repo is for ASP.NET MVC 5.x, Web API 2.x, and Web Pages 3.x. For ASP.NET Core MVC, check the [AspNetCore repo](https://github.com/aspnet/AspNetCore).
 
@@ -13,10 +10,6 @@ This repo includes:
 * ASP.NET Web API 2.x
 * ASP.NET Web Pages 3.x
 * ASP.NET Razor 3.x
-
-### Nightly builds
-
-The latest built and tested packages from this repo are available on this MyGet feed: https://dotnet.myget.org/gallery/aspnetwebstack-dev
 
 ### Contributing
 
@@ -32,5 +25,5 @@ Git tag or branch|Other products|MVC package versions|Web API package (product) 
 [v3.1.3](https://github.com/aspnet/AspNetWebStack/tree/v3.1.3)||5.1.3|5.1.2 (2.1.2)|3.1.2
 [v3.2.6](https://github.com/aspnet/AspNetWebStack/tree/v3.2.6)||5.2.6|5.2.6|3.2.6
 [v3.2.7](https://github.com/aspnet/AspNetWebStack/tree/v3.2.7)||5.2.7|5.2.7|3.2.7
-[release/3.2.8](https://github.com/aspnet/AspNetWebStack/tree/release/3.2.8)|Work in progress on 5.2.8/3.2.8||||
+[v3.2.8](https://github.com/aspnet/AspNetWebStack/tree/v3.2.8)||5.2.8|5.2.8|3.2.8
 [main](https://github.com/aspnet/AspNetWebStack/tree/main)|New work e.g. MVC 5.2.9-preview1||||
