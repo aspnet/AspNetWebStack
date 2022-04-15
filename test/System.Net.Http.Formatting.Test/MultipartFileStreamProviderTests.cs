@@ -32,6 +32,7 @@ namespace System.Net.Http
         private const int ValidBufferSize = 0x111;
         private const string ValidPath = @"c:\some\path";
 
+#if !NETCOREAPP // .NET Core does not enforce path validity in many APIs.
         public static TheoryDataSet<string> NotSupportedFilePaths
         {
             get
@@ -44,6 +45,7 @@ namespace System.Net.Http
                 };
             }
         }
+#endif
 
         public static TheoryDataSet<string> InvalidFilePaths
         {
@@ -52,15 +54,17 @@ namespace System.Net.Http
                 return new TheoryDataSet<string>
                 {
                     "",
-                    " ", 
+                    " ",
                     "  ",
-                    "\t\t \n ", 
+#if !NETCOREAPP // .NET Core does not enforce path validity in many APIs.
+                    "\t\t \n ",
                     "c:\\a<b",
                     "c:\\a>b",
                     "c:\\a\"b",
                     "c:\\a\tb",
                     "c:\\a|b",
                     "c:\\a\bb",
+#endif
                     "c:\\a\0b",
                     "c :\\a\0b",
                 };
@@ -73,12 +77,14 @@ namespace System.Net.Http
             Assert.ThrowsArgumentNull(() => { new MultipartFileStreamProvider(null); }, "rootPath");
         }
 
+#if !NETCOREAPP // .NET Core does not enforce path validity in many APIs.
         [Theory]
         [PropertyData("NotSupportedFilePaths")]
         public void Constructor_ThrowsOnNotSupportedRootPath(string notSupportedPath)
         {
             Assert.Throws<NotSupportedException>(() => new MultipartFileStreamProvider(notSupportedPath, ValidBufferSize));
         }
+#endif
 
         [Theory]
         [PropertyData("InvalidFilePaths")]

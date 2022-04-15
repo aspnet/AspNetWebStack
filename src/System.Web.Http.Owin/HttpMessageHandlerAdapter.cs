@@ -275,7 +275,7 @@ namespace System.Web.Http.Owin
             }
             else
             {
-                buffer = new MemoryStream(contentLength.Value);
+                buffer = new MemoryStream(Math.Min(4 * 1024, contentLength.Value));
             }
 
             cancellationToken.ThrowIfCancellationRequested();

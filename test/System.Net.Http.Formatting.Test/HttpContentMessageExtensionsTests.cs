@@ -482,16 +482,50 @@ namespace System.Net.Http
         }
 
         [Fact]
-        public Task ReadAsHttpRequestMessageAsync_LargeHeaderSize()
+        public async Task ReadAsHttpRequestMessageAsync_LargeHeaderSize()
         {
+            string cookieValue = string.Format("{0}={1}", new String('a', 16 * 1024), new String('b', 16 * 1024));
             string[] request = new[] {
                 @"GET / HTTP/1.1",
                 @"Host: msdn.microsoft.com",
-                String.Format("Cookie: {0}={1}", new String('a', 16 * 1024), new String('b', 16 * 1024))
+                string.Format("Cookie: {0}", cookieValue),
             };
 
             HttpContent content = CreateContent(true, request, "sample body");
-            return content.ReadAsHttpRequestMessageAsync(Uri.UriSchemeHttp, 64 * 1024, 64 * 1024);
+            var httpRequestMessage = await content.ReadAsHttpRequestMessageAsync(Uri.UriSchemeHttp, 64 * 1024, 64 * 1024);
+
+            Assert.Equal(HttpMethod.Get, httpRequestMessage.Method);
+            Assert.Equal("/", httpRequestMessage.RequestUri.PathAndQuery);
+            Assert.Equal("msdn.microsoft.com", httpRequestMessage.Headers.Host);
+            IEnumerable<string> actualCookieValue;
+            Assert.True(httpRequestMessage.Headers.TryGetValues("Cookie", out actualCookieValue));
+            Assert.Equal(cookieValue, Assert.Single(actualCookieValue));
+        }
+
+        [Fact]
+        public async Task ReadAsHttpRequestMessageAsync_LargeHttpRequestLine()
+        {
+            string requestPath = string.Format("/myurl?{0}={1}", new string('a', 4 * 1024), new string('b', 4 * 1024));
+            string cookieValue = string.Format("{0}={1}", new String('a', 4 * 1024), new String('b', 4 * 1024));
+            string[] request = new[]
+            {
+                string.Format("GET {0} HTTP/1.1", requestPath),
+                @"Host: msdn.microsoft.com",
+                string.Format("Cookie: {0}", cookieValue),
+            };
+
+            HttpContent content = CreateContent(true, request, "sample body");
+            var httpRequestMessage = await content.ReadAsHttpRequestMessageAsync(
+                Uri.UriSchemeHttp,
+                bufferSize: 64 * 1024,
+                maxHeaderSize: 64 * 1024);
+
+            Assert.Equal(HttpMethod.Get, httpRequestMessage.Method);
+            Assert.Equal(requestPath, httpRequestMessage.RequestUri.PathAndQuery);
+            Assert.Equal("msdn.microsoft.com", httpRequestMessage.Headers.Host);
+            IEnumerable<string> actualCookieValue;
+            Assert.True(httpRequestMessage.Headers.TryGetValues("Cookie", out actualCookieValue));
+            Assert.Equal(cookieValue, Assert.Single(actualCookieValue));
         }
 
         [Theory]
