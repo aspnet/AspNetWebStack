@@ -26,7 +26,7 @@ namespace Microsoft.TestCommon
         {
             if (Type.GetType(_netCore20TypeName, throwOnError: false) != null)
             {
-                // Treat .NET Core 2.0 as a .NET 4.5 superset though internal types are different.
+                // Treat .NET Core 2.1 as a .NET 4.5 superset though internal types are different.
                 return Platform.Net45;
             }
 
