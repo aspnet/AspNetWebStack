@@ -579,7 +579,7 @@ namespace System.Web.Http.WebHost
             Contract.Assert(httpContextBase != null);
             HttpResponseBase httpResponseBase = httpContextBase.Response;
             httpResponseBase.StatusCode = (int)response.StatusCode;
-            httpResponseBase.StatusDescription = response.ReasonPhrase;
+            httpResponseBase.StatusDescription = string.IsNullOrEmpty(response.ReasonPhrase) ? response.ReasonPhrase : response.ReasonPhrase.SubString(0, Math.Max(response.ReasonPhrase.Length, 512));
             httpResponseBase.TrySkipIisCustomErrors = true;
             EnsureSuppressFormsAuthenticationRedirect(httpContextBase);
 
