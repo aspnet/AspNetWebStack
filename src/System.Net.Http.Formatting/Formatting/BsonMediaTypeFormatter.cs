@@ -11,11 +11,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
-#if NEWTONSOFTJSON10
+#if NETFX_CORE
+using Newtonsoft.Json.Bson;
+#else
 using BsonReader = Newtonsoft.Json.Bson.BsonDataReader;
 using BsonWriter = Newtonsoft.Json.Bson.BsonDataWriter;
-#else
-using Newtonsoft.Json.Bson;
 #endif
 
 namespace System.Net.Http.Formatting
@@ -200,11 +200,11 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-#if !NEWTONSOFTJSON10
+#if NETFX_CORE
 #pragma warning disable CS0618 // Type or member is obsolete
 #endif
             BsonReader reader = new BsonReader(new BinaryReader(readStream, effectiveEncoding));
-#if !NEWTONSOFTJSON10
+#if NETFX_CORE
 #pragma warning restore CS0618 // Type or member is obsolete
 #endif
 
@@ -303,11 +303,11 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-#if !NEWTONSOFTJSON10
+#if NETFX_CORE
 #pragma warning disable CS0618 // Type or member is obsolete
 #endif
             return new BsonWriter(new BinaryWriter(writeStream, effectiveEncoding));
-#if !NEWTONSOFTJSON10
+#if NETFX_CORE
 #pragma warning restore CS0618 // Type or member is obsolete
 #endif
         }

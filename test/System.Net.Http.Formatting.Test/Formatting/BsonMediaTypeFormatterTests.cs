@@ -262,10 +262,10 @@ namespace System.Net.Http.Formatting
             BsonMediaTypeFormatter formatter = new BsonMediaTypeFormatter();
             HttpContent content = new StringContent(String.Empty);
             MemoryStream stream = new MemoryStream();
-#if NEWTONSOFTJSON10 // Json.NET 10's Bson package calculates the path in some exceptions differently.
-            string expectedPath = "Value";
-#else
+#if NETFX_CORE // Separate Bson package (not yet used in NETCore project) calculates the path in exceptions differently
             string expectedPath = string.Empty;
+#else
+            string expectedPath = "Value";
 #endif
             string expectedMessage = string.Format(
                 "Value is too large to fit in a signed 32 bit integer. BSON does not support unsigned values. Path '{0}'.",
