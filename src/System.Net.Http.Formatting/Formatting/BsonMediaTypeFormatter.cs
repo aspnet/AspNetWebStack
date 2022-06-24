@@ -11,12 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
-#if NEWTONSOFTJSON10
-using BsonReader = Newtonsoft.Json.Bson.BsonDataReader;
-using BsonWriter = Newtonsoft.Json.Bson.BsonDataWriter;
-#else
 using Newtonsoft.Json.Bson;
-#endif
 
 namespace System.Net.Http.Formatting
 {
@@ -200,7 +195,7 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-            BsonReader reader = new BsonReader(new BinaryReader(readStream, effectiveEncoding));
+            BsonDataReader reader = new BsonDataReader(new BinaryReader(readStream, effectiveEncoding));
 
             try
             {
@@ -297,7 +292,7 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-            return new BsonWriter(new BinaryWriter(writeStream, effectiveEncoding));
+            return new BsonDataWriter(new BinaryWriter(writeStream, effectiveEncoding));
         }
 
         // Return true if Json.Net will likely convert value of given type to a Json primitive, not JsonArray nor
