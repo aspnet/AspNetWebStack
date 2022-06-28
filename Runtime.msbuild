@@ -67,9 +67,14 @@
     <Message Text="Restoring NuGet packages..." Importance="High" />
 
     <!-- NuGet.exe attempts to read src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj and imports fails without packages. -->
-    <Exec Command='"$(NuGetExe)" restore "src\System.Net.Http.Formatting.NetCore\packages.config" -PackagesDirectory packages -NonInteractive -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
+    <Exec Command='"$(NuGetExe)" restore "src\System.Net.Http.Formatting.NetCore\packages.config"
+        -PackagesDirectory packages -NonInteractive
+        -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
 
-    <Exec Command='"$(NuGetExe)" restore "%(SolutionsToBuild.Identity)" -PackagesDirectory packages -NonInteractive -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
+    <Exec Command='"$(NuGetExe)" restore "%(SolutionsToBuild.Identity)"
+        -PackagesDirectory packages -NonInteractive
+        -Verbosity normal -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"
+        -EnvironmentVariables "RestoreUseSkipNonexistentTargets=true"' />
   </Target>
 
   <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
