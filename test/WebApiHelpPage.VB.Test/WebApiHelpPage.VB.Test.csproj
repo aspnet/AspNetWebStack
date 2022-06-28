@@ -108,9 +108,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\WebApiHelpPage.Test\app.config">
-      <Link>app.config</Link>
-    </None>
     <None Include="..\WebApiHelpPage.Test\packages.config">
       <Link>packages.config</Link>
       <SubType>Designer</SubType>
