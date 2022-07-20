@@ -70,7 +70,7 @@ namespace System.Web.WebPages.Test
             var moduleName = "my-module";
             var path = "foo.baz";
 
-            // Act 
+            // Act
             var name = ApplicationPart.GetResourceNameFromVirtualPath(moduleName, path);
 
             // Assert
@@ -84,7 +84,7 @@ namespace System.Web.WebPages.Test
             var moduleName = "my-module";
             var path = "/bar/foo";
 
-            // Act 
+            // Act
             var name = ApplicationPart.GetResourceNameFromVirtualPath(moduleName, path);
 
             // Assert
@@ -98,7 +98,7 @@ namespace System.Web.WebPages.Test
             var moduleName = "my-module";
             var path = "/program files/data files/my file .foo";
 
-            // Act 
+            // Act
             var name = ApplicationPart.GetResourceNameFromVirtualPath(moduleName, path);
 
             // Assert

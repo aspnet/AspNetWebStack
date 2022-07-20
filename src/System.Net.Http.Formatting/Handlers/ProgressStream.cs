@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace System.Net.Http.Handlers
 {
     /// <summary>
-    /// This implementation of <see cref="DelegatingStream"/> registers how much data has been 
+    /// This implementation of <see cref="DelegatingStream"/> registers how much data has been
     /// read (received) versus written (sent) for a particular HTTP operation. The implementation
     /// is client side in that the total bytes to send is taken from the request and the total
     /// bytes to read is taken from the response. In a server side scenario, it would be the

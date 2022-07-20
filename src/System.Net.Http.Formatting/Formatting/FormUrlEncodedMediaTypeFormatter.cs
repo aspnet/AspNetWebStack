@@ -13,7 +13,7 @@ using System.Web.Http;
 namespace System.Net.Http.Formatting
 {
     /// <summary>
-    /// <see cref="MediaTypeFormatter"/> class for handling HTML form URL-ended data, also known as <c>application/x-www-form-urlencoded</c>. 
+    /// <see cref="MediaTypeFormatter"/> class for handling HTML form URL-ended data, also known as <c>application/x-www-form-urlencoded</c>.
     /// </summary>
     public class FormUrlEncodedMediaTypeFormatter : MediaTypeFormatter
     {
@@ -119,7 +119,7 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("type");
             }
 
-            // Can't read arbitrary types. 
+            // Can't read arbitrary types.
             return type == typeof(FormDataCollection) || FormattingUtilities.IsJTokenType(type);
         }
 
@@ -193,7 +193,7 @@ namespace System.Net.Http.Formatting
         }
 
         /// <summary>
-        /// Reads all name-value pairs encoded as HTML Form URL encoded data and add them to 
+        /// Reads all name-value pairs encoded as HTML Form URL encoded data and add them to
         /// a collection as UNescaped URI strings.
         /// </summary>
         /// <param name="input">Stream to read from.</param>

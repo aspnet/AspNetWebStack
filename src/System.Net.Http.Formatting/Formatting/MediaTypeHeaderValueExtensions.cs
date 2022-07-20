@@ -17,8 +17,8 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Determines whether two <see cref="MediaTypeHeaderValue"/> instances match. The instance
         /// <paramref name="mediaType1"/> is said to match <paramref name="mediaType2"/> if and only if
-        /// <paramref name="mediaType1"/> is a strict subset of the values and parameters of <paramref name="mediaType2"/>. 
-        /// That is, if the media type and media type parameters of <paramref name="mediaType1"/> are all present 
+        /// <paramref name="mediaType1"/> is a strict subset of the values and parameters of <paramref name="mediaType2"/>.
+        /// That is, if the media type and media type parameters of <paramref name="mediaType1"/> are all present
         /// and match those of <paramref name="mediaType2"/> then it is a match even though <paramref name="mediaType2"/> may have additional
         /// parameters.
         /// </summary>
@@ -34,8 +34,8 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Determines whether two <see cref="MediaTypeHeaderValue"/> instances match. The instance
         /// <paramref name="mediaType1"/> is said to match <paramref name="mediaType2"/> if and only if
-        /// <paramref name="mediaType1"/> is a strict subset of the values and parameters of <paramref name="mediaType2"/>. 
-        /// That is, if the media type and media type parameters of <paramref name="mediaType1"/> are all present 
+        /// <paramref name="mediaType1"/> is a strict subset of the values and parameters of <paramref name="mediaType2"/>.
+        /// That is, if the media type and media type parameters of <paramref name="mediaType1"/> are all present
         /// and match those of <paramref name="mediaType2"/> then it is a match even though <paramref name="mediaType2"/> may have additional
         /// parameters.
         /// </summary>
@@ -75,12 +75,12 @@ namespace System.Net.Http.Formatting
                 }
             }
 
-            // So far we either have a full match or a subset match. Now check that all of 
+            // So far we either have a full match or a subset match. Now check that all of
             // mediaType1's parameters are present and equal in mediatype2
             // Optimize for the common case where the parameters inherit from Collection<T> and cache the count which is faster for Collection<T>.
             Collection<NameValueHeaderValue> parameters1 = mediaType1.Parameters.AsCollection();
             int parameterCount1 = parameters1.Count;
-            Collection<NameValueHeaderValue> parameters2 = mediaType2.Parameters.AsCollection(); 
+            Collection<NameValueHeaderValue> parameters2 = mediaType2.Parameters.AsCollection();
             int parameterCount2 = parameters2.Count;
             for (int i = 0; i < parameterCount1; i++)
             {

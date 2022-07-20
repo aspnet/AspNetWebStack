@@ -74,7 +74,7 @@ namespace System.Web.Http
         }
 
         /// <summary>
-        /// Creates an <see cref="ArgumentException"/> with a message saying that the argument must be an absolute URI 
+        /// Creates an <see cref="ArgumentException"/> with a message saying that the argument must be an absolute URI
         /// without a query or fragment identifier and then logs it with <see cref="F:TraceLevel.Error"/>.
         /// </summary>
         /// <param name="parameterName">The name of the parameter that caused the current exception.</param>

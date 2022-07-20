@@ -56,8 +56,8 @@ namespace System.Net.Http.Formatting.Parsers
         }
 
         /// <summary>
-        /// Parse an HTTP request line. 
-        /// Bytes are parsed in a consuming manner from the beginning of the request buffer meaning that the same bytes can not be 
+        /// Parse an HTTP request line.
+        /// Bytes are parsed in a consuming manner from the beginning of the request buffer meaning that the same bytes can not be
         /// present in the request buffer.
         /// </summary>
         /// <param name="buffer">Request buffer from where request is read</param>

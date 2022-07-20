@@ -13,9 +13,9 @@ using Newtonsoft.Json.Linq;
 namespace System.Net.Http.Formatting
 {
     /// <summary>
-    /// This class provides a low-level API for parsing HTML form URL-encoded data, also known as <c>application/x-www-form-urlencoded</c> 
-    /// data. The output of the parser is a <see cref="JObject"/> instance. 
-    /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+    /// This class provides a low-level API for parsing HTML form URL-encoded data, also known as <c>application/x-www-form-urlencoded</c>
+    /// data. The output of the parser is a <see cref="JObject"/> instance.
+    /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
     /// is not intended to be called directly from user code.</remarks>
     /// </summary>
     internal static class FormUrlEncodedJson
@@ -31,7 +31,7 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Parses a collection of query string values as a <see cref="JObject"/>.
         /// </summary>
-        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
         /// is not intended to be called directly from user code.</remarks>
         /// <param name="nameValuePairs">The collection of query string name-value pairs parsed in lexical order. Both names
         /// and values must be un-escaped so that they don't contain any <see cref="Uri"/> encoding.</param>
@@ -44,7 +44,7 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Parses a collection of query string values as a <see cref="JObject"/>.
         /// </summary>
-        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
         /// is not intended to be called directly from user code.</remarks>
         /// <param name="nameValuePairs">The collection of query string name-value pairs parsed in lexical order. Both names
         /// and values must be un-escaped so that they don't contain any <see cref="Uri"/> encoding.</param>
@@ -58,7 +58,7 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Parses a collection of query string values as a <see cref="JObject"/>.
         /// </summary>
-        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
         /// is not intended to be called directly from user code.</remarks>
         /// <param name="nameValuePairs">The collection of query string name-value pairs parsed in lexical order. Both names
         /// and values must be un-escaped so that they don't contain any <see cref="Uri"/> encoding.</param>
@@ -72,7 +72,7 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Parses a collection of query string values as a <see cref="JObject"/>.
         /// </summary>
-        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
         /// is not intended to be called directly from user code.</remarks>
         /// <param name="nameValuePairs">The collection of query string name-value pairs parsed in lexical order. Both names
         /// and values must be un-escaped so that they don't contain any <see cref="Uri"/> encoding.</param>
@@ -87,7 +87,7 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Parses a collection of query string values as a <see cref="JObject"/>.
         /// </summary>
-        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and 
+        /// <remarks>This is a low-level API intended for use by other APIs. It has been optimized for performance and
         /// is not intended to be called directly from user code.</remarks>
         /// <param name="nameValuePairs">The collection of query string name-value pairs parsed in lexical order. Both names
         /// and values must be un-escaped so that they don't contain any <see cref="Uri"/> encoding.</param>
@@ -112,7 +112,7 @@ namespace System.Net.Http.Formatting
                 string key = nameValuePair.Key;
                 string value = nameValuePair.Value;
 
-                // value is preserved, even if it's null, "undefined", "null", String.Empty, etc when converting to JToken. 
+                // value is preserved, even if it's null, "undefined", "null", String.Empty, etc when converting to JToken.
 
                 if (key == null)
                 {

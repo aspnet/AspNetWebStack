@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace System.Net.Http.Formatting.Parsers
 {
     /// <summary>
-    /// Complete MIME multipart parser that combines <see cref="MimeMultipartParser"/> for parsing the MIME message into individual body parts 
+    /// Complete MIME multipart parser that combines <see cref="MimeMultipartParser"/> for parsing the MIME message into individual body parts
     /// and <see cref="InternetMessageFormatHeaderParser"/> for parsing each body part into a MIME header and a MIME body. The caller of the parser is returned
     /// the resulting MIME bodies which can then be written to some output.
     /// </summary>
@@ -104,7 +104,7 @@ namespace System.Net.Http.Formatting.Parsers
         }
 
         /// <summary>
-        /// Parses the data provided and generates parsed MIME body part bodies in the form of <see cref="ArraySegment{T}"/> which are ready to 
+        /// Parses the data provided and generates parsed MIME body part bodies in the form of <see cref="ArraySegment{T}"/> which are ready to
         /// write to the output stream.
         /// </summary>
         /// <param name="data">The data to parse</param>
@@ -116,11 +116,11 @@ namespace System.Net.Http.Formatting.Parsers
             bool isFinal = false;
 
             // There's a special case here - if we've reached the end of the message and there's no optional
-            // CRLF, then we're out of bytes to read, but we have finished the message. 
+            // CRLF, then we're out of bytes to read, but we have finished the message.
             //
-            // If IsWaitingForEndOfMessage is true and we're at the end of the stream, then we're going to 
-            // call into the parser again with an empty array as the buffer to signal the end of the parse. 
-            // Then the final boundary segment will be marked as complete. 
+            // If IsWaitingForEndOfMessage is true and we're at the end of the stream, then we're going to
+            // call into the parser again with an empty array as the buffer to signal the end of the parse.
+            // Then the final boundary segment will be marked as complete.
             if (bytesRead == 0 && !_mimeParser.IsWaitingForEndOfMessage)
             {
                 CleanupCurrentBodyPart();
@@ -195,7 +195,7 @@ namespace System.Net.Http.Formatting.Parsers
                 }
                 else
                 {
-                    // Otherwise return what we have 
+                    // Otherwise return what we have
                     yield return _currentBodyPart;
                 }
             }

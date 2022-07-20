@@ -1,18 +1,17 @@
 <Project ToolsVersion="4.0" DefaultTargets="Xunit" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="WebStack.tasks.targets"/>
+  <!--
+    This is a separate MSBuild file so that we can survive upgrades of the xunit NuGet package
+    and also still work with NuGet Package Restore.
+  -->
+  <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
 
-    <!-- This is a separate MSBuild file so that we can survive upgrades of the xunit NuGet package
-         and also still work with NuGet Package Restore. -->
-    <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
+  <Target Name="Xunit" Returns="@(_ExitCodes)">
+    <xunit Assemblies="$(TestAssembly)" Xml="$(XmlPath)" IgnoreFailures="true">
+      <Output TaskParameter="ExitCode" PropertyName="_ExitCode" />
+    </xunit>
 
-    <Target Name="Xunit">
-        <xunit Assemblies="$(TestAssembly)" Xml="$(XmlPath)"/>
-
-        <!-- Replace potentially illegal escaped characters (if they get through validations done during Save). -->
-        <RegexReplace
-            Files="$(XmlPath)"
-            Find="&amp;#x(?&lt;char&gt;[0-9A-Fa-f]+);"
-            Replace="\0x${char}"
-            WarnOnNoMatch="false"/>
-    </Target>
+    <ItemGroup>
+      <_ExitCodes Include="$(TestAssembly)" Code="$(_ExitCode)" />
+    </ItemGroup>
+  </Target>
 </Project>

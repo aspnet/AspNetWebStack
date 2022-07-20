@@ -11,7 +11,7 @@
 namespace System.Net.Http.Properties {
     using System;
     using System.Reflection;
-    
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace System.Net.Http.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -50,7 +50,7 @@ namespace System.Net.Http.Properties {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -64,7 +64,7 @@ namespace System.Net.Http.Properties {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Async Callback threw an exception..
         /// </summary>
@@ -73,7 +73,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("AsyncResult_CallbackThrewException", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The IAsyncResult implementation &apos;{0}&apos; tried to complete a single operation multiple times. This could be caused by an incorrect application IAsyncResult implementation or other extensibility code, such as an IAsyncResult that returns incorrect CompletedSynchronously values or invokes the AsyncCallback multiple times..
         /// </summary>
@@ -82,7 +82,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("AsyncResult_MultipleCompletes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to End cannot be called twice on an AsyncResult..
         /// </summary>
@@ -91,7 +91,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("AsyncResult_MultipleEnds", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An incorrect IAsyncResult was provided to an &apos;End&apos; method. The IAsyncResult object passed to &apos;End&apos; must be the one returned from the matching &apos;Begin&apos; or passed to the callback provided to &apos;Begin&apos;..
         /// </summary>
@@ -100,7 +100,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("AsyncResult_ResultMismatch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Found zero byte ranges. There must be at least one byte range provided..
         /// </summary>
@@ -109,7 +109,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamContentNoRanges", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The range unit &apos;{0}&apos; is not valid. The range must have a unit of &apos;{1}&apos;..
         /// </summary>
@@ -118,7 +118,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamContentNotBytesRange", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The stream over which &apos;{0}&apos; provides a range view must have a length greater than or equal to 1..
         /// </summary>
@@ -127,7 +127,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamEmpty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;From&apos; value of the range must be less than or equal to {0}..
         /// </summary>
@@ -136,7 +136,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamInvalidFrom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An attempt was made to move the position before the beginning of the stream..
         /// </summary>
@@ -145,7 +145,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamInvalidOffset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None of the requested ranges ({0}) overlap with the current extent of the selected resource..
         /// </summary>
@@ -154,7 +154,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamNoneOverlap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The requested range ({0}) does not overlap with the current extent of the selected resource..
         /// </summary>
@@ -163,7 +163,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamNoOverlap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The stream over which &apos;{0}&apos; provides a range view must be seekable..
         /// </summary>
@@ -172,7 +172,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamNotSeekable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This is a read-only stream..
         /// </summary>
@@ -181,7 +181,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ByteRangeStreamReadOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A null &apos;{0}&apos; is not valid..
         /// </summary>
@@ -190,7 +190,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("CannotHaveNullInList", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; of &apos;{1}&apos; cannot be used as a supported media type because it is a media range..
         /// </summary>
@@ -199,7 +199,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("CannotUseMediaRangeForSupportedMediaType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; type cannot accept a null value for the value type &apos;{1}&apos;..
         /// </summary>
@@ -208,7 +208,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("CannotUseNullValueType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The specified value is not a valid cookie name..
         /// </summary>
@@ -217,7 +217,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("CookieInvalidName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cookie cannot be null..
         /// </summary>
@@ -226,7 +226,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("CookieNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; list is invalid because it contains one or more null items..
         /// </summary>
@@ -235,7 +235,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("DelegatingHandlerArrayContainsNullItem", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; list is invalid because the property &apos;{1}&apos; of &apos;{2}&apos; is not null..
         /// </summary>
@@ -244,7 +244,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("DelegatingHandlerArrayHasNonNullInnerHandler", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error reading HTML form URL-encoded data stream..
         /// </summary>
@@ -253,7 +253,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ErrorReadingFormUrlEncodedStream", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mismatched types at node &apos;{0}&apos;..
         /// </summary>
@@ -262,7 +262,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("FormUrlEncodedMismatchingTypes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing HTML form URL-encoded data, byte {0}..
         /// </summary>
@@ -271,7 +271,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("FormUrlEncodedParseError", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid HTTP status code: &apos;{0}&apos;. The status code must be between {1} and {2}..
         /// </summary>
@@ -280,7 +280,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpInvalidStatusCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid HTTP version: &apos;{0}&apos;. The version must start with the characters &apos;{1}&apos;..
         /// </summary>
@@ -289,7 +289,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpInvalidVersion", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; of the &apos;{1}&apos; has already been read..
         /// </summary>
@@ -298,7 +298,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageContentAlreadyRead", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; must be seekable in order to create an &apos;{1}&apos; instance containing an entity body.  .
         /// </summary>
@@ -307,7 +307,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageContentStreamMustBeSeekable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error reading HTTP message..
         /// </summary>
@@ -316,7 +316,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageErrorReading", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; instance provided. It does not have a content type header with a value of &apos;{1}&apos;..
         /// </summary>
@@ -325,7 +325,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageInvalidMediaType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to HTTP Request URI cannot be an empty string..
         /// </summary>
@@ -334,7 +334,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageParserEmptyUri", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing HTTP message header byte {0} of message {1}..
         /// </summary>
@@ -343,7 +343,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageParserError", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An invalid number of &apos;{0}&apos; header fields were present in the HTTP Request. It must contain exactly one &apos;{0}&apos; header field but found {1}..
         /// </summary>
@@ -352,7 +352,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageParserInvalidHostCount", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid URI scheme: &apos;{0}&apos;. The URI scheme must be a valid &apos;{1}&apos; scheme..
         /// </summary>
@@ -361,7 +361,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("HttpMessageParserInvalidUriScheme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid array at node &apos;{0}&apos;..
         /// </summary>
@@ -370,7 +370,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("InvalidArrayInsert", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Traditional style array without &apos;[]&apos; is not supported with nested object at location {0}..
         /// </summary>
@@ -379,7 +379,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("JQuery13CompatModeNotSupportNestedJson", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method returned null. It must return a JSON serializer instance..
         /// </summary>
@@ -388,7 +388,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("JsonSerializerFactoryReturnedNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method threw an exception when attempting to create a JSON serializer..
         /// </summary>
@@ -397,7 +397,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("JsonSerializerFactoryThrew", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The maximum read depth ({0}) has been exceeded because the form url-encoded data being read has more levels of nesting than is allowed..
         /// </summary>
@@ -406,7 +406,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MaxDepthExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The number of keys in a NameValueCollection has exceeded the limit of &apos;{0}&apos;. You can adjust it by modifying the MaxHttpCollectionKeys property on the &apos;{1}&apos; class..
         /// </summary>
@@ -415,7 +415,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MaxHttpCollectionKeyLimitReached", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing BSON data; unable to read content as a {0}..
         /// </summary>
@@ -424,7 +424,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatter_BsonParseError_MissingData", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing BSON data; unexpected dictionary content: {0} entries, first key &apos;{1}&apos;..
         /// </summary>
@@ -433,7 +433,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatter_BsonParseError_UnexpectedData", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method returned null. It must return a JSON reader instance..
         /// </summary>
@@ -442,7 +442,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatter_JsonReaderFactoryReturnedNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method returned null. It must return a JSON writer instance..
         /// </summary>
@@ -451,7 +451,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatter_JsonWriterFactoryReturnedNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The media type formatter of type &apos;{0}&apos; does not support reading because it does not implement the ReadFromStreamAsync method..
         /// </summary>
@@ -460,7 +460,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatterCannotRead", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The media type formatter of type &apos;{0}&apos; does not support reading because it does not implement the ReadFromStream method..
         /// </summary>
@@ -469,7 +469,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatterCannotReadSync", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The media type formatter of type &apos;{0}&apos; does not support writing because it does not implement the WriteToStreamAsync method..
         /// </summary>
@@ -478,7 +478,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatterCannotWrite", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The media type formatter of type &apos;{0}&apos; does not support writing because it does not implement the WriteToStream method..
         /// </summary>
@@ -487,7 +487,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatterCannotWriteSync", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No encoding found for media type formatter &apos;{0}&apos;. There must be at least one supported encoding registered in order for the media type formatter to read or write content..
         /// </summary>
@@ -496,7 +496,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MediaTypeFormatterNoEncoding", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MIME multipart boundary cannot end with an empty space..
         /// </summary>
@@ -505,7 +505,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MimeMultipartParserBadBoundary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Did not find required &apos;{0}&apos; header field in MIME multipart body part..
         /// </summary>
@@ -514,7 +514,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MultipartFormDataStreamProviderNoContentDisposition", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Could not determine a valid local file name for the multipart body part..
         /// </summary>
@@ -523,7 +523,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("MultipartStreamProviderInvalidLocalFileName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Nested bracket is not valid for &apos;{0}&apos; data at position {1}..
         /// </summary>
@@ -532,7 +532,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("NestedBracketNotValid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A non-null request URI must be provided to determine if a &apos;{0}&apos; matches a given request or response message..
         /// </summary>
@@ -541,7 +541,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("NonNullUriRequiredForMediaTypeMapping", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No MediaTypeFormatter is available to read an object of type &apos;{0}&apos; from content with media type &apos;{1}&apos;..
         /// </summary>
@@ -550,7 +550,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("NoReadSerializerAvailable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An object of type &apos;{0}&apos; cannot be used with a type parameter of &apos;{1}&apos;..
         /// </summary>
@@ -559,7 +559,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ObjectAndTypeDisagree", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The configured formatter &apos;{0}&apos; cannot write an object of type &apos;{1}&apos;..
         /// </summary>
@@ -568,7 +568,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ObjectContent_FormatterCannotWriteType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Query string name cannot be null..
         /// </summary>
@@ -577,7 +577,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("QueryStringNameShouldNotNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unexpected end of HTTP message stream. HTTP message is not complete..
         /// </summary>
@@ -586,7 +586,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsHttpMessageUnexpectedTermination", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; instance provided. It does not have a &apos;{1}&apos; content-type header with a &apos;{2}&apos; parameter..
         /// </summary>
@@ -595,7 +595,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartArgumentNoBoundary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; instance provided. It does not have a content-type header value. &apos;{0}&apos; instances must have a content-type header starting with &apos;{1}&apos;..
         /// </summary>
@@ -604,7 +604,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartArgumentNoContentType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid &apos;{0}&apos; instance provided. It does not have a content type header starting with &apos;{1}&apos;..
         /// </summary>
@@ -613,7 +613,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartArgumentNoMultipart", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error reading MIME multipart body part..
         /// </summary>
@@ -622,7 +622,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartErrorReading", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error writing MIME multipart body part to output stream..
         /// </summary>
@@ -631,7 +631,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartErrorWriting", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing MIME multipart body part header byte {0} of data segment {1}..
         /// </summary>
@@ -640,7 +640,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartHeaderParseError", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Error parsing MIME multipart message byte {0} of data segment {1}..
         /// </summary>
@@ -649,7 +649,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartParseError", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The stream provider of type &apos;{0}&apos; threw an exception..
         /// </summary>
@@ -658,7 +658,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartStreamProviderException", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The stream provider of type &apos;{0}&apos; returned null. It must return a writable &apos;{1}&apos; instance..
         /// </summary>
@@ -667,7 +667,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartStreamProviderNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The stream provider of type &apos;{0}&apos; returned a read-only stream. It must return a writable &apos;{1}&apos; instance..
         /// </summary>
@@ -676,7 +676,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartStreamProviderReadOnly", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unexpected end of MIME multipart stream. MIME multipart message is not complete..
         /// </summary>
@@ -685,7 +685,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("ReadAsMimeMultipartUnexpectedTermination", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method in &apos;{1}&apos; returned null. It must return a RemoteStreamResult instance containing a writable stream and a valid URL..
         /// </summary>
@@ -694,7 +694,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("RemoteStreamInfoCannotBeNull", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; serializer cannot serialize the type &apos;{1}&apos;..
         /// </summary>
@@ -703,7 +703,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("SerializerCannotSerializeType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is an unmatched opened bracket for the &apos;{0}&apos; at position {1}..
         /// </summary>
@@ -712,7 +712,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("UnMatchedBracketNotValid", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Indentation is not supported by &apos;{0}&apos;..
         /// </summary>
@@ -721,7 +721,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("UnsupportedIndent", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The object of type &apos;{0}&apos; returned by {1} must be an instance of either XmlObjectSerializer or XmlSerializer..
         /// </summary>
@@ -730,7 +730,7 @@ namespace System.Net.Http.Properties {
                 return ResourceManager.GetString("XmlMediaTypeFormatter_InvalidSerializerType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The object returned by {0} must not be a null value..
         /// </summary>

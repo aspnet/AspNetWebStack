@@ -40,12 +40,14 @@ if exist "%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" (
 
 if "%1" == "" goto BuildDefaults
 
-%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M /fl /flp:LogFile=bin\msbuild.log;Verbosity=Normal /t:%*
+%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M ^
+    /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary /t:%*
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 
 :BuildDefaults
-%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M /fl /flp:LogFile=bin\msbuild.log;Verbosity=Normal
+%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M ^
+    /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 

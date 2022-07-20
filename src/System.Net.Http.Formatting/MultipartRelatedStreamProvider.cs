@@ -24,7 +24,7 @@ namespace System.Net.Http
         private HttpContent _parent;
 
         /// <summary>
-        /// Gets the <see cref="HttpContent"/> instance that has been marked as the <c>root</c> content in the 
+        /// Gets the <see cref="HttpContent"/> instance that has been marked as the <c>root</c> content in the
         /// MIME multipart related message using the <c>start</c> parameter. If no <c>start</c> parameter is
         /// present then pick the first of the children.
         /// </summary>
@@ -71,7 +71,7 @@ namespace System.Net.Http
         {
             Contract.Assert(children != null);
 
-            // Find 'start' parameter from parent content type. The value is used 
+            // Find 'start' parameter from parent content type. The value is used
             // to identify the MIME body with the corresponding Content-ID header value.
             NameValueHeaderValue startNameValue = FindMultipartRelatedParameter(parent, StartParameter);
             if (startNameValue == null)

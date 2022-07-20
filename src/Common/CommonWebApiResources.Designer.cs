@@ -24,15 +24,15 @@ namespace System.Web.Http.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class CommonWebApiResources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal CommonWebApiResources() {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -59,7 +59,7 @@ namespace System.Web.Http.Properties {
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -73,7 +73,7 @@ namespace System.Web.Http.Properties {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Relative URI values are not supported: &apos;{0}&apos;. The URI must be absolute..
         /// </summary>
@@ -82,7 +82,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentInvalidAbsoluteUri", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unsupported URI scheme: &apos;{0}&apos;. The URI scheme must be either &apos;{1}&apos; or &apos;{2}&apos;..
         /// </summary>
@@ -91,7 +91,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentInvalidHttpUriScheme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Value must be greater than or equal to {0}..
         /// </summary>
@@ -100,7 +100,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentMustBeGreaterThanOrEqualTo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Value must be less than or equal to {0}..
         /// </summary>
@@ -109,7 +109,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentMustBeLessThanOrEqualTo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The argument &apos;{0}&apos; is null or empty..
         /// </summary>
@@ -118,7 +118,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentNullOrEmpty", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to URI must not contain a query component or a fragment identifier..
         /// </summary>
@@ -127,7 +127,7 @@ namespace System.Web.Http.Properties {
                 return ResourceManager.GetString("ArgumentUriHasQueryOrFragment", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The value of argument &apos;{0}&apos; ({1}) is invalid for Enum type &apos;{2}&apos;..
         /// </summary>

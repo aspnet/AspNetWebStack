@@ -40,14 +40,14 @@ namespace System.Net.Http.Formatting
             }
         }
 
-        public bool IsAllMediaRange 
-        { 
-            get { return _isAllMediaRange; } 
+        public bool IsAllMediaRange
+        {
+            get { return _isAllMediaRange; }
         }
 
-        public bool IsSubtypeMediaRange 
-        { 
-            get { return _isSubtypeMediaRange; } 
+        public bool IsSubtypeMediaRange
+        {
+            get { return _isSubtypeMediaRange; }
         }
 
         public bool TypesEqual(ref ParsedMediaTypeHeaderValue other)
