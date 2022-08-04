@@ -1,105 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net462</TargetFrameworks>
     <RootNamespace>System.Net.Http</RootNamespace>
-    <AssemblyName>System.Net.Http.Formatting.NetCore.Test</AssemblyName>
     <OutputPath>..\..\bin\$(Configuration)\Test\NetCore\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>$(DefineConstants);NETFX_CORE</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.7.142.0" />
     <PackageReference Include="xunit" Version="2.3.0" />
+    <PackageReference Include="xunit.analyzers" Version="1.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="XunitXml.TestLogger" Version="3.0.70" />
 
-    <!--
-      Repeat references from System.Net.Http.Formatting.NetCore/packages.config because legacy project does not
-      provide transitive reference information.
-    -->
-    <PackageReference Include="Microsoft.Net.Http" Version="2.2.13" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\System.Net.Http.Formatting.Test\DataSets\**\*.cs" LinkBase="DataSets\" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\BsonMediaTypeFormatterTests.cs" Link="Formatting\BsonMediaTypeFormatterTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormDataCollectionTests.cs" Link="Formatting\FormDataCollectionTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedFromContentTests.cs" Link="Formatting\FormUrlEncodedFromContentTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedFromUriQueryTests.cs" Link="Formatting\FormUrlEncodedFromUriQueryTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedJsonTests.cs" Link="Formatting\FormUrlEncodedJsonTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\FormUrlEncodedMediaTypeFormatterTests.cs" Link="Formatting\FormUrlEncodedMediaTypeFormatterTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\JsonMediaTypeFormatterTests.cs" Link="Formatting\JsonMediaTypeFormatterTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\JsonNetSerializationTest.cs" Link="Formatting\JsonNetSerializationTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\JsonNetValidationTest.cs" Link="Formatting\JsonNetValidationTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\MediaTypeConstantsTests.cs" Link="Formatting\MediaTypeConstantsTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\MediaTypeFormatterCollectionTests.cs" Link="Formatting\MediaTypeFormatterCollectionTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\MediaTypeFormatterTestBase.cs" Link="Formatting\MediaTypeFormatterTestBase.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\MediaTypeFormatterTests.cs" Link="Formatting\MediaTypeFormatterTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\MediaTypeHeaderValueExtensionsTests.cs" Link="Formatting\MediaTypeHeaderValueExtensionsTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\ParsedMediaTypeHeaderValueTests.cs" Link="Formatting\ParsedMediaTypeHeaderValueTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\Parsers\*.cs" LinkBase="Formatting\Parsers\" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\SerializerConsistencyTests.cs" Link="Formatting\SerializerConsistencyTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Formatting\StringComparisonHelperTest.cs" Link="Formatting\StringComparisonHelperTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\FormattingUtilitiesTests.cs" Link="FormattingUtilitiesTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Handlers\*.cs" LinkBase="Handlers\"
-        Exclude="..\System.Net.Http.Formatting.Test\Handlers\ProgressWriteAsyncResultTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpClientExtensionsTest.cs" Link="HttpClientExtensionsTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpClientFactoryTest.cs" Link="HttpClientFactoryTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpContentExtensionsTest.cs" Link="HttpContentExtensionsTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpContentFormDataExtensionsTest.cs" Link="HttpContentFormDataExtensionsTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpContentMessageExtensionsTests.cs" Link="HttpContentMessageExtensionsTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpContentMultipartExtensionsTests.cs" Link="HttpContentMultipartExtensionsTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpHeaderExtensionsTest.cs" Link="HttpHeaderExtensionsTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpMessageContentTests.cs" Link="HttpMessageContentTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpUnsortedRequestTest.cs" Link="HttpUnsortedRequestTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\HttpUnsortedResponseTest.cs" Link="HttpUnsortedResponseTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Internal\*.cs" LinkBase="Internal\"
-        Exclude="..\System.Net.Http.Formatting.Test\Internal\ByteRangeStreamTest.cs;
-                 ..\System.Net.Http.Formatting.Test\Internal\NonClosingDelegatingStreamTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\MimeBodyPartTest.cs" Link="MimeBodyPartTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\Mocks\*.cs" LinkBase="Mocks\"
-        Exclude="..\System.Net.Http.Formatting.Test\Mocks\MockContentNegotiator.cs;
-                 ..\System.Net.Http.Formatting.Test\Mocks\MockMediaTypeMapping.cs;
-                 ..\System.Net.Http.Formatting.Test\Mocks\MockNonClosingDelegatingStream.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\MultipartFileDataTest.cs" Link="MultipartFileDataTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\MultipartMemoryStreamProviderTests.cs" Link="MultipartMemoryStreamProviderTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\MultipartRelatedStreamProviderTests.cs" Link="MultipartRelatedStreamProviderTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\MultipartStreamProviderTestBase.cs" Link="MultipartStreamProviderTestBase.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\ObjectContentOfTTests.cs" Link="ObjectContentOfTTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\ObjectContentTests.cs" Link="ObjectContentTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\ParserData.cs" Link="ParserData.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\PushStreamContentTest.cs" Link="PushStreamContentTest.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\UriExtensionsTests.cs" Link="UriExtensionsTests.cs" />
-    <Compile Include="..\System.Net.Http.Formatting.Test\UriQueryDataSet.cs" Link="UriQueryDataSet.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="..\System.Net.Http.Formatting.Test\**\*.cs"
+        Exclude="..\System.Net.Http.Formatting.Test\obj\**\*.cs;
+                 ..\System.Net.Http.Formatting.Test\Formatting\BufferedMediaTypeFormatterTests.cs;
+                 ..\System.Net.Http.Formatting.Test\Handlers\ProgressWriteAsyncResultTest.cs">
+      <Link>%(RecursiveDir)\%(Filename).cs</Link>
+    </Compile>
+
     <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj" />
-    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Properties="NetFX_Core=true" />
+
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
-  </ItemGroup>
-  <Import Project="..\..\packages\xunit.core.2.3.0\build\xunit.core.targets"
-      Condition="Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.props')"
-        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.props'))" />
-    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')"
-        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.targets'))" />
-    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props')"
-        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props'))" />
-  </Target>
 </Project>

@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C40883CD-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.TestCommon", "test\Microsoft.TestCommon\Microsoft.TestCommon.csproj", "{FCCC4CB7-BAF7-4A57-9F89-E5766FE536C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.Formatting.NetCore", "src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj", "{C7060639-719B-4BD2-8A37-2F146B5A0668}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Net.Http.Formatting.NetCore", "src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj", "{C7060639-719B-4BD2-8A37-2F146B5A0668}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Net.Http.Formatting.NetCore.Test", "test\System.Net.Http.Formatting.NetCore.Test\System.Net.Http.Formatting.NetCore.Test.csproj", "{8DA61DAC-FF7E-4CA1-93A0-6148DB66FD08}"
 EndProject

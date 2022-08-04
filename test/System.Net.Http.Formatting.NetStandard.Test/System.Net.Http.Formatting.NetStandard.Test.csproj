@@ -3,32 +3,31 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;net462</TargetFrameworks>
     <RootNamespace>System.Net.Http</RootNamespace>
-    <AssemblyName>System.Net.Http.Formatting.NetStandard.Test</AssemblyName>
     <OutputPath>..\..\bin\$(Configuration)\Test\NetStandard\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.7.142.0" />
     <PackageReference Include="xunit" Version="2.3.0" />
+    <PackageReference Include="xunit.analyzers" Version="1.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="XunitXml.TestLogger" Version="3.0.70" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\System.Net.Http.Formatting.Test\**\*.cs" Exclude="..\System.Net.Http.Formatting.Test\obj\**\*.cs">
+
+    <Compile Include="..\System.Net.Http.Formatting.Test\**\*.cs"
+        Exclude="..\System.Net.Http.Formatting.Test\obj\**\*.cs">
       <Link>%(RecursiveDir)\%(Filename).cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetStandard\System.Net.Http.Formatting.NetStandard.csproj" />
     <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>
