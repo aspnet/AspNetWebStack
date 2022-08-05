@@ -200,7 +200,13 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
+#if !NEWTONSOFTJSON10
+#pragma warning disable CS0618 // Type or member is obsolete
+#endif
             BsonReader reader = new BsonReader(new BinaryReader(readStream, effectiveEncoding));
+#if !NEWTONSOFTJSON10
+#pragma warning restore CS0618 // Type or member is obsolete
+#endif
 
             try
             {
@@ -297,7 +303,13 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
+#if !NEWTONSOFTJSON10
+#pragma warning disable CS0618 // Type or member is obsolete
+#endif
             return new BsonWriter(new BinaryWriter(writeStream, effectiveEncoding));
+#if !NEWTONSOFTJSON10
+#pragma warning restore CS0618 // Type or member is obsolete
+#endif
         }
 
         // Return true if Json.Net will likely convert value of given type to a Json primitive, not JsonArray nor
