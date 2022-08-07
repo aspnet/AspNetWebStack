@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A9836F9E-6DB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C40883CD-366D-4534-8B58-3EA0D13136DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.TestCommon", "test\Microsoft.TestCommon\Microsoft.TestCommon.csproj", "{FCCC4CB7-BAF7-4A57-9F89-E5766FE536C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.TestCommon", "test\Microsoft.TestCommon\Microsoft.TestCommon.csproj", "{FCCC4CB7-BAF7-4A57-9F89-E5766FE536C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.Formatting.NetCore", "src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj", "{C7060639-719B-4BD2-8A37-2F146B5A0668}"
 EndProject

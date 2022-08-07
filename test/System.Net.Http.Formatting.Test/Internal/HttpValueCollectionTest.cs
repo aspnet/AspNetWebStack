@@ -27,10 +27,12 @@ namespace System.Net.Http.Internal
 #endif
         }
 
+#if !NETCOREAPP
         private static void RunInIsolation(Action action)
         {
             AppDomainUtils.RunInSeparateAppDomain(action);
         }
+#endif
 
         public static TheoryDataSet<IEnumerable<KeyValuePair<string, string>>> KeyValuePairs
         {

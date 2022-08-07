@@ -466,6 +466,7 @@ namespace Microsoft.TestCommon
                         String.Format(CultureReplacer.DefaultCulture, "Value must be less than or equal to {0}.", maxValue), false, actualValue);
         }
 
+#if !NETCOREAPP
         /// <summary>
         /// Verifies that the code throws an HttpException (or optionally any exception which derives from it).
         /// </summary>
@@ -481,6 +482,7 @@ namespace Microsoft.TestCommon
             Equal(httpCode, ex.GetHttpCode());
             return ex;
         }
+#endif
 
         /// <summary>
         /// Verifies that the code throws an InvalidEnumArgumentException (or optionally any exception which derives from it).
