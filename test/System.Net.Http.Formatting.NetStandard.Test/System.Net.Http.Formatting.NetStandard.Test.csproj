@@ -9,16 +9,20 @@
     <DefineConstants>$(DefineConstants);Testing_NetStandard2_0</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Version 2.4.5 does not support netstandard2.1. -->
+    <_VSRunnerVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">2.4.3</_VSRunnerVersion>
+    <_VSRunnerVersion Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">2.4.5</_VSRunnerVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.7.5" />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="Moq" Version="4.7.142.0" />
-    <PackageReference Include="xunit" Version="2.3.0" />
-    <PackageReference Include="xunit.analyzers" Version="1.0.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1">
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.analyzers" Version="1.1.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(_VSRunnerVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
