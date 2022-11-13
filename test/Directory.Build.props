@@ -4,6 +4,6 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <TargetFrameworkVersion Condition="'$(MSBuildProjectName)' != 'System.Net.Http.Formatting.NetStandard.Test'">v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion Condition=" !$(MSBuildProjectName.StartsWith('System.Net.Http.Formatting.Net')) ">v4.5.2</TargetFrameworkVersion>
   </PropertyGroup>
 </Project>

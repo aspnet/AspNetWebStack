@@ -102,11 +102,17 @@
   <Target Name="RunTests" DependsOnTargets="CheckSkipStrongNames">
     <ItemGroup>
       <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll" />
-      <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.*.dll" />
-      <_TestDLLsXunit Include="bin\$(Configuration)\Test\NetCore\*.Test.dll" Condition="'$(BuildPortable)' == 'true'" />
+      <_TestDLLsXunit Include="bin\$(Configuration)\test\*\net4*\*.Test.dll" Condition="'$(BuildPortable)' == 'true'" />
       <_XunitProject Include="tools\WebStack.xunit.targets">
         <Properties>TestAssembly=%(_TestDLLsXunit.FullPath);XmlPath=$(TestResultsDirectory)%(_TestDLLsXunit.FileName)-XunitResults.xml</Properties>
       </_XunitProject>
+
+      <_VSTestDLLs Include="bin\$(Configuration)\test\*\netcoreapp*\*.Test.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <_VSTestDLLs>
+        <TestResultsPath>$(TestResultsDirectory)%(FileName)-NetCoreApp-XunitResults.xml</TestResultsPath>
+      </_VSTestDLLs>
     </ItemGroup>
 
     <!-- Recreate the test results directory so that print summary doesn't run on old test results. -->
@@ -117,12 +123,11 @@
       <Output TaskParameter="TargetOutputs" ItemName="_ExitCodes" />
     </MSBuild>
 
-    <!-- Failures in this project will fail build. But, results will not be included in test run summary. -->
-    <MSBuild
-      Properties="Configuration=$(Configuration)"
-      Projects="test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj"
-      Targets="Test"
-      Condition="'$(BuildPortable)' == 'true'" />
+    <Exec Command="dotnet vstest @(_VSTestDLLs) --logger:&quot;xunit;LogFilePath=%(_VSTestDLLs.TestResultsPath)&quot;"
+        Condition=" '$(BuildPortable)' == 'true' "
+        IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" ItemName="_VSTestErrorCode" />
+    </Exec>
   </Target>
 
   <Target Name="CheckSkipStrongNames" DependsOnTargets="RestoreSkipStrongNames">
