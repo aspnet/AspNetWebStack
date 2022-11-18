@@ -44,7 +44,7 @@ jobs:
   displayName: CodeQL
   pool:
     name: NetCore1ESPool-Internal
-    demands: ImageOverride -equals build.windows.10.amd64.vs2017
+    demands: ImageOverride -equals windows.vs2017.amd64
   timeoutInMinutes: 90
 
   steps:
