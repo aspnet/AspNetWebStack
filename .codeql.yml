@@ -59,8 +59,8 @@ jobs:
   - script: .\build.cmd EnableSkipStrongNames
     displayName: Windows Build - EnableSkipStrongNames
 
-   - script: .\build.cmd
-     displayName: Windows Build
+  - script: .\build.cmd
+    displayName: Windows Build
 
   - task: CodeQL3000Finalize@0
     displayName: CodeQL Finalize
