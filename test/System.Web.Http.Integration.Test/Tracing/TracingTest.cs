@@ -380,12 +380,24 @@ namespace System.Web.Http.ModelBinding
                 // artifact specific to testing in VS. (Attempting to load all types from xunit.runner.visualstudio.testadapter.dll
                 // fails with recent xUnit.net packages. The assembly references Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
                 // which is not available with xUnit.net 2.0.x.)
+                //
+                // Similarly, ignore records for the same exception to allow test to succeed when using the xUnit MSBuild runner.
+                // In that case, missing types may come from System.Web and Microsoft.Build.Utilities.v4.0 as well as xunit.runner.msbuild.net452.
                 if (actualRecord.Operation == null &&
                     actualRecord.Exception is ReflectionTypeLoadException &&
                     actualRecord.Message != null &&
-                    actualRecord.Message.StartsWith(
-                        "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
-                        StringComparison.Ordinal))
+                    (actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'xunit.runner.msbuild.",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'System.Web, ",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'Microsoft.Build.Utilities.",
+                         StringComparison.Ordinal)))
                 {
                     continue;
                 }
@@ -397,8 +409,8 @@ namespace System.Web.Http.ModelBinding
 
                 if (expectedTrace == null)
                 {
-                    unexpected.Add(string.Format("kind={0} category={1}, operator={2}, operation={3}",
-                                    actualRecord.Kind, actualRecord.Category, actualRecord.Operator, actualRecord.Operation));
+                    unexpected.Add(string.Format("kind={0} category={1}, operator={2}, operation={3}, message={4}",
+                        actualRecord.Kind, actualRecord.Category, actualRecord.Operator, actualRecord.Operation, actualRecord.Message));
                 }
             }
 
@@ -422,14 +434,26 @@ namespace System.Web.Http.ModelBinding
                 // artifact specific to testing in VS. (Attempting to load all types from xunit.runner.visualstudio.testadapter.dll
                 // fails with recent xUnit.net packages. The assembly references Microsoft.VisualStudio.TestPlatform.ObjectModel.dll
                 // which is not available with xUnit.net 2.0.x.)
+                //
+                // Similarly, ignore records for the same exception to allow test to succeed when using the xUnit MSBuild runner.
+                // In that case, missing types may come from System.Web and Microsoft.Build.Utilities.v4.0 as well as xunit.runner.msbuild.net452.
                 var actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);
-                if (actualRecord != null &&
+                while (actualRecord != null &&
                     actualRecord.Operation == null &&
                     actualRecord.Exception is ReflectionTypeLoadException &&
                     actualRecord.Message != null &&
-                    actualRecord.Message.StartsWith(
-                        "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
-                        StringComparison.Ordinal))
+                    (actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'xunit.runner.visualstudio.testadapter, ",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'xunit.runner.msbuild.",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'System.Web, ",
+                         StringComparison.Ordinal) ||
+                     actualRecord.Message.StartsWith(
+                         "Exception thrown while getting types from 'Microsoft.Build.Utilities.",
+                         StringComparison.Ordinal)))
                 {
                     traceBeginPos++;
                     actualRecord = actualRecords.ElementAtOrDefault(traceBeginPos);

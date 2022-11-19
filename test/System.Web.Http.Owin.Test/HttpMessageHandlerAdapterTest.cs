@@ -429,7 +429,6 @@ namespace System.Web.Http.Owin
         [InlineData(@"-_.~+""<>^`{|}")]
         // random unicode characters
         [InlineData("激光這")]
-        [InlineData("%24")]
         [InlineData("?#")]
         public async Task Invoke_CreatesUri_ThatGeneratesCorrectlyDecodedStrings(string decodedId)
         {
@@ -445,6 +444,27 @@ namespace System.Web.Http.Owin
 
             Assert.NotNull(routeData);
             Assert.Equal(decodedId, routeData.Values["id"]);
+        }
+
+        [Theory]
+        [InlineData("%24", "$")]
+        [InlineData("%28%29", "()")]
+        [InlineData("%5B%5D", "[]")]
+        [InlineData("%7B%7D", "{}")]
+        public async Task Invoke_CreatesUri_ContainingCorrectlyDecodedStrings(string encoded, string decoded)
+        {
+            var handler = CreateOKHandlerStub();
+            var bufferPolicySelector = CreateBufferPolicySelector(bufferInput: false, bufferOutput: false);
+            var environment = CreateOwinEnvironment("GET", "http", "localhost", "/vroot", "/api/customers/" + encoded);
+            var options = CreateValidOptions(handler, bufferPolicySelector);
+            var adapter = CreateProductUnderTest(options);
+            var route = new HttpRoute("api/customers/{id}");
+
+            await adapter.Invoke(new OwinContext(environment));
+            IHttpRouteData routeData = route.GetRouteData("/vroot", handler.Request);
+
+            Assert.NotNull(routeData);
+            Assert.Equal(decoded, routeData.Values["id"]);
         }
 
         [Fact]

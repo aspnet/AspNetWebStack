@@ -41,7 +41,7 @@
       <Link>Common\UriQueryUtility.cs</Link>
     </Compile>
 
-    <Compile Include="..\System.Net.Http.Formatting\**\*.cs">
+    <Compile Include="..\System.Net.Http.Formatting\**\*.cs" Exclude="..\System.Net.Http.Formatting\obj\**\*.cs">
       <Link>%(RecursiveDir)\%(Filename).cs</Link>
     </Compile>
   </ItemGroup>
