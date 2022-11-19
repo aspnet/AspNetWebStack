@@ -73,8 +73,8 @@
 
     <Exec Command='"$(NuGetExe)" restore "%(SolutionsToBuild.Identity)" ^
         -PackagesDirectory packages -NonInteractive ^
-        -Verbosity normal -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config" ^
-        -EnvironmentVariables "RestoreUseSkipNonexistentTargets=true"' />
+        -Verbosity normal -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"'
+        EnvironmentVariables="RestoreUseSkipNonexistentTargets=true" />
   </Target>
 
   <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
