@@ -64,29 +64,38 @@
   </Target>
 
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
+    <ItemGroup>
+      <_NuGetPackagesAndSolutions Include="src\System.Net.Http.Formatting.NetCore\packages.config;
+          test\System.Net.Http.Formatting.NetCore.Test\packages.config;
+          Runtime.sln" />
+
+      <!-- Avoid restoring RuntimePortable.sln directly. -->
+      <_NuGetPackagesAndSolutions Include="src\System.Net.Http.Formatting.NetCore\packages.config;
+          test\System.Net.Http.Formatting.NetCore.Test\packages.config"
+        Condition=" '$(BuildPortable)' == 'true' " />
+      <_ProjectsToRestore Include="src\System.Net.Http.Formatting.NetStandard\System.Net.Http.Formatting.NetStandard.csproj;
+          test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj"
+        Condition=" '$(BuildPortable)' == 'true' " />
+    </ItemGroup>
+
     <Message Text="Restoring NuGet packages..." Importance="High" />
-
-    <!-- NuGet.exe attempts to read src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj and imports fails without packages. -->
-    <Exec Command='"$(NuGetExe)" restore "src\System.Net.Http.Formatting.NetCore\packages.config" ^
+    <Exec Command='"$(NuGetExe)" restore "%(_NuGetPackagesAndSolutions.Identity)" ^
         -PackagesDirectory packages -NonInteractive ^
-        -Verbosity quiet -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"' />
-
-    <Exec Command='"$(NuGetExe)" restore "%(SolutionsToBuild.Identity)" ^
-        -PackagesDirectory packages -NonInteractive ^
-        -Verbosity normal -ConfigFile "$(MsBuildThisFileDirectory)\.nuget\NuGet.Config"'
-        EnvironmentVariables="RestoreUseSkipNonexistentTargets=true" />
+        -Verbosity normal -ConfigFile "$(MSBuildThisFileDirectory)\.nuget\NuGet.Config"' />
+    <MSBuild Projects="@(_ProjectsToRestore)" Targets="Restore" Properties="Configuration=$(Configuration)"
+      Condition=" '$(BuildPortable)' == 'true' " />
   </Target>
 
   <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
   <Target Name="BuildTools">
     <PropertyGroup>
-        <FxCopProjectLocation>$(MsBuildThisFileDirectory)tools\src\Microsoft.Web.FxCop\</FxCopProjectLocation>
-        <CustomFxCopRulesPath>$(MsBuildThisFileDirectory)packages\CustomFxCopRules</CustomFxCopRulesPath>
+        <FxCopProjectLocation>$(MSBuildThisFileDirectory)tools\src\Microsoft.Web.FxCop\</FxCopProjectLocation>
+        <CustomFxCopRulesPath>$(MSBuildThisFileDirectory)packages\CustomFxCopRules</CustomFxCopRulesPath>
     </PropertyGroup>
-    <MsBuild
-          Condition=" '$(CodeAnalysis)' == 'true' "
-          Projects="$(FxCopProjectLocation)\Microsoft.Web.FxCop.csproj"
-          Properties="Configuration=Release;OutputPath=$(CustomFxCopRulesPath)" />
+    <MSBuild
+        Condition=" '$(CodeAnalysis)' == 'true' "
+        Projects="$(FxCopProjectLocation)\Microsoft.Web.FxCop.csproj"
+        Properties="Configuration=Release;OutputPath=$(CustomFxCopRulesPath)" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages;BuildTools">
@@ -94,11 +103,11 @@
     <Error Condition=" '$(CodeAnalysis)' == 'true' and '$(Configuration)' == 'Release' " Text="Unable to run code analysis in Release configuration. Release assemblies do not include SuppressMessage attributes (so code analysis would always fail with the errors that are normally suppressed)." />
     <MakeDir Directories="bin\$(Configuration)" />
     <MSBuild
-          Projects="@(SolutionsToBuild)"
-          BuildInParallel="%(SolutionsToBuild.BuildInParallel)"
-          Targets="Build"
-          Condition=" '%(SolutionsToBuild.Portable)' != 'true' or '$(BuildPortable)' == 'true' "
-          Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);VisualStudioVersion=$(VisualStudioVersion)" />
+        Projects="@(SolutionsToBuild)"
+        BuildInParallel="%(SolutionsToBuild.BuildInParallel)"
+        Targets="Build"
+        Condition=" '%(SolutionsToBuild.Portable)' != 'true' or '$(BuildPortable)' == 'true' "
+        Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);VisualStudioVersion=$(VisualStudioVersion)" />
   </Target>
 
   <Target Name="UnitTest" DependsOnTargets="CheckSkipStrongNames;Build">
