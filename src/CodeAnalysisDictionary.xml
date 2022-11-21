@@ -55,6 +55,13 @@
             <Word>ModelName</Word>
             <Word>BSON</Word>
             <Word>Untyped</Word>
+            <Word>Behavior</Word>
+            <Word>Callback</Word>
+            <Word>Canceled</Word>
+            <Word>Color</Word>
+            <Word>Fallback</Word>
+            <Word>Markup</Word>
+            <Word>Preflight</Word>
         </Recognized>
         <Compound>
             <Term CompoundAlternate="WebPage">WebPage</Term>
