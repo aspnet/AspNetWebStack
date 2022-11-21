@@ -1,0 +1,66 @@
+parameters:
+  # Optionally do not publish to TSA. Useful for e.g. verifying fixes before PR.
+- name: TSAEnabled
+  displayName: Publish results to TSA
+  type: boolean
+  default: true
+
+variables:
+- template: eng/common/templates/variables/pool-providers.yml
+  # CG is handled in the primary CI pipeline
+- name: skipComponentGovernanceDetection
+  value: true
+  # Force CodeQL enabled so it may be run on any branch
+- name: Codeql.Enabled
+  value: true
+  # Do not let CodeQL 3000 Extension gate scan frequency
+- name: Codeql.Cadence
+  value: 0
+- name: Codeql.SourceRoot
+  value: src
+  # CodeQL needs this plumbed along as a variable to enable TSA
+- name: Codeql.TSAEnabled
+  value: ${{ parameters.TSAEnabled }}
+# Default expects tsaoptions.json under SourceRoot.
+- name: Codeql.TSAOptionsPath
+  value: '$(Build.SourcesDirectory)/.config/tsaoptions.json'
+
+  # Build variables
+- name: _BuildConfig
+  value: Release
+
+trigger: none
+
+schedules:
+  - cron: 0 12 * * 1
+    displayName: Weekly Monday CodeQL run
+    branches:
+      include:
+      - main
+    always: true
+
+jobs:
+- job: codeql
+  displayName: CodeQL
+  pool:
+    name: NetCore1ESPool-Internal
+    demands: ImageOverride -equals windows.vs2017.amd64
+  timeoutInMinutes: 90
+
+  steps:
+
+  - task: UseDotNet@2
+    inputs:
+      useGlobalJson: true
+
+  - task: CodeQL3000Init@0
+    displayName: CodeQL Initialize
+
+  - script: .\build.cmd EnableSkipStrongNames
+    displayName: Windows Build - EnableSkipStrongNames
+
+  - script: .\build.cmd
+    displayName: Windows Build
+
+  - task: CodeQL3000Finalize@0
+    displayName: CodeQL Finalize
