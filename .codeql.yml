@@ -6,7 +6,6 @@ parameters:
   default: true
 
 variables:
-- template: eng/common/templates/variables/pool-providers.yml
   # CG is handled in the primary CI pipeline
 - name: skipComponentGovernanceDetection
   value: true
@@ -59,7 +58,7 @@ jobs:
   - script: .\build.cmd EnableSkipStrongNames
     displayName: Windows Build - EnableSkipStrongNames
 
-  - script: .\build.cmd
+  - script: .\build.cmd Build /p:BuildPortable=true /p:Desktop=false
     displayName: Windows Build
 
   - task: CodeQL3000Finalize@0
