@@ -67,7 +67,7 @@ jobs:
     displayName: Enable SkipStrongNames
   - script: .\build.cmd $(_BuildTarget) /p:Desktop=false /p:BuildPortable=true ^
       /binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled) ^
-      /flp:LogFile=artifacts/msbuild.log;Verbosity=Normal
+      /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
     displayName: Build
 
   - publish: ./bin/$(_Configuration)/Test/TestResults/
