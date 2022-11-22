@@ -72,11 +72,11 @@ jobs:
 
   - publish: ./bin/$(_Configuration)/Test/TestResults/
     artifact: $(_Configuration) Test Results
-    condition: and(always(), ne('$(_BuildTarget)', 'Build'))
+    condition: and(always(), ne(variables._BuildTarget, 'Build'))
     continueOnError: true
     displayName: Upload test results
   - task: PublishTestResults@2
-    condition: and(always(), ne('$(_BuildTarget)', 'Build'))
+    condition: and(always(), ne(variables._BuildTarget, 'Build'))
     continueOnError: true
     displayName: Publish test results
     inputs:
