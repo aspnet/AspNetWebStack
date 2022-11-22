@@ -64,11 +64,11 @@ jobs:
       useGlobalJson: true
 
   - script: .\build.cmd EnableSkipStrongNames
-    displayName: Windows Build - EnableSkipStrongNames
+    displayName: Enable SkipStrongNames
   - script: .\build.cmd $(_BuildTarget) /p:Desktop=false /p:BuildPortable=true ^
       /binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled) ^
       /flp:LogFile=artifacts/msbuild.log;Verbosity=Normal
-    displayName: Windows Build
+    displayName: Build
 
   - publish: ./bin/$(_Configuration)/Test/TestResults/
     artifact: $(_Configuration) Test Results
