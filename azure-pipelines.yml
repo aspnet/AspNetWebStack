@@ -31,7 +31,7 @@ jobs:
     ${{ else }}:
       name: NetCore1ESPool-Internal
       demands: ImageOverride -equals windows.vs2017.amd64
-  timeoutInMinutes: 90
+  timeoutInMinutes: 30
 
   strategy:
     matrix:
@@ -80,11 +80,11 @@ jobs:
     continueOnError: true
     displayName: Publish test results
     inputs:
-      configuration: $(_Configuration)
       mergeTestResults: true
       searchFolder: ./bin/$(_Configuration)/Test/TestResults/
       testResultsFiles: '*.xml'
       testRunner: xUnit
+      testRunTitle: $(_Configuration)
 
   - publish: ./artifacts/
     artifact: $(_Configuration) Logs
