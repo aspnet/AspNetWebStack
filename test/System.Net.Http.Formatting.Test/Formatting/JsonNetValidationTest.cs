@@ -28,15 +28,7 @@ namespace System.Net.Http.Formatting
                     {"\"foo\"", typeof(DateTime), 1},
 
                     {"[\"a\",\"b\",\"45\",34]", typeof(int[]), 2},
-                    {
-                        "[\"a\",\"b\",\"45\",34]",
-                        typeof(DateTime[]),
-#if NEWTONSOFTJSON10 // Json.NET 10 detects an additional error over earlier versions.
-                        5
-#else
-                        4
-#endif
-                    },
+                    {"[\"a\",\"b\",\"45\",34]", typeof(DateTime[]), 5},
 
                     // Required members
 

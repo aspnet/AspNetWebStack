@@ -340,9 +340,9 @@ namespace System.Net.Http.Formatting
             stream.Seek(0L, SeekOrigin.Begin);
 
             // Act & Assert
-            await Assert.ThrowsAsync<OverflowException>(
+            await Assert.ThrowsAsync<JsonReaderException>(
                 () => formatter.ReadFromStreamAsync(variationType, stream, content, null),
-                "Value was either too large or too small for a Decimal.");
+                "Could not convert to decimal: 7.92281625142643E+28. Path 'Value'.");
         }
 
         [Theory]

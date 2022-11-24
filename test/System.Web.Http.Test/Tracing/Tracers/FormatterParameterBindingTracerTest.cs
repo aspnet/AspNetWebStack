@@ -125,7 +125,7 @@ namespace System.Web.Http.Tracing.Tracers
 
             // Assert
             Assert.Equal<TraceRecord>(expectedTraces, traceWriter.Traces, new TraceRecordComparer());
-            Assert.Equal("True", actionContext.ActionArguments["paramName"]);
+            Assert.Equal("true", actionContext.ActionArguments["paramName"]);
         }
 
         [Fact]
