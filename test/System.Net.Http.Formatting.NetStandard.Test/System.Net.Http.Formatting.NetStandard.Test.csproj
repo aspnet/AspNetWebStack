@@ -5,7 +5,6 @@
     <RootNamespace>System.Net.Http</RootNamespace>
     <AssemblyName>System.Net.Http.Formatting.NetStandard.Test</AssemblyName>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
-    <DefineConstants>$(DefineConstants);NEWTONSOFTJSON10</DefineConstants>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
