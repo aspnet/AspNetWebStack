@@ -11,7 +11,7 @@ using System.Web.Http;
 namespace System.Net.Http.Formatting.Parsers
 {
     /// <summary>
-    /// Buffer-oriented parsing of HTML form URL-ended, also known as <c>application/x-www-form-urlencoded</c>, data. 
+    /// Buffer-oriented parsing of HTML form URL-ended, also known as <c>application/x-www-form-urlencoded</c>, data.
     /// </summary>
     internal class FormUrlEncodedParser
     {
@@ -54,7 +54,7 @@ namespace System.Net.Http.Formatting.Parsers
 
         /// <summary>
         /// Parse a buffer of URL form-encoded name-value pairs and add them to the collection.
-        /// Bytes are parsed in a consuming manner from the beginning of the buffer meaning that the same bytes can not be 
+        /// Bytes are parsed in a consuming manner from the beginning of the buffer meaning that the same bytes can not be
         /// present in the buffer.
         /// </summary>
         /// <param name="buffer">Buffer from where data is read</param>
@@ -243,7 +243,7 @@ namespace System.Net.Http.Formatting.Parsers
         }
 
         /// <summary>
-        /// Maintains information about the current header field being parsed. 
+        /// Maintains information about the current header field being parsed.
         /// </summary>
         private class CurrentNameValuePair
         {

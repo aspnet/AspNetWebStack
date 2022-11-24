@@ -67,8 +67,8 @@ namespace System.Net.Http.Formatting
         /// </summary>
         /// <value>
         /// <remarks>
-        /// The default media type does not have any <c>charset</c> parameter as 
-        /// the <see cref="Encoding"/> can be configured on a per <see cref="XmlMediaTypeFormatter"/> 
+        /// The default media type does not have any <c>charset</c> parameter as
+        /// the <see cref="Encoding"/> can be configured on a per <see cref="XmlMediaTypeFormatter"/>
         /// instance basis.
         /// </remarks>
         /// Because <see cref="MediaTypeHeaderValue"/> is mutable, the value
@@ -89,7 +89,7 @@ namespace System.Net.Http.Formatting
         public bool UseXmlSerializer { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to indent elements when writing data. 
+        /// Gets or sets a value indicating whether to indent elements when writing data.
         /// </summary>
         public bool Indent
         {

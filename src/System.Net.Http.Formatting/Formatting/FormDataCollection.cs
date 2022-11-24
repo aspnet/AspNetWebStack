@@ -21,9 +21,9 @@ namespace System.Net.Http.Formatting
 {
     /// <summary>
     /// Represent the form data.
-    /// - This has 100% fidelity (including ordering, which is important for deserializing ordered array). 
-    /// - using interfaces allows us to optimize the implementation. E.g., we can avoid eagerly string-splitting a 10gb file. 
-    /// - This also provides a convenient place to put extension methods. 
+    /// - This has 100% fidelity (including ordering, which is important for deserializing ordered array).
+    /// - using interfaces allows us to optimize the implementation. E.g., we can avoid eagerly string-splitting a 10gb file.
+    /// - This also provides a convenient place to put extension methods.
     /// </summary>
 #if NETFX_CORE
     internal
@@ -37,8 +37,8 @@ namespace System.Net.Http.Formatting
         private NameValueCollection _nameValueCollection;
 
         /// <summary>
-        /// Initialize a form collection around incoming data. 
-        /// The key value enumeration should be immutable. 
+        /// Initialize a form collection around incoming data.
+        /// The key value enumeration should be immutable.
         /// </summary>
         /// <param name="pairs">incoming set of key value pairs. Ordering is preserved.</param>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "This is the convention for representing FormData")]
@@ -52,8 +52,8 @@ namespace System.Net.Http.Formatting
         }
 
         /// <summary>
-        /// Initialize a form collection from a query string. 
-        /// Uri and FormURl body have the same schema. 
+        /// Initialize a form collection from a query string.
+        /// Uri and FormURl body have the same schema.
         /// </summary>
         public FormDataCollection(Uri uri)
         {
@@ -136,7 +136,7 @@ namespace System.Net.Http.Formatting
         }
 
         /// <summary>
-        /// Get values associated with a given key. If there are multiple values, they're concatenated. 
+        /// Get values associated with a given key. If there are multiple values, they're concatenated.
         /// </summary>
         public string Get(string key)
         {
@@ -144,7 +144,7 @@ namespace System.Net.Http.Formatting
         }
 
         /// <summary>
-        /// Get a value associated with a given key. 
+        /// Get a value associated with a given key.
         /// </summary>
         public string[] GetValues(string key)
         {

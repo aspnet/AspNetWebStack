@@ -41,9 +41,9 @@ namespace System.Net.Http
         }
 
         /// <summary>
-        /// Determines whether the specified content is MIME multipart content with the 
+        /// Determines whether the specified content is MIME multipart content with the
         /// specified subtype. For example, the subtype <c>mixed</c> would match content
-        /// with a content type of <c>multipart/mixed</c>. 
+        /// with a content type of <c>multipart/mixed</c>.
         /// </summary>
         /// <param name="content">The content.</param>
         /// <param name="subtype">The MIME multipart subtype to match.</param>
@@ -91,7 +91,7 @@ namespace System.Net.Http
 
         /// <summary>
         /// Reads all body parts within a MIME multipart message using the provided <see cref="MultipartStreamProvider"/> instance
-        /// to determine where the contents of each body part is written. 
+        /// to determine where the contents of each body part is written.
         /// </summary>
         /// <typeparam name="T">The <see cref="MultipartStreamProvider"/> with which to process the data.</typeparam>
         /// <param name="content">An existing <see cref="HttpContent"/> instance to use for the object's content.</param>
@@ -104,7 +104,7 @@ namespace System.Net.Http
 
         /// <summary>
         /// Reads all body parts within a MIME multipart message using the provided <see cref="MultipartStreamProvider"/> instance
-        /// to determine where the contents of each body part is written. 
+        /// to determine where the contents of each body part is written.
         /// </summary>
         /// <typeparam name="T">The <see cref="MultipartStreamProvider"/> with which to process the data.</typeparam>
         /// <param name="content">An existing <see cref="HttpContent"/> instance to use for the object's content.</param>

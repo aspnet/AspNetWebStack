@@ -95,7 +95,7 @@ namespace System.Net.Http.Formatting
 #endif
 
         /// <summary>
-        /// Gets or sets a value indicating whether to indent elements when writing data. 
+        /// Gets or sets a value indicating whether to indent elements when writing data.
         /// </summary>
         public bool Indent { get; set; }
 

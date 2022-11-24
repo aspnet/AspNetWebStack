@@ -122,7 +122,7 @@ namespace System.Net.Http.Formatting.Parsers
             /// </summary>
             DataTooBig,
         }
-        
+
         public bool CanParseMore(int bytesRead, int bytesConsumed)
         {
             if (bytesConsumed < bytesRead)
@@ -147,7 +147,7 @@ namespace System.Net.Http.Formatting.Parsers
 
         /// <summary>
         /// Parse a MIME multipart message. Bytes are parsed in a consuming
-        /// manner from the beginning of the request buffer meaning that the same bytes can not be 
+        /// manner from the beginning of the request buffer meaning that the same bytes can not be
         /// present in the request buffer.
         /// </summary>
         /// <param name="buffer">Request buffer from where request is read</param>
@@ -156,7 +156,7 @@ namespace System.Net.Http.Formatting.Parsers
         /// <param name="remainingBodyPart">Any body part that was considered as a potential MIME multipart boundary but which was in fact part of the body.</param>
         /// <param name="bodyPart">The bulk of the body part.</param>
         /// <param name="isFinalBodyPart">Indicates whether the final body part has been found.</param>
-        /// <remarks>In order to get the complete body part, the caller is responsible for concatenating the contents of the 
+        /// <remarks>In order to get the complete body part, the caller is responsible for concatenating the contents of the
         /// <paramref name="remainingBodyPart"/> and <paramref name="bodyPart"/> out parameters.</remarks>
         /// <returns>State of the parser.</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Exception is translated to parse state.")]
@@ -375,7 +375,7 @@ namespace System.Net.Http.Formatting.Parsers
                             goto quit;
                         }
                     }
-                    
+
                     if (bytesConsumed > segmentStart)
                     {
                         if (!currentBodyPart.AppendBoundary(buffer, segmentStart, bytesConsumed - segmentStart))
@@ -391,7 +391,7 @@ namespace System.Net.Http.Formatting.Parsers
                 case BodyPartState.AfterBoundary:
 
                     // This state means that we just saw the end of a boundary. It might by a 'normal' boundary, in which
-                    // case it's followed by optional whitespace and a CRLF. Or it might be the 'final' boundary and will 
+                    // case it's followed by optional whitespace and a CRLF. Or it might be the 'final' boundary and will
                     // be followed by '--', optional whitespace and an optional CRLF.
                     if (buffer[bytesConsumed] == MimeMultipartParser.Dash && !currentBodyPart.IsFinal)
                     {
@@ -456,13 +456,13 @@ namespace System.Net.Http.Formatting.Parsers
                     {
                         currentBodyPart.AppendBoundary(MimeMultipartParser.Dash);
                         bytesConsumed++;
-                        
+
                         if (currentBodyPart.IsBoundaryComplete())
                         {
                             Debug.Assert(currentBodyPart.IsFinal);
 
-                            // If we get in here, it means we've see the trailing '--' of the last boundary - in order to consume all of the 
-                            // remaining bytes, we don't mark the parse as complete again - wait until this method is called again with the 
+                            // If we get in here, it means we've see the trailing '--' of the last boundary - in order to consume all of the
+                            // remaining bytes, we don't mark the parse as complete again - wait until this method is called again with the
                             // empty buffer to do that.
                             bodyPartState = BodyPartState.AfterBoundary;
                             parseStatus = State.NeedMoreData;
@@ -658,9 +658,9 @@ namespace System.Net.Http.Formatting.Parsers
             /// <param name="count">The number of bytes to append.</param>
             public bool AppendBoundary(byte[] data, int offset, int count)
             {
-                // Check that potential boundary is not bigger than our reference boundary. 
-                // Allow for 2 extra characters to include the final boundary which ends with 
-                // an additional "--" sequence + plus up to 4 LWS characters (which are allowed). 
+                // Check that potential boundary is not bigger than our reference boundary.
+                // Allow for 2 extra characters to include the final boundary which ends with
+                // an additional "--" sequence + plus up to 4 LWS characters (which are allowed).
                 if (_boundaryLength + count > _referenceBoundaryLength + 6)
                 {
                     return false;
@@ -753,7 +753,7 @@ namespace System.Net.Http.Formatting.Parsers
                 {
                     return false;
                 }
-                
+
                 if (_boundaryLength < _referenceBoundaryLength)
                 {
                     return false;
@@ -797,9 +797,9 @@ namespace System.Net.Http.Formatting.Parsers
                 var boundary = Encoding.UTF8.GetString(_boundary, 0, _boundaryLength);
 
                 return String.Format(
-                    CultureInfo.InvariantCulture, 
-                    "Expected: {0} *** Current: {1}", 
-                    referenceBoundary, 
+                    CultureInfo.InvariantCulture,
+                    "Expected: {0} *** Current: {1}",
+                    referenceBoundary,
                     boundary);
             }
         }

@@ -15,7 +15,7 @@ using NameValueCollection = System.Net.Http.Formatting.HttpValueCollection;
 namespace System.Net.Http
 {
     /// <summary>
-    /// Extension methods to allow HTML form URL-encoded data, also known as <c>application/x-www-form-urlencoded</c>, 
+    /// Extension methods to allow HTML form URL-encoded data, also known as <c>application/x-www-form-urlencoded</c>,
     /// to be read from <see cref="HttpContent"/> instances.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]

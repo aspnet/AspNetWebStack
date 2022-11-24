@@ -30,6 +30,7 @@
                 if (!Version.TryParse(MinimumVersion, out minimumRequiredVersion))
                 {
                     Log.LogError("MinimumVersion '{0}' is not a valid Version.", MinimumVersion);
+                    return false;
                 }
 
                 try
@@ -74,61 +75,9 @@
 
                     if (!File.Exists(OutputFileName))
                     {
-                        Log.LogMessage("Downloading latest version of NuGet.exe...");
+                        Log.LogMessage(MessageImportance.High, "Downloading latest version of NuGet.exe...");
                         WebClient webClient = new WebClient();
                         webClient.DownloadFile("https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", OutputFileName);
-                    }
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Log.LogErrorFromException(ex);
-                    return false;
-                }
-            ]]>
-      </Code>
-    </Task>
-  </UsingTask>
-
-  <UsingTask TaskName="RegexReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryAssemblyFile)">
-    <ParameterGroup>
-      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <Find ParameterType="System.String" Required="true" />
-      <Replace ParameterType="System.String" Required="true" />
-      <WarnOnNoMatch ParameterType="System.Boolean" Required="false" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Text" />
-      <Using Namespace="System.Text.RegularExpressions" />
-      <Using Namespace="Microsoft.Build.Framework" />
-      <Using Namespace="Microsoft.Build.Utilities" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-                try
-                {
-                    Regex regex = new Regex(Find, RegexOptions.Multiline | RegexOptions.Compiled);
-
-                    foreach (ITaskItem file in Files)
-                    {
-                        string fullPath = Path.GetFullPath(file.ItemSpec);
-                        string originalText = File.ReadAllText(fullPath);
-                        bool matched = regex.IsMatch(originalText);
-
-                        if (!matched)
-                        {
-                            if (WarnOnNoMatch)
-                            {
-                                Log.LogWarning("No matches for '{0}' in '{1}'.", Find, fullPath);
-                            }
-                        }
-                        else
-                        {
-                            File.SetAttributes(fullPath, File.GetAttributes(fullPath) & ~FileAttributes.ReadOnly);
-                            File.WriteAllText(fullPath, regex.Replace(originalText, Replace), Encoding.UTF8);
-                        }
                     }
 
                     return true;
@@ -154,13 +103,18 @@
       <Using Namespace="System.Collections.Generic" />
       <Using Namespace="System.IO" />
       <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Text.RegularExpressions" />
       <Using Namespace="System.Xml.Linq" />
+      <Using Namespace="Microsoft.Build.Framework" />
+      <Using Namespace="Microsoft.Build.Utilities" />
       <Code Type="Fragment" Language="cs">
         <![CDATA[
                 try
                 {
                     string[] testResultFiles = Directory.GetFiles(TestResultsDirectory);
-
+                    Regex regex = new Regex("&#x(?<char>[0-9A-Fa-f]+);",
+                        RegexOptions.Multiline | RegexOptions.Compiled);
                     int testsPassed = 0;
                     int testsFailed = 0;
                     int testsSkipped = 0;
@@ -169,8 +123,20 @@
 
                     foreach (string testResultFile in testResultFiles)
                     {
+                        // Replace potentially illegal escaped characters (if they get through validations done during Save).
+                        string fullPath = Path.GetFullPath(testResultFile);
+                        string originalText = File.ReadAllText(fullPath);
+                        bool matched = regex.IsMatch(originalText);
+
+                        if (matched)
+                        {
+                            File.SetAttributes(fullPath, File.GetAttributes(fullPath) & ~FileAttributes.ReadOnly);
+                            File.WriteAllText(fullPath, regex.Replace(originalText, "\0x${char}"), Encoding.UTF8);
+                        }
+
+                        // Collect test failure information from results file.
                         XElement xml;
-                        using (FileStream fileStream = File.OpenRead(testResultFile))
+                        using (FileStream fileStream = File.OpenRead(fullPath))
                         {
                             xml = XElement.Load(fileStream);
                         }
@@ -213,23 +179,32 @@
                         }
                     }
 
+                    // Log all test failures.
                     if (testFailures.Count > 0)
                     {
-                        Console.WriteLine();
-                        Console.WriteLine("  Test Failures:");
-                        ConsoleColor originalColor = Console.ForegroundColor;
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        Log.LogMessage(MessageImportance.High, string.Empty);
+                        Log.LogError("Tests failed...");
                         foreach (string testFailure in testFailures)
                         {
-                            Console.WriteLine("  " + testFailure);
+                            // Provide the list of failed tests but don't repeat it in the build summary. List
+                            // is usually less helpful than errors from tests themselves (which are repeated)
+                            // because those errors include the exact failure locations. On the other hand,
+                            // this is more compact.
+                            Log.LogMessage(MessageImportance.High, testFailure);
                         }
-                        Console.ForegroundColor = originalColor;
                     }
 
-                    Console.WriteLine();
-                    Console.WriteLine("  Tests passed: {0}, Tests failed: {1}, Tests skipped: {2}", testsPassed, testsFailed, testsSkipped);
-                    Console.WriteLine("  Time spent running tests: {0} seconds", timeSpent);
-                    return true;
+                    // Log summary of all results.
+                    Log.LogMessage(MessageImportance.High, string.Empty);
+                    Log.LogMessage(MessageImportance.High,
+                        "Tests passed: {0}, Tests failed: {1}, Tests skipped: {2}",
+                        testsPassed,
+                        testsFailed,
+                        testsSkipped);
+                    Log.LogMessage(MessageImportance.High,
+                        "Time spent running tests: {0} seconds", timeSpent);
+
+                    return !Log.HasLoggedErrors;
                 }
                 catch (Exception ex)
                 {

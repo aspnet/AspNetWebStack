@@ -27,7 +27,7 @@ namespace System.Collections.Generic
         }
 
         /// <summary>
-        /// Return the enumerable as an Array, copying if required. Optimized for common case where it is an Array. 
+        /// Return the enumerable as an Array, copying if required. Optimized for common case where it is an Array.
         /// Avoid mutating the return value.
         /// </summary>
         public static T[] AsArray<T>(this IEnumerable<T> values)
@@ -43,7 +43,7 @@ namespace System.Collections.Generic
         }
 
         /// <summary>
-        /// Return the enumerable as a Collection of T, copying if required. Optimized for the common case where it is 
+        /// Return the enumerable as a Collection of T, copying if required. Optimized for the common case where it is
         /// a Collection of T and avoiding a copy if it implements IList of T. Avoid mutating the return value.
         /// </summary>
         public static Collection<T> AsCollection<T>(this IEnumerable<T> enumerable)
@@ -78,9 +78,9 @@ namespace System.Collections.Generic
             }
             return new List<T>(enumerable);
         }
-        
+
         /// <summary>
-        /// Return the enumerable as a List of T, copying if required. Optimized for common case where it is an List of T 
+        /// Return the enumerable as a List of T, copying if required. Optimized for common case where it is an List of T
         /// or a ListWrapperCollection of T. Avoid mutating the return value.
         /// </summary>
         public static List<T> AsList<T>(this IEnumerable<T> enumerable)

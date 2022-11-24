@@ -58,8 +58,8 @@ namespace System.Net.Http.Formatting.Parsers
         }
 
         /// <summary>
-        /// Parse an HTTP status line. 
-        /// Bytes are parsed in a consuming manner from the beginning of the response buffer meaning that the same bytes can not be 
+        /// Parse an HTTP status line.
+        /// Bytes are parsed in a consuming manner from the beginning of the response buffer meaning that the same bytes can not be
         /// present in the response buffer.
         /// </summary>
         /// <param name="buffer">Response buffer from where response is read</param>

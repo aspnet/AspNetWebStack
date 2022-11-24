@@ -23,9 +23,9 @@ namespace System.Net.Http.Formatting
         /// <param name="headerName">Name of the header to match.</param>
         /// <param name="headerValue">The header value to match.</param>
         /// <param name="valueComparison">The value comparison to use when matching <paramref name="headerValue"/>.</param>
-        /// <param name="isValueSubstring">if set to <c>true</c> then <paramref name="headerValue"/> is 
+        /// <param name="isValueSubstring">if set to <c>true</c> then <paramref name="headerValue"/> is
         /// considered a match if it matches a substring of the actual header value.</param>
-        /// <param name="mediaType">The media type to use if <paramref name="headerName"/> and <paramref name="headerValue"/> 
+        /// <param name="mediaType">The media type to use if <paramref name="headerName"/> and <paramref name="headerValue"/>
         /// is considered a match.</param>
         public RequestHeaderMapping(string headerName, string headerValue, StringComparison valueComparison, bool isValueSubstring, string mediaType)
             : base(mediaType)
@@ -39,9 +39,9 @@ namespace System.Net.Http.Formatting
         /// <param name="headerName">Name of the header to match.</param>
         /// <param name="headerValue">The header value to match.</param>
         /// <param name="valueComparison">The <see cref="StringComparison"/> to use when matching <paramref name="headerValue"/>.</param>
-        /// <param name="isValueSubstring">if set to <c>true</c> then <paramref name="headerValue"/> is 
+        /// <param name="isValueSubstring">if set to <c>true</c> then <paramref name="headerValue"/> is
         /// considered a match if it matches a substring of the actual header value.</param>
-        /// <param name="mediaType">The <see cref="MediaTypeHeaderValue"/> to use if <paramref name="headerName"/> and <paramref name="headerValue"/> 
+        /// <param name="mediaType">The <see cref="MediaTypeHeaderValue"/> to use if <paramref name="headerName"/> and <paramref name="headerValue"/>
         /// is considered a match.</param>
         public RequestHeaderMapping(string headerName, string headerValue, StringComparison valueComparison, bool isValueSubstring, MediaTypeHeaderValue mediaType)
             : base(mediaType)
@@ -65,7 +65,7 @@ namespace System.Net.Http.Formatting
         public StringComparison HeaderValueComparison { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether <see cref="HeaderValue"/> is 
+        /// Gets a value indicating whether <see cref="HeaderValue"/> is
         /// a matched as a substring of the actual header value.
         /// this instance is value substring.
         /// </summary>

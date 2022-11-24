@@ -40,7 +40,7 @@ namespace System.Net.Http.Formatting.Internal
         internal readonly List<KeyValuePair<string, string>> List = new List<KeyValuePair<string, string>>();
 
         /// <summary>
-        /// Creates a new <see cref="System.Net.Http.Formatting.HttpValueCollection"/> instance 
+        /// Creates a new <see cref="System.Net.Http.Formatting.HttpValueCollection"/> instance
         /// </summary>
         public HttpValueCollection()
         {
