@@ -6,6 +6,9 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
+#if NETFX_CORE
+using System.Web.Http;
+#endif
 
 namespace Microsoft.TestCommon
 {
@@ -494,12 +497,17 @@ namespace Microsoft.TestCommon
         /// <param name="allowDerivedExceptions">Pass true to allow exceptions which derive from TException; pass false, otherwise</param>
         /// <returns>The exception that was thrown, when successful</returns>
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
-        public static InvalidEnumArgumentException ThrowsInvalidEnumArgument(Action testCode, string paramName, int invalidValue, Type enumType, bool allowDerivedExceptions = false)
+        public static ArgumentException ThrowsInvalidEnumArgument(Action testCode, string paramName, int invalidValue, Type enumType, bool allowDerivedExceptions = false)
         {
             string message = String.Format(CultureReplacer.DefaultCulture,
                                            "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.{3}Parameter name: {0}",
                                            paramName, invalidValue, enumType.Name, Environment.NewLine);
+
+#if NETFX_CORE // InvalidEnumArgumentException not available in netstandard1.3.
+            return Throws<Error.InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);
+#else
             return Throws<InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);
+#endif
         }
 
         /// <summary>

@@ -12,15 +12,7 @@ namespace System.Net.Http.Formatting
         {
         }
 
-#if NETFX_CORE // InvariantCulture and InvarianteCultureIgnore case are not supported in portable library projects
-        protected override void AssertForUndefinedValue(Action testCode, string parameterName, int invalidValue, Type enumType, bool allowDerivedExceptions = false)
-        {
-            Assert.ThrowsArgument(
-                testCode,
-                parameterName,
-                allowDerivedExceptions);
-        }
-
+#if NETFX_CORE // InvariantCulture and InvariantCultureIgnoreCase case are not supported in portable library projects
         protected override bool ValueExistsForFramework(StringComparison value)
         {
             return !(value == StringComparison.InvariantCulture || value == StringComparison.InvariantCultureIgnoreCase);

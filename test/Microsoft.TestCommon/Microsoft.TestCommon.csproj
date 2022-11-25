@@ -26,5 +26,9 @@
 
     <Compile Remove="AppDomainUtils.cs;Microsoft\TestCommon\RuntimeEnvironment.cs;WebUtils.cs"
         Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' " />
+
+    <!-- To access Error.InvalidEnumArgumentException in this special case. -->
+    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj"
+        Condition=" '$(NetFX_Core)' == 'true' " />
   </ItemGroup>
 </Project>

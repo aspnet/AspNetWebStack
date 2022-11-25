@@ -225,11 +225,7 @@ namespace System.Web.Http
         /// <returns>The logged <see cref="Exception"/>.</returns>
         internal static ArgumentException InvalidEnumArgument(string parameterName, int invalidValue, Type enumClass)
         {
-#if NETFX_CORE
-            return new ArgumentException(Error.Format(CommonWebApiResources.InvalidEnumArgument, parameterName, invalidValue, enumClass.Name), parameterName);
-#else
             return new InvalidEnumArgumentException(parameterName, invalidValue, enumClass);
-#endif
         }
 
         /// <summary>
@@ -265,5 +261,24 @@ namespace System.Web.Http
         {
             return new NotSupportedException(Error.Format(messageFormat, messageArgs));
         }
+
+#if NETFX_CORE // InvalidEnumArgumentException not available in netstandard1.3.
+        internal class InvalidEnumArgumentException : ArgumentException
+        {
+            public InvalidEnumArgumentException() : this(null)
+            { }
+
+            public InvalidEnumArgumentException(string message) : base(message)
+            { }
+
+            public InvalidEnumArgumentException(string message, Exception innerException) : base(message, innerException)
+            { }
+
+            public InvalidEnumArgumentException(string argumentName, int invalidValue, Type enumClass) : base(
+                Error.Format(CommonWebApiResources.InvalidEnumArgument, argumentName, invalidValue, enumClass.Name),
+                argumentName)
+            { }
+        }
+#endif
     }
 }
