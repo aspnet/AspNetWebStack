@@ -302,15 +302,10 @@ namespace System.Net.Http.Formatting
         {
             Contract.Assert(type != null);
 
-            bool isSimpleType;
-#if NETFX_CORE // TypeDescriptor is not supported in portable library
-            isSimpleType = type.IsValueType() || type == typeof(string);
-#else
             // CanConvertFrom() check is similar to MVC / Web API ModelMetadata.IsComplexType getters. This is
             // sufficient for many cases but Json.Net uses JsonConverterAttribute and built-in converters, not type
             // descriptors.
-            isSimpleType = TypeDescriptor.GetConverter(type).CanConvertFrom(typeof(string));
-#endif
+            bool isSimpleType = TypeDescriptor.GetConverter(type).CanConvertFrom(typeof(string));
 
             return isSimpleType;
         }

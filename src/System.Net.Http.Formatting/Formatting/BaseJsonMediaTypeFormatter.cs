@@ -10,9 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
-#if !NETFX_CORE
 using Newtonsoft.Json.Serialization;
-#endif
 
 namespace System.Net.Http.Formatting
 {
@@ -24,9 +22,7 @@ namespace System.Net.Http.Formatting
         // Though MaxDepth is not supported in portable library, we still override JsonReader's MaxDepth
         private int _maxDepth = FormattingUtilities.DefaultMaxDepth;
 
-#if !NETFX_CORE // DataContractResolver is not supported in portable library
         private readonly IContractResolver _defaultContractResolver;
-#endif
 
         private JsonSerializerSettings _jsonSerializerSettings;
 
@@ -36,9 +32,7 @@ namespace System.Net.Http.Formatting
         protected BaseJsonMediaTypeFormatter()
         {
             // Initialize serializer settings
-#if !NETFX_CORE // DataContractResolver is not supported in portable library
             _defaultContractResolver = new JsonContractResolver(this);
-#endif
             _jsonSerializerSettings = CreateDefaultSerializerSettings();
 
             // Set default supported character encodings
@@ -105,17 +99,11 @@ namespace System.Net.Http.Formatting
         /// <summary>
         /// Creates a <see cref="JsonSerializerSettings"/> instance with the default settings used by the <see cref="BaseJsonMediaTypeFormatter"/>.
         /// </summary>
-#if NETFX_CORE
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "This could only be static half the time.")]
-#endif
         public JsonSerializerSettings CreateDefaultSerializerSettings()
         {
             return new JsonSerializerSettings()
             {
-#if !NETFX_CORE // DataContractResolver is not supported in portable library
                 ContractResolver = _defaultContractResolver,
-#endif
-
                 MissingMemberHandling = MissingMemberHandling.Ignore,
 
                 // Do not change this setting
