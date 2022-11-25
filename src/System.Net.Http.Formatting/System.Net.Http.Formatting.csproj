@@ -42,7 +42,6 @@
     <Compile Include="..\Common\ListWrapperCollection.cs" Link="Common\ListWrapperCollection.cs" />
     <Compile Include="..\Common\TaskHelpers.cs" Link="Common\TaskHelpers.cs" />
     <Compile Include="..\Common\TaskHelpersExtensions.cs" Link="Common\TaskHelpersExtensions.cs" />
-    <Compile Include="..\Common\UriQueryUtility.cs" Link="Common\UriQueryUtility.cs" />
 
     <Compile Include="**\*.cs" Exclude="obj\**\*.cs;Properties\Resources.Designer.cs" />
 

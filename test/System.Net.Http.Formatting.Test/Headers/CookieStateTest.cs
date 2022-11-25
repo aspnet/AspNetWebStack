@@ -29,19 +29,21 @@ namespace System.Net.Http.Headers
         {
             get
             {
-                return new TheoryDataSet<string, string>
+                TheoryDataSet<string, string> data = new TheoryDataSet<string, string>
                 {
-                    { "?", "%3f" },
-                    { "=", "%3d" },
-                    { "<acb>", "%3cacb%3e" },
-                    { "{acb}", "%7bacb%7d" },
-                    { "[acb]", "%5bacb%5d" },
+                    { "?", "%3F" },
+                    { "=", "%3D" },
+                    { "<acb>", "%3Cacb%3E" },
+                    { "{acb}", "%7Bacb%7D" },
+                    { "[acb]", "%5Bacb%5D" },
                     { "\"acb\"", "%22acb%22" },
-                    { "a,b", "a%2cb" },
-                    { "a;b", "a%3bb" },
-                    { "a\\b", "a%5cb" },
-                    { "[]{}\\|!@#$%^&*()_-+=", "%5b%5d%7b%7d%5c%7c!%40%23%24%25%5e%26*()_-%2b%3d" },
+                    { "a,b", "a%2Cb" },
+                    { "a;b", "a%3Bb" },
+                    { "a\\b", "a%5Cb" },
+                    { "[]{}\\|!@#$%^&*()_-+=", "%5B%5D%7B%7D%5C%7C!%40%23%24%25%5E%26*()_-%2B%3D" },
                 };
+
+                return data;
             }
         }
 

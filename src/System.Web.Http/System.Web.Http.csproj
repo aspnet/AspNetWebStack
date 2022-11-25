@@ -102,9 +102,6 @@
     <Compile Include="..\Common\TypeExtensions.cs">
       <Link>Common\TypeExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Common\UriQueryUtility.cs">
-      <Link>Common\UriQueryUtility.cs</Link>
-    </Compile>
     <Compile Include="AcceptVerbsAttribute.cs" />
     <Compile Include="Batch\BatchExecutionOrder.cs" />
     <Compile Include="Batch\BatchHttpRequestContext.cs" />

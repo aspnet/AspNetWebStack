@@ -275,9 +275,9 @@ namespace System.Net.Http.Formatting.Parsers
             /// <param name="nameValuePairs">The collection to copy into.</param>
             public void CopyTo(ICollection<KeyValuePair<string, string>> nameValuePairs)
             {
-                string unescapedName = UriQueryUtility.UrlDecode(_name.ToString());
+                string unescapedName = WebUtility.UrlDecode(_name.ToString());
                 string escapedValue = _value.ToString();
-                string value = UriQueryUtility.UrlDecode(escapedValue);
+                string value = WebUtility.UrlDecode(escapedValue);
 
                 nameValuePairs.Add(new KeyValuePair<string, string>(unescapedName, value));
 
@@ -290,7 +290,7 @@ namespace System.Net.Http.Formatting.Parsers
             /// <param name="nameValuePairs">The collection to copy into.</param>
             public void CopyNameOnlyTo(ICollection<KeyValuePair<string, string>> nameValuePairs)
             {
-                string unescapedName = UriQueryUtility.UrlDecode(_name.ToString());
+                string unescapedName = WebUtility.UrlDecode(_name.ToString());
                 string value = String.Empty;
                 nameValuePairs.Add(new KeyValuePair<string, string>(unescapedName, value));
                 Clear();

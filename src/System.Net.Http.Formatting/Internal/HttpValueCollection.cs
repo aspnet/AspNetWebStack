@@ -157,10 +157,10 @@ namespace System.Net.Http.Formatting.Internal
         private static bool AppendNameValuePair(StringBuilder builder, bool first, bool urlEncode, string name, string value)
         {
             string effectiveName = name ?? String.Empty;
-            string encodedName = urlEncode ? UriQueryUtility.UrlEncode(effectiveName) : effectiveName;
+            string encodedName = urlEncode ? WebUtility.UrlEncode(effectiveName) : effectiveName;
 
             string effectiveValue = value ?? String.Empty;
-            string encodedValue = urlEncode ? UriQueryUtility.UrlEncode(effectiveValue) : effectiveValue;
+            string encodedValue = urlEncode ? WebUtility.UrlEncode(effectiveValue) : effectiveValue;
 
             if (first)
             {
