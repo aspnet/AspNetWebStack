@@ -18,21 +18,12 @@ namespace System.Net.Http
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class UriExtensions
     {
-#if NETFX_CORE
-        /// <summary>
-        /// Parses the query portion of the specified <see cref="Uri"/>.
-        /// </summary>
-        /// <param name="address">The <see cref="Uri"/> instance from which to read.</param>
-        /// <returns>A <see cref="HttpValueCollection"/> containing the parsed result.</returns>
-        public static HttpValueCollection ParseQueryString(this Uri address)
-#else
         /// <summary>
         /// Parses the query portion of the specified <see cref="Uri"/>.
         /// </summary>
         /// <param name="address">The <see cref="Uri"/> instance from which to read.</param>
         /// <returns>A <see cref="NameValueCollection"/> containing the parsed result.</returns>
         public static NameValueCollection ParseQueryString(this Uri address)
-#endif
         {
             if (address == null)
             {

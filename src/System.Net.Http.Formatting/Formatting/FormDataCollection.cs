@@ -5,17 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-#if !NETFX_CORE
 using System.Net.Http.Formatting.Internal;
-#endif
 using System.Net.Http.Formatting.Parsers;
 using System.Text;
 using System.Threading;
 using System.Web.Http;
-
-#if NETFX_CORE
-using NameValueCollection = System.Net.Http.Formatting.HttpValueCollection;
-#endif
 
 namespace System.Net.Http.Formatting
 {
@@ -25,12 +19,7 @@ namespace System.Net.Http.Formatting
     /// - using interfaces allows us to optimize the implementation. E.g., we can avoid eagerly string-splitting a 10gb file.
     /// - This also provides a convenient place to put extension methods.
     /// </summary>
-#if NETFX_CORE
-    internal
-#else
-    public
-#endif
-    class FormDataCollection : IEnumerable<KeyValuePair<string, string>>
+    public class FormDataCollection : IEnumerable<KeyValuePair<string, string>>
     {
         private readonly IEnumerable<KeyValuePair<string, string>> _pairs;
 

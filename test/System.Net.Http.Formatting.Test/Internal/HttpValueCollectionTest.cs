@@ -4,9 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
-#if !NETFX_CORE
 using System.Net.Http.Formatting.Internal;
-#endif
 using System.Web.WebPages.TestUtils;
 using Microsoft.TestCommon;
 
@@ -20,11 +18,7 @@ namespace System.Net.Http.Internal
 
         private static HttpValueCollection CreateInstance()
         {
-#if NETFX_CORE
-            return new HttpValueCollection();
-#else
             return HttpValueCollection.Create();
-#endif
         }
 
 #if !NETCOREAPP
@@ -256,14 +250,8 @@ namespace System.Net.Http.Internal
                 string expectedKey = kvp.Key ?? String.Empty;
                 string expectedValue = kvp.Value ?? String.Empty;
 
-#if NETFX_CORE
-                KeyValuePair<string, string> actualKvp = nvc.List[index];
-                string actualKey = actualKvp.Key;
-                string actualValue = actualKvp.Value;
-#else
                 string actualKey = nvc.AllKeys[index];
                 string actualValue = nvc[index];
-#endif
                 index++;
 
                 Assert.Equal(expectedKey, actualKey);
