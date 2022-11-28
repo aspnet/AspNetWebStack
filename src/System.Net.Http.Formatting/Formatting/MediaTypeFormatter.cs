@@ -129,7 +129,6 @@ namespace System.Net.Http.Formatting
             get { return _mediaTypeMappings; }
         }
 
-#if !NETFX_CORE // IRequiredMemberSelector is not in portable libraries because there is no model state on the client.
         /// <summary>
         /// Gets or sets the <see cref="IRequiredMemberSelector"/> used to determine required members.
         /// </summary>
@@ -144,7 +143,6 @@ namespace System.Net.Http.Formatting
                 _requiredMemberSelector = value;
             }
         }
-#endif
 
         internal virtual bool CanWriteAnyTypes
         {
