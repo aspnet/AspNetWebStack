@@ -83,18 +83,14 @@ namespace System.Net.Http.Formatting
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter()
             {
                 Indent = true,
-#if !NETFX_CORE // MaxDepth and DCJS not supported in client portable library
                 MaxDepth = 42,
                 UseDataContractJsonSerializer = true
-#endif
             };
 
             TestJsonMediaTypeFormatter derivedFormatter = new TestJsonMediaTypeFormatter(formatter);
 
-#if !NETFX_CORE // MaxDepth and DCJS not supported in client portable library
             Assert.Equal(formatter.MaxDepth, derivedFormatter.MaxDepth);
             Assert.Equal(formatter.UseDataContractJsonSerializer, derivedFormatter.UseDataContractJsonSerializer);
-#endif
             Assert.Equal(formatter.Indent, derivedFormatter.Indent);
             Assert.Same(formatter.SerializerSettings, derivedFormatter.SerializerSettings);
             Assert.Same(formatter.SerializerSettings.ContractResolver, derivedFormatter.SerializerSettings.ContractResolver);
@@ -117,7 +113,6 @@ namespace System.Net.Http.Formatting
                 expectedDefaultValue: false);
         }
 
-#if !NETFX_CORE // MaxDepth is not supported in portable libraries
         [Fact]
         public void MaxDepth_RoundTrips()
         {
@@ -131,7 +126,6 @@ namespace System.Net.Http.Formatting
                 illegalUpperValue: null,
                 roundTripTestValue: 256);
         }
-#endif
 
         [Theory]
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection")]

@@ -149,9 +149,7 @@ namespace System.Net.Http.Formatting
             // Arrange
             TestBsonMediaTypeFormatter formatter = new TestBsonMediaTypeFormatter()
             {
-#if !NETFX_CORE // MaxDepth is not supported in portable library
                 MaxDepth = 42,
-#endif
             };
 
             // Replace serializable settings and switch one property's value
@@ -163,16 +161,13 @@ namespace System.Net.Http.Formatting
             TestBsonMediaTypeFormatter derivedFormatter = new TestBsonMediaTypeFormatter(formatter);
 
             // Assert
-#if !NETFX_CORE // MaxDepth is not supported in portable library
             Assert.Equal(formatter.MaxDepth, derivedFormatter.MaxDepth);
-#endif
             Assert.NotSame(oldSettings, formatter.SerializerSettings);
             Assert.NotEqual(oldSettings.CheckAdditionalContent, formatter.SerializerSettings.CheckAdditionalContent);
             Assert.Same(formatter.SerializerSettings, derivedFormatter.SerializerSettings);
             Assert.Same(formatter.SerializerSettings.ContractResolver, derivedFormatter.SerializerSettings.ContractResolver);
         }
 
-#if !NETFX_CORE // MaxDepth is not supported in portable library
         [Fact]
         public void MaxDepth_RoundTrips()
         {
@@ -187,7 +182,6 @@ namespace System.Net.Http.Formatting
                 illegalUpperValue: null,
                 roundTripTestValue: 256);
         }
-#endif
 
         [Theory]
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection")]

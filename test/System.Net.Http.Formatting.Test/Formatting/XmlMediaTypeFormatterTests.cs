@@ -67,18 +67,14 @@ namespace System.Net.Http.Formatting
             TestXmlMediaTypeFormatter formatter = new TestXmlMediaTypeFormatter()
             {
                 Indent = true,
-#if !NETFX_CORE // We don't support MaxDepth in the portable library
                 MaxDepth = 42,
-#endif
                 UseXmlSerializer = true
             };
 
             TestXmlMediaTypeFormatter derivedFormatter = new TestXmlMediaTypeFormatter(formatter);
 
             Assert.Equal(formatter.Indent, derivedFormatter.Indent);
-#if !NETFX_CORE // We don't support MaxDepth in the portable library
             Assert.Equal(formatter.MaxDepth, derivedFormatter.MaxDepth);
-#endif
             Assert.Equal(formatter.UseXmlSerializer, derivedFormatter.UseXmlSerializer);
         }
 
@@ -90,7 +86,6 @@ namespace System.Net.Http.Formatting
             Assert.Equal("application/xml", mediaType.MediaType);
         }
 
-#if !NETFX_CORE // We don't support MaxDepth in the portable library
         [Fact]
         public void MaxDepthReturnsCorrectValue()
         {
@@ -115,7 +110,6 @@ namespace System.Net.Http.Formatting
             stream.Position = 0;
             await Assert.ThrowsAsync<SerializationException>(() => formatter.ReadFromStreamAsync(typeof(SampleType), stream, null, null));
         }
-#endif
 
         [Fact]
         public void Indent_RoundTrips()

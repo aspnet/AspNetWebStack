@@ -55,9 +55,7 @@ namespace System.Net.Http.Formatting
         {
             UseXmlSerializer = formatter.UseXmlSerializer;
             WriterSettings = formatter.WriterSettings;
-#if !NETFX_CORE // MaxDepth is not supported in portable libraries
             MaxDepth = formatter.MaxDepth;
-#endif
         }
 
         /// <summary>
@@ -106,7 +104,6 @@ namespace System.Net.Http.Formatting
         /// </summary>
         public XmlWriterSettings WriterSettings { get; private set; }
 
-#if !NETFX_CORE // MaxDepth is not supported in portable libraries
         /// <summary>
         /// Gets or sets the maximum depth allowed by this formatter.
         /// </summary>
@@ -126,7 +123,6 @@ namespace System.Net.Http.Formatting
                 _readerQuotas.MaxDepth = value;
             }
         }
-#endif
 
         /// <summary>
         /// Registers the <see cref="XmlObjectSerializer"/> to use to read or write

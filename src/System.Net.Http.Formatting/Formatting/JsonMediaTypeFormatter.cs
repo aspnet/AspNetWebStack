@@ -99,7 +99,6 @@ namespace System.Net.Http.Formatting
         /// </summary>
         public bool Indent { get; set; }
 
-#if !NETFX_CORE // MaxDepth not supported in portable library; no need to override there
         /// <inheritdoc/>
         public sealed override int MaxDepth
         {
@@ -113,7 +112,6 @@ namespace System.Net.Http.Formatting
                 _readerQuotas.MaxDepth = value;
             }
         }
-#endif
 
         /// <inheritdoc />
         public override JsonReader CreateJsonReader(Type type, Stream readStream, Encoding effectiveEncoding)

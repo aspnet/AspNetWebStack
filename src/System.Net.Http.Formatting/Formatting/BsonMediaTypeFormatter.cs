@@ -60,7 +60,6 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETFX_CORE // MaxDepth and DBNull not supported in portable library; no need to override there
         /// <inheritdoc />
         public sealed override int MaxDepth
         {
@@ -74,6 +73,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if !NETFX_CORE // DBNull not supported in portable library; no need to override there
         /// <inheritdoc />
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {

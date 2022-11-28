@@ -61,9 +61,7 @@ namespace System.Net.Http.Formatting
         {
             XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter()
             {
-#if !NETFX_CORE // We don't support MaxDepth in the portable library
                 MaxDepth = 5001
-#endif
             };
 
             StringContent content = new StringContent(GetDeeplyNestedObject(5000));
