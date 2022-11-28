@@ -35,10 +35,8 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes.Add(MediaTypeConstants.ApplicationJsonMediaType);
             SupportedMediaTypes.Add(MediaTypeConstants.TextJsonMediaType);
 
-#if !NETFX_CORE // MediaTypeMappings are not supported in portable library
             _requestHeaderMapping = new XmlHttpRequestHeaderMapping();
             MediaTypeMappings.Add(_requestHeaderMapping);
-#endif
         }
 
         /// <summary>

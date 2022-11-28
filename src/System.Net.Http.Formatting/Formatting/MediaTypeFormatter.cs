@@ -33,10 +33,8 @@ namespace System.Net.Http.Formatting
 
         private readonly List<MediaTypeHeaderValue> _supportedMediaTypes;
         private readonly List<Encoding> _supportedEncodings;
-#if !NETFX_CORE // No MediaTypeMappings in portable library or IRequiredMemberSelector (no model state on client)
         private readonly List<MediaTypeMapping> _mediaTypeMappings;
         private IRequiredMemberSelector _requiredMemberSelector;
-#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediaTypeFormatter"/> class.
@@ -47,10 +45,8 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes = new MediaTypeHeaderValueCollection(_supportedMediaTypes);
             _supportedEncodings = new List<Encoding>();
             SupportedEncodings = new Collection<Encoding>(_supportedEncodings);
-#if !NETFX_CORE // No MediaTypeMappings in portable library
             _mediaTypeMappings = new List<MediaTypeMapping>();
             MediaTypeMappings = new Collection<MediaTypeMapping>(_mediaTypeMappings);
-#endif
         }
 
         /// <summary>
@@ -68,11 +64,9 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes = formatter.SupportedMediaTypes;
             _supportedEncodings = formatter._supportedEncodings;
             SupportedEncodings = formatter.SupportedEncodings;
-#if !NETFX_CORE // No MediaTypeMappings in portable library or IRequiredMemberSelector (no model state on client)
             _mediaTypeMappings = formatter._mediaTypeMappings;
             MediaTypeMappings = formatter.MediaTypeMappings;
             _requiredMemberSelector = formatter._requiredMemberSelector;
-#endif
         }
 
         /// <summary>
@@ -123,7 +117,6 @@ namespace System.Net.Http.Formatting
             get { return _supportedEncodings; }
         }
 
-#if !NETFX_CORE // No MediaTypeMappings in portable library
         /// <summary>
         /// Gets the mutable collection of <see cref="MediaTypeMapping"/> elements used
         /// by this <see cref="MediaTypeFormatter"/> instance to determine the
@@ -135,7 +128,6 @@ namespace System.Net.Http.Formatting
         {
             get { return _mediaTypeMappings; }
         }
-#endif
 
 #if !NETFX_CORE // IRequiredMemberSelector is not in portable libraries because there is no model state on the client.
         /// <summary>

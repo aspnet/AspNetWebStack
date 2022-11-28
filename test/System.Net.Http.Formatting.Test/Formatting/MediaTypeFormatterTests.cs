@@ -51,12 +51,10 @@ namespace System.Net.Http.Formatting
             Collection<MediaTypeHeaderValue> supportedMediaTypes = formatter.SupportedMediaTypes;
             Assert.NotNull(supportedMediaTypes);
             Assert.Empty(supportedMediaTypes);
-#if !NETFX_CORE // No MediaTypeMapping support in portable libraries
             Collection<MediaTypeMapping> mappings = formatter.MediaTypeMappings;
 
             Assert.NotNull(mappings);
             Assert.Empty(mappings);
-#endif
         }
 
         [Fact]
@@ -65,11 +63,9 @@ namespace System.Net.Http.Formatting
             TestMediaTypeFormatter formatter = new TestMediaTypeFormatter();
             TestMediaTypeFormatter derivedFormatter = new TestMediaTypeFormatter(formatter);
 
-#if !NETFX_CORE // No MediaTypeMapping or RequiredMemberSelector in client libraries
             Assert.Same(formatter.MediaTypeMappings, derivedFormatter.MediaTypeMappings);
             Assert.Same(formatter.MediaTypeMappingsInternal, derivedFormatter.MediaTypeMappingsInternal);
             Assert.Equal(formatter.RequiredMemberSelector, derivedFormatter.RequiredMemberSelector);
-#endif
 
             Assert.Same(formatter.SupportedMediaTypes, derivedFormatter.SupportedMediaTypes);
             Assert.Same(formatter.SupportedMediaTypesInternal, derivedFormatter.SupportedMediaTypesInternal);
@@ -151,7 +147,6 @@ namespace System.Net.Http.Formatting
             Assert.ThrowsArgument(() => supportedMediaTypes.Insert(0, mediaType), "item", Error.Format(Properties.Resources.CannotUseMediaRangeForSupportedMediaType, typeof(MediaTypeHeaderValue).Name, mediaType.MediaType));
         }
 
-#if !NETFX_CORE // No MediaTypeMapping support in portable libraries
         [Fact]
         public void MediaTypeMappings_IsMutable()
         {
@@ -165,7 +160,6 @@ namespace System.Net.Http.Formatting
 
             Assert.True(standardMappings.SequenceEqual(formatter.MediaTypeMappings));
         }
-#endif
 
         [Fact]
         public void SelectCharacterEncoding_ThrowsIfNoSupportedEncodings()
