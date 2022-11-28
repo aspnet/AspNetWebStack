@@ -1,26 +1,18 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if !NETFX_CORE
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Http.Headers;
-#if !NETFX_CORE
 using System.Net.Http.Internal;
 using System.Runtime.Serialization.Json;
-#endif
 using System.Text;
 using System.Threading;
-#if !NETFX_CORE
 using System.Threading.Tasks;
-#endif
 using System.Web.Http;
-#if !NETFX_CORE
 using System.Xml;
-#endif
 using Newtonsoft.Json;
 
 namespace System.Net.Http.Formatting
@@ -30,11 +22,9 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public class JsonMediaTypeFormatter : BaseJsonMediaTypeFormatter
     {
-#if !NETFX_CORE // DataContractJsonSerializer and MediaTypeMappings are not supported in portable library
         private ConcurrentDictionary<Type, DataContractJsonSerializer> _dataContractSerializerCache = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
         private XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.CreateDefaultReaderQuotas();
         private RequestHeaderMapping _requestHeaderMapping;
-#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonMediaTypeFormatter"/> class.
@@ -60,10 +50,7 @@ namespace System.Net.Http.Formatting
         {
             Contract.Assert(formatter != null);
 
-#if !NETFX_CORE // UseDataContractJsonSerializer is not supported in portable library
             UseDataContractJsonSerializer = formatter.UseDataContractJsonSerializer;
-#endif
-
             Indent = formatter.Indent;
         }
 
@@ -84,7 +71,6 @@ namespace System.Net.Http.Formatting
             get { return MediaTypeConstants.ApplicationJsonMediaType; }
         }
 
-#if !NETFX_CORE // DataContractJsonSerializer is not supported in portable library
         /// <summary>
         /// Gets or sets a value indicating whether to use <see cref="DataContractJsonSerializer"/> by default.
         /// </summary>
@@ -92,7 +78,6 @@ namespace System.Net.Http.Formatting
         ///     <c>true</c> if use <see cref="DataContractJsonSerializer"/> by default; otherwise, <c>false</c>. The default is <c>false</c>.
         /// </value>
         public bool UseDataContractJsonSerializer { get; set; }
-#endif
 
         /// <summary>
         /// Gets or sets a value indicating whether to indent elements when writing data.
@@ -161,7 +146,6 @@ namespace System.Net.Http.Formatting
             return jsonWriter;
         }
 
-#if !NETFX_CORE // DataContractJsonSerializer not supported in portable library; no need to override there
         /// <inheritdoc />
         public override bool CanReadType(Type type)
         {
@@ -231,10 +215,19 @@ namespace System.Net.Http.Formatting
             if (UseDataContractJsonSerializer)
             {
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
+
+#if NETFX_CORE // JsonReaderWriterFactory is internal in netstandard1.3. Unfortunately, ignoring _readerQuotas.
+                // Force a preamble into the stream since DataContractJsonSerializer only supports auto-detecting
+                // encoding in netstandard1.3 ].
+                readStream = new ReadOnlyStreamWithEncodingPreamble(readStream, effectiveEncoding);
+
+                return dataContractSerializer.ReadObject(new NonClosingDelegatingStream(readStream));
+#else
                 using (XmlReader reader = JsonReaderWriterFactory.CreateJsonReader(new NonClosingDelegatingStream(readStream), effectiveEncoding, _readerQuotas, null))
                 {
                     return dataContractSerializer.ReadObject(reader);
                 }
+#endif
             }
             else
             {
@@ -284,6 +277,14 @@ namespace System.Net.Http.Formatting
 
             if (UseDataContractJsonSerializer)
             {
+#if NETFX_CORE // DataContractJsonSerializer writes only UTF8 in netstandard1.3. Later versions of (now public)
+               // JsonReaderWriterFactory can compensate.
+                if (!string.Equals(Encoding.UTF8.WebName, effectiveEncoding.WebName, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new NotSupportedException("!!! To be added !!!");
+                }
+#endif
+
                 if (MediaTypeFormatter.TryGetDelegatingTypeForIQueryableGenericOrSame(ref type))
                 {
                     if (value != null)
@@ -293,10 +294,15 @@ namespace System.Net.Http.Formatting
                 }
 
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
+
+#if NETFX_CORE // JsonReaderWriterFactory is internal in netstandard1.3.
+                dataContractSerializer.WriteObject(writeStream, value);
+#else
                 using (XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(writeStream, effectiveEncoding, ownsStream: false))
                 {
                     dataContractSerializer.WriteObject(writer, value);
                 }
+#endif
             }
             else
             {
@@ -314,8 +320,11 @@ namespace System.Net.Http.Formatting
 
             try
             {
+#if !NETFX_CORE // XsdDataContractExporter is not supported in portable libraries
                 // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                 FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);
+#endif
+
                 serializer = CreateDataContractSerializer(type);
             }
             catch (Exception caught)
@@ -376,6 +385,5 @@ namespace System.Net.Http.Formatting
 
             return serializer;
         }
-#endif
     }
 }

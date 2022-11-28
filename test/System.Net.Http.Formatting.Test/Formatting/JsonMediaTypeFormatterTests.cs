@@ -224,7 +224,6 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
-#if !NETFX_CORE
         [Fact]
         public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
         {
@@ -309,7 +308,6 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
-#endif
 
         [Fact]
         public void CanReadType_ReturnsTrueOnJtoken()
@@ -493,9 +491,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false
-#endif
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
@@ -512,9 +508,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false,
-#endif
                 Indent = true
             };
             MemoryStream memoryStream = new MemoryStream();
@@ -532,9 +526,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false
-#endif
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
@@ -627,7 +619,6 @@ namespace System.Net.Http.Formatting
                 return InnerJsonSerializer;
             }
 
-#if !NETFX_CORE
             public override DataContractJsonSerializer CreateDataContractSerializer(Type type)
             {
                 InnerDataContractSerializer = base.CreateDataContractSerializer(type);
@@ -644,7 +635,6 @@ namespace System.Net.Http.Formatting
 
                 return InnerDataContractSerializer;
             }
-#endif
         }
 
         private bool IsTypeSerializableWithJsonSerializer(Type type, object obj)
