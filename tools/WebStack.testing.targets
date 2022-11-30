@@ -5,10 +5,19 @@
   -->
   <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
 
-  <Target Name="Xunit" Returns="@(_ExitCodes)">
-    <xunit Assemblies="$(TestAssembly)" Xml="$(XmlPath)" IgnoreFailures="true">
+  <Target Name="TestAssembly" Returns="@(_ExitCodes)">
+    <xunit Assemblies="$(TestAssembly)"
+        Condition=" '$(UseVSTest)' != 'true' "
+        IgnoreFailures="true"
+        Xml="$(XmlPath)">
       <Output TaskParameter="ExitCode" PropertyName="_ExitCode" />
     </xunit>
+    <Exec Command="dotnet vstest $(TestAssembly) --logger:&quot;xunit;LogFilePath=$(XmlPath)&quot;"
+        Condition=" '$(UseVSTest)' == 'true' "
+        IgnoreExitCode="true"
+        IgnoreStandardErrorWarningFormat="true">
+      <Output TaskParameter="ExitCode" PropertyName="_ExitCode" />
+    </Exec>
 
     <ItemGroup>
       <_ExitCodes Include="$(TestAssembly)" Code="$(_ExitCode)" />
