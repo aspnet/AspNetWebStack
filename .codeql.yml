@@ -47,7 +47,6 @@ jobs:
   timeoutInMinutes: 90
 
   steps:
-
   - task: UseDotNet@2
     inputs:
       useGlobalJson: true
@@ -58,7 +57,7 @@ jobs:
   - script: .\build.cmd EnableSkipStrongNames
     displayName: Windows Build - EnableSkipStrongNames
 
-  - script: .\build.cmd Build /p:BuildPortable=true /p:Desktop=false
+  - script: .\build.cmd Build /p:BuildPortable=true
     displayName: Windows Build
 
   - task: CodeQL3000Finalize@0

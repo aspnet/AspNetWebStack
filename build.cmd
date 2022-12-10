@@ -38,15 +38,18 @@ if exist "%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" (
   goto BuildFail
 )
 
+REM Are we running in a local dev environment (not on CI)?
+if DEFINED CI (set Desktop=false) else if DEFINED TEAMCITY_VERSION (set Desktop=false) else (set Desktop=true)
+
 if "%1" == "" goto BuildDefaults
 
-%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M ^
+%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
     /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary /t:%*
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 
 :BuildDefaults
-%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=true /v:M ^
+%MSBuild% Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
     /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
