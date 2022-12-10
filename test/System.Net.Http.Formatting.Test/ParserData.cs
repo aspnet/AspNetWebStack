@@ -198,7 +198,7 @@ namespace System.Net.Http
             ((int)HttpStatus).ToString() +
             " " +
             HttpReasonPhrase +
-            "\r\nN1: V1a, V1b, V1c, V1d, V1e\r\nN2: V2\r\n\r\n";
+            "\r\nN1: V1a, V1b, V1c, V1d, V1e\r\nN2: V2\r\nContent-Length: 0\r\n\r\n";
 
         public static readonly string HttpRequestWithEntity =
             HttpMethod +
@@ -206,6 +206,7 @@ namespace System.Net.Http
             HttpHostName +
             "\r\nN1: V1a, V1b, V1c, V1d, V1e\r\nN2: V2\r\nContent-Type: " +
             TextContentType +
+            "\r\nContent-Length: 100" +
             "\r\n\r\n" +
             HttpMessageEntity;
 
@@ -216,6 +217,7 @@ namespace System.Net.Http
             HttpReasonPhrase +
             "\r\nN1: V1a, V1b, V1c, V1d, V1e\r\nN2: V2\r\nContent-Type: " +
             TextContentType +
+            "\r\nContent-Length: 100" +
             "\r\n\r\n" +
             HttpMessageEntity;
     }

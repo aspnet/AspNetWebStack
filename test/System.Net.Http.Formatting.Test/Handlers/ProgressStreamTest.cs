@@ -274,7 +274,7 @@ namespace System.Net.Http.Handlers
             Stream iStream = innerStream ?? new Mock<Stream>().Object;
             ProgressMessageHandler pHandler = progressMessageHandler ?? new ProgressMessageHandler();
             HttpRequestMessage req = request ?? new HttpRequestMessage();
-            HttpResponseMessage rsp = response ?? new HttpResponseMessage();
+            HttpResponseMessage rsp = response ?? new HttpResponseMessage() { Content = new StreamContent(Stream.Null) };
             return new ProgressStream(iStream, pHandler, req, rsp);
         }
 

@@ -3,6 +3,7 @@
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Web.Http;
 
 namespace System.Net.Http
@@ -29,6 +30,7 @@ namespace System.Net.Http
 
             return new HttpResponseMessage
             {
+                Content = new StreamContent(Stream.Null),
                 StatusCode = statusCode,
                 RequestMessage = request
             };
@@ -49,6 +51,7 @@ namespace System.Net.Http
 
             return new HttpResponseMessage
             {
+                Content = new StreamContent(Stream.Null),
                 RequestMessage = request
             };
         }

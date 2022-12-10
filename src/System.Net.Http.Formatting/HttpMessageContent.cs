@@ -205,6 +205,7 @@ namespace System.Net.Http
         protected override bool TryComputeLength(out long length)
         {
             // We have four states we could be in:
+            //   0. We have content and it knows its ContentLength.
             //   1. We have content, but the task is still running or finished without success
             //   2. We have content, the task has finished successfully, and the stream came back as a null or non-seekable
             //   3. We have content, the task has finished successfully, and the stream is seekable, so we know its length
@@ -214,11 +215,13 @@ namespace System.Net.Http
             // For #3, we return true & the size of our headers + the content length
             // For #4, we return true & the size of our headers
 
-            bool hasContent = _streamTask.Value != null;
             length = 0;
 
-            // Cases #1, #2, #3
-            if (hasContent)
+            if (Content?.Headers.ContentLength is not null)
+            {
+                length = (long)Content.Headers.ContentLength; // Case #0
+            }
+            else if (_streamTask.Value is not null)
             {
                 Stream readStream;
                 if (!_streamTask.Value.TryGetResult(out readStream) // Case #1

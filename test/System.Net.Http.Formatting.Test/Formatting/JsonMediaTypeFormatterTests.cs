@@ -588,7 +588,7 @@ namespace System.Net.Http.Formatting
             // Arrange
             JsonMediaTypeFormatter formatter = CreateFormatter();
             Stream stream = new MemoryStream();
-            HttpContent content = new StringContent(String.Empty);
+            HttpContent content = new StreamContent(Stream.Null);
 
             // Act
             await formatter.WriteToStreamAsync(typeof(SampleType), null, stream, content, null);

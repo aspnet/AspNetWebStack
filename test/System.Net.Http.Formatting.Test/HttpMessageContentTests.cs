@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
@@ -39,10 +40,8 @@ namespace System.Net.Http
             httpResponse.ReasonPhrase = ParserData.HttpReasonPhrase;
             httpResponse.Version = new Version("1.2");
             AddMessageHeaders(httpResponse.Headers);
-            if (containsEntity)
-            {
-                httpResponse.Content = new StringContent(ParserData.HttpMessageEntity);
-            }
+            httpResponse.Content =
+                containsEntity ? new StringContent(ParserData.HttpMessageEntity) : new StreamContent(Stream.Null);
 
             return httpResponse;
         }
@@ -76,6 +75,7 @@ namespace System.Net.Http
         private static async Task ValidateResponse(HttpContent content, bool containsEntity)
         {
             Assert.Equal(ParserData.HttpResponseMediaType, content.Headers.ContentType);
+
             long? length = content.Headers.ContentLength;
             Assert.NotNull(length);
 
@@ -164,7 +164,6 @@ namespace System.Net.Http
             }
         }
 
-#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [Fact]
         public async Task SerializeResponse()
         {
@@ -186,7 +185,6 @@ namespace System.Net.Http
                 await ValidateResponse(instance, false);
             }
         }
-#endif
 
         [Fact]
         public async Task SerializeRequestWithEntity()
@@ -243,7 +241,6 @@ namespace System.Net.Http
             }
         }
 
-#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [Fact]
         public async Task SerializeResponseAsync()
         {
@@ -254,7 +251,6 @@ namespace System.Net.Http
                 await ValidateResponse(instance, false);
             }
         }
-#endif
 
         [Fact]
         public async Task SerializeRequestWithPortAndQueryAsync()

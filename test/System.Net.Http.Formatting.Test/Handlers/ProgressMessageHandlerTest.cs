@@ -56,10 +56,8 @@ namespace System.Net.Http.Handlers
         }
 
         [Theory]
-#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [InlineData(false, false)]
         [InlineData(false, true)]
-#endif
         [InlineData(true, false)]
         [InlineData(true, true)]
         public async Task SendAsync_InsertsReceiveProgressWhenResponseEntityPresent(bool insertResponseEntity, bool addReceiveProgressHandler)
@@ -86,7 +84,8 @@ namespace System.Net.Http.Handlers
                 }
                 else
                 {
-                    Assert.Null(response.Content);
+                    Assert.NotNull(response.Content);
+                    Assert.Equal(0L, response.Content.Headers.ContentLength);
                 }
             }
         }
