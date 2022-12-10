@@ -297,7 +297,7 @@ namespace Microsoft.TestCommon
         /// <exception cref="ThrowsException">Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown</exception>
         public static ArgumentException ThrowsArgumentNullOrEmpty(Action testCode, string paramName)
         {
-            return Throws<ArgumentException>(testCode, "Value cannot be null or empty.\r\nParameter name: " + paramName, allowDerivedExceptions: false);
+            return Throws<ArgumentException>(testCode, "Value cannot be null or empty." + GetParameterMessage(paramName), allowDerivedExceptions: false);
         }
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace Microsoft.TestCommon
         {
             if (exceptionMessage != null)
             {
-                exceptionMessage = exceptionMessage + "\r\nParameter name: " + paramName;
+                exceptionMessage = exceptionMessage + GetParameterMessage(paramName);
                 if (actualValue != null)
                 {
                     exceptionMessage += String.Format(CultureReplacer.DefaultCulture, "\r\nActual value was {0}.", actualValue);
@@ -360,7 +360,7 @@ namespace Microsoft.TestCommon
         {
             if (exceptionMessage != null)
             {
-                exceptionMessage = exceptionMessage + "\r\nParameter name: " + paramName;
+                exceptionMessage = exceptionMessage + GetParameterMessage(paramName);
                 if (actualValue != null)
                 {
                     exceptionMessage += String.Format(CultureReplacer.DefaultCulture, "\r\nActual value was {0}.", actualValue);
@@ -500,8 +500,8 @@ namespace Microsoft.TestCommon
         public static ArgumentException ThrowsInvalidEnumArgument(Action testCode, string paramName, int invalidValue, Type enumType, bool allowDerivedExceptions = false)
         {
             string message = String.Format(CultureReplacer.DefaultCulture,
-                                           "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.{3}Parameter name: {0}",
-                                           paramName, invalidValue, enumType.Name, Environment.NewLine);
+                                           "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.{3}",
+                                           paramName, invalidValue, enumType.Name, GetParameterMessage(paramName));
 
 #if NETFX_CORE // InvalidEnumArgumentException not available in netstandard1.3.
             return Throws<Error.InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);
@@ -579,6 +579,15 @@ namespace Microsoft.TestCommon
             var ex = await ThrowsAsync<TException>(testCode);
             VerifyExceptionMessage(ex, exceptionMessage, partialMatch);
             return ex;
+        }
+
+        private static string GetParameterMessage(string parameterName)
+        {
+#if NETCOREAPP3_1_OR_GREATER
+            return " (Parameter '" + parameterName + "')";
+#else
+            return Environment.NewLine + "Parameter name: " + parameterName;
+#endif
         }
 
         // We've re-implemented all the xUnit.net Throws code so that we can get this

@@ -14,6 +14,12 @@ namespace System.Net.Http
 {
     public class HttpClientExtensionsTest
     {
+        private const string InvalidUriMessage =
+#if NET6_0_OR_GREATER
+            "An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.";
+#else
+            "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.";
+#endif
         private readonly MediaTypeFormatter _formatter = new MockMediaTypeFormatter { CallBase = true };
         private readonly HttpClient _client;
         private readonly MediaTypeHeaderValue _mediaTypeHeader = MediaTypeHeaderValue.Parse("foo/bar; charset=utf-16");
@@ -40,7 +46,7 @@ namespace System.Net.Http
         public void PostAsJsonAsync_String_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsJsonAsync((string)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -64,7 +70,7 @@ namespace System.Net.Http
         public void PostAsXmlAsync_String_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsXmlAsync((string)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -88,7 +94,7 @@ namespace System.Net.Http
         public void PostAsync_String_WhenRequestUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsync((string)null, new object(), new JsonMediaTypeFormatter(), "text/json"),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -169,7 +175,7 @@ namespace System.Net.Http
         public void PutAsJsonAsync_String_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsJsonAsync((string)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -193,7 +199,7 @@ namespace System.Net.Http
         public void PutAsXmlAsync_String_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsXmlAsync((string)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -217,7 +223,7 @@ namespace System.Net.Http
         public void PutAsync_String_WhenRequestUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsync((string)null, new object(), new JsonMediaTypeFormatter(), "text/json"),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -298,7 +304,7 @@ namespace System.Net.Http
         public void PostAsJsonAsync_Uri_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsJsonAsync((Uri)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -322,7 +328,7 @@ namespace System.Net.Http
         public void PostAsXmlAsync_Uri_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsXmlAsync((Uri)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -346,7 +352,7 @@ namespace System.Net.Http
         public void PostAsync_Uri_WhenRequestUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PostAsync((Uri)null, new object(), new JsonMediaTypeFormatter(), "text/json"),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -427,7 +433,7 @@ namespace System.Net.Http
         public void PutAsJsonAsync_Uri_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsJsonAsync((Uri)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -451,7 +457,7 @@ namespace System.Net.Http
         public void PutAsXmlAsync_Uri_WhenUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsXmlAsync((Uri)null, new object()),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]
@@ -475,7 +481,7 @@ namespace System.Net.Http
         public void PutAsync_Uri_WhenRequestUriIsNull_ThrowsException()
         {
             Assert.Throws<InvalidOperationException>(() => _client.PutAsync((Uri)null, new object(), new JsonMediaTypeFormatter(), "text/json"),
-                "An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.");
+                InvalidUriMessage);
         }
 
         [Fact]

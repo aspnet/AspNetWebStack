@@ -56,8 +56,10 @@ namespace System.Net.Http.Handlers
         }
 
         [Theory]
+#if !NET6_0_OR_GREATER // Temporarily ignore EmptyContent test issues.
         [InlineData(false, false)]
         [InlineData(false, true)]
+#endif
         [InlineData(true, false)]
         [InlineData(true, true)]
         public async Task SendAsync_InsertsReceiveProgressWhenResponseEntityPresent(bool insertResponseEntity, bool addReceiveProgressHandler)

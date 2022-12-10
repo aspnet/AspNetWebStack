@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <DefineConstants
         Condition=" '$(NetFX_Core)' == 'true' ">$(DefineConstants);NETFX_CORE</DefineConstants>

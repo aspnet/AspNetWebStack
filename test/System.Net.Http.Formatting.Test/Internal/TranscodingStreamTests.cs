@@ -174,7 +174,7 @@ namespace System.Text.Tests
 
             // Async
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
+#if NETCOREAPP3_1_OR_GREATER || NETSTANDARD2_1
             innerStream = new MemoryStream();
             transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
             transcodingStream.DisposeAsync().GetAwaiter().GetResult();
@@ -196,7 +196,7 @@ namespace System.Text.Tests
 
             // Async
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
+#if NETCOREAPP3_1_OR_GREATER || NETSTANDARD2_1
             innerStream = new MemoryStream();
             transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
             transcodingStream.DisposeAsync().GetAwaiter().GetResult();

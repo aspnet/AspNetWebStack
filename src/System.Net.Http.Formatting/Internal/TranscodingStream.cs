@@ -119,7 +119,7 @@ namespace System.Text
             }
         }
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
+#if NETCOREAPP3_1_OR_GREATER || NETSTANDARD2_1
         public override ValueTask DisposeAsync()
         {
             if (_innerStream is null)

@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
+using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -575,6 +576,29 @@ namespace System.Net.Http.Formatting
             return WriteContentUsingCorrectCharacterEncodingHelperAsync(
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
+
+#if NET6_0_OR_GREATER
+        // Cannot Mock a Stream and let JsonWriter write to it. Writer will use ReadOnlySpan in this case and such
+        // parameters are not currently mockable. See moq/moq4#829, moq/moq4#979, and dotnet/runtime#45152.
+        // Override here avoids the Mock<Stream> and should confirm this Stream is not closed. Also adds an
+        // additional check of the written text.
+        [Fact]
+        public override async Task WriteToStreamAsync_WhenObjectIsNull_WritesDataButDoesNotCloseStream()
+        {
+            // Arrange
+            JsonMediaTypeFormatter formatter = CreateFormatter();
+            Stream stream = new MemoryStream();
+            HttpContent content = new StringContent(String.Empty);
+
+            // Act
+            await formatter.WriteToStreamAsync(typeof(SampleType), null, stream, content, null);
+
+            // Assert (stream will throw if it has been closed)
+            stream.Position = 0;
+            using var reader = new StreamReader(stream);
+            Assert.Equal("null", reader.ReadToEnd());
+        }
+#endif
 
         public class TestJsonMediaTypeFormatter : JsonMediaTypeFormatter
         {
