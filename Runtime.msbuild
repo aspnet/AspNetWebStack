@@ -60,7 +60,7 @@
   </Target>
 
   <Target Name="RestoreSkipStrongNames" DependsOnTargets="DownloadNuGet">
-    <Exec Command='"$(NuGetExe)" restore .nuget\packages.config -PackagesDirectory packages -NonInteractive -Verbosity quiet -ConfigFile .nuget\NuGet.Config' />
+    <Exec Command='"$(NuGetExe)" restore .nuget\packages.config -PackagesDirectory packages -NonInteractive -Verbosity quiet' />
   </Target>
 
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
@@ -77,8 +77,7 @@
 
     <Message Text="Restoring NuGet packages..." Importance="High" />
     <Exec Command='"$(NuGetExe)" restore "%(_NuGetPackagesAndSolutions.Identity)" ^
-        -PackagesDirectory packages -NonInteractive ^
-        -Verbosity quiet -ConfigFile "$(MSBuildThisFileDirectory)\.nuget\NuGet.Config"' />
+        -PackagesDirectory packages -NonInteractive -Verbosity quiet' />
     <MSBuild Projects="@(_ProjectsToRestore)" Targets="Restore"
       BuildInParallel="$(BuildInParallel)"
       Condition=" '$(BuildPortable)' == 'true' "
