@@ -3,6 +3,11 @@
 
   <PropertyGroup>
     <!-- Require VS2017 so VS builds also use MSBuild v15.0. -->
-    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <!--
+      Suppress "MSBUILD : warning : Post-build Code Analysis (FxCopCmd.exe) has been deprecated in favor of FxCop
+      analyzers, which run during build. Refer to https://aka.ms/fxcopanalyzers to migrate to FxCop analyzers."
+    -->
+    <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
 </Project>

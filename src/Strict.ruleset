@@ -6,5 +6,7 @@
   <IncludeAll Action="Error" />
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1062" Action="None" />
+    <!-- Ignore int.ToString(...) calls w/o an IFormatProvider in old code. -->
+    <Rule Id="CA1305" Action="None" />
   </Rules>
 </RuleSet>

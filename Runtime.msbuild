@@ -11,6 +11,7 @@
     <BuildPortable Condition=" '$(BuildPortable)' == '' ">true</BuildPortable>
     <BuildInParallel Condition=" '$(BuildInParallel)' == '' And $(MSBuildNodeCount) &gt; 1 ">true</BuildInParallel>
     <BuildInParallel Condition=" '$(BuildInParallel)' == '' ">false</BuildInParallel>
+    <RestoreInParallel Condition=" '$(RestoreInParallel)' == '' ">false</RestoreInParallel>
     <TestInParallel Condition=" '$(TestInParallel)' == '' ">false</TestInParallel>
     <TestResultsDirectory>$(MSBuildThisFileDirectory)bin\$(Configuration)\test\TestResults\</TestResultsDirectory>
     <SkipStrongNamesExe>$(MSBuildThisFileDirectory)packages\Microsoft.Web.SkipStrongNames.1.0.0\tools\SkipStrongNames.exe</SkipStrongNamesExe>
@@ -64,24 +65,12 @@
   </Target>
 
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
-    <ItemGroup>
-      <_NuGetPackagesAndSolutions Include="Runtime.sln" />
-
-      <!-- Avoid restoring RuntimePortable.sln directly. -->
-      <_NuGetPackagesAndSolutions Include="src\System.Net.Http.Formatting.NetCore\packages.config;
-          test\System.Net.Http.Formatting.NetCore.Test\packages.config"
-        Condition=" '$(BuildPortable)' == 'true' " />
-      <_ProjectsToRestore Include="test\System.Net.Http.Formatting.NetStandard.Test\System.Net.Http.Formatting.NetStandard.Test.csproj"
-        Condition=" '$(BuildPortable)' == 'true' " />
-    </ItemGroup>
-
-    <Message Text="Restoring NuGet packages..." Importance="High" />
-    <Exec Command='"$(NuGetExe)" restore "%(_NuGetPackagesAndSolutions.Identity)" ^
-        -PackagesDirectory packages -NonInteractive -Verbosity quiet' />
-    <MSBuild Projects="@(_ProjectsToRestore)" Targets="Restore"
-      BuildInParallel="$(BuildInParallel)"
-      Condition=" '$(BuildPortable)' == 'true' "
-      Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);VisualStudioVersion=$(VisualStudioVersion)" />
+    <Message Text="%0ARestoring NuGet packages..." Importance="High" />
+    <MSBuild Projects="@(SolutionsToBuild)" Targets="Restore"
+      BuildInParallel="$(RestoreInParallel)"
+      Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
+                  RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion)" />
+    <Message Importance="High" Text="" />
   </Target>
 
   <!-- Pick the right Microsoft.Web.FxCop package to use and copy it to a standard location. -->
@@ -96,7 +85,7 @@
         Properties="Configuration=Release;OutputPath=$(CustomFxCopRulesPath)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="RestorePackages;BuildTools">
+  <Target Name="Build" DependsOnTargets="RestoreSkipStrongNames;RestorePackages;BuildTools">
     <!-- we need to batch the solution files since they both build Microsoft.TestCommon -->
     <Error Condition=" '$(CodeAnalysis)' == 'true' and '$(Configuration)' == 'Release' " Text="Unable to run code analysis in Release configuration. Release assemblies do not include SuppressMessage attributes (so code analysis would always fail with the errors that are normally suppressed)." />
     <MakeDir Directories="bin\$(Configuration)" />
