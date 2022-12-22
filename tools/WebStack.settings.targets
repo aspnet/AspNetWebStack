@@ -36,8 +36,8 @@
     <StyleCopTreatErrorsAsWarnings Condition=" '$(StyleCopTreatErrorsAsWarnings)' == '' ">false</StyleCopTreatErrorsAsWarnings>
     <StyleCopEnabled Condition=" '$(StyleCopEnabled)' == '' ">false</StyleCopEnabled>
 
-    <!-- Disable C# 6.0 features in Visual Studio. -->
-    <LangVersion Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">5</LangVersion>
+    <!-- Use latest C# compiler supported in Visual Studio 2019. -->
+    <LangVersion Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">9.0</LangVersion>
 
     <!-- Everything is delay signed by default -->
     <SignAssembly>true</SignAssembly>

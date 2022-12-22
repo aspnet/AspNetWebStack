@@ -1,13 +1,19 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+// From https://github.com/dotnet/runtime/blob/88868b7a781f4e5b9037b8721f30440207a7aa42/src/libraries/System.Private.CoreLib/src/System/Text/TranscodingStream.cs
+
 using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
+using Properties = System.Net.Http.Properties;
+
+#nullable enable
 
 namespace System.Text
 {
@@ -25,10 +31,14 @@ namespace System.Text
         private const int MinWriteRentedArraySize = 4 * 1024;
         private const int MaxWriteRentedArraySize = 1024 * 1024;
 
+        internal static readonly byte[] EmptyByteBuffer = new byte[0];
+        internal static readonly char[] EmptyCharBuffer = new char[0];
+
         private readonly Encoding _innerEncoding;
         private readonly Encoding _thisEncoding;
         private Stream _innerStream; // null if the wrapper has been disposed
         private readonly bool _leaveOpen;
+        private readonly byte[] _singleByteBuffer = new byte[1];
 
         /*
          * Fields used for writing bytes [this] -> chars -> bytes [inner]
@@ -50,17 +60,13 @@ namespace System.Text
         private int _readBufferOffset;
         private int _readBufferCount;
 
-        internal TranscodingStream(Stream innerStream, Encoding innerEncoding, Encoding thisEncoding, bool leaveOpen)
+        internal TranscodingStream(Stream innerStream, Encoding innerEncoding, Encoding thisEncoding, bool leaveOpen = false)
         {
-            Debug.Assert(innerStream != null);
-            Debug.Assert(innerEncoding != null);
-            Debug.Assert(thisEncoding != null);
-
-            _innerStream = innerStream;
+            _innerStream = innerStream ?? throw Error.ArgumentNull(nameof(innerStream));
             _leaveOpen = leaveOpen;
 
-            _innerEncoding = innerEncoding;
-            _thisEncoding = thisEncoding;
+            _innerEncoding = innerEncoding ?? throw Error.ArgumentNull(nameof(innerEncoding));
+            _thisEncoding = thisEncoding ?? throw Error.ArgumentNull(nameof(thisEncoding));
         }
 
         /*
@@ -74,23 +80,18 @@ namespace System.Text
 
         public override bool CanWrite => _innerStream?.CanWrite ?? false;
 
-        public override long Length => throw new NotSupportedException(SR.NotSupported_UnseekableStream);
+        public override long Length => throw Error.NotSupported(Properties.Resources.NotSupported_UnseekableStream);
 
         public override long Position
         {
-            get => throw new NotSupportedException(SR.NotSupported_UnseekableStream);
-            set => ThrowHelper.ThrowNotSupportedException_UnseekableStream();
+            get => throw Error.NotSupported(Properties.Resources.NotSupported_UnseekableStream);
+            set => throw Error.NotSupported(Properties.Resources.NotSupported_UnseekableStream);
         }
-
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state)
-            => TaskToApm.Begin(ReadAsync(buffer, offset, count, CancellationToken.None), callback, state);
-
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state)
-            => TaskToApm.Begin(WriteAsync(buffer, offset, count, CancellationToken.None), callback, state);
 
         protected override void Dispose(bool disposing)
         {
             Debug.Assert(disposing, "This type isn't finalizable.");
+            base.Dispose(disposing);
 
             if (_innerStream is null)
             {
@@ -102,7 +103,7 @@ namespace System.Text
             ArraySegment<byte> pendingData = FinalFlushWriteBuffers();
             if (pendingData.Count != 0)
             {
-                _innerStream.Write(pendingData);
+                _innerStream.Write(pendingData.Array, pendingData.Offset, pendingData.Count);
             }
 
             // Mark our object as disposed
@@ -118,6 +119,7 @@ namespace System.Text
             }
         }
 
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
         public override ValueTask DisposeAsync()
         {
             if (_innerStream is null)
@@ -160,12 +162,7 @@ namespace System.Text
                 }
             }
         }
-
-        public override int EndRead(IAsyncResult asyncResult)
-            => TaskToApm.End<int>(asyncResult);
-
-        public override void EndWrite(IAsyncResult asyncResult)
-            => TaskToApm.End(asyncResult);
+#endif
 
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
@@ -185,7 +182,7 @@ namespace System.Text
             {
                 if (!CanRead)
                 {
-                    ThrowHelper.ThrowNotSupportedException_UnreadableStream();
+                    throw Error.NotSupported(Properties.Resources.NotSupported_UnreadableStream);
                 }
 
                 _innerDecoder = _innerEncoding.GetDecoder();
@@ -198,7 +195,11 @@ namespace System.Text
                 // data which we haven't yet read; however, we own the entire backing array and can
                 // re-create the segment as needed once the array is repopulated.
 
+#if NET5_0_OR_GREATER
                 _readBuffer = GC.AllocateUninitializedArray<byte>(_thisEncoding.GetMaxByteCount(_readCharBufferMaxSize));
+#else
+                _readBuffer = new byte[_thisEncoding.GetMaxByteCount(_readCharBufferMaxSize)];
+#endif
             }
         }
 
@@ -217,7 +218,7 @@ namespace System.Text
             {
                 if (!CanWrite)
                 {
-                    ThrowHelper.ThrowNotSupportedException_UnwritableStream();
+                    throw Error.NotSupported(Properties.Resources.NotSupported_UnwritableStream);
                 }
 
                 _innerEncoder = _innerEncoding.GetEncoder();
@@ -244,20 +245,19 @@ namespace System.Text
             // Let's not bother complicating this logic with array pool rentals or allocation-
             // avoiding loops.
 
-
-            char[] chars = Array.Empty<char>();
-            int charCount = _thisDecoder.GetCharCount(Array.Empty<byte>(), 0, 0, flush: true);
+            char[] chars = EmptyCharBuffer;
+            int charCount = _thisDecoder.GetCharCount(EmptyByteBuffer, 0, 0, flush: true);
             if (charCount > 0)
             {
                 chars = new char[charCount];
-                charCount = _thisDecoder.GetChars(Array.Empty<byte>(), 0, 0, chars, 0, flush: true);
+                charCount = _thisDecoder.GetChars(EmptyByteBuffer, 0, 0, chars, 0, flush: true);
             }
 
             // convert chars -> bytes [inner]
             // It's possible that _innerEncoder might need to perform some end-of-text fixup
             // (due to flush: true), even if _thisDecoder didn't need to do so.
 
-            byte[] bytes = Array.Empty<byte>();
+            byte[] bytes = EmptyByteBuffer;
             int byteCount = _innerEncoder.GetByteCount(chars, 0, charCount, flush: true);
             if (byteCount > 0)
             {
@@ -293,7 +293,12 @@ namespace System.Text
             return Read(new Span<byte>(buffer, offset, count));
         }
 
-        public override int Read(Span<byte> buffer)
+#if NETCOREAPP || NETSTANDARD2_1
+        public override
+#else
+        private
+#endif
+        int Read(Span<byte> buffer)
         {
             EnsurePreReadConditions();
 
@@ -364,13 +369,23 @@ namespace System.Text
             return ReadAsync(new Memory<byte>(buffer, offset, count), cancellationToken).AsTask();
         }
 
-        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
+#if NETCOREAPP || NETSTANDARD2_1
+        public override
+#else
+        private
+#endif
+        ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
             EnsurePreReadConditions();
 
             if (cancellationToken.IsCancellationRequested)
             {
-                return ValueTask.FromCanceled<int>(cancellationToken);
+#if NETCOREAPP || NETSTANDARD
+                return new ValueTask<int>(Task.FromCanceled<int>(cancellationToken));
+#else
+                // Lose track of the CancellationToken in this case.
+                return new ValueTask<int>(TaskHelpers.Canceled<int>());
+#endif
             }
 
             return ReadAsyncCore(buffer, cancellationToken);
@@ -401,7 +416,7 @@ namespace System.Text
                             // a larger-than-expected array, but our worst-case expansion calculations
                             // performed earlier didn't take that into account.
 
-                            int innerBytesReadJustNow = await _innerStream.ReadAsync(rentedBytes.AsMemory(0, DefaultReadByteBufferSize), cancellationToken).ConfigureAwait(false);
+                            int innerBytesReadJustNow = await _innerStream.ReadAsync(rentedBytes, 0, DefaultReadByteBufferSize, cancellationToken).ConfigureAwait(false);
                             isEofReached = (innerBytesReadJustNow == 0);
 
                             // Convert bytes [inner] -> chars, then convert chars -> bytes [this].
@@ -437,19 +452,22 @@ namespace System.Text
             }
         }
 
-        public override unsafe int ReadByte()
+        public override int ReadByte()
         {
-            byte b = 0;
-            return Read(new Span<byte>(ref b)) != 0 ? b : -1;
+            return Read(_singleByteBuffer, offset: 0, count: 1) != 0 ? _singleByteBuffer[0] : -1;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
-            => throw new NotSupportedException(SR.NotSupported_UnseekableStream);
+            => throw Error.NotSupported(Properties.Resources.NotSupported_UnseekableStream);
 
         public override void SetLength(long value)
-            => ThrowHelper.ThrowNotSupportedException_UnseekableStream();
+            => throw Error.NotSupported(Properties.Resources.NotSupported_UnseekableStream);
 
+#if NET6_0_OR_GREATER
         [StackTraceHidden]
+#else
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private void ThrowIfDisposed()
         {
             if (_innerStream is null)
@@ -459,19 +477,28 @@ namespace System.Text
         }
 
         [DoesNotReturn]
+#if NET6_0_OR_GREATER
         [StackTraceHidden]
+#else
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         private void ThrowObjectDisposedException()
         {
-            ThrowHelper.ThrowObjectDisposedException_StreamClosed(GetType().Name);
+            throw new ObjectDisposedException(GetType().Name, Properties.Resources.ObjectDisposed_StreamClosed);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
             ValidateBufferArguments(buffer, offset, count);
 
+#if NETCOREAPP || NETSTANDARD2_1
             Write(new ReadOnlySpan<byte>(buffer, offset, count));
+#else
+            WriteCore(buffer, offset, count);
+#endif
         }
 
+#if NETCOREAPP || NETSTANDARD2_1
         public override void Write(ReadOnlySpan<byte> buffer)
         {
             EnsurePreWriteConditions();
@@ -481,7 +508,9 @@ namespace System.Text
                 return;
             }
 
-            int rentalLength = Math.Clamp(buffer.Length, MinWriteRentedArraySize, MaxWriteRentedArraySize);
+            int rentalLength = buffer.Length < MinWriteRentedArraySize ? MinWriteRentedArraySize :
+                buffer.Length > MaxWriteRentedArraySize ? MaxWriteRentedArraySize :
+                buffer.Length;
 
             char[] scratchChars = ArrayPool<char>.Shared.Rent(rentalLength);
             byte[] scratchBytes = ArrayPool<byte>.Shared.Rent(rentalLength);
@@ -532,32 +561,113 @@ namespace System.Text
                 ArrayPool<byte>.Shared.Return(scratchBytes);
             }
         }
+#else
+        private void WriteCore(byte[] buffer, int offset, int count)
+        {
+            EnsurePreWriteConditions();
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            int rentalLength = buffer.Length < MinWriteRentedArraySize ? MinWriteRentedArraySize :
+                buffer.Length > MaxWriteRentedArraySize ? MaxWriteRentedArraySize :
+                buffer.Length;
+
+            char[] scratchChars = ArrayPool<char>.Shared.Rent(rentalLength);
+            byte[] scratchBytes = ArrayPool<byte>.Shared.Rent(rentalLength);
+
+            try
+            {
+                bool decoderFinished, encoderFinished;
+                do
+                {
+                    // convert bytes [this] -> chars
+
+                    _thisDecoder.Convert(
+                        bytes: buffer,
+                        byteIndex: offset,
+                        byteCount: count,
+                        chars: scratchChars,
+                        charIndex: 0,
+                        charCount: rentalLength,
+                        flush: false,
+                        out int bytesConsumed,
+                        out int charsWritten,
+                        out decoderFinished);
+
+                    offset += bytesConsumed;
+                    count -= bytesConsumed;
+
+                    // convert chars -> bytes [inner]
+
+                    int scratchOffset = 0;
+                    do
+                    {
+                        _innerEncoder.Convert(
+                            chars: scratchChars,
+                            charIndex: scratchOffset,
+                            charCount: charsWritten,
+                            bytes: scratchBytes,
+                            byteIndex: 0,
+                            byteCount: rentalLength,
+                            flush: false,
+                            out int charsConsumed,
+                            out int bytesWritten,
+                            out encoderFinished);
+
+                        scratchOffset += charsConsumed;
+                        charsWritten -= charsConsumed;
+
+                        // It's more likely that the inner stream provides an optimized implementation of
+                        // Write(byte[], ...) over Write(ROS<byte>), so we'll prefer the byte[]-based overloads.
+
+                        _innerStream.Write(scratchBytes, 0, bytesWritten);
+                    } while (!encoderFinished);
+                } while (!decoderFinished);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.Return(scratchChars);
+                ArrayPool<byte>.Shared.Return(scratchBytes);
+            }
+        }
+#endif
 
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             ValidateBufferArguments(buffer, offset, count);
 
+#if NETCOREAPP || NETSTANDARD2_1
             return WriteAsync(new ReadOnlyMemory<byte>(buffer, offset, count), cancellationToken).AsTask();
+#else
+            return WriteAsyncCore(buffer, offset, count, cancellationToken).AsTask();
+#endif
         }
 
-        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
+#if NETCOREAPP || NETSTANDARD2_1
+        public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         {
             EnsurePreWriteConditions();
 
             if (cancellationToken.IsCancellationRequested)
             {
-                return ValueTask.FromCanceled(cancellationToken);
+                return new ValueTask(Task.FromCanceled<int>(cancellationToken));
             }
 
             if (buffer.IsEmpty)
             {
-                return ValueTask.CompletedTask;
+                // ValueTask.CompletedTask
+                return default;
             }
 
             return WriteAsyncCore(buffer, cancellationToken);
             async ValueTask WriteAsyncCore(ReadOnlyMemory<byte> remainingOuterEncodedBytes, CancellationToken cancellationToken)
             {
-                int rentalLength = Math.Clamp(remainingOuterEncodedBytes.Length, MinWriteRentedArraySize, MaxWriteRentedArraySize);
+                int rentalLength = remainingOuterEncodedBytes.Length < MinWriteRentedArraySize ? MinWriteRentedArraySize :
+                    remainingOuterEncodedBytes.Length > MaxWriteRentedArraySize ? MaxWriteRentedArraySize:
+                    remainingOuterEncodedBytes.Length;
 
                 char[] scratchChars = ArrayPool<char>.Shared.Rent(rentalLength);
                 byte[] scratchBytes = ArrayPool<byte>.Shared.Rent(rentalLength);
@@ -570,18 +680,18 @@ namespace System.Text
                         // convert bytes [this] -> chars
 
                         _thisDecoder.Convert(
-                            bytes: remainingOuterEncodedBytes.Span,
+                            bytes: buffer,
                             chars: scratchChars,
                             flush: false,
                             out int bytesConsumed,
                             out int charsWritten,
                             out decoderFinished);
 
-                        remainingOuterEncodedBytes = remainingOuterEncodedBytes.Slice(bytesConsumed);
+                        buffer = buffer.Slice(bytesConsumed);
 
                         // convert chars -> bytes [inner]
 
-                        ArraySegment<char> decodedChars = new ArraySegment<char>(scratchChars, 0, charsWritten);
+                        Span<char> decodedChars = scratchChars.AsSpan(0, charsWritten);
 
                         do
                         {
@@ -594,7 +704,8 @@ namespace System.Text
                                 out encoderFinished);
 
                             decodedChars = decodedChars.Slice(charsConsumed);
-                            await _innerStream.WriteAsync(new ReadOnlyMemory<byte>(scratchBytes, 0, bytesWritten), cancellationToken).ConfigureAwait(false);
+
+                            await _innerStream.WriteAsync(scratchBytes, 0, bytesWritten, cancellationToken).ConfigureAwait(false);
                         } while (!encoderFinished);
                     } while (!decoderFinished);
                 }
@@ -605,8 +716,117 @@ namespace System.Text
                 }
             }
         }
+#else
+        private ValueTask WriteAsyncCore(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        {
+            EnsurePreWriteConditions();
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+#if NETSTANDARD
+                return new ValueTask(Task.FromCanceled<int>(cancellationToken));
+#else
+                // Lose track of the CancellationToken in this case.
+                return new ValueTask(TaskHelpers.Canceled());
+#endif
+            }
+
+            if (count == 0)
+            {
+                // ValueTask.CompletedTask
+                return default;
+            }
+
+            return WriteAsyncCore(buffer, cancellationToken);
+            async ValueTask WriteAsyncCore(ReadOnlyMemory<byte> remainingOuterEncodedBytes, CancellationToken cancellationToken)
+            {
+                int rentalLength = remainingOuterEncodedBytes.Length < MinWriteRentedArraySize ? MinWriteRentedArraySize :
+                    remainingOuterEncodedBytes.Length > MaxWriteRentedArraySize ? MaxWriteRentedArraySize :
+                    remainingOuterEncodedBytes.Length;
+
+                char[] scratchChars = ArrayPool<char>.Shared.Rent(rentalLength);
+                byte[] scratchBytes = ArrayPool<byte>.Shared.Rent(rentalLength);
+
+                try
+                {
+                    bool decoderFinished, encoderFinished;
+                    do
+                    {
+                        // convert bytes [this] -> chars
+
+                        _thisDecoder.Convert(
+                            bytes: buffer,
+                            byteIndex: offset,
+                            byteCount: count,
+                            chars: scratchChars,
+                            charIndex: 0,
+                            charCount: rentalLength,
+                            flush: false,
+                            out int bytesConsumed,
+                            out int charsWritten,
+                            out decoderFinished);
+
+                        offset += bytesConsumed;
+                        count -= bytesConsumed;
+
+                        // convert chars -> bytes [inner]
+
+                        int scratchOffset = 0;
+                        do
+                        {
+                            _innerEncoder.Convert(
+                                chars: scratchChars,
+                                charIndex: scratchOffset,
+                                charCount: charsWritten,
+                                bytes: scratchBytes,
+                                byteIndex: 0,
+                                byteCount: rentalLength,
+                                flush: false,
+                                out int charsConsumed,
+                                out int bytesWritten,
+                                out encoderFinished);
+
+                            scratchOffset += charsConsumed;
+                            charsWritten -= charsConsumed;
+
+                            await _innerStream.WriteAsync(scratchBytes, 0, bytesWritten, cancellationToken).ConfigureAwait(false);
+                        } while (!encoderFinished);
+                    } while (!decoderFinished);
+                }
+                finally
+                {
+                    ArrayPool<char>.Shared.Return(scratchChars);
+                    ArrayPool<byte>.Shared.Return(scratchBytes);
+                }
+            }
+        }
+#endif
 
         public override void WriteByte(byte value)
-            => Write(new ReadOnlySpan<byte>(in value));
+        {
+            _singleByteBuffer[0] = value;
+            Write(_singleByteBuffer, offset: 0, count: 1);
+        }
+
+        // From https://github.com/dotnet/runtime/blob/88868b7a781f4e5b9037b8721f30440207a7aa42/src/libraries/System.Private.CoreLib/src/System/IO/Stream.cs
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ValidateBufferArguments(byte[] buffer, int offset, int count)
+        {
+            if (buffer is null)
+            {
+                throw Error.ArgumentNull(nameof(buffer));
+            }
+
+            if (offset < 0)
+            {
+                throw Error.ArgumentMustBeGreaterThanOrEqualTo(nameof(offset), offset, minValue: 0);
+            }
+
+            if ((uint)count > buffer.Length - offset)
+            {
+                throw Error.ArgumentOutOfRange(nameof(count), count, Properties.Resources.Argument_InvalidOffLen);
+            }
+        }
     }
 }

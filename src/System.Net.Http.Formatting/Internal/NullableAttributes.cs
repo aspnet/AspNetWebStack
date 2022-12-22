@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+// From https://github.com/dotnet/runtime/blob/88868b7a781f4e5b9037b8721f30440207a7aa42/src/tools/illink/src/ILLink.RoslynAnalyzer/NullableAttributes.cs
+
 namespace System.Diagnostics.CodeAnalysis
 {
 #if !NETSTANDARD2_1

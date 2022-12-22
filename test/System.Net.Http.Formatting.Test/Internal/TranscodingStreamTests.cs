@@ -1,33 +1,25 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+// From https://github.com/dotnet/runtime/blob/88868b7a781f4e5b9037b8721f30440207a7aa42/src/libraries/System.Text.Encoding/tests/Encoding/TranscodingStreamTests.cs
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Pipelines;
-using System.IO.Tests;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.TestCommon;
 using Moq;
-using Xunit;
+
+#nullable enable annotations
 
 namespace System.Text.Tests
 {
-    public class TranscodingStreamTests : ConnectedStreamConformanceTests
+    public class TranscodingStreamTests
     {
-        protected override bool FlushRequiredToWriteData => true;
-        protected override bool FlushGuaranteesAllDataWritten => false;
-        protected override bool BlocksOnZeroByteReads => true;
-
-        protected override Task<StreamPair> CreateConnectedStreamsAsync()
-        {
-            (Stream stream1, Stream stream2) = ConnectedStreams.CreateBidirectional();
-            return Task.FromResult<StreamPair>(
-                (Encoding.CreateTranscodingStream(stream1, new IdentityEncoding(), new IdentityEncoding()),
-                 Encoding.CreateTranscodingStream(stream2, new IdentityEncoding(), new IdentityEncoding())));
-        }
-
         public static IEnumerable<object[]> ReadWriteTestBufferLengths
         {
             get
@@ -39,13 +31,13 @@ namespace System.Text.Tests
             }
         }
 
-        // Moq heavily utilizes RefEmit, which does not work on most aot workloads
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+#if NETFX_CORE || Testing_NetStandard2_0 // .NET Framework implementation loses track of cancellation token.
+        [Fact]
         public void AsyncMethods_ReturnCanceledTaskIfCancellationTokenTripped()
         {
             // Arrange
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             CancellationToken expectedCancellationToken = cts.Token;
             cts.Cancel();
 
@@ -53,14 +45,16 @@ namespace System.Text.Tests
             innerStreamMock.Setup(o => o.CanRead).Returns(true);
             innerStreamMock.Setup(o => o.CanWrite).Returns(true);
 
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            Stream transcodingStream = new TranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
             // Act & assert
 
             RunTest(() => transcodingStream.ReadAsync(new byte[0], 0, 0, expectedCancellationToken));
-            RunTest(() => transcodingStream.ReadAsync(Memory<byte>.Empty, expectedCancellationToken).AsTask());
             RunTest(() => transcodingStream.WriteAsync(new byte[0], 0, 0, expectedCancellationToken));
+#if NETCOREAPP || NETSTANDARD2_1
+            RunTest(() => transcodingStream.ReadAsync(Memory<byte>.Empty, expectedCancellationToken).AsTask());
             RunTest(() => transcodingStream.WriteAsync(ReadOnlyMemory<byte>.Empty, expectedCancellationToken).AsTask());
+#endif
 
             void RunTest(Func<Task> callback)
             {
@@ -69,16 +63,17 @@ namespace System.Text.Tests
                 Assert.Equal(expectedCancellationToken, Assert.Throws<TaskCanceledException>(() => task.GetAwaiter().GetResult()).CancellationToken);
             }
         }
+#endif
 
         [Fact]
         public void CreateTranscodingStream_InvalidArgs()
         {
-            Assert.Throws<ArgumentNullException>("innerStream", () => Encoding.CreateTranscodingStream(null, Encoding.UTF8, Encoding.UTF8));
-            Assert.Throws<ArgumentNullException>("innerStreamEncoding", () => Encoding.CreateTranscodingStream(Stream.Null, null, Encoding.UTF8));
-            Assert.Throws<ArgumentNullException>("outerStreamEncoding", () => Encoding.CreateTranscodingStream(Stream.Null, Encoding.UTF8, null));
+            Assert.ThrowsArgumentNull(() => new TranscodingStream(null, Encoding.UTF8, Encoding.UTF8), "innerStream");
+            Assert.ThrowsArgumentNull(() => new TranscodingStream(Stream.Null, null, Encoding.UTF8), "innerEncoding");
+            Assert.ThrowsArgumentNull(() => new TranscodingStream(Stream.Null, Encoding.UTF8, null), "thisEncoding");
         }
 
-        [ConditionalTheory(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public void CanRead_DelegatesToInnerStream(bool expectedCanRead)
@@ -87,7 +82,7 @@ namespace System.Text.Tests
 
             var innerStreamMock = new Mock<Stream>();
             innerStreamMock.Setup(o => o.CanRead).Returns(expectedCanRead);
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            Stream transcodingStream = new TranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
             // Act
 
@@ -101,7 +96,7 @@ namespace System.Text.Tests
             Assert.False(actualCanReadAfterDispose);
         }
 
-        [ConditionalTheory(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public void CanWrite_DelegatesToInnerStream(bool expectedCanWrite)
@@ -110,7 +105,7 @@ namespace System.Text.Tests
 
             var innerStreamMock = new Mock<Stream>();
             innerStreamMock.Setup(o => o.CanWrite).Returns(expectedCanWrite);
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            Stream transcodingStream = new TranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
             // Act
 
@@ -129,8 +124,8 @@ namespace System.Text.Tests
         {
             // Arrange
 
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
             // Act
 
@@ -143,19 +138,26 @@ namespace System.Text.Tests
             Assert.False(transcodingStream.CanSeek);
             Assert.False(transcodingStream.CanWrite);
 
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.BeginRead(new byte[0], 0, 0, null, null));
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.BeginWrite(new byte[0], 0, 0, null, null));
+#if true // Not overriding these and base Stream's BeginXYZ methods check CanXYZ first, throwing NotSupportedException.
+            Assert.Throws<NotSupportedException>(() => transcodingStream.BeginRead(new byte[0], 0, 0, null, null));
+            Assert.Throws<NotSupportedException>(() => transcodingStream.BeginWrite(new byte[0], 0, 0, null, null));
+#else
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.BeginRead(new byte[0], 0, 0, null, null));
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.BeginWrite(new byte[0], 0, 0, null, null));
+#endif
+#if NETCOREAPP || NETSTANDARD2_1
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.Read(Span<byte>.Empty));
+            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.ReadAsync(Memory<byte>.Empty));
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.Write(ReadOnlySpan<byte>.Empty));
+            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.WriteAsync(ReadOnlyMemory<byte>.Empty));
+#endif
             Assert.Throws<ObjectDisposedException>(() => transcodingStream.Flush());
             Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.FlushAsync());
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.Read(new byte[0], 0, 0));
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.Read(Span<byte>.Empty));
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.Read(new byte[0], 0, 0));
             Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.ReadAsync(new byte[0], 0, 0));
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.ReadAsync(Memory<byte>.Empty));
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.ReadByte());
+            Assert.Throws<ObjectDisposedException>(() => transcodingStream.ReadByte());
             Assert.Throws<ObjectDisposedException>(() => transcodingStream.Write(new byte[0], 0, 0));
-            Assert.Throws<ObjectDisposedException>(() => transcodingStream.Write(ReadOnlySpan<byte>.Empty));
             Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.WriteAsync(new byte[0], 0, 0));
-            Assert.Throws<ObjectDisposedException>(() => (object)transcodingStream.WriteAsync(ReadOnlyMemory<byte>.Empty));
             Assert.Throws<ObjectDisposedException>(() => transcodingStream.WriteByte((byte)'x'));
         }
 
@@ -164,19 +166,21 @@ namespace System.Text.Tests
         {
             // Sync
 
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
             transcodingStream.Dispose();
             transcodingStream.Dispose(); // calling it a second time should no-op
-            Assert.Throws<ObjectDisposedException>(() => innerStream.Read(Span<byte>.Empty));
+            Assert.Throws<ObjectDisposedException>(() => innerStream.Read(TranscodingStream.EmptyByteBuffer, 0, 0));
 
             // Async
 
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
             innerStream = new MemoryStream();
-            transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
+            transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
             transcodingStream.DisposeAsync().GetAwaiter().GetResult();
             transcodingStream.DisposeAsync().GetAwaiter().GetResult(); // calling it a second time should no-op
             Assert.Throws<ObjectDisposedException>(() => innerStream.Read(Span<byte>.Empty));
+#endif
         }
 
         [Fact]
@@ -184,23 +188,25 @@ namespace System.Text.Tests
         {
             // Sync
 
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
             transcodingStream.Dispose();
             transcodingStream.Dispose(); // calling it a second time should no-op
-            innerStream.Read(Span<byte>.Empty); // shouldn't throw
+            innerStream.Read(TranscodingStream.EmptyByteBuffer, 0, 0); // shouldn't throw
 
             // Async
 
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER || NETSTANDARD2_1
             innerStream = new MemoryStream();
-            transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
             transcodingStream.DisposeAsync().GetAwaiter().GetResult();
             transcodingStream.DisposeAsync().GetAwaiter().GetResult(); // calling it a second time should no-op
             innerStream.Read(Span<byte>.Empty); // shouldn't throw
+#endif
         }
 
         // Moq heavily utilizes RefEmit, which does not work on most aot workloads
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public void Flush_FlushesInnerStreamButNotDecodedState()
         {
             // Arrange
@@ -210,9 +216,9 @@ namespace System.Text.Tests
 
             var innerStreamMock = new Mock<MemoryStream>() { CallBase = true };
             innerStreamMock.Setup(o => o.FlushAsync(expectedCancellationToken)).Returns(expectedFlushAsyncTask);
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            Stream transcodingStream = new TranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
-            transcodingStream.Write(new byte[] { 0x7A, 0xE0 });
+            transcodingStream.Write(new byte[] { 0x7A, 0xE0 }, 0, 2);
             innerStreamMock.Verify(o => o.Flush(), Times.Never);
             innerStreamMock.Verify(o => o.FlushAsync(It.IsAny<CancellationToken>()), Times.Never);
 
@@ -239,8 +245,8 @@ namespace System.Text.Tests
             // Test read
             // [ C0 ] is never a valid UTF-8 byte, should be replaced with U+FFFD
 
-            MemoryStream innerStream = new MemoryStream(new byte[] { 0xC0 });
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8);
+            MemoryStream innerStream = new(new byte[] { 0xC0 });
+            Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8);
 
             Assert.Equal(0xEF, transcodingStream.ReadByte());
             Assert.Equal(0xBF, transcodingStream.ReadByte());
@@ -250,13 +256,13 @@ namespace System.Text.Tests
             // Test write
 
             innerStream = new MemoryStream();
-            transcodingStream = Encoding.CreateTranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8);
+            transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8);
             transcodingStream.WriteByte(0xC0);
             Assert.Equal(new byte[] { 0xEF, 0xBF, 0xBD }, innerStream.ToArray());
         }
 
         [Theory]
-        [MemberData(nameof(ReadWriteTestBufferLengths))]
+        [PropertyData(nameof(ReadWriteTestBufferLengths))]
         public void Read_ByteArray(int bufferLength)
         {
             // Tests TranscodingStream.Read(byte[], int, int)
@@ -277,9 +283,9 @@ namespace System.Text.Tests
         [Fact]
         public void Read_ByteArray_WithInvalidArgs_Throws()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => transcodingStream.Read(null, 0, 0));
+            Assert.ThrowsArgumentNull(() => transcodingStream.Read(null, 0, 0), "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Read(new byte[5], -1, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Read(new byte[5], 3, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Read(new byte[5], 5, 1));
@@ -305,8 +311,9 @@ namespace System.Text.Tests
             });
         }
 
+#if NETCOREAPP || NETSTANDARD2_1
         [Theory]
-        [MemberData(nameof(ReadWriteTestBufferLengths))]
+        [PropertyData(nameof(ReadWriteTestBufferLengths))]
         public void Read_Span(int bufferLength)
         {
             // Tests TranscodingStream.Read(Span<byte>)
@@ -319,19 +326,20 @@ namespace System.Text.Tests
                 Assert.True(numBytesRead >= 0);
                 Assert.True(numBytesRead <= bufferLength);
 
-                sink.Write(buffer.AsSpan(0..numBytesRead));
+                sink.Write(buffer.AsSpan(0, numBytesRead));
                 return numBytesRead;
             });
         }
+#endif
 
         private void RunReadTest(Func<Stream, MemoryStream, int> callback)
         {
-            MemoryStream sink = new MemoryStream();
+            MemoryStream sink = new();
 
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStream,
-                innerStreamEncoding: Encoding.UTF8,
-                outerStreamEncoding: CustomAsciiEncoding);
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(innerStream,
+                innerEncoding: Encoding.UTF8,
+                thisEncoding: CustomAsciiEncoding);
 
             // Test with a small string, then test with a large string
 
@@ -379,7 +387,8 @@ namespace System.Text.Tests
 
                 string expectedStringContents = GetVeryLongAsciiString(stringLength);
                 innerStream.SetLength(0); // reset
-                innerStream.Write(Encoding.UTF8.GetBytes(expectedStringContents));
+                var bytes = Encoding.UTF8.GetBytes(expectedStringContents);
+                innerStream.Write(bytes, 0, bytes.Length);
                 innerStream.Position = 0;
 
                 int numBytesReadJustNow;
@@ -393,7 +402,7 @@ namespace System.Text.Tests
             }
         }
 
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public Task ReadApm()
         {
             // Tests TranscodingStream.BeginRead / EndRead
@@ -402,8 +411,8 @@ namespace System.Text.Tests
 
             return RunReadTestAsync((transcodingStream, cancellationToken, sink) =>
             {
-                TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
-                object expectedState = new object();
+                TaskCompletionSource<int> tcs = new();
+                object expectedState = new();
 
                 try
                 {
@@ -434,8 +443,8 @@ namespace System.Text.Tests
             suppressExpectedCancellationTokenAsserts: true); // APM pattern doesn't allow flowing CancellationToken
         }
 
-        [ConditionalTheory(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
-        [MemberData(nameof(ReadWriteTestBufferLengths))]
+        [Theory]
+        [PropertyData(nameof(ReadWriteTestBufferLengths))]
         public Task ReadAsync_ByteArray(int bufferLength)
         {
             // Tests TranscodingStream.ReadAsync(byte[], int, int, CancellationToken)
@@ -453,8 +462,9 @@ namespace System.Text.Tests
             });
         }
 
-        [ConditionalTheory(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
-        [MemberData(nameof(ReadWriteTestBufferLengths))]
+#if NETCOREAPP || NETSTANDARD2_1
+        [Theory]
+        [PropertyData(nameof(ReadWriteTestBufferLengths))]
         public async Task ReadAsync_Memory(int bufferLength)
         {
             // Tests TranscodingStream.ReadAsync(Memory<byte>, CancellationToken)
@@ -467,10 +477,11 @@ namespace System.Text.Tests
                 Assert.True(numBytesRead >= 0);
                 Assert.True(numBytesRead <= bufferLength);
 
-                sink.Write(buffer.AsSpan(0..numBytesRead));
+                sink.Write(buffer.AsSpan(0, numBytesRead));
                 return numBytesRead;
             });
         }
+#endif
 
         [Fact]
         public async Task ReadAsync_LoopsWhenPartialDataReceived()
@@ -478,8 +489,8 @@ namespace System.Text.Tests
             // Validates that the TranscodingStream will loop instead of returning 0
             // if the inner stream read partial data and GetBytes cannot make forward progress.
 
-            using AsyncComms comms = new AsyncComms();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(comms.ReadStream, Encoding.UTF8, Encoding.UTF8);
+            using AsyncComms comms = new();
+            Stream transcodingStream = new TranscodingStream(comms.ReadStream, Encoding.UTF8, Encoding.UTF8);
 
             // First, ensure that writing [ C0 ] (always invalid UTF-8) to the stream
             // causes the reader to return immediately with fallback behavior.
@@ -487,8 +498,8 @@ namespace System.Text.Tests
             byte[] readBuffer = new byte[1024];
             comms.WriteBytes(new byte[] { 0xC0 });
 
-            int numBytesRead = await transcodingStream.ReadAsync(readBuffer.AsMemory());
-            Assert.Equal(new byte[] { 0xEF, 0xBF, 0xBD }, readBuffer[0..numBytesRead]); // fallback substitution
+            int numBytesRead = await transcodingStream.ReadAsync(readBuffer, 0, readBuffer.Length);
+            Assert.Equal(new byte[] { 0xEF, 0xBF, 0xBD }, readBuffer.AsSpan(0, numBytesRead).ToArray()); // fallback substitution
 
             // Next, ensure that writing [ C2 ] (partial UTF-8, needs more data) to the stream
             // causes the reader to asynchronously loop, returning "not yet complete".
@@ -496,12 +507,12 @@ namespace System.Text.Tests
             readBuffer = new byte[1024];
             comms.WriteBytes(new byte[] { 0xC2 });
 
-            ValueTask<int> task = transcodingStream.ReadAsync(readBuffer.AsMemory());
+            var task = transcodingStream.ReadAsync(readBuffer, 0, readBuffer.Length);
             Assert.False(task.IsCompleted);
             comms.WriteBytes(new byte[] { 0x80 }); // [ C2 80 ] is valid UTF-8
 
             numBytesRead = await task; // should complete successfully
-            Assert.Equal(new byte[] { 0xC2, 0x80 }, readBuffer[0..numBytesRead]);
+            Assert.Equal(new byte[] { 0xC2, 0x80 }, readBuffer.AsSpan(0, numBytesRead).ToArray());
 
             // Finally, ensure that writing [ C2 ] (partial UTF-8, needs more data) to the stream
             // followed by EOF causes the reader to perform substitution before returning EOF.
@@ -509,25 +520,25 @@ namespace System.Text.Tests
             readBuffer = new byte[1024];
             comms.WriteBytes(new byte[] { 0xC2 });
 
-            task = transcodingStream.ReadAsync(readBuffer.AsMemory());
+            task = transcodingStream.ReadAsync(readBuffer, 0, readBuffer.Length);
             Assert.False(task.IsCompleted);
             comms.WriteEof();
 
             numBytesRead = await task; // should complete successfully
-            Assert.Equal(new byte[] { 0xEF, 0xBF, 0xBD }, readBuffer[0..numBytesRead]); // fallback substitution
+            Assert.Equal(new byte[] { 0xEF, 0xBF, 0xBD }, readBuffer.AsSpan(0, numBytesRead).ToArray()); // fallback substitution
 
             // Next call really should return "EOF reached"
 
             readBuffer = new byte[1024];
-            Assert.Equal(0, await transcodingStream.ReadAsync(readBuffer.AsMemory()));
+            Assert.Equal(0, await transcodingStream.ReadAsync(readBuffer, 0, readBuffer.Length));
         }
 
         [Fact]
         public void ReadAsync_WithInvalidArgs_Throws()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => (object)transcodingStream.ReadAsync(null, 0, 0));
+            Assert.ThrowsArgumentNull(() => { transcodingStream.ReadAsync(null, 0, 0); }, "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.ReadAsync(new byte[5], -1, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.ReadAsync(new byte[5], 3, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.ReadAsync(new byte[5], 5, 1));
@@ -536,27 +547,53 @@ namespace System.Text.Tests
         }
 
         [Fact]
-        public void ReadApm_WithInvalidArgs_Throws()
+        public void ReadApm_WithInvalidArgs_ThrowsAsync()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => transcodingStream.BeginRead(null, 0, 0, null, null));
+#if true
+            // Not overriding BeginRead and base Stream's method returns a Task as its IAsyncResult, delaying parameter checks.
+            Assert.ThrowsArgumentNull(() => transcodingStream.EndRead(transcodingStream.BeginRead(null, 0, 0, null, null)), "buffer");
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndRead(transcodingStream.BeginRead(new byte[5], -1, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndRead(transcodingStream.BeginRead(new byte[5], 3, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndRead(transcodingStream.BeginRead(new byte[5], 5, 1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndRead(transcodingStream.BeginRead(new byte[5], 6, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndRead(transcodingStream.BeginRead(new byte[5], 6, 0, null, null)));
+#else
+            Assert.ThrowsArgumentNull(() => transcodingStream.BeginRead(null, 0, 0, null, null), "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginRead(new byte[5], -1, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginRead(new byte[5], 3, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginRead(new byte[5], 5, 1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginRead(new byte[5], 6, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginRead(new byte[5], 6, 0, null, null));
+#endif
         }
 
         private async Task RunReadTestAsync(Func<Stream, CancellationToken, MemoryStream, ValueTask<int>> callback, bool suppressExpectedCancellationTokenAsserts = false)
         {
             CancellationToken expectedCancellationToken = new CancellationTokenSource().Token;
-            MemoryStream sink = new MemoryStream();
-            MemoryStream innerStream = new MemoryStream();
+            MemoryStream sink = new();
+            MemoryStream innerStream = new();
 
             var delegatingInnerStreamMock = new Mock<Stream>(MockBehavior.Strict);
             delegatingInnerStreamMock.Setup(o => o.CanRead).Returns(true);
 
+            // Needed for ReadByte calls.
+            delegatingInnerStreamMock.Setup(o => o.Read(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns<byte[], int, int>(innerStream.Read);
+
+#if true // In current src/ projects, always pass byte array to inner Stream.
+            if (suppressExpectedCancellationTokenAsserts)
+            {
+                delegatingInnerStreamMock.Setup(o => o.ReadAsync(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                    .Returns<byte[], int, int, CancellationToken>(innerStream.ReadAsync);
+            }
+            else
+            {
+                delegatingInnerStreamMock.Setup(o => o.ReadAsync(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), expectedCancellationToken))
+                    .Returns<byte[], int, int, CancellationToken>(innerStream.ReadAsync);
+            }
+#else
             if (suppressExpectedCancellationTokenAsserts)
             {
                 delegatingInnerStreamMock.Setup(o => o.ReadAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
@@ -567,18 +604,19 @@ namespace System.Text.Tests
                 delegatingInnerStreamMock.Setup(o => o.ReadAsync(It.IsAny<Memory<byte>>(), expectedCancellationToken))
                     .Returns<Memory<byte>, CancellationToken>(innerStream.ReadAsync);
             }
+#endif
 
-            Stream transcodingStream = Encoding.CreateTranscodingStream(
+            Stream transcodingStream = new TranscodingStream(
                 innerStream: delegatingInnerStreamMock.Object,
-                innerStreamEncoding: Encoding.UTF8,
-                outerStreamEncoding: CustomAsciiEncoding);
+                innerEncoding: Encoding.UTF8,
+                thisEncoding: CustomAsciiEncoding);
 
             // Test with a small string, then test with a large string
 
             await RunOneTestIteration(128);
             await RunOneTestIteration(10 * 1024 * 1024);
 
-            Assert.Equal(-1, await transcodingStream.ReadByteAsync(expectedCancellationToken)); // should've reached EOF
+            Assert.Equal(-1, transcodingStream.ReadByte()); // should've reached EOF
 
             // Now put some invalid data into the inner stream, followed by EOF, and ensure we get U+FFFD back out.
 
@@ -595,7 +633,7 @@ namespace System.Text.Tests
             } while (numBytesReadJustNow > 0);
 
             Assert.Equal("[FFFD]", ErrorCheckingAsciiEncoding.GetString(sink.ToArray()));
-            Assert.Equal(-1, await transcodingStream.ReadByteAsync(expectedCancellationToken)); // should've reached EOF
+            Assert.Equal(-1, transcodingStream.ReadByte()); // should've reached EOF
 
             // Now put some incomplete data into the inner stream, followed by EOF, and ensure we get U+FFFD back out.
 
@@ -611,7 +649,7 @@ namespace System.Text.Tests
             } while (numBytesReadJustNow > 0);
 
             Assert.Equal("[FFFD]", ErrorCheckingAsciiEncoding.GetString(sink.ToArray()));
-            Assert.Equal(-1, await transcodingStream.ReadByteAsync(expectedCancellationToken)); // should've reached EOF
+            Assert.Equal(-1, transcodingStream.ReadByte()); // should've reached EOF
 
             async Task RunOneTestIteration(int stringLength)
             {
@@ -619,7 +657,8 @@ namespace System.Text.Tests
 
                 string expectedStringContents = GetVeryLongAsciiString(stringLength);
                 innerStream.SetLength(0); // reset
-                innerStream.Write(Encoding.UTF8.GetBytes(expectedStringContents));
+                var bytes = Encoding.UTF8.GetBytes(expectedStringContents);
+                innerStream.Write(bytes, 0, bytes.Length);
                 innerStream.Position = 0;
 
                 int numBytesReadJustNow;
@@ -641,7 +680,7 @@ namespace System.Text.Tests
             var innerStreamMock = new Mock<Stream>();
             innerStreamMock.SetupProperty(o => o.ReadTimeout);
             innerStreamMock.SetupProperty(o => o.WriteTimeout);
-            Stream transcodingStream = Encoding.CreateTranscodingStream(Stream.Null, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
+            Stream transcodingStream = new TranscodingStream(Stream.Null, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
 
             // Act & assert - TranscodingStream shouldn't support ReadTimeout + WriteTimeout
 
@@ -656,7 +695,7 @@ namespace System.Text.Tests
         public void Seek_AlwaysThrows()
         {
             // MemoryStream is seekable, but we're not
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
             Assert.False(transcodingStream.CanSeek);
             Assert.Throws<NotSupportedException>(() => transcodingStream.Length);
@@ -669,11 +708,11 @@ namespace System.Text.Tests
         [Fact]
         public void Write()
         {
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(
                 innerStream,
-                innerStreamEncoding: ErrorCheckingUnicodeEncoding /* throws on error */,
-                outerStreamEncoding: Encoding.UTF8 /* performs substition */,
+                innerEncoding: ErrorCheckingUnicodeEncoding /* throws on error */,
+                thisEncoding: Encoding.UTF8 /* performs substitution */,
                 leaveOpen: true);
 
             // First, test Write(byte[], int, int)
@@ -701,14 +740,14 @@ namespace System.Text.Tests
 
             string asciiString = GetVeryLongAsciiString(128);
             byte[] asciiBytesAsUtf8 = Encoding.UTF8.GetBytes(asciiString);
-            transcodingStream.Write(asciiBytesAsUtf8.AsSpan());
+            transcodingStream.Write(asciiBytesAsUtf8, 0, asciiBytesAsUtf8.Length);
             Assert.Equal(asciiString, ErrorCheckingUnicodeEncoding.GetString(innerStream.ToArray()));
 
             innerStream.SetLength(0); // reset inner stream
 
             asciiString = GetVeryLongAsciiString(16 * 1024 * 1024);
             asciiBytesAsUtf8 = Encoding.UTF8.GetBytes(asciiString);
-            transcodingStream.Write(asciiBytesAsUtf8.AsSpan());
+            transcodingStream.Write(asciiBytesAsUtf8, 0, asciiBytesAsUtf8.Length);
             Assert.Equal(asciiString, ErrorCheckingUnicodeEncoding.GetString(innerStream.ToArray()));
 
             innerStream.SetLength(0); // reset inner stream
@@ -719,19 +758,19 @@ namespace System.Text.Tests
             Assert.Equal(0, innerStream.Position);
         }
 
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public void Write_WithPartialData()
         {
-            MemoryStream innerStream = new MemoryStream();
-            Stream transcodingStream = Encoding.CreateTranscodingStream(
+            MemoryStream innerStream = new();
+            Stream transcodingStream = new TranscodingStream(
                 innerStream,
-                innerStreamEncoding: CustomAsciiEncoding /* performs custom substitution */,
-                outerStreamEncoding: Encoding.UTF8 /* performs U+FFFD substition */,
+                innerEncoding: CustomAsciiEncoding /* performs custom substitution */,
+                thisEncoding: Encoding.UTF8 /* performs U+FFFD substitution */,
                 leaveOpen: true);
 
             // First, write some incomplete data
 
-            transcodingStream.Write(new byte[] { 0x78, 0x79, 0x7A, 0xC3 }); // [C3] shouldn't be flushed yet
+            transcodingStream.Write(new byte[] { 0x78, 0x79, 0x7A, 0xC3 }, 0, 4); // [C3] shouldn't be flushed yet
             Assert.Equal("xyz", ErrorCheckingAsciiEncoding.GetString(innerStream.ToArray()));
 
             // Flushing should have no effect
@@ -747,7 +786,7 @@ namespace System.Text.Tests
             // Provide an incomplete sequence, then close the stream.
             // Closing the stream should flush the underlying buffers and write the replacement char.
 
-            transcodingStream.Write(new byte[] { 0xE0, 0xBF }); // first 2 bytes of incomplete 3-byte sequence
+            transcodingStream.Write(new byte[] { 0xE0, 0xBF }, 0, 1); // first 2 bytes of incomplete 3-byte sequence
             Assert.Equal("xyz[00E0]", ErrorCheckingAsciiEncoding.GetString(innerStream.ToArray())); // wasn't flushed yet
 
             transcodingStream.Close();
@@ -757,9 +796,9 @@ namespace System.Text.Tests
         [Fact]
         public void Write_WithInvalidArgs_Throws()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => transcodingStream.Write(null, 0, 0));
+            Assert.ThrowsArgumentNull(() => transcodingStream.Write(null, 0, 0), "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Write(new byte[5], -1, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Write(new byte[5], 3, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.Write(new byte[5], 5, 1));
@@ -768,23 +807,28 @@ namespace System.Text.Tests
         }
 
         // Moq heavily utilizes RefEmit, which does not work on most aot workloads
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public async Task WriteAsync_WithFullData()
         {
-            MemoryStream sink = new MemoryStream();
+            MemoryStream sink = new();
             CancellationToken expectedFlushAsyncCancellationToken = new CancellationTokenSource().Token;
             CancellationToken expectedWriteAsyncCancellationToken = new CancellationTokenSource().Token;
 
             var innerStreamMock = new Mock<Stream>(MockBehavior.Strict);
             innerStreamMock.Setup(o => o.CanWrite).Returns(true);
+#if true // In current src/ projects, always pass byte array to inner Stream.
+            innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), expectedWriteAsyncCancellationToken))
+                .Returns<byte[], int, int, CancellationToken>(sink.WriteAsync);
+#else
             innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), expectedWriteAsyncCancellationToken))
                 .Returns<ReadOnlyMemory<byte>, CancellationToken>(sink.WriteAsync);
-            innerStreamMock.Setup(o => o.FlushAsync(expectedFlushAsyncCancellationToken)).Returns(Task.CompletedTask);
+#endif
+            innerStreamMock.Setup(o => o.FlushAsync(expectedFlushAsyncCancellationToken)).Returns(TaskHelpers.Completed());
 
-            Stream transcodingStream = Encoding.CreateTranscodingStream(
+            Stream transcodingStream = new TranscodingStream(
                 innerStreamMock.Object,
-                innerStreamEncoding: ErrorCheckingUnicodeEncoding,
-                outerStreamEncoding: Encoding.UTF8 /* performs U+FFFD substition */,
+                innerEncoding: ErrorCheckingUnicodeEncoding,
+                thisEncoding: Encoding.UTF8 /* performs U+FFFD substitution */,
                 leaveOpen: true);
 
             // First, test WriteAsync(byte[], int, int, CancellationToken)
@@ -808,74 +852,77 @@ namespace System.Text.Tests
 
             string asciiString = GetVeryLongAsciiString(128);
             byte[] asciiBytesAsUtf8 = Encoding.UTF8.GetBytes(asciiString);
-            await transcodingStream.WriteAsync(asciiBytesAsUtf8.AsMemory(), expectedWriteAsyncCancellationToken);
+            await transcodingStream.WriteAsync(asciiBytesAsUtf8, 0, asciiBytesAsUtf8.Length, expectedWriteAsyncCancellationToken);
             Assert.Equal(asciiString, ErrorCheckingUnicodeEncoding.GetString(sink.ToArray()));
 
             sink.SetLength(0); // reset sink
 
             asciiString = GetVeryLongAsciiString(16 * 1024 * 1024);
             asciiBytesAsUtf8 = Encoding.UTF8.GetBytes(asciiString);
-            await transcodingStream.WriteAsync(asciiBytesAsUtf8.AsMemory(), expectedWriteAsyncCancellationToken);
+            await transcodingStream.WriteAsync(asciiBytesAsUtf8, 0, asciiBytesAsUtf8.Length, expectedWriteAsyncCancellationToken);
             Assert.Equal(asciiString, ErrorCheckingUnicodeEncoding.GetString(sink.ToArray()));
 
             sink.SetLength(0); // reset sink
 
             // Close the outer stream and ensure no leftover data was written to the inner stream
 
-            ValueTask actualDisposeTask = transcodingStream.DisposeAsync();
-            Assert.Equal(default(ValueTask), actualDisposeTask); // should've completed synchronously
+            transcodingStream.Dispose();
             Assert.Equal(0, sink.Position);
         }
 
         // Moq heavily utilizes RefEmit, which does not work on most aot workloads
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public async Task WriteAsync_WithPartialData()
         {
-            MemoryStream sink = new MemoryStream();
+            MemoryStream sink = new();
             CancellationToken expectedCancellationToken = new CancellationTokenSource().Token;
 
             var innerStreamMock = new Mock<Stream>(MockBehavior.Strict);
             innerStreamMock.Setup(o => o.CanWrite).Returns(true);
+#if true // In current src/ projects, always pass byte array to inner Stream.
+            innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), expectedCancellationToken))
+                .Returns<byte[], int, int, CancellationToken>(sink.WriteAsync);
+#else
             innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), expectedCancellationToken))
                 .Returns<ReadOnlyMemory<byte>, CancellationToken>(sink.WriteAsync);
+#endif
 
-            Stream transcodingStream = Encoding.CreateTranscodingStream(
+            Stream transcodingStream = new TranscodingStream(
                 innerStreamMock.Object,
-                innerStreamEncoding: CustomAsciiEncoding /* performs custom substitution */,
-                outerStreamEncoding: Encoding.UTF8 /* performs U+FFFD substition */,
+                innerEncoding: CustomAsciiEncoding /* performs custom substitution */,
+                thisEncoding: Encoding.UTF8 /* performs U+FFFD substitution */,
                 leaveOpen: true);
 
             // First, write some incomplete data
 
-            await transcodingStream.WriteAsync(new byte[] { 0x78, 0x79, 0x7A, 0xC3 }, expectedCancellationToken); // [C3] shouldn't be flushed yet
+            await transcodingStream.WriteAsync(new byte[] { 0x78, 0x79, 0x7A, 0xC3 }, 0, 4, expectedCancellationToken); // [C3] shouldn't be flushed yet
             Assert.Equal("xyz", ErrorCheckingAsciiEncoding.GetString(sink.ToArray()));
 
             // Provide the second byte of the multi-byte sequence
 
-            await transcodingStream.WriteAsync(new byte[] { 0xA0 }, expectedCancellationToken); // [C3 A0] = U+00E0
+            await transcodingStream.WriteAsync(new byte[] { 0xA0 }, 0, 1, expectedCancellationToken); // [C3 A0] = U+00E0
             Assert.Equal("xyz[00E0]", ErrorCheckingAsciiEncoding.GetString(sink.ToArray()));
 
             // Provide an incomplete sequence, then close the stream.
             // Closing the stream should flush the underlying buffers and write the replacement char.
 
-            await transcodingStream.WriteAsync(new byte[] { 0xE0, 0xBF }, expectedCancellationToken); // first 2 bytes of incomplete 3-byte sequence
+            await transcodingStream.WriteAsync(new byte[] { 0xE0, 0xBF }, 0, 2, expectedCancellationToken); // first 2 bytes of incomplete 3-byte sequence
             Assert.Equal("xyz[00E0]", ErrorCheckingAsciiEncoding.GetString(sink.ToArray())); // wasn't flushed yet
 
-            // The call to DisposeAsync() will call innerStream.WriteAsync without a CancellationToken.
+            // The call to Dispose() will call innerStream.Write.
 
-            innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), CancellationToken.None))
-                .Returns<ReadOnlyMemory<byte>, CancellationToken>(sink.WriteAsync);
-
-            await transcodingStream.DisposeAsync();
+            innerStreamMock.Setup(o => o.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Callback<byte[], int, int>(sink.Write);
+            transcodingStream.Dispose();
             Assert.Equal("xyz[00E0][FFFD]", ErrorCheckingAsciiEncoding.GetString(sink.ToArray()));
         }
 
         [Fact]
         public void WriteAsync_WithInvalidArgs_Throws()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => (object)transcodingStream.WriteAsync(null, 0, 0));
+            Assert.ThrowsArgumentNull(() => { transcodingStream.WriteAsync(null, 0, 0); }, "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.WriteAsync(new byte[5], -1, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.WriteAsync(new byte[5], 3, -1));
             Assert.Throws<ArgumentOutOfRangeException>(() => (object)transcodingStream.WriteAsync(new byte[5], 5, 1));
@@ -884,20 +931,25 @@ namespace System.Text.Tests
         }
 
         // Moq heavily utilizes RefEmit, which does not work on most aot workloads
-        [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]
+        [Fact]
         public void WriteApm()
         {
             // Arrange
 
-            MemoryStream sink = new MemoryStream();
-            object expectedState = new object();
+            MemoryStream sink = new();
+            object expectedState = new();
 
             var innerStreamMock = new Mock<Stream>(MockBehavior.Strict);
             innerStreamMock.Setup(o => o.CanWrite).Returns(true);
+#if true // In current src/ projects, base Stream's BeginWrite method relies on Write and passes the byte array to the inner stream.
+            innerStreamMock.Setup(o => o.Write(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Callback<byte[], int, int>(sink.Write);
+#else
             innerStreamMock.Setup(o => o.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), CancellationToken.None))
                 .Returns<ReadOnlyMemory<byte>, CancellationToken>(sink.WriteAsync);
+#endif
 
-            Stream transcodingStream = Encoding.CreateTranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(innerStreamMock.Object, Encoding.UTF8, Encoding.UTF8);
 
             // Act
 
@@ -913,19 +965,29 @@ namespace System.Text.Tests
         [Fact]
         public void WriteApm_WithInvalidArgs_Throws()
         {
-            Stream transcodingStream = Encoding.CreateTranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
+            Stream transcodingStream = new TranscodingStream(new MemoryStream(), Encoding.UTF8, Encoding.UTF8);
 
-            Assert.Throws<ArgumentNullException>("buffer", () => transcodingStream.BeginWrite(null, 0, 0, null, null));
+#if true // Not overriding BeginRead and base Stream's method returns a Task as its IAsyncResult, delaying parameter checks.
+            Assert.ThrowsArgumentNull(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(null, 0, 0, null, null)), "buffer");
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(new byte[5], -1, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(new byte[5], 3, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(new byte[5], 5, 1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(new byte[5], 6, -1, null, null)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.EndWrite(transcodingStream.BeginWrite(new byte[5], 6, 0, null, null)));
+#else
+            Assert.ThrowsArgumentNull(() => transcodingStream.BeginWrite(null, 0, 0, null, null), "buffer");
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginWrite(new byte[5], -1, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginWrite(new byte[5], 3, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginWrite(new byte[5], 5, 1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginWrite(new byte[5], 6, -1, null, null));
             Assert.Throws<ArgumentOutOfRangeException>(() => transcodingStream.BeginWrite(new byte[5], 6, 0, null, null));
+#endif
         }
 
         // returns "abc...xyzabc...xyzabc..."
         private static string GetVeryLongAsciiString(int length)
         {
+#if NETCOREAPP || NETSTANDARD2_1
             return string.Create(length, (object)null, (buffer, _) =>
             {
                 for (int i = 0; i < buffer.Length; i++)
@@ -933,6 +995,10 @@ namespace System.Text.Tests
                     buffer[i] = (char)('a' + (i % 26));
                 }
             });
+#else
+            // Somewhat minor that the string just repeats a single character.
+            return new string('z', length);
+#endif
         }
 
         // A custom ASCIIEncoding where both encoder + decoder fallbacks have been specified
@@ -943,7 +1009,7 @@ namespace System.Text.Tests
             = Encoding.GetEncoding("ascii", EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
 
         private static readonly UnicodeEncoding ErrorCheckingUnicodeEncoding
-            = new UnicodeEncoding(bigEndian: false, byteOrderMark: false, throwOnInvalidBytes: true);
+            = new(bigEndian: false, byteOrderMark: false, throwOnInvalidBytes: true);
 
         // A custom encoder fallback which substitutes unknown chars with "[xxxx]" (the code point as hex)
         private sealed class CustomEncoderFallback : EncoderFallback
@@ -971,7 +1037,7 @@ namespace System.Text.Tests
                 private bool FallbackCommon(uint codePoint)
                 {
                     Assert.True(codePoint <= 0x10FFFF);
-                    _remaining = FormattableString.Invariant($"[{codePoint:X4}]");
+                    _remaining = String.Format(CultureInfo.InvariantCulture, "[{0:X4}]", codePoint);
                     _remainingIdx = 0;
                     return true;
                 }
@@ -1029,7 +1095,7 @@ namespace System.Text.Tests
 
             public override int GetMaxCharCount(int byteCount) => byteCount;
 
-            public override byte[] GetPreamble() => Array.Empty<byte>();
+            public override byte[] GetPreamble() => TranscodingStream.EmptyByteBuffer;
         }
 
         // A helper type that allows synchronously writing to a stream while asynchronously
@@ -1045,7 +1111,7 @@ namespace System.Text.Tests
                 var pipe = new Pipe();
                 ReadStream = pipe.Reader.AsStream();
                 _writer = pipe.Writer;
-                Task.Run(_DrainWorker);
+                Task.Run(DrainWorker);
             }
 
             public Stream ReadStream { get; }
@@ -1065,7 +1131,7 @@ namespace System.Text.Tests
                 _blockingCollection.Add(null);
             }
 
-            private async Task _DrainWorker()
+            private async Task DrainWorker()
             {
                 byte[] buffer;
                 while ((buffer = _blockingCollection.Take()) is not null)
