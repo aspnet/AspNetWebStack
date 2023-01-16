@@ -22,9 +22,9 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public class JsonMediaTypeFormatter : BaseJsonMediaTypeFormatter
     {
-        private ConcurrentDictionary<Type, DataContractJsonSerializer> _dataContractSerializerCache = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
-        private XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.CreateDefaultReaderQuotas();
-        private RequestHeaderMapping _requestHeaderMapping;
+        private readonly ConcurrentDictionary<Type, DataContractJsonSerializer> _dataContractSerializerCache = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
+        private readonly XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.CreateDefaultReaderQuotas();
+        private readonly RequestHeaderMapping _requestHeaderMapping;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonMediaTypeFormatter"/> class.
@@ -216,17 +216,23 @@ namespace System.Net.Http.Formatting
             {
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
 
-#if NETFX_CORE // JsonReaderWriterFactory is internal in netstandard1.3. Unfortunately, ignoring _readerQuotas.
-                // Force a preamble into the stream since DataContractJsonSerializer only supports auto-detecting
-                // encoding in netstandard1.3 ].
-                readStream = new ReadOnlyStreamWithEncodingPreamble(readStream, effectiveEncoding);
+                // JsonReaderWriterFactory is internal, CreateTextReader only supports auto-detecting the encoding
+                // and auto-detection fails in some cases for the NETFX_CORE project. In addition, DCS encodings are
+                // limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
+                Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
+                    new NonClosingDelegatingStream(readStream) :
+                    new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
 
-                return dataContractSerializer.ReadObject(new NonClosingDelegatingStream(readStream));
-#else
-                using (XmlReader reader = JsonReaderWriterFactory.CreateJsonReader(new NonClosingDelegatingStream(readStream), effectiveEncoding, _readerQuotas, null))
+#if NETFX_CORE
+                using (innerStream)
                 {
-                    return dataContractSerializer.ReadObject(reader);
+                    // Unfortunately, we're ignoring _readerQuotas.
+                    return dataContractSerializer.ReadObject(innerStream);
                 }
+#else
+                // XmlReader will always dispose of innerStream when we dispose of the reader.
+                using var reader = JsonReaderWriterFactory.CreateJsonReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
+                return dataContractSerializer.ReadObject(reader);
 #endif
             }
             else
@@ -277,14 +283,6 @@ namespace System.Net.Http.Formatting
 
             if (UseDataContractJsonSerializer)
             {
-#if NETFX_CORE // DataContractJsonSerializer writes only UTF8 in netstandard1.3. Later versions of (now public)
-               // JsonReaderWriterFactory can compensate.
-                if (!string.Equals(Encoding.UTF8.WebName, effectiveEncoding.WebName, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new NotSupportedException("!!! To be added !!!");
-                }
-#endif
-
                 if (MediaTypeFormatter.TryGetDelegatingTypeForIQueryableGenericOrSame(ref type))
                 {
                     if (value != null)
@@ -293,21 +291,37 @@ namespace System.Net.Http.Formatting
                     }
                 }
 
-                DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
-
-#if NETFX_CORE // JsonReaderWriterFactory is internal in netstandard1.3.
-                dataContractSerializer.WriteObject(writeStream, value);
-#else
-                using (XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(writeStream, effectiveEncoding, ownsStream: false))
+                WritePreamble(writeStream, effectiveEncoding);
+                if (string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase))
                 {
-                    dataContractSerializer.WriteObject(writer, value);
+                    WriteObject(writeStream, type, value);
                 }
-#endif
+                else
+                {
+                    // JsonReaderWriterFactory is internal and DataContractJsonSerializer only writes UTF8 for the
+                    // NETFX_CORE project. In addition, DCS encodings are limited to UTF8, UTF16BE, and UTF16LE.
+                    // Convert to UTF8 as we write.
+                    using var innerStream = new TranscodingStream(writeStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
+                    WriteObject(innerStream, type, value);
+                }
             }
             else
             {
                 base.WriteToStream(type, value, writeStream, effectiveEncoding);
             }
+        }
+
+        private void WriteObject(Stream stream, Type type, object value)
+        {
+            DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
+
+            // Do not dispose of the stream. WriteToStream handles that where it's needed.
+#if NETFX_CORE
+            dataContractSerializer.WriteObject(stream, value);
+#else
+            using XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Utf8Encoding, ownsStream: false);
+            dataContractSerializer.WriteObject(writer, value);
+#endif
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catch all is around an extensibile method")]

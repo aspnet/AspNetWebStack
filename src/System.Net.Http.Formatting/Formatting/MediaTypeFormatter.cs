@@ -20,6 +20,8 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public abstract class MediaTypeFormatter
     {
+        private protected static readonly Encoding Utf8Encoding =
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
         private const int DefaultMinHttpCollectionKeys = 1;
         private const int DefaultMaxHttpCollectionKeys = 1000; // same default as ASPNET
         private const string IWellKnownComparerTypeName = "System.IWellKnownStringEqualityComparer, mscorlib, Version=4.0.0.0, PublicKeyToken=b77a5c561934e089";
@@ -497,6 +499,15 @@ namespace System.Net.Http.Formatting
                 return Activator.CreateInstance(type);
             }
             return null;
+        }
+
+        private protected static void WritePreamble(Stream stream, Encoding encoding)
+        {
+            byte[] bytes = encoding.GetPreamble();
+            if (bytes.Length > 0)
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
         }
 
         /// <summary>

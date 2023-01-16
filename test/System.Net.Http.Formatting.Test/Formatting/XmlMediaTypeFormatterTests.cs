@@ -514,23 +514,10 @@ namespace System.Net.Http.Formatting
 
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            if (!isDefaultEncoding)
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             XmlMediaTypeFormatter formatter = new XmlMediaTypeFormatter();
 
             string formattedContent = "<string xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">" + content + "</string>";
-#if NETFX_CORE
-            // We need to supply the xml declaration when compiled in portable library for non utf-8 content
-            if (String.Equals("utf-16", encoding, StringComparison.OrdinalIgnoreCase))
-            {
-                formattedContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>" + formattedContent;
-            }
-#endif
             string mediaType = string.Format("application/xml; charset={0}", encoding);
 
             // Act & assert
@@ -582,12 +569,6 @@ namespace System.Net.Http.Formatting
 
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            if (!isDefaultEncoding)
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             XmlMediaTypeFormatter formatter = new XmlMediaTypeFormatter();
             string formattedContent = "<string xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">" + content +

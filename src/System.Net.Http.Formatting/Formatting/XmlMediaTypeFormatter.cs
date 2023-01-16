@@ -337,12 +337,14 @@ namespace System.Net.Http.Formatting
         {
             // Get the character encoding for the content
             Encoding effectiveEncoding = SelectCharacterEncoding(content == null ? null : content.Headers);
-#if NETFX_CORE
-            // Force a preamble into the stream, since CreateTextReader in WinRT only supports auto-detecting encoding.
-            return XmlDictionaryReader.CreateTextReader(new ReadOnlyStreamWithEncodingPreamble(readStream, effectiveEncoding), _readerQuotas);
-#else
-            return XmlDictionaryReader.CreateTextReader(new NonClosingDelegatingStream(readStream), effectiveEncoding, _readerQuotas, null);
-#endif
+
+            // DCS encodings are limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
+            Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
+                new NonClosingDelegatingStream(readStream) :
+                new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
+
+            // XmlReader will always dispose of innerStream when caller disposes of the reader.
+            return XmlDictionaryReader.CreateTextReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
         }
 
         /// <inheritdoc/>
@@ -433,9 +435,20 @@ namespace System.Net.Http.Formatting
         protected internal virtual XmlWriter CreateXmlWriter(Stream writeStream, HttpContent content)
         {
             Encoding effectiveEncoding = SelectCharacterEncoding(content != null ? content.Headers : null);
+            WritePreamble(writeStream, effectiveEncoding);
+
+            // DCS encodings are limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
+            Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
+                writeStream :
+                new TranscodingStream(writeStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
+
             XmlWriterSettings writerSettings = WriterSettings.Clone();
-            writerSettings.Encoding = effectiveEncoding;
-            return XmlWriter.Create(writeStream, writerSettings);
+            writerSettings.Encoding = Utf8Encoding;
+
+            // Have XmlWriter dispose of innerStream when caller disposes of the writer if using a TranscodingStream.
+            writerSettings.CloseOutput = writeStream != innerStream;
+
+            return XmlWriter.Create(innerStream, writerSettings);
         }
 
         /// <summary>

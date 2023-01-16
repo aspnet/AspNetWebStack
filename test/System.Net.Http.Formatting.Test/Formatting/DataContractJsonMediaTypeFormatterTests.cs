@@ -218,12 +218,6 @@ namespace System.Net.Http.Formatting
 
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            if (!isDefaultEncoding)
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             DataContractJsonMediaTypeFormatter formatter = new DataContractJsonMediaTypeFormatter();
             string formattedContent = "\"" + content + "\"";
@@ -236,14 +230,6 @@ namespace System.Net.Http.Formatting
 
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            // DataContractJsonSerializer does not honor the value of byteOrderMark in the UnicodeEncoding ctor.
-            // It doesn't include the BOM when byteOrderMark is set to true.
-            if (!isDefaultEncoding || encoding != "utf-8")
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             DataContractJsonMediaTypeFormatter formatter = new DataContractJsonMediaTypeFormatter();
             string formattedContent = "\"" + content + "\"";
