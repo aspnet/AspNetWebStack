@@ -9,5 +9,8 @@
       analyzers, which run during build. Refer to https://aka.ms/fxcopanalyzers to migrate to FxCop analyzers."
     -->
     <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
+    <!-- Workaround continued use of netcoreapp2.1; suppress the NETSDK1138 warning. -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
+
 </Project>

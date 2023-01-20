@@ -48,6 +48,11 @@
                         if (versionInfo != null && versionInfo.ProductVersion != null)
                         {
                             toParse = versionInfo.ProductVersion;
+                            int index = toParse.IndexOfAny(new[] {'-', '+'});
+                            if (index > 0)
+                            {
+                                toParse = toParse.Substring(0, index);
+                            }
                         }
                         else
                         {
