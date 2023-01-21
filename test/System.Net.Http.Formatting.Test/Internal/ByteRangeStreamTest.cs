@@ -303,6 +303,7 @@ namespace System.Net.Http.Internal
             }
         }
 
+#if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
         [Theory]
         [PropertyData("ReadBoundsDataWithLimit")]
         public void BeginRead_ReadsEffectiveLengthBytes(int from, int to, int innerLength, int effectiveLength)
@@ -330,6 +331,7 @@ namespace System.Net.Http.Internal
                 Assert.Equal(effectiveLength, rangeStream.Position);
             }
         }
+#endif
 
         [Fact]
         public async Task BeginRead_CanReadAfterLength()
