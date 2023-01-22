@@ -67,6 +67,7 @@ namespace System.Net.Http.Handlers
             ReportBytesReceived(readCount, userState: null);
             return readCount;
         }
+
 #if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
