@@ -14,6 +14,8 @@ parameters:
 variables:
 - name: DOTNET_CLI_TELEMETRY_OPTOUT
   value: 1
+- name: DOTNET_NOLOGO
+  value: 1
   # Run CodeQL3000 tasks in a separate internal pipeline; not needed here.
 - name: Codeql.SkipTaskAutoInjection
   value: true
