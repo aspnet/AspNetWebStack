@@ -121,7 +121,7 @@ namespace System.Web.Http.Owin
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close()).Callback(() => innerStreamDisposed = true);
             mock.As<IDisposable>().Setup(s => s.Dispose());
-            mock.Protected().Setup("Dispose", true).Callback(() => innerStreamDisposed = true);
+            mock.Protected().Setup("Dispose", exactParameterMatch: true, args: true).Callback(() => innerStreamDisposed = true);
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))
@@ -159,7 +159,7 @@ namespace System.Web.Http.Owin
             Mock<Stream> mock = new Mock<Stream>(MockBehavior.Strict);
             mock.Setup(s => s.Close()).Callback(() => innerStreamDisposed = true);
             mock.As<IDisposable>().Setup(s => s.Dispose());
-            mock.Protected().Setup("Dispose", true).Callback(() => innerStreamDisposed = true);
+            mock.Protected().Setup("Dispose", exactParameterMatch: true, args: true).Callback(() => innerStreamDisposed = true);
 
             using (Stream innerStream = mock.Object)
             using (Stream product = CreateProductUnderTest(innerStream))

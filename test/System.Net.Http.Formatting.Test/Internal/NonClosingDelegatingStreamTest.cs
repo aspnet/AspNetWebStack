@@ -22,7 +22,7 @@ namespace System.Net.Http.Internal
             mockStream.Dispose();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Never(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
         }
 
@@ -37,7 +37,7 @@ namespace System.Net.Http.Internal
             mockStream.Close();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Never(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
         }
     }

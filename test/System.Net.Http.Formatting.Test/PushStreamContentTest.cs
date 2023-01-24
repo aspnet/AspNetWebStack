@@ -92,7 +92,7 @@ namespace System.Net.Http
             mockStream.Dispose();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Never(), exactParameterMatch: true, args: true);
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
             Assert.True(await serializeToStreamTask.Task);
         }
@@ -109,7 +109,7 @@ namespace System.Net.Http
             mockStream.Dispose();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Never(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
             Assert.True(await serializeToStreamTask.Task);
@@ -127,7 +127,7 @@ namespace System.Net.Http
             mockStream.Close();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Never(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Never(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Never());
             Assert.Equal(TaskStatus.RanToCompletion, serializeToStreamTask.Task.Status);
             Assert.True(await serializeToStreamTask.Task);

@@ -301,7 +301,7 @@ namespace System.Web.Mvc.Test
         {
             // Arrange
             Mock<Controller> mockController = new Mock<Controller>();
-            mockController.Protected().Setup("Dispose", true).Verifiable();
+            mockController.Protected().Setup("Dispose", exactParameterMatch: true, args: true).Verifiable();
             Controller controller = mockController.Object;
 
             // Act

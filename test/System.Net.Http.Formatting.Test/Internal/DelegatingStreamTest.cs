@@ -141,7 +141,7 @@ namespace System.Net.Http.Internal
             mockStream.Dispose();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Once(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Once());
         }
 
@@ -156,7 +156,7 @@ namespace System.Net.Http.Internal
             mockStream.Close();
 
             // Assert
-            mockInnerStream.Protected().Verify("Dispose", Times.Once(), true);
+            mockInnerStream.Protected().Verify("Dispose", Times.Once(), exactParameterMatch: true, args: true);
             mockInnerStream.Verify(s => s.Close(), Times.Once());
         }
 
