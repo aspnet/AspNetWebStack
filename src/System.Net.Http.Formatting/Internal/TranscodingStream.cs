@@ -465,8 +465,6 @@ namespace System.Text
 
 #if NET6_0_OR_GREATER
         [StackTraceHidden]
-#else
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         private void ThrowIfDisposed()
         {
@@ -479,8 +477,6 @@ namespace System.Text
         [DoesNotReturn]
 #if NET6_0_OR_GREATER
         [StackTraceHidden]
-#else
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         private void ThrowObjectDisposedException()
         {
