@@ -228,8 +228,9 @@ namespace System.Net.Http.Formatting
                     return dataContractSerializer.ReadObject(innerStream);
                 }
 #else
-                // XmlReader will always dispose of innerStream when we dispose of the reader.
-                using var reader = JsonReaderWriterFactory.CreateJsonReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
+                // XmlDictionaryReader will always dispose of innerStream when we dispose of the reader.
+                using XmlDictionaryReader reader =
+                    JsonReaderWriterFactory.CreateJsonReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
                 return dataContractSerializer.ReadObject(reader);
 #endif
             }

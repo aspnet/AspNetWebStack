@@ -343,7 +343,7 @@ namespace System.Net.Http.Formatting
                 new NonClosingDelegatingStream(readStream) :
                 new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
 
-            // XmlReader will always dispose of innerStream when caller disposes of the reader.
+            // XmlDictionaryReader will always dispose of innerStream when caller disposes of the reader.
             return XmlDictionaryReader.CreateTextReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
         }
 
