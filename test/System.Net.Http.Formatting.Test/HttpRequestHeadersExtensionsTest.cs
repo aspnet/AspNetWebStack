@@ -45,7 +45,7 @@ namespace System.Net.Http
                         new string[]
                         {
                             "adxcs=-",
-                            "ADXCS=si=0%3a1"
+                            "ADXCS=si=0%3A1"
                         }
                     },
                     {

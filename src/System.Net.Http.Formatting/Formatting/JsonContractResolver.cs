@@ -29,8 +29,11 @@ namespace System.Net.Http.Formatting
             }
 
             _formatter = formatter;
+
+#if !NETFX_CORE
             // Need this setting to have [Serializable] types serialized correctly
             IgnoreSerializableAttribute = false;
+#endif
         }
 
         // Determines whether a member is required or not and sets the appropriate JsonProperty settings

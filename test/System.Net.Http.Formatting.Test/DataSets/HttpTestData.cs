@@ -356,7 +356,6 @@ namespace System.Net.Http.Formatting.DataSets
 
         //// TODO: make this list compose from other data?
         // Collection of legal instances of all standard MediaTypeMapping types
-#if !NETFX_CORE // not present in portable library version
         public static TestData<MediaTypeMapping> StandardMediaTypeMappings
         {
             get
@@ -375,7 +374,6 @@ namespace System.Net.Http.Formatting.DataSets
                 });
             }
         }
-#endif
 
         public static TestData<string> LegalUriPathExtensions
         {

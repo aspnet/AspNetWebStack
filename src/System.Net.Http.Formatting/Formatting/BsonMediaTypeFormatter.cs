@@ -11,12 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
-#if NETFX_CORE
 using Newtonsoft.Json.Bson;
-#else
-using BsonReader = Newtonsoft.Json.Bson.BsonDataReader;
-using BsonWriter = Newtonsoft.Json.Bson.BsonDataWriter;
-#endif
 
 namespace System.Net.Http.Formatting
 {
@@ -65,7 +60,6 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETFX_CORE // MaxDepth and DBNull not supported in portable library; no need to override there
         /// <inheritdoc />
         public sealed override int MaxDepth
         {
@@ -79,6 +73,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if !NETFX_CORE // DBNull not supported in portable library; no need to override there
         /// <inheritdoc />
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
@@ -200,13 +195,7 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-#if NETFX_CORE
-#pragma warning disable CS0618 // Type or member is obsolete
-#endif
-            BsonReader reader = new BsonReader(new BinaryReader(readStream, effectiveEncoding));
-#if NETFX_CORE
-#pragma warning restore CS0618 // Type or member is obsolete
-#endif
+            BsonDataReader reader = new BsonDataReader(new BinaryReader(readStream, effectiveEncoding));
 
             try
             {
@@ -303,13 +292,7 @@ namespace System.Net.Http.Formatting
                 throw Error.ArgumentNull("effectiveEncoding");
             }
 
-#if NETFX_CORE
-#pragma warning disable CS0618 // Type or member is obsolete
-#endif
-            return new BsonWriter(new BinaryWriter(writeStream, effectiveEncoding));
-#if NETFX_CORE
-#pragma warning restore CS0618 // Type or member is obsolete
-#endif
+            return new BsonDataWriter(new BinaryWriter(writeStream, effectiveEncoding));
         }
 
         // Return true if Json.Net will likely convert value of given type to a Json primitive, not JsonArray nor
@@ -319,15 +302,10 @@ namespace System.Net.Http.Formatting
         {
             Contract.Assert(type != null);
 
-            bool isSimpleType;
-#if NETFX_CORE // TypeDescriptor is not supported in portable library
-            isSimpleType = type.IsValueType() || type == typeof(string);
-#else
             // CanConvertFrom() check is similar to MVC / Web API ModelMetadata.IsComplexType getters. This is
             // sufficient for many cases but Json.Net uses JsonConverterAttribute and built-in converters, not type
             // descriptors.
-            isSimpleType = TypeDescriptor.GetConverter(type).CanConvertFrom(typeof(string));
-#endif
+            bool isSimpleType = TypeDescriptor.GetConverter(type).CanConvertFrom(typeof(string));
 
             return isSimpleType;
         }

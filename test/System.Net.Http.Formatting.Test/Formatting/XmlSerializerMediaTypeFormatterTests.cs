@@ -61,9 +61,7 @@ namespace System.Net.Http.Formatting
         {
             XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter()
             {
-#if !NETFX_CORE // We don't support MaxDepth in the portable library
                 MaxDepth = 5001
-#endif
             };
 
             StringContent content = new StringContent(GetDeeplyNestedObject(5000));
@@ -250,22 +248,9 @@ namespace System.Net.Http.Formatting
 
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            if (!isDefaultEncoding)
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter();
             string formattedContent = "<string>" + content + "</string>";
-#if NETFX_CORE
-            if (String.Equals("utf-16", encoding, StringComparison.OrdinalIgnoreCase))
-            {
-                // We need to supply the xml declaration when compiled in portable library for non utf-8 content
-                formattedContent = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>" + formattedContent;
-            }
-#endif
             string mediaType = string.Format("application/xml; charset={0}", encoding);
 
             // Act & assert
@@ -274,12 +259,6 @@ namespace System.Net.Http.Formatting
 
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
-            if (!isDefaultEncoding)
-            {
-                // XmlDictionaryReader/Writer only supports utf-8 and 16
-                return TaskHelpers.Completed();
-            }
-
             // Arrange
             XmlSerializerMediaTypeFormatter formatter = new XmlSerializerMediaTypeFormatter();
             string formattedContent = "<string>" + content + "</string>";

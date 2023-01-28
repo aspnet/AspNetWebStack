@@ -361,9 +361,7 @@ namespace System.Net.Http.Formatting
         [InlineData(typeof(XAttribute))]
         [InlineData(typeof(Type))]
         [InlineData(typeof(byte[]))]
-#if !NETFX_CORE
         [InlineData(typeof(XmlElement))]
-#endif
         [InlineData(typeof(FormDataCollection))]
         public void IsTypeExcludedFromValidation_ReturnsTrueForExcludedTypes(Type type)
         {

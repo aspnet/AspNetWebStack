@@ -1,23 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;net452</TargetFrameworks>
-    <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
+    <TargetFrameworks>net452;net462;netcoreapp2.1</TargetFrameworks>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
+    <DefineConstants
+        Condition=" '$(NetFX_Core)' == 'true' ">$(DefineConstants);NETFX_CORE</DefineConstants>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
+    <OutputPath
+        Condition=" '$(NetFX_Core)' == 'true' ">$(OutputPath)NetCore\</OutputPath>
   </PropertyGroup>
+
   <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 
-    <PackageReference Include="Moq" Version="4.7.142.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <Reference Include="System.Web"
+        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' " />
+
+    <PackageReference Include="Moq" Version="4.7.142.0" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
     <PackageReference Include="xunit.assert" Version="2.3.0" />
     <PackageReference Include="xunit.extensibility.core" Version="2.3.0" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.3.0" />
 
     <Compile Remove="AppDomainUtils.cs;Microsoft\TestCommon\RuntimeEnvironment.cs;WebUtils.cs"
-        Condition=" '$(TargetFramework)' == 'netcoreapp2.1' "/>
-    <Reference Include="System.Web" Condition=" '$(TargetFramework)' == 'net452' " />
+        Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' " />
+
+    <!-- To access Error.InvalidEnumArgumentException in this special case. -->
+    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj"
+        Condition=" '$(NetFX_Core)' == 'true' " />
   </ItemGroup>
 </Project>

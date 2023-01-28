@@ -10,7 +10,7 @@ using Microsoft.TestCommon;
 
 namespace System.Net.Http
 {
-    public class UriQueryUtilityTest
+    public class WebUtilityTest
     {
         public static TheoryDataSet<string, string, string> UriQueryData
         {
@@ -23,19 +23,20 @@ namespace System.Net.Http
         [Fact]
         public void TypeIsCorrect()
         {
-            Assert.Type.HasProperties(typeof(UriQueryUtility), TypeAssert.TypeProperties.IsClass | TypeAssert.TypeProperties.IsStatic);
+            Assert.Type.HasProperties(typeof(WebUtility),
+                TypeAssert.TypeProperties.IsStatic | TypeAssert.TypeProperties.IsPublicVisibleClass);
         }
 
         [Fact]
         public void UrlEncode_ReturnsNull()
         {
-            Assert.Null(UriQueryUtility.UrlEncode(null));
+            Assert.Null(WebUtility.UrlEncode(null));
         }
 
         [Fact]
         public void UrlDecode_ReturnsNull()
         {
-            Assert.Null(UriQueryUtility.UrlDecode(null));
+            Assert.Null(WebUtility.UrlDecode(null));
         }
 
         [Fact]

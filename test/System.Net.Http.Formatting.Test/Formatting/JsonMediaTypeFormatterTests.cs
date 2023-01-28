@@ -83,18 +83,14 @@ namespace System.Net.Http.Formatting
             TestJsonMediaTypeFormatter formatter = new TestJsonMediaTypeFormatter()
             {
                 Indent = true,
-#if !NETFX_CORE // MaxDepth and DCJS not supported in client portable library
                 MaxDepth = 42,
                 UseDataContractJsonSerializer = true
-#endif
             };
 
             TestJsonMediaTypeFormatter derivedFormatter = new TestJsonMediaTypeFormatter(formatter);
 
-#if !NETFX_CORE // MaxDepth and DCJS not supported in client portable library
             Assert.Equal(formatter.MaxDepth, derivedFormatter.MaxDepth);
             Assert.Equal(formatter.UseDataContractJsonSerializer, derivedFormatter.UseDataContractJsonSerializer);
-#endif
             Assert.Equal(formatter.Indent, derivedFormatter.Indent);
             Assert.Same(formatter.SerializerSettings, derivedFormatter.SerializerSettings);
             Assert.Same(formatter.SerializerSettings.ContractResolver, derivedFormatter.SerializerSettings.ContractResolver);
@@ -117,7 +113,6 @@ namespace System.Net.Http.Formatting
                 expectedDefaultValue: false);
         }
 
-#if !NETFX_CORE // MaxDepth is not supported in portable libraries
         [Fact]
         public void MaxDepth_RoundTrips()
         {
@@ -131,7 +126,6 @@ namespace System.Net.Http.Formatting
                 illegalUpperValue: null,
                 roundTripTestValue: 256);
         }
-#endif
 
         [Theory]
         [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection")]
@@ -230,7 +224,6 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
-#if !NETFX_CORE
         [Fact]
         public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
         {
@@ -315,7 +308,6 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
-#endif
 
         [Fact]
         public void CanReadType_ReturnsTrueOnJtoken()
@@ -499,9 +491,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false
-#endif
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
@@ -518,9 +508,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false,
-#endif
                 Indent = true
             };
             MemoryStream memoryStream = new MemoryStream();
@@ -538,9 +526,7 @@ namespace System.Net.Http.Formatting
         {
             JsonMediaTypeFormatter formatter = new JsonMediaTypeFormatter
             {
-#if !NETFX_CORE // No JsonSerializer in portable libraries
                 UseDataContractJsonSerializer = false
-#endif
             };
             MemoryStream memoryStream = new MemoryStream();
             HttpContent content = new StringContent(String.Empty);
@@ -633,7 +619,6 @@ namespace System.Net.Http.Formatting
                 return InnerJsonSerializer;
             }
 
-#if !NETFX_CORE
             public override DataContractJsonSerializer CreateDataContractSerializer(Type type)
             {
                 InnerDataContractSerializer = base.CreateDataContractSerializer(type);
@@ -650,7 +635,6 @@ namespace System.Net.Http.Formatting
 
                 return InnerDataContractSerializer;
             }
-#endif
         }
 
         private bool IsTypeSerializableWithJsonSerializer(Type type, object obj)

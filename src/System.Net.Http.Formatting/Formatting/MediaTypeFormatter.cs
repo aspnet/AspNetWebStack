@@ -1,17 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if !NETFX_CORE // In portable library we have our own implementation of Concurrent Dictionary which is in the internal namespace
 using System.Collections.Concurrent;
-#endif
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-#if NETFX_CORE // In portable library we have our own implementation of Concurrent Dictionary which is in the internal namespace
-using System.Net.Http.Internal;
-#endif
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -25,6 +20,8 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public abstract class MediaTypeFormatter
     {
+        private protected static readonly Encoding Utf8Encoding =
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
         private const int DefaultMinHttpCollectionKeys = 1;
         private const int DefaultMaxHttpCollectionKeys = 1000; // same default as ASPNET
         private const string IWellKnownComparerTypeName = "System.IWellKnownStringEqualityComparer, mscorlib, Version=4.0.0.0, PublicKeyToken=b77a5c561934e089";
@@ -36,10 +33,8 @@ namespace System.Net.Http.Formatting
 
         private readonly List<MediaTypeHeaderValue> _supportedMediaTypes;
         private readonly List<Encoding> _supportedEncodings;
-#if !NETFX_CORE // No MediaTypeMappings in portable library or IRequiredMemberSelector (no model state on client)
         private readonly List<MediaTypeMapping> _mediaTypeMappings;
         private IRequiredMemberSelector _requiredMemberSelector;
-#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediaTypeFormatter"/> class.
@@ -50,10 +45,8 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes = new MediaTypeHeaderValueCollection(_supportedMediaTypes);
             _supportedEncodings = new List<Encoding>();
             SupportedEncodings = new Collection<Encoding>(_supportedEncodings);
-#if !NETFX_CORE // No MediaTypeMappings in portable library
             _mediaTypeMappings = new List<MediaTypeMapping>();
             MediaTypeMappings = new Collection<MediaTypeMapping>(_mediaTypeMappings);
-#endif
         }
 
         /// <summary>
@@ -71,11 +64,9 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes = formatter.SupportedMediaTypes;
             _supportedEncodings = formatter._supportedEncodings;
             SupportedEncodings = formatter.SupportedEncodings;
-#if !NETFX_CORE // No MediaTypeMappings in portable library or IRequiredMemberSelector (no model state on client)
             _mediaTypeMappings = formatter._mediaTypeMappings;
             MediaTypeMappings = formatter.MediaTypeMappings;
             _requiredMemberSelector = formatter._requiredMemberSelector;
-#endif
         }
 
         /// <summary>
@@ -126,7 +117,6 @@ namespace System.Net.Http.Formatting
             get { return _supportedEncodings; }
         }
 
-#if !NETFX_CORE // No MediaTypeMappings in portable library
         /// <summary>
         /// Gets the mutable collection of <see cref="MediaTypeMapping"/> elements used
         /// by this <see cref="MediaTypeFormatter"/> instance to determine the
@@ -138,9 +128,7 @@ namespace System.Net.Http.Formatting
         {
             get { return _mediaTypeMappings; }
         }
-#endif
 
-#if !NETFX_CORE // IRequiredMemberSelector is not in portable libraries because there is no model state on the client.
         /// <summary>
         /// Gets or sets the <see cref="IRequiredMemberSelector"/> used to determine required members.
         /// </summary>
@@ -155,7 +143,6 @@ namespace System.Net.Http.Formatting
                 _requiredMemberSelector = value;
             }
         }
-#endif
 
         internal virtual bool CanWriteAnyTypes
         {
@@ -502,6 +489,15 @@ namespace System.Net.Http.Formatting
                 return Activator.CreateInstance(type);
             }
             return null;
+        }
+
+        private protected static void WritePreamble(Stream stream, Encoding encoding)
+        {
+            byte[] bytes = encoding.GetPreamble();
+            if (bytes.Length > 0)
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
         }
 
         /// <summary>

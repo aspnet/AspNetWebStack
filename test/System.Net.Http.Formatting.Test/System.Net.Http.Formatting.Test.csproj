@@ -12,8 +12,44 @@
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Buffers.4.5.1\lib\netstandard2.0\System.Buffers.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IO.Pipelines, Version=4.0.2.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.Pipelines.4.7.5\lib\netstandard2.0\System.IO.Pipelines.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Memory.4.5.5\lib\netstandard2.0\System.Memory.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
@@ -21,6 +57,10 @@
     <Reference Include="Moq, Version=4.7.142.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Moq.4.7.142\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -30,14 +70,6 @@
       <HintPath>..\..\packages\Newtonsoft.Json.Bson.1.0.2\lib\net45\Newtonsoft.Json.Bson.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
@@ -54,123 +86,13 @@
       <HintPath>..\..\packages\xunit.extensibility.execution.2.3.0\lib\net452\xunit.execution.desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
+
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
       <Visible>False</Visible>
     </CodeAnalysisDependentAssemblyPaths>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ByteRangeStreamContentTest.cs" />
-    <Compile Include="Formatting\BsonMediaTypeFormatterTests.cs" />
-    <Compile Include="Internal\ConcurrentDictionaryTests.cs" />
-    <Compile Include="InvalidByteRangeExceptionTest.cs" />
-    <Compile Include="Formatting\FormUrlEncodedFromContentTests.cs" />
-    <Compile Include="Formatting\FormUrlEncodedFromUriQueryTests.cs" />
-    <Compile Include="Formatting\JsonNetSerializationTest.cs" />
-    <Compile Include="Formatting\JsonNetValidationTest.cs" />
-    <Compile Include="Formatting\MediaTypeMappingTests.cs" />
-    <Compile Include="Internal\ByteRangeStreamTest.cs" />
-    <Compile Include="Internal\ReadOnlyStreamWithEncodingPreambleTest.cs" />
-    <Compile Include="MimeBodyPartTest.cs" />
-    <Compile Include="HttpHeaderExtensionsTest.cs" />
-    <Compile Include="HttpUnsortedResponseTest.cs" />
-    <Compile Include="HttpUnsortedRequestTest.cs" />
-    <Compile Include="Formatting\StringComparisonHelperTest.cs" />
-    <Compile Include="Formatting\XmlHttpRequestHeaderMappingTest.cs" />
-    <Compile Include="Formatting\MediaTypeFormatterMatchTest.cs" />
-    <Compile Include="HttpContentFormDataExtensionsTest.cs" />
-    <Compile Include="Mocks\MockAsyncCallback.cs" />
-    <Compile Include="Mocks\MockCompletedAsyncResult.cs" />
-    <Compile Include="Mocks\MockMediaTypeMapping.cs" />
-    <Compile Include="Mocks\MockContentNegotiator.cs" />
-    <Compile Include="CustomMultipartFormDataRemoteStreamProvider.cs" />
-    <Compile Include="RemoteStreamInfoTests.cs" />
-    <Compile Include="MultipartRemoteFileDataTests.cs" />
-    <Compile Include="MultipartFormDataRemoteStreamProviderTests.cs" />
-    <Compile Include="PushStreamContentTest.cs" />
-    <Compile Include="HttpClientFactoryTest.cs" />
-    <Compile Include="Handlers\ProgressContentTest.cs" />
-    <Compile Include="Handlers\ProgressMessageHandlerTest.cs" />
-    <Compile Include="Handlers\ProgressStreamTest.cs" />
-    <Compile Include="Handlers\ProgressWriteAsyncResultTest.cs" />
-    <Compile Include="Handlers\HttpProgressEventArgsTest.cs" />
-    <Compile Include="MultipartRelatedStreamProviderTests.cs" />
-    <Compile Include="MultipartStreamProviderTestBase.cs" />
-    <Compile Include="MultipartFileDataTest.cs" />
-    <Compile Include="HttpRequestHeadersExtensionsTest.cs" />
-    <Compile Include="HttpResponseHeadersExtensionsTest.cs" />
-    <Compile Include="DataSets\Types\DataContractEnum.cs" />
-    <Compile Include="DataSets\Types\DataContractType.cs" />
-    <Compile Include="DataSets\Types\DerivedDataContractType.cs" />
-    <Compile Include="DataSets\Types\DerivedFormUrlEncodedMediaTypeFormatter.cs" />
-    <Compile Include="DataSets\Types\DerivedJsonMediaTypeFormatter.cs" />
-    <Compile Include="DataSets\Types\DerivedWcfPocoType.cs" />
-    <Compile Include="DataSets\Types\DerivedXmlMediaTypeFormatter.cs" />
-    <Compile Include="DataSets\Types\DerivedXmlSerializableType.cs" />
-    <Compile Include="DataSets\HttpTestData.cs" />
-    <Compile Include="DataSets\Types\INotJsonSerializable.cs" />
-    <Compile Include="DataSets\Types\WcfPocoType.cs" />
-    <Compile Include="DataSets\Types\XmlSerializableType.cs" />
-    <Compile Include="Formatting\DataContractJsonMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\SerializerConsistencyTests.cs" />
-    <Compile Include="Formatting\XmlSerializerMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\MediaTypeFormatterTestBase.cs" />
-    <Compile Include="Formatting\StringWithQualityHeaderValueComparerTests.cs" />
-    <Compile Include="Formatting\FormDataCollectionTests.cs" />
-    <Compile Include="Formatting\ContentNegotiationResultTest.cs" />
-    <Compile Include="Formatting\FormUrlEncodedJsonTests.cs" />
-    <Compile Include="Headers\CookieStateTest.cs" />
-    <Compile Include="Headers\CookieHeaderValueTest.cs" />
-    <Compile Include="HttpClientExtensionsTest.cs" />
-    <Compile Include="HttpContentExtensionsTest.cs" />
-    <Compile Include="HttpRequestMessageCommonExtensionsTest.cs" />
-    <Compile Include="Internal\AsyncResultTest.cs" />
-    <Compile Include="Internal\HttpValueCollectionTest.cs" />
-    <Compile Include="Internal\NonClosingDelegatingStreamTest.cs" />
-    <Compile Include="Internal\DelegatingStreamTest.cs" />
-    <Compile Include="Mocks\MockDelegatingHandler.cs" />
-    <Compile Include="Mocks\MockNonClosingDelegatingStream.cs" />
-    <Compile Include="Mocks\MockDelegatingStream.cs" />
-    <Compile Include="Mocks\MockProgressEventHandler.cs" />
-    <Compile Include="Mocks\TestableHttpMessageHandler.cs" />
-    <Compile Include="UriQueryDataSet.cs" />
-    <Compile Include="FormattingUtilitiesTests.cs" />
-    <Compile Include="Formatting\BufferedMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\DefaultContentNegotiatorTests.cs" />
-    <Compile Include="Formatting\FormUrlEncodedMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\JsonMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\MediaTypeConstantsTests.cs" />
-    <Compile Include="Formatting\MediaTypeFormatterCollectionTests.cs" />
-    <Compile Include="Formatting\MediaTypeFormatterExtensionsTests.cs" />
-    <Compile Include="Formatting\MediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\MediaTypeWithQualityHeaderValueComparerTests.cs" />
-    <Compile Include="Formatting\MediaTypeHeaderValueExtensionsTests.cs" />
-    <Compile Include="Formatting\ParsedMediaTypeHeaderValueTests.cs" />
-    <Compile Include="Formatting\QueryStringMappingTests.cs" />
-    <Compile Include="Formatting\RequestHeaderMappingTests.cs" />
-    <Compile Include="Formatting\XmlMediaTypeFormatterTests.cs" />
-    <Compile Include="Formatting\Parsers\FormUrlEncodedParserTests.cs" />
-    <Compile Include="HttpContentMessageExtensionsTests.cs" />
-    <Compile Include="HttpContentMultipartExtensionsTests.cs" />
-    <Compile Include="HttpMessageContentTests.cs" />
-    <Compile Include="Formatting\Parsers\HttpRequestHeaderParserTests.cs" />
-    <Compile Include="Formatting\Parsers\HttpRequestLineParserTests.cs" />
-    <Compile Include="Formatting\Parsers\HttpResponseHeaderParserTests.cs" />
-    <Compile Include="Formatting\Parsers\HttpStatusLineParserTests.cs" />
-    <Compile Include="Formatting\Parsers\InternetMessageFormatHeaderParserTests.cs" />
-    <Compile Include="Formatting\Parsers\MimeMultipartParserTests.cs" />
-    <Compile Include="MultipartFileStreamProviderTests.cs" />
-    <Compile Include="MultipartFormDataStreamProviderTests.cs" />
-    <Compile Include="MultipartMemoryStreamProviderTests.cs" />
-    <Compile Include="ObjectContentOfTTests.cs" />
-    <Compile Include="ObjectContentTests.cs" />
-    <Compile Include="ParserData.cs" />
-    <Compile Include="UriExtensionsTests.cs" />
-    <Compile Include="Mocks\MockHttpContent.cs" />
-    <Compile Include="Mocks\MockMediaTypeFormatter.cs" />
-  </ItemGroup>
-  <ItemGroup>
+
+    <Compile Include="**\*.cs" Exclude="obj\**\*.cs" />
+
     <ProjectReference Include="..\..\src\System.Net.Http.Formatting\System.Net.Http.Formatting.csproj">
       <Project>{668E9021-CE84-49D9-98FB-DF125A9FCDB0}</Project>
       <Name>System.Net.Http.Formatting</Name>
@@ -179,26 +101,28 @@
       <Project>{FCCC4CB7-BAF7-4A57-9F89-E5766FE536C0}</Project>
       <Name>Microsoft.TestCommon</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
+
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
+
     <Analyzer Include="..\..\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
+
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\xunit.core.2.3.0\build\xunit.core.targets"
+      Condition="Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.props'))" />
-    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.targets'))" />
-    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.props')"
+        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.props'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')"
+        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core.2.3.0\build\xunit.core.targets'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props')"
+        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.3.1\build\net20\xunit.runner.visualstudio.props'))" />
   </Target>
-  <Import Project="..\..\packages\xunit.core.2.3.0\build\xunit.core.targets" Condition="Exists('..\..\packages\xunit.core.2.3.0\build\xunit.core.targets')" />
 </Project>

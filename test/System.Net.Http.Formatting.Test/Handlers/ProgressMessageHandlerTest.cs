@@ -125,16 +125,13 @@ namespace System.Net.Http.Handlers
 
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
-#if NETFX_CORE  // Extension method only available on non portable library
-                HttpResponseMessage response = new HttpResponseMessage() { RequestMessage = request };
-#else
                 HttpResponseMessage response = request.CreateResponse();
-#endif
                 if (_includeResponseEntity)
                 {
                     response.Content = new StringContent("Response Entity");
                     response.Content.Headers.Add(TestHeader, TestValue);
                 }
+
                 return Task.FromResult(response);
             }
         }

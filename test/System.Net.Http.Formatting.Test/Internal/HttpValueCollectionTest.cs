@@ -4,9 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
-#if !NETFX_CORE
 using System.Net.Http.Formatting.Internal;
-#endif
 using System.Web.WebPages.TestUtils;
 using Microsoft.TestCommon;
 
@@ -20,11 +18,7 @@ namespace System.Net.Http.Internal
 
         private static HttpValueCollection CreateInstance()
         {
-#if NETFX_CORE
-            return new HttpValueCollection();
-#else
             return HttpValueCollection.Create();
-#endif
         }
 
 #if !NETCOREAPP
@@ -79,11 +73,7 @@ namespace System.Net.Http.Internal
                     hvc4.Add("na me", "");
                     dataSet.Add(hvc4, "na+me");
 
-#if NETFX_CORE
                     string encoded5 = "n%22%2C%3B%5Cn";
-#else
-                    string encoded5 = "n%22%2c%3b%5cn";
-#endif
 
                     var hvc5 = CreateInstance();
                     hvc5.Add("n\",;\\n", "");
@@ -103,22 +93,14 @@ namespace System.Net.Http.Internal
                     hvc7.Add("n4", "v4");
                     dataSet.Add(hvc7, "n1=v1&n2=v2&n3=v3&n4=v4");
 
-#if NETFX_CORE
                     string encoded8 = "n%2C1=v%2C1&n%3B2=v%3B2";
-#else
-                    string encoded8 = "n%2c1=v%2c1&n%3b2=v%3b2";
-#endif
 
                     var hvc8 = CreateInstance();
                     hvc8.Add("n,1", "v,1");
                     hvc8.Add("n;2", "v;2");
                     dataSet.Add(hvc8, encoded8);
 
-#if NETFX_CORE
                     string encoded9 = "n1=%26&n2=%3B&n3=%26&n4=%2B&n5=%26&n6=%3D&n7=%26";
-#else
-                    string encoded9 = "n1=%26&n2=%3b&n3=%26&n4=%2b&n5=%26&n6=%3d&n7=%26";
-#endif
 
                     var hvc9 = CreateInstance();
                     hvc9.Add("n1", "&");
@@ -268,14 +250,8 @@ namespace System.Net.Http.Internal
                 string expectedKey = kvp.Key ?? String.Empty;
                 string expectedValue = kvp.Value ?? String.Empty;
 
-#if NETFX_CORE
-                KeyValuePair<string, string> actualKvp = nvc.List[index];
-                string actualKey = actualKvp.Key;
-                string actualValue = actualKvp.Value;
-#else
                 string actualKey = nvc.AllKeys[index];
                 string actualValue = nvc[index];
-#endif
                 index++;
 
                 Assert.Equal(expectedKey, actualKey);

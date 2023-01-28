@@ -340,11 +340,11 @@ namespace System.Net.Http.Formatting
                             {
                                 dateStr = dateStr.Substring(1, dateStr.Length - 2);
                             }
-                            results.Add(prefix + "=" + UriQueryUtility.UrlEncode(dateStr));
+                            results.Add(prefix + "=" + WebUtility.UrlEncode(dateStr));
                         }
                         else
                         {
-                            results.Add(prefix + "=" + UriQueryUtility.UrlEncode(jsonPrimitive.Value.ToString()));
+                            results.Add(prefix + "=" + WebUtility.UrlEncode(jsonPrimitive.Value.ToString()));
                         }
                     }
                 }

@@ -1,26 +1,18 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if !NETFX_CORE
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Http.Headers;
-#if !NETFX_CORE
 using System.Net.Http.Internal;
 using System.Runtime.Serialization.Json;
-#endif
 using System.Text;
 using System.Threading;
-#if !NETFX_CORE
 using System.Threading.Tasks;
-#endif
 using System.Web.Http;
-#if !NETFX_CORE
 using System.Xml;
-#endif
 using Newtonsoft.Json;
 
 namespace System.Net.Http.Formatting
@@ -30,11 +22,9 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public class JsonMediaTypeFormatter : BaseJsonMediaTypeFormatter
     {
-#if !NETFX_CORE // DataContractJsonSerializer and MediaTypeMappings are not supported in portable library
-        private ConcurrentDictionary<Type, DataContractJsonSerializer> _dataContractSerializerCache = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
-        private XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.CreateDefaultReaderQuotas();
-        private RequestHeaderMapping _requestHeaderMapping;
-#endif
+        private readonly ConcurrentDictionary<Type, DataContractJsonSerializer> _dataContractSerializerCache = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
+        private readonly XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.CreateDefaultReaderQuotas();
+        private readonly RequestHeaderMapping _requestHeaderMapping;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonMediaTypeFormatter"/> class.
@@ -45,10 +35,8 @@ namespace System.Net.Http.Formatting
             SupportedMediaTypes.Add(MediaTypeConstants.ApplicationJsonMediaType);
             SupportedMediaTypes.Add(MediaTypeConstants.TextJsonMediaType);
 
-#if !NETFX_CORE // MediaTypeMappings are not supported in portable library
             _requestHeaderMapping = new XmlHttpRequestHeaderMapping();
             MediaTypeMappings.Add(_requestHeaderMapping);
-#endif
         }
 
         /// <summary>
@@ -60,10 +48,7 @@ namespace System.Net.Http.Formatting
         {
             Contract.Assert(formatter != null);
 
-#if !NETFX_CORE // UseDataContractJsonSerializer is not supported in portable library
             UseDataContractJsonSerializer = formatter.UseDataContractJsonSerializer;
-#endif
-
             Indent = formatter.Indent;
         }
 
@@ -84,7 +69,6 @@ namespace System.Net.Http.Formatting
             get { return MediaTypeConstants.ApplicationJsonMediaType; }
         }
 
-#if !NETFX_CORE // DataContractJsonSerializer is not supported in portable library
         /// <summary>
         /// Gets or sets a value indicating whether to use <see cref="DataContractJsonSerializer"/> by default.
         /// </summary>
@@ -92,14 +76,12 @@ namespace System.Net.Http.Formatting
         ///     <c>true</c> if use <see cref="DataContractJsonSerializer"/> by default; otherwise, <c>false</c>. The default is <c>false</c>.
         /// </value>
         public bool UseDataContractJsonSerializer { get; set; }
-#endif
 
         /// <summary>
         /// Gets or sets a value indicating whether to indent elements when writing data.
         /// </summary>
         public bool Indent { get; set; }
 
-#if !NETFX_CORE // MaxDepth not supported in portable library; no need to override there
         /// <inheritdoc/>
         public sealed override int MaxDepth
         {
@@ -113,7 +95,6 @@ namespace System.Net.Http.Formatting
                 _readerQuotas.MaxDepth = value;
             }
         }
-#endif
 
         /// <inheritdoc />
         public override JsonReader CreateJsonReader(Type type, Stream readStream, Encoding effectiveEncoding)
@@ -163,7 +144,6 @@ namespace System.Net.Http.Formatting
             return jsonWriter;
         }
 
-#if !NETFX_CORE // DataContractJsonSerializer not supported in portable library; no need to override there
         /// <inheritdoc />
         public override bool CanReadType(Type type)
         {
@@ -233,10 +213,26 @@ namespace System.Net.Http.Formatting
             if (UseDataContractJsonSerializer)
             {
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
-                using (XmlReader reader = JsonReaderWriterFactory.CreateJsonReader(new NonClosingDelegatingStream(readStream), effectiveEncoding, _readerQuotas, null))
+
+                // JsonReaderWriterFactory is internal, CreateTextReader only supports auto-detecting the encoding
+                // and auto-detection fails in some cases for the NETFX_CORE project. In addition, DCS encodings are
+                // limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
+                Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
+                    new NonClosingDelegatingStream(readStream) :
+                    new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
+
+#if NETFX_CORE
+                using (innerStream)
                 {
-                    return dataContractSerializer.ReadObject(reader);
+                    // Unfortunately, we're ignoring _readerQuotas.
+                    return dataContractSerializer.ReadObject(innerStream);
                 }
+#else
+                // XmlDictionaryReader will always dispose of innerStream when we dispose of the reader.
+                using XmlDictionaryReader reader =
+                    JsonReaderWriterFactory.CreateJsonReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
+                return dataContractSerializer.ReadObject(reader);
+#endif
             }
             else
             {
@@ -294,16 +290,37 @@ namespace System.Net.Http.Formatting
                     }
                 }
 
-                DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
-                using (XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(writeStream, effectiveEncoding, ownsStream: false))
+                WritePreamble(writeStream, effectiveEncoding);
+                if (string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase))
                 {
-                    dataContractSerializer.WriteObject(writer, value);
+                    WriteObject(writeStream, type, value);
+                }
+                else
+                {
+                    // JsonReaderWriterFactory is internal and DataContractJsonSerializer only writes UTF8 for the
+                    // NETFX_CORE project. In addition, DCS encodings are limited to UTF8, UTF16BE, and UTF16LE.
+                    // Convert to UTF8 as we write.
+                    using var innerStream = new TranscodingStream(writeStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
+                    WriteObject(innerStream, type, value);
                 }
             }
             else
             {
                 base.WriteToStream(type, value, writeStream, effectiveEncoding);
             }
+        }
+
+        private void WriteObject(Stream stream, Type type, object value)
+        {
+            DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
+
+            // Do not dispose of the stream. WriteToStream handles that where it's needed.
+#if NETFX_CORE
+            dataContractSerializer.WriteObject(stream, value);
+#else
+            using XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Utf8Encoding, ownsStream: false);
+            dataContractSerializer.WriteObject(writer, value);
+#endif
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Catch all is around an extensibile method")]
@@ -316,8 +333,11 @@ namespace System.Net.Http.Formatting
 
             try
             {
+#if !NETFX_CORE // XsdDataContractExporter is not supported in portable libraries
                 // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                 FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);
+#endif
+
                 serializer = CreateDataContractSerializer(type);
             }
             catch (Exception caught)
@@ -378,6 +398,5 @@ namespace System.Net.Http.Formatting
 
             return serializer;
         }
-#endif
     }
 }
