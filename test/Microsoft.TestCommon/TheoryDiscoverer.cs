@@ -77,6 +77,7 @@ namespace Microsoft.TestCommon
                 var testCase = new SkippedXunitTestCase(
                     _diagnosticMessageSink,
                     discoveryOptions.MethodDisplayOrDefault(),
+                    TestMethodDisplayOptions.None,
                     skipReason,
                     baseCase.TestMethod,
                     baseCase.TestMethodArguments);
