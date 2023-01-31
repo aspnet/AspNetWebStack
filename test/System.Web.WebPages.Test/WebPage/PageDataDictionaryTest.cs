@@ -54,9 +54,9 @@ namespace System.Web.WebPages.Test
             var d = new PageDataDictionary<dynamic>();
             var item = new KeyValuePair<object, object>("x", 1);
             d.Add(item);
-            Assert.Contains(item, d);
+            Assert.Contains<KeyValuePair<object, object>>(item, d);
             var item2 = new KeyValuePair<object, object>("y", 2);
-            Assert.DoesNotContain(item2, d);
+            Assert.DoesNotContain<KeyValuePair<object, object>>(item2, d);
         }
 
         [Fact]
@@ -106,9 +106,9 @@ namespace System.Web.WebPages.Test
             var d = new PageDataDictionary<dynamic>();
             var item = new KeyValuePair<object, object>("x", 2);
             d.Add(item);
-            Assert.Contains(item, d);
+            Assert.Contains<KeyValuePair<object, object>>(item, d);
             d.Remove(item);
-            Assert.DoesNotContain(item, d);
+            Assert.DoesNotContain<KeyValuePair<object, object>>(item, d);
         }
 
         [Fact]

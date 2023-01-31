@@ -1,6 +1,6 @@
 <Project>
   <Import Project="..\Directory.Build.targets" />
-  <Import Project="..\packages\xunit.runner.msbuild.2.3.1\**\xunit.runner.msbuild.props"
+  <Import Project="..\packages\xunit.runner.msbuild.2.4.2\**\xunit.runner.msbuild.props"
       Condition="$(IsTestProject) and '$(MSBuildRuntimeType)' != 'Core' and '$(TargetFrameworkIdentifier)' == '.NETFramework'" />
 
   <Target Name="Test" DependsOnTargets="_TestWithVSTest;_TestWithDotnetTest;_TestWithRunner" />

@@ -65,8 +65,14 @@
   </Target>
 
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
+    <ItemGroup>
+      <_ToRestore Include="@(SolutionsToBuild)" />
+      <_ToRestore Include="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj"
+          AdditionalProperties="NetFX_Core=true"
+          Condition=" '$(BuildPortable)' == 'true' " />
+    </ItemGroup>
     <Message Text="%0ARestoring NuGet packages..." Importance="High" />
-    <MSBuild Projects="@(SolutionsToBuild)" Targets="Restore"
+    <MSBuild Projects="@(_ToRestore)" Targets="Restore"
       BuildInParallel="$(RestoreInParallel)"
       Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
                   RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion)" />

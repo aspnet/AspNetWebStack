@@ -19,8 +19,8 @@ namespace System.Web.WebPages.Validation.Test
         public void FormFieldKeyIsCommonToModelStateAndValidationHelper()
         {
             // Arrange
+            const string key = "_FORM";
             RequestFieldValidatorBase.IgnoreUseUnvalidatedValues = true;
-            string key = "_FORM";
             ValidationHelper validationHelper = GetValidationHelper(GetContext());
 
             // Act and Assert

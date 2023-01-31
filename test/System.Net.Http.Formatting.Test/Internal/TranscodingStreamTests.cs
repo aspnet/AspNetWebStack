@@ -170,7 +170,7 @@ namespace System.Text.Tests
             Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: false);
             transcodingStream.Dispose();
             transcodingStream.Dispose(); // calling it a second time should no-op
-            Assert.Throws<ObjectDisposedException>(() => innerStream.Read(TranscodingStream.EmptyByteBuffer, 0, 0));
+            Assert.Throws<ObjectDisposedException>(() => innerStream.Read(Array.Empty<byte>(), 0, 0));
 
             // Async
 
@@ -192,7 +192,7 @@ namespace System.Text.Tests
             Stream transcodingStream = new TranscodingStream(innerStream, Encoding.UTF8, Encoding.UTF8, leaveOpen: true);
             transcodingStream.Dispose();
             transcodingStream.Dispose(); // calling it a second time should no-op
-            innerStream.Read(TranscodingStream.EmptyByteBuffer, 0, 0); // shouldn't throw
+            innerStream.Read(Array.Empty<byte>(), 0, 0); // shouldn't throw
 
             // Async
 
@@ -1095,7 +1095,7 @@ namespace System.Text.Tests
 
             public override int GetMaxCharCount(int byteCount) => byteCount;
 
-            public override byte[] GetPreamble() => TranscodingStream.EmptyByteBuffer;
+            public override byte[] GetPreamble() => Array.Empty<byte>();
         }
 
         // A helper type that allows synchronously writing to a stream while asynchronously

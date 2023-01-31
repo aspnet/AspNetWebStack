@@ -2466,6 +2466,8 @@ namespace System.Web.Mvc.Test
 
             Mock<ControllerContext> mockControllerContext = new Mock<ControllerContext>();
             mockControllerContext.SetupGet(c => c.RouteData).Returns(new RouteData());
+            mockControllerContext.SetupGet(c => c.HttpContext.Session).Returns((HttpSessionStateBase)null);
+            mockControllerContext.SetupProperty(c => c.HttpContext.User);
 
             mockControllerContext.Setup(c => c.HttpContext.Request.ValidateInput()).Callback(() =>
             {
@@ -2480,7 +2482,6 @@ namespace System.Web.Mvc.Test
                 }
             });
 
-            mockControllerContext.Setup(c => c.HttpContext.Session).Returns((HttpSessionStateBase)null);
             mockControllerContext.Setup(c => c.Controller).Returns(controller);
             return mockControllerContext.Object;
         }

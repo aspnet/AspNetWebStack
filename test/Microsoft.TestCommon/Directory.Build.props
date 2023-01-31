@@ -1,0 +1,9 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <!-- Set base intermediate output path early for NETFX_Core but still exclude everything under the obj\ folder. -->
+    <BaseIntermediateOutputPath Condition=" '$(NetFX_Core)' == 'true' ">obj\NetCore\</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

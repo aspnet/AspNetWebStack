@@ -3,7 +3,7 @@
     This is a separate MSBuild file so that we can survive upgrades of the xunit NuGet package
     and also still work with NuGet Package Restore.
   -->
-  <Import Project="..\packages\**\xunit.runner.msbuild.props"/>
+  <Import Project="..\packages\xunit.runner.msbuild.2.4.2\**\xunit.runner.msbuild.props"/>
 
   <Target Name="TestAssembly" Returns="@(_ExitCodes)">
     <xunit Assemblies="$(TestAssembly)"

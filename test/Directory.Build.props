@@ -7,6 +7,6 @@
     <TargetFrameworkVersion
         Condition=" '$(MSBuildProjectName)' != 'Microsoft.TestCommon' AND
           '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.NetCore.Test' AND
-          '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.NetStandard.Test' ">v4.5.2</TargetFrameworkVersion>
+          '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.NetStandard.Test' ">v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
 </Project>

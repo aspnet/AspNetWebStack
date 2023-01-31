@@ -29,7 +29,7 @@ namespace System.Web.WebPages.Test
 
             // Assert
             response.Verify();
-            Assert.Equal(Encoding.Default.GetString(stream.ToArray()), _fileContent);
+            Assert.Equal(_fileContent, Encoding.Default.GetString(stream.ToArray()));
         }
 
         [Fact]

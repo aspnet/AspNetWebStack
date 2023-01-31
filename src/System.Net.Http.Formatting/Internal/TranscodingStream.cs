@@ -31,8 +31,8 @@ namespace System.Text
         private const int MinWriteRentedArraySize = 4 * 1024;
         private const int MaxWriteRentedArraySize = 1024 * 1024;
 
-        internal static readonly byte[] EmptyByteBuffer = new byte[0];
-        internal static readonly char[] EmptyCharBuffer = new char[0];
+        private static readonly byte[] EmptyByteBuffer = new byte[0];
+        private static readonly char[] EmptyCharBuffer = new char[0];
 
         private readonly Encoding _innerEncoding;
         private readonly Encoding _thisEncoding;
