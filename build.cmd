@@ -2,13 +2,12 @@
 pushd %~dp0
 setlocal
 
-if exist bin goto build
+if exist bin goto Build
 mkdir bin
 
 :Build
 
-REM Find the most recent 32bit MSBuild.exe on the system. Require v16.0 (installed with VS2019) or later.
-REM Use `vswhere` for the search because it can find all VS installations.
+REM Require VS2019 (v16.0) on the system. Use `vswhere` for the search because it can find all VS installations.
 set vswhere="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 if not exist %vswhere% (
   set vswhere="%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -39,9 +38,17 @@ if not DEFINED InstallDir (
   goto BuildFail
 )
 
-PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass  -Command ^
-  "try { & '%~dp0eng\GetXCopyMSBuild.ps1'; exit $LASTEXITCODE } catch { write-host $_; exit 1 }"
+REM Find or install MSBuild. Need v17.4 due to our .NET SDK choice.
+set "MSBuildVersion=17.4.1"
+set "Command=[System.Threading.Thread]::CurrentThread.CurrentCulture = ''"
+set "Command=%Command%; [System.Threading.Thread]::CurrentThread.CurrentUICulture = ''"
+set "Command=%Command%; try { & '%~dp0eng\GetXCopyMSBuild.ps1' %MSBuildVersion%; exit $LASTEXITCODE }"
+set "Command=%Command%  catch { write-host $_; exit 1 }"
+PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass  -Command "%Command%"
 if %ERRORLEVEL% neq 0 goto BuildFail
+
+REM Add MSBuild to the path.
+set "PATH=%CD%\.msbuild\%MSBuildVersion%\tools\MSBuild\Current\Bin\;%PATH%"
 
 REM Configure NuGet operations to work w/in this repo i.e. do not pollute system packages folder.
 REM Note this causes two copies of packages restored using packages.config to land in this folder e.g.

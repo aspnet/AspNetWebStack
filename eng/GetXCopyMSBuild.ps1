@@ -1,5 +1,13 @@
 # Lifted from https://github.com/dotnet/arcade/blob/main/eng/common/tools.ps1
 
+[CmdletBinding(DefaultParameterSetName='Groups')]
+param(
+    [string]$Version = '17.4.1'
+)
+
+Set-StrictMode -Version 2
+$ErrorActionPreference = 'Stop'
+
 function Create-Directory ([string[]] $path) {
   New-Item -Path $path -Force -ItemType 'Directory' | Out-Null
 }
@@ -31,7 +39,4 @@ function InitializeXCopyMSBuild([string]$packageVersion, [bool]$install, [string
   return Join-Path $packageDir 'tools'
 }
 
-$basePath = InitializeXCopyMSBuild -packageVersion 17.4.1 -install $true -ToolsDir (join-path $PWD .msbuild)
-
-# Add it to the path...
-$env:Path = "$env:Path;$basePath\MSBuild\Current\Bin"
+InitializeXCopyMSBuild -packageVersion $Version -install $true -ToolsDir (join-path $PWD .msbuild)
