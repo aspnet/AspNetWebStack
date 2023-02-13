@@ -56,7 +56,7 @@ namespace System.Net.Http.Handlers
         }
 
         [Theory]
-#if !NET6_0_OR_GREATER // Temporarily ignore EmptyContent test issues.
+#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [InlineData(false, false)]
         [InlineData(false, true)]
 #endif

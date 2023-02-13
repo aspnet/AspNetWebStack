@@ -164,7 +164,7 @@ namespace System.Net.Http
             }
         }
 
-#if !NET6_0_OR_GREATER // Temporarily ignore EmptyContent test issues.
+#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [Fact]
         public async Task SerializeResponse()
         {
@@ -243,7 +243,7 @@ namespace System.Net.Http
             }
         }
 
-#if !NET6_0_OR_GREATER // Temporarily ignore EmptyContent test issues.
+#if !NET6_0_OR_GREATER // https://github.com/aspnet/AspNetWebStack/issues/386
         [Fact]
         public async Task SerializeResponseAsync()
         {
