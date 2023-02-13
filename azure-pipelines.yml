@@ -60,10 +60,16 @@ jobs:
   - checkout: self
     clean: true
     displayName: Checkout
+
   - task: UseDotNet@2
     displayName: Get .NET SDK
     inputs:
       useGlobalJson: true
+  - task: UseDotNet@2
+    displayName: Get .NET 2.1 runtime
+    inputs:
+      packageType: runtime
+      version: '2.1.x'
 
   - script: .\build.cmd EnableSkipStrongNames
     displayName: Enable SkipStrongNames

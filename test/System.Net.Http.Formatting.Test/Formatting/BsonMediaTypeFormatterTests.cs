@@ -330,7 +330,12 @@ namespace System.Net.Http.Formatting
             // Act & Assert
             await Assert.ThrowsAsync<JsonReaderException>(
                 () => formatter.ReadFromStreamAsync(variationType, stream, content, null),
-                "Could not convert to decimal: 7.92281625142643E+28. Path 'Value'.");
+#if NETCOREAPP3_1_OR_GREATER
+                "Could not convert to decimal: 7.922816251426434E+28. Path 'Value'."
+#else
+                "Could not convert to decimal: 7.92281625142643E+28. Path 'Value'."
+#endif
+                );
         }
 
         [Theory]
