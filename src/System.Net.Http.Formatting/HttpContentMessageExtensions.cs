@@ -451,7 +451,7 @@ namespace System.Net.Http
             Contract.Assert(destination != null, "destination headers cannot be null");
             Contract.Assert(contentStream != null, "contentStream must be non null");
             HttpContentHeaders contentHeaders = null;
-            HttpContent content = null;
+            HttpContent content;
 
             // Set the header fields
             foreach (KeyValuePair<string, IEnumerable<string>> header in source)
@@ -480,6 +480,10 @@ namespace System.Net.Http
                 contentStream.Seek(0 - rewind, SeekOrigin.Current);
                 content = new StreamContent(contentStream);
                 contentHeaders.CopyTo(content.Headers);
+            }
+            else
+            {
+                content = new StreamContent(Stream.Null);
             }
 
             return content;

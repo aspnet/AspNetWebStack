@@ -31,7 +31,8 @@ namespace System.Web.Http.Controllers
             var result = _converter.Convert(_context, null);
 
             Assert.Equal(HttpStatusCode.NoContent, result.StatusCode);
-            Assert.Null(result.Content);
+            Assert.NotNull(result.Content);
+            Assert.Equal(0L, result.Content.Headers.ContentLength);
             Assert.Same(_request, result.RequestMessage);
         }
     }

@@ -220,7 +220,8 @@ namespace System.Web.Http.WebHost
                 {
                     Assert.NotNull(response);
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                    Assert.Null(response.Content);
+                    Assert.NotNull(response.Content);
+                    Assert.Equal(0L, response.Content.Headers.ContentLength);
                     Assert.Same(expectedRequest, response.RequestMessage);
                 }
             }
