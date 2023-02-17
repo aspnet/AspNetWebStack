@@ -359,12 +359,21 @@ namespace System.Net.Http
 
         private void ValidateStreamForReading(Stream stream)
         {
+            // Stream is null case should be an extreme, incredibly unlikely corner case. Every HttpContent from
+            // the framework (see dotnet/runtime or .NET Framework reference source) provides a non-null Stream
+            // in the ReadAsStringAsync task's return value. Likely need a poorly-designed derived HttpContent
+            // to hit this. Mostly ignoring the fact this message doesn't make much sense for the case.
+            if (stream is null || !stream.CanRead)
+            {
+                throw Error.NotSupported(Properties.Resources.NotSupported_UnreadableStream);
+            }
+
             // If the content needs to be written to a target stream a 2nd time, then the stream must support
             // seeking (e.g. a FileStream), otherwise the stream can't be copied a second time to a target
             // stream (e.g. a NetworkStream).
             if (_contentConsumed)
             {
-                if (stream != null && stream.CanRead)
+                if (stream.CanSeek)
                 {
                     stream.Position = 0;
                 }

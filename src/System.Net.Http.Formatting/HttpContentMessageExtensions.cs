@@ -467,7 +467,8 @@ namespace System.Net.Http
                 }
             }
 
-            // If we have content headers then create an HttpContent for this Response
+            // If we have content headers then create an HttpContent for this request or response. Otherwise,
+            // provide a HttpContent instance to overwrite the null or EmptyContent value.
             if (contentHeaders != null)
             {
                 // Need to rewind the input stream to be at the position right after the HTTP header
