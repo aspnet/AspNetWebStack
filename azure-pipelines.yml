@@ -28,10 +28,10 @@ jobs:
   displayName: Build
   pool:
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
-      name: NetCore-Public
+      name: NetCore-Svc-Public
       demands: ImageOverride -equals windows.vs2019.amd64.open
     ${{ else }}:
-      name: NetCore1ESPool-Internal
+      name: NetCore1ESPool-Svc-Internal
       demands: ImageOverride -equals windows.vs2019.amd64
   timeoutInMinutes: 30
 
