@@ -361,7 +361,7 @@ namespace System.Net.Http
         {
             // Stream is null case should be an extreme, incredibly unlikely corner case. Every HttpContent from
             // the framework (see dotnet/runtime or .NET Framework reference source) provides a non-null Stream
-            // in the ReadAsStringAsync task's return value. Likely need a poorly-designed derived HttpContent
+            // in the ReadAsStreamAsync task's return value. Likely need a poorly-designed derived HttpContent
             // to hit this. Mostly ignoring the fact this message doesn't make much sense for the case.
             if (stream is null || !stream.CanRead)
             {
