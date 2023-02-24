@@ -46,20 +46,34 @@ namespace System.Net.Http
             return httpResponse;
         }
 
-        private static async Task<string> ReadContentAsync(HttpContent content)
+        private static async Task<string> ReadContentAsync(HttpContent content, bool unBuffered = false)
         {
-            await content.LoadIntoBufferAsync();
+            if (unBuffered)
+            {
+                var stream = new MemoryStream();
+                await content.CopyToAsync(stream);
+                stream.Position = 0L;
 
-            return await content.ReadAsStringAsync();
+                // StreamReader will dispose of the Stream.
+                using var reader = new StreamReader(stream);
+
+                return await reader.ReadToEndAsync();
+            }
+            else
+            {
+                await content.LoadIntoBufferAsync();
+
+                return await content.ReadAsStringAsync();
+            }
         }
 
-        private static async Task ValidateRequest(HttpContent content, bool containsEntity)
+        private static async Task ValidateRequest(HttpContent content, bool containsEntity, bool unBuffered = false)
         {
             Assert.Equal(ParserData.HttpRequestMediaType, content.Headers.ContentType);
             long? length = content.Headers.ContentLength;
             Assert.NotNull(length);
 
-            string message = await ReadContentAsync(content);
+            string message = await ReadContentAsync(content, unBuffered);
             if (containsEntity)
             {
                 Assert.Equal(ParserData.HttpRequestWithEntity.Length, length);
@@ -72,14 +86,14 @@ namespace System.Net.Http
             }
         }
 
-        private static async Task ValidateResponse(HttpContent content, bool containsEntity)
+        private static async Task ValidateResponse(HttpContent content, bool containsEntity, bool unBuffered = false)
         {
             Assert.Equal(ParserData.HttpResponseMediaType, content.Headers.ContentType);
 
             long? length = content.Headers.ContentLength;
             Assert.NotNull(length);
 
-            string message = await ReadContentAsync(content);
+            string message = await ReadContentAsync(content, unBuffered);
             if (containsEntity)
             {
                 Assert.Equal(ParserData.HttpResponseWithEntity.Length, length);
@@ -153,14 +167,16 @@ namespace System.Net.Http
             Assert.Equal(ParserData.HttpRequestWithHost, message);
         }
 
-        [Fact]
-        public async Task SerializeRequestMultipleTimes()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SerializeRequestMultipleTimes(bool unBuffered)
         {
-            HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, false);
-            HttpMessageContent instance = new HttpMessageContent(request);
+            HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            HttpMessageContent instance = new(request);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                await ValidateRequest(instance, false);
+                await ValidateRequest(instance, containsEntity: false, unBuffered);
             }
         }
 
@@ -175,14 +191,16 @@ namespace System.Net.Http
             }
         }
 
-        [Fact]
-        public async Task SerializeResponseMultipleTimes()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SerializeResponseMultipleTimes(bool unBuffered)
         {
-            HttpResponseMessage response = CreateResponse(false);
-            HttpMessageContent instance = new HttpMessageContent(response);
+            HttpResponseMessage response = CreateResponse(containsEntity: false);
+            HttpMessageContent instance = new(response);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                await ValidateResponse(instance, false);
+                await ValidateResponse(instance, containsEntity: false, unBuffered);
             }
         }
 
@@ -197,14 +215,16 @@ namespace System.Net.Http
             }
         }
 
-        [Fact]
-        public async Task SerializeRequestWithEntityMultipleTimes()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SerializeRequestWithEntityMultipleTimes(bool unBuffered)
         {
-            HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, true);
-            HttpMessageContent instance = new HttpMessageContent(request);
+            HttpRequestMessage request = CreateRequest(ParserData.HttpRequestUri, containsEntity: true);
+            HttpMessageContent instance = new(request);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                await ValidateRequest(instance, true);
+                await ValidateRequest(instance, containsEntity: true, unBuffered);
             }
         }
 
@@ -219,14 +239,16 @@ namespace System.Net.Http
             }
         }
 
-        [Fact]
-        public async Task SerializeResponseWithEntityMultipleTimes()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SerializeResponseWithEntityMultipleTimes(bool unBuffered)
         {
-            HttpResponseMessage response = CreateResponse(true);
-            HttpMessageContent instance = new HttpMessageContent(response);
+            HttpResponseMessage response = CreateResponse(containsEntity: true);
+            HttpMessageContent instance = new(response);
             for (int cnt = 0; cnt < iterations; cnt++)
             {
-                await ValidateResponse(instance, true);
+                await ValidateResponse(instance, containsEntity: true, unBuffered);
             }
         }
 
@@ -302,6 +324,228 @@ namespace System.Net.Http
             HttpMessageContent instance = new HttpMessageContent(response);
             instance.Dispose();
             Assert.ThrowsObjectDisposed(() => { response.StatusCode = HttpStatusCode.OK; }, typeof(HttpResponseMessage).FullName);
+        }
+
+        [Fact]
+        public void Request_ContentLengthNull_IfReadOnlyStream()
+        {
+            var request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            request.Content = new StreamContent(new ReadOnlyStream());
+            var instance = new HttpMessageContent(request);
+
+            var length = instance.Headers.ContentLength;
+
+            Assert.Null(length);
+        }
+
+        [Fact]
+        public void Response_ContentLengthNull_IfReadOnlyStream()
+        {
+            var response = CreateResponse(containsEntity: false);
+            response.Content = new StreamContent(new ReadOnlyStream());
+            var instance = new HttpMessageContent(response);
+
+            var length = instance.Headers.ContentLength;
+
+            Assert.Null(length);
+        }
+
+        // Also confirms content can be serialized multiple times if either buffered or involves a seekable Stream.
+        [Theory]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public async Task Request_NoContentLength_IfNotRequested(bool readOnlyStream, bool unBuffered)
+        {
+            var request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            if (readOnlyStream)
+            {
+                request.Content = new StreamContent(new ReadOnlyStream());
+            }
+            var instance = new HttpMessageContent(request);
+
+            for (int cnt = 0; cnt < iterations; cnt++)
+            {
+                var contentString = await ReadContentAsync(instance, unBuffered);
+
+                Assert.Equal(ParserData.HttpRequest.Replace("Content-Length: 0\r\n", ""), contentString);
+            }
+        }
+
+        // Also confirms content can be serialized multiple times if either buffered or involves a seekable Stream.
+        [Theory]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        public async Task Response_NoContentLength_IfNotRequested(bool readOnlyStream, bool unBuffered)
+        {
+            var response = CreateResponse(containsEntity: false);
+            if (readOnlyStream)
+            {
+                response.Content = new StreamContent(new ReadOnlyStream());
+            }
+            var instance = new HttpMessageContent(response);
+
+            for (int cnt = 0; cnt < iterations; cnt++)
+            {
+                var contentString = await ReadContentAsync(instance, unBuffered);
+
+                Assert.Equal(ParserData.HttpResponse.Replace("Content-Length: 0\r\n", ""), contentString);
+            }
+        }
+
+        // Covers the false, false case of Request_NoContentLength_IfNotRequested(...).
+        [Fact]
+        public async Task Request_HasContentLength_IfBuffered_EvenIfNotRequested()
+        {
+            var request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            var instance = new HttpMessageContent(request);
+            for (int cnt = 0; cnt < iterations; cnt++)
+            {
+                var contentString = await ReadContentAsync(instance, unBuffered: false);
+
+                Assert.Equal(ParserData.HttpRequest, contentString);
+            }
+        }
+
+        // Covers the false, false case of Response_NoContentLength_IfNotRequested(...).
+        [Fact]
+        public async Task Response_HasContentLength_IfBuffered_EvenIfNotRequested()
+        {
+            var response = CreateResponse(containsEntity: false);
+            var instance = new HttpMessageContent(response);
+            for (int cnt = 0; cnt < iterations; cnt++)
+            {
+                var contentString = await ReadContentAsync(instance, unBuffered: false);
+
+                Assert.Equal(ParserData.HttpResponse, contentString);
+            }
+        }
+
+        // Covers the true, true case of Request_NoContentLength_IfNotRequested(...).
+        [Fact]
+        public async Task Request_CannotSerializeMultipleTimes_IfNotBufferedAndNotSeekable()
+        {
+            var request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            request.Content = new StreamContent(new ReadOnlyStream());
+            var instance = new HttpMessageContent(request);
+
+            // Act #1
+            var contentString = await ReadContentAsync(instance, unBuffered: true);
+
+            // Assert #1
+            Assert.Equal(ParserData.HttpRequest.Replace("Content-Length: 0\r\n", ""), contentString);
+
+            // Act #2
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => ReadContentAsync(instance, unBuffered: true),
+                "The 'HttpContent' of the 'HttpRequestMessage' has already been read.");
+        }
+
+        // Covers the true, true case of Response_NoContentLength_IfNotRequested(...).
+        [Fact]
+        public async Task Response_CannotSerializeMultipleTimes_IfNotBufferedAndNotSeekable()
+        {
+            var response = CreateResponse(containsEntity: false);
+            response.Content = new StreamContent(new ReadOnlyStream());
+            var instance = new HttpMessageContent(response);
+
+            // Act #1
+            var contentString = await ReadContentAsync(instance, unBuffered: true);
+
+            // Assert #1
+            Assert.Equal(ParserData.HttpResponse.Replace("Content-Length: 0\r\n", ""), contentString);
+
+            // Act #2
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => ReadContentAsync(instance, unBuffered: true),
+                "The 'HttpContent' of the 'HttpResponseMessage' has already been read.");
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Request_CannotSerialize_IfWriteOnlyStream(bool unBuffered)
+        {
+            var request = CreateRequest(ParserData.HttpRequestUri, containsEntity: false);
+            request.Content = new StreamContent(new WriteOnlyStream());
+            var instance = new HttpMessageContent(request);
+
+            await Assert.ThrowsAsync<NotSupportedException>(
+                () => ReadContentAsync(instance, unBuffered),
+                "Stream does not support reading.");
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task Response_CannotSerialize_IfWriteOnlyStream(bool unBuffered)
+        {
+            var response = CreateResponse(containsEntity: false);
+            response.Content = new StreamContent(new WriteOnlyStream());
+            var instance = new HttpMessageContent(response);
+
+            await Assert.ThrowsAsync<NotSupportedException>(
+                () => ReadContentAsync(instance, unBuffered),
+                "Stream does not support reading.");
+        }
+
+        // Unlike Stream.Null, this stream does not support seeking. Bit more like (say) a network stream or
+        // the EmptyReadStream introduced in .NET 5. Note: EmptyReadStream should never be visible to our code
+        // because HttpContentMessageExtensions and HttpRequestMessageExtensions overwrite
+        // HttpResponseMessage.Content (or HttpRequestMessage.Content in one case) when creating an instance.
+        private class ReadOnlyStream : Stream
+        {
+            public override bool CanRead => true;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotImplementedException();
+            public override long Position
+            {
+                get => throw new NotImplementedException();
+                set => throw new NotImplementedException();
+            }
+
+            public override void Flush()
+            {
+                // Do nothing.
+            }
+
+            public override int Read(byte[] buffer, int offset, int count) => 0;
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+
+            public override void SetLength(long value) => throw new NotImplementedException();
+
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+        }
+
+        // Unlike Stream.Null, this stream does not support seeking. Bit more like (say) a network stream.
+        private class WriteOnlyStream : Stream
+        {
+            public override bool CanRead => false;
+            public override bool CanSeek => false;
+            public override bool CanWrite => true;
+            public override long Length => throw new NotImplementedException();
+            public override long Position
+            {
+                get => throw new NotImplementedException();
+                set => throw new NotImplementedException();
+            }
+
+            public override void Flush()
+            {
+                // Do nothing.
+            }
+
+            public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
+
+            public override void SetLength(long value) => throw new NotImplementedException();
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                // Ignore all parameters and do nothing.
+            }
         }
     }
 }
