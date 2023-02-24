@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
     <RootNamespace>System.Net.Http</RootNamespace>
-    <OutputPath>..\..\bin\$(Configuration)\Test\NetStandard\</OutputPath>
+    <OutputPath>..\..\bin\$(Configuration)\Test\ns2_0\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefineConstants>$(DefineConstants);Testing_NetStandard2_0</DefineConstants>

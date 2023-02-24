@@ -115,9 +115,9 @@
           XmlPath=$(TestResultsDirectory)%(_TestDLLsXunit.FileName)-XunitResults.xml</Properties>
       </_XunitProject>
 
-      <_VSTestDLLs Include="bin\$(Configuration)\test\NetCore\**\*.Test.dll;
-                            bin\$(Configuration)\test\NetStandard\**\*.Test.dll"
-          Exclude="bin\$(Configuration)\test\Net*\net4*\*.Test.dll" />
+      <_VSTestDLLs Include="bin\$(Configuration)\test\ns1_3\**\*.Test.dll;
+                            bin\$(Configuration)\test\ns2_0\**\*.Test.dll"
+          Exclude="bin\$(Configuration)\test\ns*\net4*\*.Test.dll" />
       <_XunitProject Include="tools\WebStack.testing.targets" Condition=" '$(BuildPortable)' == 'true' ">
         <Properties>TestAssembly=%(_VSTestDLLs.FullPath);
           XmlPath=$(TestResultsDirectory)%(_VSTestDLLs.FileName)-$([System.String]::Copy('%(_VSTestDLLs.RecursiveDir)').Trim('\\'))-XunitResults.xml;

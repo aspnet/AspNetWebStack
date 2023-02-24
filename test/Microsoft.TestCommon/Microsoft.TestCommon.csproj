@@ -8,13 +8,13 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
     <OutputPath
-        Condition=" '$(NetFX_Core)' == 'true' ">$(OutputPath)NetCore\</OutputPath>
+        Condition=" '$(NetFX_Core)' == 'true' ">$(OutputPath)ns1_3\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 
-    <!-- NetCore project brings in System.Net.Http from .NET Standard but doesn't expose that to us here. -->
+    <!-- ns1_3 project brings in System.Net.Http from .NET Standard but doesn't expose that to us here. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4"
         Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(NetFX_Core)' == 'true' " />
     <Reference Include="System.Net.Http"

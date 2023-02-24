@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <!-- Set base intermediate output path early for NETFX_Core but still exclude everything under the obj\ folder. -->
-    <BaseIntermediateOutputPath Condition=" '$(NetFX_Core)' == 'true' ">obj\NetCore\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath Condition=" '$(NetFX_Core)' == 'true' ">obj\ns2_0\</BaseIntermediateOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
   </PropertyGroup>
 </Project>
