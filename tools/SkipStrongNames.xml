@@ -41,8 +41,8 @@
   <assembly name="System.Json.Test"/>
   <assembly name="System.Json.Test.Integration"/>
   <assembly name="System.Net.Http.Formatting.Test"/>
-  <assembly name="System.Net.Http.Formatting.NetCore.Test"/>
-  <assembly name="System.Net.Http.Formatting.NetStandard.Test"/>
+  <assembly name="System.Net.Http.Formatting.ns1_3.Test"/>
+  <assembly name="System.Net.Http.Formatting.ns2_0.Test"/>
   <assembly name="System.Net.Http.Formatting.Test.Integration"/>
   <assembly name="System.Web.Cors.Test"/>
   <assembly name="System.Web.Helpers.Test"/>

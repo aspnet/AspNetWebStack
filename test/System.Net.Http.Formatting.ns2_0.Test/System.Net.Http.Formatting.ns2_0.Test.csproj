@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
     <RootNamespace>System.Net.Http</RootNamespace>
-    <OutputPath>..\..\bin\$(Configuration)\Test\NetCore\</OutputPath>
+    <OutputPath>..\..\bin\$(Configuration)\Test\NetStandard\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <DefineConstants>$(DefineConstants);NETFX_CORE</DefineConstants>
+    <DefineConstants>$(DefineConstants);Testing_NetStandard2_0</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.7.5" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4"
-        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' " />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
@@ -31,14 +29,12 @@
     <PackageReference Include="XunitXml.TestLogger" Version="3.0.70" />
 
     <Compile Include="..\System.Net.Http.Formatting.Test\**\*.cs"
-        Exclude="..\System.Net.Http.Formatting.Test\obj\**\*.cs;
-                 ..\System.Net.Http.Formatting.Test\Formatting\BufferedMediaTypeFormatterTests.cs;
-                 ..\System.Net.Http.Formatting.Test\Handlers\ProgressWriteAsyncResultTest.cs">
+        Exclude="..\System.Net.Http.Formatting.Test\obj\**\*.cs">
       <Link>%(RecursiveDir)\%(Filename).cs</Link>
     </Compile>
 
-    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj" />
-    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Properties="NetFX_Core=true" />
+    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.ns2_0\System.Net.Http.Formatting.ns2_0.csproj" />
+    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" />
 
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

@@ -33,7 +33,7 @@
         Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' " />
 
     <!-- To access Error.InvalidEnumArgumentException in this special case. -->
-    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.NetCore\System.Net.Http.Formatting.NetCore.csproj"
+    <ProjectReference Include="..\..\src\System.Net.Http.Formatting.ns1_3\System.Net.Http.Formatting.ns1_3.csproj"
         Condition=" '$(NetFX_Core)' == 'true' " />
   </ItemGroup>
 </Project>
