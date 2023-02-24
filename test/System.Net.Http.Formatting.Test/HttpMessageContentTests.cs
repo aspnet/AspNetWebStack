@@ -50,7 +50,12 @@ namespace System.Net.Http
         {
             if (unBuffered)
             {
-                using var reader = new StreamReader(await content.ReadAsStreamAsync());
+                var stream = new MemoryStream();
+                await content.CopyToAsync(stream);
+                stream.Position = 0L;
+
+                // StreamReader will dispose of the Stream.
+                using var reader = new StreamReader(stream);
 
                 return await reader.ReadToEndAsync();
             }
