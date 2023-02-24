@@ -30,7 +30,7 @@ namespace System.Net.Http.Formatting
 
             _formatter = formatter;
 
-#if !NETFX_CORE
+#if !NETSTANDARD1_3
             // Need this setting to have [Serializable] types serialized correctly
             IgnoreSerializableAttribute = false;
 #endif

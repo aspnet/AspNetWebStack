@@ -6,7 +6,7 @@
     <OutputPath>..\..\bin\$(Configuration)\Test\ns1_3\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <DefineConstants>$(DefineConstants);NETFX_CORE</DefineConstants>
+    <DefineConstants>$(DefineConstants);Testing_NetStandard1_3</DefineConstants>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
@@ -38,7 +38,7 @@
     </Compile>
 
     <ProjectReference Include="..\..\src\System.Net.Http.Formatting.ns1_3\System.Net.Http.Formatting.ns1_3.csproj" />
-    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Properties="NetFX_Core=true" />
+    <ProjectReference Include="..\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Properties="Testing_NetStandard1_3=true" />
 
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

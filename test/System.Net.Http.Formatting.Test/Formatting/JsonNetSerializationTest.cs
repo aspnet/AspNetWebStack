@@ -92,7 +92,7 @@ namespace System.Net.Http.Formatting
                     // Classes
                     { new DataContractType() { s = "foo", i = 49, NotAMember = "Error" }, "{\"s\":\"foo\",\"i\":49}" },
                     { new POCOType() { s = "foo", t = "Error"}, "{\"s\":\"foo\"}" },
-#if !NETFX_CORE // Only publics are serialized in portable library
+#if !Testing_NetStandard1_3 // Only publics are serialized in netstandard1.3
                     { new SerializableType("protected") { publicField = "public", protectedInternalField = "protected internal", internalField = "internal", PublicProperty = "private", nonSerializedField = "Error" }, "{\"publicField\":\"public\",\"internalField\":\"internal\",\"protectedInternalField\":\"protected internal\",\"protectedField\":\"protected\",\"privateField\":\"private\"}" },
 #else
                     { new SerializableType("protected") { publicField = "public", protectedInternalField = "protected internal", internalField = "internal", PublicProperty = "private", nonSerializedField = "Error" }, "{\"publicField\":\"public\",\"PublicProperty\":\"private\"}" },
@@ -491,7 +491,7 @@ namespace System.Net.Http.Formatting
 
         public bool Equals(SerializableType other)
         {
-#if !NETFX_CORE // Only publics are serialized in portable library. privateField is serialized through PublicProperty
+#if !Testing_NetStandard1_3 // Only publics are serialized in netstandard1.3. privateField is serialized through PublicProperty
             return this.publicField == other.publicField &&
                 this.internalField == other.internalField &&
                 this.protectedInternalField == other.protectedInternalField &&

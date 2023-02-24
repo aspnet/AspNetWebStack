@@ -19,7 +19,7 @@ namespace System.Net.Http.Formatting
     /// </summary>
     public abstract class BaseJsonMediaTypeFormatter : MediaTypeFormatter
     {
-        // Though MaxDepth is not supported in portable library, we still override JsonReader's MaxDepth
+        // Though MaxDepth is not supported in netstandard1.3, we still override JsonReader's MaxDepth
         private int _maxDepth = FormattingUtilities.DefaultMaxDepth;
 
         private readonly IContractResolver _defaultContractResolver;

@@ -87,7 +87,7 @@ namespace System.Net.Http.Formatting
             Assert.False(isSerializable != canSupport && isSerializable, String.Format("2nd CanReadType returned wrong value for '{0}'.", variationType));
         }
 
-#if !NETFX_CORE // XsdDataContractExporterMethods unconditionally return true without XsdDataContractExporter to use.
+#if !Testing_NetStandard1_3 // XsdDataContractExporterMethods unconditionally return true without XsdDataContractExporter to use.
         [Fact]
         public void CanReadType_ReturnsFalse_ForInvalidDataContracts()
         {

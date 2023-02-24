@@ -522,7 +522,7 @@ namespace System.Net.Http.Formatting
                 }
                 else
                 {
-#if !NETFX_CORE // XsdDataContractExporter is not supported in portable libraries
+#if !NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
                     // REVIEW: Is there something comparable in WinRT?
                     // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                     FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);

@@ -31,7 +31,7 @@ namespace System.Text.Tests
             }
         }
 
-#if NETFX_CORE || Testing_NetStandard2_0 // .NET Framework implementation loses track of cancellation token.
+#if Testing_NetStandard1_3 || Testing_NetStandard2_0 // .NET Framework implementation loses track of cancellation token.
         [Fact]
         public void AsyncMethods_ReturnCanceledTaskIfCancellationTokenTripped()
         {

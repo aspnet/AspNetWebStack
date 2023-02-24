@@ -262,7 +262,7 @@ namespace System.Web.Http
             return new NotSupportedException(Error.Format(messageFormat, messageArgs));
         }
 
-#if NETFX_CORE // InvalidEnumArgumentException not available in netstandard1.3.
+#if NETSTANDARD1_3 // InvalidEnumArgumentException not available in netstandard1.3.
         internal class InvalidEnumArgumentException : ArgumentException
         {
             public InvalidEnumArgumentException() : this(null)

@@ -68,7 +68,7 @@ namespace System.Net.Http.Handlers
             return readCount;
         }
 
-#if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
+#if !NETSTANDARD1_3 // BeginX and EndX are not supported on Streams in netstandard1.3
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return InnerStream.BeginRead(buffer, offset, count, callback, state);
@@ -100,7 +100,7 @@ namespace System.Net.Http.Handlers
             ReportBytesSent(count, userState: null);
         }
 
-#if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
+#if !NETSTANDARD1_3 // BeginX and EndX are not supported on Streams in netstandard1.3
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return new ProgressWriteAsyncResult(InnerStream, this, buffer, offset, count, callback, state);

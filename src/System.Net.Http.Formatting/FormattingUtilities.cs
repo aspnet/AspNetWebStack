@@ -114,7 +114,7 @@ namespace System.Net.Http
         /// </summary>
         public static readonly Type QueryableInterfaceGenericType = typeof(IQueryable<>);
 
-#if !NETFX_CORE // XsdDataContractExporter is not supported in portable libraries
+#if !NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
         /// <summary>
         /// An instance of <see cref="XsdDataContractExporter"/>.
         /// </summary>

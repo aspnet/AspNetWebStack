@@ -15,12 +15,12 @@ namespace System.Net.Http.Formatting.Internal
     /// <summary>
     ///  NameValueCollection to represent form data and to generate form data output.
     /// </summary>
-#if !NETFX_CORE // NameValueCollection is not serializable in netstandard1.3.
+#if !NETSTANDARD1_3 // NameValueCollection is not serializable in netstandard1.3.
     [Serializable]
 #endif
     internal class HttpValueCollection : NameValueCollection
     {
-#if !NETFX_CORE // NameValueCollection is not serializable in netstandard1.3.
+#if !NETSTANDARD1_3 // NameValueCollection is not serializable in netstandard1.3.
         protected HttpValueCollection(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

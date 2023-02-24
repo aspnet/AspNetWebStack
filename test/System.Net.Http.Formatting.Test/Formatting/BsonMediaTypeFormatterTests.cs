@@ -392,7 +392,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETFX_CORE // DBNull not supported in portable library
+#if !Testing_NetStandard1_3 // DBNull not supported in netstandard1.3
         // Test alternate null value
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AllSingleInstances)]

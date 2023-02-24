@@ -673,7 +673,7 @@ namespace System.Net.Http.Formatting
                 "'\x16', hexadecimal value 0x16, is an invalid character.");
         }
 
-#if !NETFX_CORE // Different behavior in portable libraries due to no DataContract validation
+#if !Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation
         [Fact]
         public void CanReadType_ReturnsFalse_ForInvalidDataContracts()
         {

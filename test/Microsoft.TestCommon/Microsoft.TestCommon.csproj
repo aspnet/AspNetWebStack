@@ -4,11 +4,11 @@
     <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <DefineConstants
-        Condition=" '$(NetFX_Core)' == 'true' ">$(DefineConstants);NETFX_CORE</DefineConstants>
+        Condition=" '$(Testing_NetStandard1_3)' == 'true' ">$(DefineConstants);Testing_NetStandard1_3</DefineConstants>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>..\..\bin\$(Configuration)\Test\</OutputPath>
     <OutputPath
-        Condition=" '$(NetFX_Core)' == 'true' ">$(OutputPath)ns1_3\</OutputPath>
+        Condition=" '$(Testing_NetStandard1_3)' == 'true' ">$(OutputPath)ns1_3\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +16,9 @@
 
     <!-- ns1_3 project brings in System.Net.Http from .NET Standard but doesn't expose that to us here. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4"
-        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(NetFX_Core)' == 'true' " />
+        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(Testing_NetStandard1_3)' == 'true' " />
     <Reference Include="System.Net.Http"
-        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(NetFX_Core)' != 'true' " />
+        Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' AND '$(Testing_NetStandard1_3)' != 'true' " />
 
     <Reference Include="System.Web"
         Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' " />
@@ -34,6 +34,6 @@
 
     <!-- To access Error.InvalidEnumArgumentException in this special case. -->
     <ProjectReference Include="..\..\src\System.Net.Http.Formatting.ns1_3\System.Net.Http.Formatting.ns1_3.csproj"
-        Condition=" '$(NetFX_Core)' == 'true' " />
+        Condition=" '$(Testing_NetStandard1_3)' == 'true' " />
   </ItemGroup>
 </Project>

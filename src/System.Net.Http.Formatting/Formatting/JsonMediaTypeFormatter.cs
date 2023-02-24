@@ -215,13 +215,13 @@ namespace System.Net.Http.Formatting
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
 
                 // JsonReaderWriterFactory is internal, CreateTextReader only supports auto-detecting the encoding
-                // and auto-detection fails in some cases for the NETFX_CORE project. In addition, DCS encodings are
+                // and auto-detection fails in some cases for the netstandard1.3 project. In addition, DCS encodings are
                 // limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
                 Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
                     new NonClosingDelegatingStream(readStream) :
                     new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
 
-#if NETFX_CORE
+#if NETSTANDARD1_3
                 using (innerStream)
                 {
                     // Unfortunately, we're ignoring _readerQuotas.
@@ -298,7 +298,7 @@ namespace System.Net.Http.Formatting
                 else
                 {
                     // JsonReaderWriterFactory is internal and DataContractJsonSerializer only writes UTF8 for the
-                    // NETFX_CORE project. In addition, DCS encodings are limited to UTF8, UTF16BE, and UTF16LE.
+                    // netstandard1.3 project. In addition, DCS encodings are limited to UTF8, UTF16BE, and UTF16LE.
                     // Convert to UTF8 as we write.
                     using var innerStream = new TranscodingStream(writeStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
                     WriteObject(innerStream, type, value);
@@ -315,7 +315,7 @@ namespace System.Net.Http.Formatting
             DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
 
             // Do not dispose of the stream. WriteToStream handles that where it's needed.
-#if NETFX_CORE
+#if NETSTANDARD1_3
             dataContractSerializer.WriteObject(stream, value);
 #else
             using XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Utf8Encoding, ownsStream: false);
@@ -333,7 +333,7 @@ namespace System.Net.Http.Formatting
 
             try
             {
-#if !NETFX_CORE // XsdDataContractExporter is not supported in portable libraries
+#if !NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
                 // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                 FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);
 #endif

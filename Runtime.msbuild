@@ -68,7 +68,7 @@
     <ItemGroup>
       <_ToRestore Include="@(SolutionsToBuild)" />
       <_ToRestore Include="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj"
-          AdditionalProperties="NetFX_Core=true"
+          AdditionalProperties="Testing_NetStandard1_3=true"
           Condition=" '$(BuildPortable)' == 'true' " />
     </ItemGroup>
     <Message Text="%0ARestoring NuGet packages..." Importance="High" />
