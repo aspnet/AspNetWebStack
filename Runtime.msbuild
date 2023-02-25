@@ -8,7 +8,6 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <CodeAnalysis Condition=" '$(CodeAnalysis)' == '' and '$(Configuration)' != 'Release' ">true</CodeAnalysis>
     <StyleCopEnabled Condition=" '$(StyleCopEnabled)' == '' ">true</StyleCopEnabled>
-    <BuildPortable Condition=" '$(BuildPortable)' == '' ">true</BuildPortable>
     <BuildInParallel Condition=" '$(BuildInParallel)' == '' And $(MSBuildNodeCount) &gt; 1 ">true</BuildInParallel>
     <BuildInParallel Condition=" '$(BuildInParallel)' == '' ">false</BuildInParallel>
     <RestoreInParallel Condition=" '$(RestoreInParallel)' == '' ">false</RestoreInParallel>
@@ -18,16 +17,6 @@
     <SkipStrongNamesXml>$(MSBuildThisFileDirectory)tools\SkipStrongNames.xml</SkipStrongNamesXml>
     <NuGetExe>.nuget\NuGet.exe</NuGetExe>
   </PropertyGroup>
-
-  <ItemGroup>
-    <SolutionsToBuild Include="Runtime.sln">
-      <BuildInParallel>$(BuildInParallel)</BuildInParallel>
-    </SolutionsToBuild>
-    <SolutionsToBuild Include="RuntimePortable.sln">
-      <BuildInParallel>$(BuildInParallel)</BuildInParallel>
-      <Portable>true</Portable>
-    </SolutionsToBuild>
-  </ItemGroup>
 
   <Target Name="EnableSkipStrongNames" DependsOnTargets="RestoreSkipStrongNames">
     <Exec Command='"$(SkipStrongNamesExe)" -e "$(SkipStrongNamesXml)"' />
@@ -49,9 +38,8 @@
 
   <Target Name="Clean">
     <MSBuild
-        Projects="@(SolutionsToBuild)"
+        Projects="Runtime.sln"
         Targets="Clean"
-        Condition=" '%(SolutionsToBuild.Portable)' != 'true' or '$(BuildPortable)' == 'true' "
         Properties="Configuration=$(Configuration);VisualStudioVersion=$(VisualStudioVersion)" />
     <RemoveDir Directories="bin\$(Configuration)" />
   </Target>
@@ -66,10 +54,9 @@
 
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
     <ItemGroup>
-      <_ToRestore Include="@(SolutionsToBuild)" />
+      <_ToRestore Include="Runtime.sln" />
       <_ToRestore Include="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj"
-          AdditionalProperties="Testing_NetStandard1_3=true"
-          Condition=" '$(BuildPortable)' == 'true' " />
+          AdditionalProperties="Testing_NetStandard1_3=true" />
     </ItemGroup>
     <Message Text="%0ARestoring NuGet packages..." Importance="High" />
     <MSBuild Projects="@(_ToRestore)" Targets="Restore"
@@ -96,10 +83,9 @@
     <Error Condition=" '$(CodeAnalysis)' == 'true' and '$(Configuration)' == 'Release' " Text="Unable to run code analysis in Release configuration. Release assemblies do not include SuppressMessage attributes (so code analysis would always fail with the errors that are normally suppressed)." />
     <MakeDir Directories="bin\$(Configuration)" />
     <MSBuild
-        Projects="@(SolutionsToBuild)"
-        BuildInParallel="%(SolutionsToBuild.BuildInParallel)"
+        Projects="Runtime.sln"
+        BuildInParallel="$(BuildInParallel)"
         Targets="Build"
-        Condition=" '%(SolutionsToBuild.Portable)' != 'true' or '$(BuildPortable)' == 'true' "
         Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);VisualStudioVersion=$(VisualStudioVersion)" />
   </Target>
 
@@ -107,9 +93,8 @@
 
   <Target Name="RunTests" DependsOnTargets="CheckSkipStrongNames">
     <ItemGroup>
-      <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll" />
-      <_TestDLLsXunit Include="bin\$(Configuration)\test\*\net4*\*.Test.dll"
-          Condition=" '$(BuildPortable)' == 'true' " />
+      <_TestDLLsXunit Include="bin\$(Configuration)\test\*.Test.dll;
+                               bin\$(Configuration)\test\*\net4*\*.Test.dll" />
       <_XunitProject Include="tools\WebStack.testing.targets">
         <Properties>TestAssembly=%(_TestDLLsXunit.FullPath);
           XmlPath=$(TestResultsDirectory)%(_TestDLLsXunit.FileName)-XunitResults.xml</Properties>
@@ -117,8 +102,8 @@
 
       <_VSTestDLLs Include="bin\$(Configuration)\test\ns1_3\**\*.Test.dll;
                             bin\$(Configuration)\test\ns2_0\**\*.Test.dll"
-          Exclude="bin\$(Configuration)\test\ns*\net4*\*.Test.dll" />
-      <_XunitProject Include="tools\WebStack.testing.targets" Condition=" '$(BuildPortable)' == 'true' ">
+          Exclude="bin\$(Configuration)\test\*\net4*\*.Test.dll" />
+      <_XunitProject Include="tools\WebStack.testing.targets">
         <Properties>TestAssembly=%(_VSTestDLLs.FullPath);
           XmlPath=$(TestResultsDirectory)%(_VSTestDLLs.FileName)-$([System.String]::Copy('%(_VSTestDLLs.RecursiveDir)').Trim('\\'))-XunitResults.xml;
           UseVSTest=true</Properties>
