@@ -40,7 +40,7 @@ namespace System.Web.Http.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-#if NETFX_CORE
+#if NETSTANDARD1_3
                     var assembly = typeof(CommonWebApiResources).GetTypeInfo().Assembly;
 #else
                     var assembly = typeof(CommonWebApiResources).Assembly;

@@ -111,7 +111,7 @@ namespace System.Net.Http.Internal
             }
         }
 
-#if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
+#if !NETSTANDARD1_3 // BeginX and EndX are not supported on Streams in netstandard1.3
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             return base.BeginRead(buffer, offset, PrepareStreamForRangeRead(count), callback, state);
@@ -174,7 +174,7 @@ namespace System.Net.Http.Internal
             throw Error.NotSupported(Properties.Resources.ByteRangeStreamReadOnly);
         }
 
-#if !NETFX_CORE // BeginX and EndX are not supported on streams in portable libraries
+#if !NETSTANDARD1_3 // BeginX and EndX are not supported on Streams in netstandard1.3
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             throw Error.NotSupported(Properties.Resources.ByteRangeStreamReadOnly);

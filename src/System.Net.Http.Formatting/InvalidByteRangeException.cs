@@ -35,7 +35,7 @@ namespace System.Net.Http
             Initialize(contentRange);
         }
 
-#if !NETFX_CORE // Exception is not serializable in netstandard1.3.
+#if !NETSTANDARD1_3 // Exception is not serializable in netstandard1.3.
         public InvalidByteRangeException(ContentRangeHeaderValue contentRange, SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

@@ -153,7 +153,7 @@ namespace System.Net.Http
                 _serializeToStreamTask = serializeToStreamTask;
             }
 
-#if NETFX_CORE
+#if NETSTANDARD1_3
             [SuppressMessage(
                 "Microsoft.Usage",
                 "CA2215:Dispose methods should call base class dispose",

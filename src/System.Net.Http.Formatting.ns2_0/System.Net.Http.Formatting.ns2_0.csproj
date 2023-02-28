@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>System.Net.Http</RootNamespace>
     <AssemblyName>System.Net.Http.Formatting</AssemblyName>
-    <OutputPath>$(OutputPath)NetStandard\</OutputPath>
+    <OutputPath>$(OutputPath)ns2_0\</OutputPath>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <DefineConstants>$(DefineConstants);ASPNETMVC</DefineConstants>

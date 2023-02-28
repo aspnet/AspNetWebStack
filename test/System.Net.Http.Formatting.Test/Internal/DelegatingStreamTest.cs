@@ -193,7 +193,7 @@ namespace System.Net.Http.Internal
             mockInnerStream.Verify(s => s.Read(buffer, offset, count), Times.Once());
         }
 
-#if !NETFX_CORE // BeginX and EndX not supported on Streams in portable libraries
+#if !Testing_NetStandard1_3 // BeginX and EndX not supported on Streams in netstandard1.3
         [Fact]
         public void DelegatingStream_BeginRead()
         {
@@ -305,7 +305,7 @@ namespace System.Net.Http.Internal
             mockInnerStream.Verify(s => s.Write(buffer, offset, count), Times.Once());
         }
 
-#if !NETFX_CORE // BeginX and EndX not supported on Streams in portable libraries
+#if !Testing_NetStandard1_3 // BeginX and EndX not supported on Streams in netstandard1.3
         [Fact]
         public void DelegatingStream_BeginWrite()
         {

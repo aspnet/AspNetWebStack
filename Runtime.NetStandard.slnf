@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "Runtime.sln",
+    "projects": [
+      "src\\System.Net.Http.Formatting.ns1_3\\System.Net.Http.Formatting.ns1_3.csproj",
+      "src\\System.Net.Http.Formatting.ns2_0\\System.Net.Http.Formatting.ns2_0.csproj",
+      "test\\Microsoft.TestCommon\\Microsoft.TestCommon.csproj",
+      "test\\System.Net.Http.Formatting.ns1_3.Test\\System.Net.Http.Formatting.ns1_3.Test.csproj",
+      "test\\System.Net.Http.Formatting.ns2_0.Test\\System.Net.Http.Formatting.ns2_0.Test.csproj"
+    ]
+  }
+}

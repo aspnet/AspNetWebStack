@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
-#if NETFX_CORE
+#if Testing_NetStandard1_3
 using System.Web.Http;
 #endif
 
@@ -503,7 +503,7 @@ namespace Microsoft.TestCommon
                                            "The value of argument '{0}' ({1}) is invalid for Enum type '{2}'.{3}",
                                            paramName, invalidValue, enumType.Name, GetParameterMessage(paramName));
 
-#if NETFX_CORE // InvalidEnumArgumentException not available in netstandard1.3.
+#if Testing_NetStandard1_3 // InvalidEnumArgumentException not available in netstandard1.3.
             return Throws<Error.InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);
 #else
             return Throws<InvalidEnumArgumentException>(testCode, message, allowDerivedExceptions);

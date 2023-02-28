@@ -79,7 +79,7 @@ namespace System.Net.Http
             Assert.True(outputStream.CanRead);
         }
 
-#if NETFX_CORE
+#if Testing_NetStandard1_3
         [Fact]
         public async Task CompleteTaskOnCloseStream_Dispose_CompletesTaskButDoNotDisposeInnerStream()
         {
@@ -222,7 +222,7 @@ namespace System.Net.Http
 
                 if (_close)
                 {
-#if NETFX_CORE
+#if Testing_NetStandard1_3
                     stream.Dispose();
 #else
                     stream.Close();

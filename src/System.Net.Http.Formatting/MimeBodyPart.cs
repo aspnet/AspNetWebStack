@@ -190,7 +190,7 @@ namespace System.Net.Http
                 }
                 else
                 {
-#if NETFX_CORE
+#if NETSTANDARD1_3
                     _outputStream.Dispose();
 #else
                     _outputStream.Close();

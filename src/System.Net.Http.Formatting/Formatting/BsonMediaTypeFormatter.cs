@@ -73,7 +73,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETFX_CORE // DBNull not supported in portable library; no need to override there
+#if !NETSTANDARD1_3 // DBNull not supported in netstandard1.3; no need to override there
         /// <inheritdoc />
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
@@ -241,7 +241,7 @@ namespace System.Net.Http.Formatting
                 return;
             }
 
-#if !NETFX_CORE // DBNull not supported in portable library
+#if !NETSTANDARD1_3 // DBNull not supported in netstandard1.3
             if (value == DBNull.Value)
             {
                 // ReadFromStreamAsync() override above converts null to DBNull.Value if given Type is DBNull; normally

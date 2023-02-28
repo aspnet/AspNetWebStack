@@ -4,10 +4,10 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <RootNamespace>System.Net.Http</RootNamespace>
     <AssemblyName>System.Net.Http.Formatting</AssemblyName>
-    <OutputPath>$(OutputPath)NetCore\</OutputPath>
+    <OutputPath>$(OutputPath)ns1_3\</OutputPath>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <DefineConstants>$(DefineConstants);ASPNETMVC;NETFX_CORE</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASPNETMVC</DefineConstants>
     <NoWarn>1591</NoWarn>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>

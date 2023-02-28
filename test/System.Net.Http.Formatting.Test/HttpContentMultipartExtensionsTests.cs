@@ -444,7 +444,7 @@ namespace System.Net.Http
                 throw new IOException(ExceptionAsyncStreamMessage);
             }
 
-#if !NETFX_CORE // BeginX and EndX not supported on Streams in portable libraries
+#if !Testing_NetStandard1_3 // BeginX and EndX not supported on Streams in netstandard1.3
             public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
             {
                 throw new IOException(ExceptionAsyncStreamMessage);
@@ -464,7 +464,7 @@ namespace System.Net.Http
                 throw new IOException(ExceptionAsyncStreamMessage);
             }
 
-#if !NETFX_CORE // BeginX and EndX not supported on Streams in portable libraries
+#if !Testing_NetStandard1_3 // BeginX and EndX not supported on Streams in netstandard1.3
             public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
             {
                 throw new IOException(ExceptionAsyncStreamMessage);

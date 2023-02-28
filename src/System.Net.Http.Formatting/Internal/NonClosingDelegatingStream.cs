@@ -20,7 +20,7 @@ namespace System.Net.Http.Internal
         {
         }
 
-#if NETFX_CORE
+#if NETSTANDARD1_3
         protected override void Dispose(bool disposing)
         {
         }
