@@ -392,7 +392,6 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !Testing_NetStandard1_3 // DBNull not supported in netstandard1.3
         // Test alternate null value
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AllSingleInstances)]
@@ -408,7 +407,7 @@ namespace System.Net.Http.Formatting
             Assert.Null(readObj);
         }
 
-#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1 except at top level (using BsonMediaTypeformatter special case).
+#if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1 except at top level (using BsonMediaTypeformatter special case).
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AsDictionary)]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsync_DBNullAsNull_Dictionary(Type variationType, object testData)
@@ -512,7 +511,6 @@ namespace System.Net.Http.Formatting
             // Only BSON case where DBNull.Value round-trips
             Assert.Equal(testData, readObj);
         }
-#endif
 
         private class TestBsonMediaTypeFormatter : BsonMediaTypeFormatter
         {
