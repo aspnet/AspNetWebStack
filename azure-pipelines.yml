@@ -79,7 +79,7 @@ jobs:
     displayName: Build
 
   - publish: ./bin/$(_Configuration)/Test/TestResults/
-    artifact: $(_Configuration) Test Results
+    artifact: $(_Configuration) Test Results $(System.JobId)
     condition: and(always(), ne(variables._BuildTarget, 'Build'))
     continueOnError: true
     displayName: Upload test results
@@ -95,6 +95,6 @@ jobs:
       testRunTitle: $(_Configuration)
 
   - publish: ./artifacts/
-    artifact: $(_Configuration) Logs
+    artifact: $(_Configuration) Logs $(System.JobId)
     condition: always()
     displayName: Upload logs
