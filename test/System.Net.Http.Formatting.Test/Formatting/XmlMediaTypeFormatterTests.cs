@@ -36,7 +36,7 @@ namespace System.Net.Http.Formatting
                 Int32.MaxValue,
                 Int64.MinValue,
                 Int64.MaxValue,
-#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1.
+#if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1.
                 DBNull.Value,
 #endif
             });
@@ -478,7 +478,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1.
+#if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1.
         [Fact]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingDataContractSerializer_DBNull()
         {

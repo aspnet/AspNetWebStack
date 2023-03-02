@@ -73,7 +73,6 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETSTANDARD1_3 // DBNull not supported in netstandard1.3; no need to override there
         /// <inheritdoc />
         public override Task<object> ReadFromStreamAsync(Type type, Stream readStream, HttpContent content, IFormatterLogger formatterLogger)
         {
@@ -101,7 +100,6 @@ namespace System.Net.Http.Formatting
                 return base.ReadFromStreamAsync(type, readStream, content, formatterLogger);
             }
         }
-#endif
 
         /// <inheritdoc />
         public override object ReadFromStream(Type type, Stream readStream, Encoding effectiveEncoding,
@@ -234,14 +232,13 @@ namespace System.Net.Http.Formatting
 
             if (value == null)
             {
-                // Cannot serialize null at the top level.  Json.Net throws Newtonsoft.Json.JsonWriterException : Error
-                // writing Null value. BSON must start with an Object or Array. Path ''.  Fortunately
+                // Cannot serialize null at the top level. Json.Net throws Newtonsoft.Json.JsonWriterException : Error
+                // writing Null value. BSON must start with an Object or Array. Path ''. Fortunately
                 // BaseJsonMediaTypeFormatter.ReadFromStream(Type, Stream, HttpContent, IFormatterLogger) treats zero-
                 // length content as null or the default value of a struct.
                 return;
             }
 
-#if !NETSTANDARD1_3 // DBNull not supported in netstandard1.3
             if (value == DBNull.Value)
             {
                 // ReadFromStreamAsync() override above converts null to DBNull.Value if given Type is DBNull; normally
@@ -252,7 +249,6 @@ namespace System.Net.Http.Formatting
                 // rather than null, and not meet the receiver's expectations.
                 return;
             }
-#endif
 
             // See comments in ReadFromStream() above about this special case and the need to include byte[] in it.
             // Using runtime type here because Json.Net will throw during serialization whenever it cannot handle the

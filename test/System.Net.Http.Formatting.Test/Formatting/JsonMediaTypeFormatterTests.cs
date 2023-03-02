@@ -367,7 +367,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
-#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1.
+#if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1.
         // Test alternate null value; always serialized as "null"
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "DBNullAsObjectTestDataCollection", TestDataVariations.AllSingleInstances)]

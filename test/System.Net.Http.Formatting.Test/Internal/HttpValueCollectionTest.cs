@@ -12,7 +12,7 @@ namespace System.Net.Http.Internal
 {
     public class HttpValueCollectionTest
     {
-#if !NETCOREAPP // Unused on .NET Core 2.1.
+#if !NETCOREAPP // Unused on .NET Core.
         private static readonly int _maxCollectionKeys = 1000;
 #endif
 
@@ -21,7 +21,7 @@ namespace System.Net.Http.Internal
             return HttpValueCollection.Create();
         }
 
-#if !NETCOREAPP
+#if !NETCOREAPP // Unsupported on .NET Core.
         private static void RunInIsolation(Action action)
         {
             AppDomainUtils.RunInSeparateAppDomain(action);
@@ -132,7 +132,7 @@ namespace System.Net.Http.Internal
             Assert.Empty(nvc);
         }
 
-#if !NETCOREAPP // DBNull not serializable on .NET Core 2.1.
+#if !NETCOREAPP // Able to run on a separate AppDomain only on .NET Framework.
         // This set of tests requires running on a separate appdomain so we don't
         // touch the static property MediaTypeFormatter.MaxHttpCollectionKeys.
         [Fact]
