@@ -391,6 +391,15 @@ namespace System.Net.Http.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Unable to validate types on this platform when {0} is &apos;true&apos;. Please reset {0} or move to a supported platform, one where the &apos;netstandard2.0&apos; assembly is usable..
+        /// </summary>
+        internal static string JsonMediaTypeFormatter_DCS_NotSupported {
+            get {
+                return ResourceManager.GetString("JsonMediaTypeFormatter_DCS_NotSupported", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to The &apos;{0}&apos; method returned null. It must return a JSON serializer instance..
         /// </summary>
         internal static string JsonSerializerFactoryReturnedNull {
@@ -765,6 +774,15 @@ namespace System.Net.Http.Properties {
         internal static string UnsupportedIndent {
             get {
                 return ResourceManager.GetString("UnsupportedIndent", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to validate types on this platform when {0} is &apos;false&apos;. Please set {0} or move to a supported platform, one where the &apos;netstandard2.0&apos; assembly is usable..
+        /// </summary>
+        internal static string XmlMediaTypeFormatter_DCS_NotSupported {
+            get {
+                return ResourceManager.GetString("XmlMediaTypeFormatter_DCS_NotSupported", resourceCulture);
             }
         }
 

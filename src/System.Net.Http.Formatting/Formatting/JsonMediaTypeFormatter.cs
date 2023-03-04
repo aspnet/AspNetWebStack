@@ -6,7 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Http.Headers;
+#if !NETSTANDARD1_3 // Unnecessary when targeting netstandard1.3.
 using System.Net.Http.Internal;
+#endif
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
@@ -214,20 +216,15 @@ namespace System.Net.Http.Formatting
             {
                 DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
 
-                // JsonReaderWriterFactory is internal, CreateTextReader only supports auto-detecting the encoding
-                // and auto-detection fails in some cases for the netstandard1.3 project. In addition, DCS encodings are
-                // limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
-                Stream innerStream = string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
+#if NETSTANDARD1_3 // Unreachable when targeting netstandard1.3. Return just to satisfy the compiler.
+                return null;
+#else
+                // DCS encodings are limited to UTF8, UTF16BE, and UTF16LE. Convert to UTF8 as we read.
+                Stream innerStream =
+                    string.Equals(effectiveEncoding.WebName, Utf8Encoding.WebName, StringComparison.OrdinalIgnoreCase) ?
                     new NonClosingDelegatingStream(readStream) :
                     new TranscodingStream(readStream, effectiveEncoding, Utf8Encoding, leaveOpen: true);
 
-#if NETSTANDARD1_3
-                using (innerStream)
-                {
-                    // Unfortunately, we're ignoring _readerQuotas.
-                    return dataContractSerializer.ReadObject(innerStream);
-                }
-#else
                 // XmlDictionaryReader will always dispose of innerStream when we dispose of the reader.
                 using XmlDictionaryReader reader =
                     JsonReaderWriterFactory.CreateJsonReader(innerStream, Utf8Encoding, _readerQuotas, onClose: null);
@@ -314,10 +311,8 @@ namespace System.Net.Http.Formatting
         {
             DataContractJsonSerializer dataContractSerializer = GetDataContractSerializer(type);
 
+#if !NETSTANDARD1_3 // Unreachable when targeting netstandard1.3.
             // Do not dispose of the stream. WriteToStream handles that where it's needed.
-#if NETSTANDARD1_3
-            dataContractSerializer.WriteObject(stream, value);
-#else
             using XmlWriter writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Utf8Encoding, ownsStream: false);
             dataContractSerializer.WriteObject(writer, value);
 #endif
@@ -328,15 +323,26 @@ namespace System.Net.Http.Formatting
         {
             Contract.Assert(type != null);
 
+#if NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
+            if (throwOnError)
+            {
+                throw new PlatformNotSupportedException(Error.Format(
+                    Properties.Resources.JsonMediaTypeFormatter_DCS_NotSupported,
+                    nameof(UseDataContractJsonSerializer)));
+            }
+            else
+            {
+                return null;
+            }
+#else
+
             DataContractJsonSerializer serializer = null;
             Exception exception = null;
 
             try
             {
-#if !NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
                 // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                 FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);
-#endif
 
                 serializer = CreateDataContractSerializer(type);
             }
@@ -362,6 +368,7 @@ namespace System.Net.Http.Formatting
             }
 
             return serializer;
+#endif
         }
 
         /// <summary>

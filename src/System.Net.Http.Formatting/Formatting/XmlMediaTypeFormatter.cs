@@ -511,6 +511,23 @@ namespace System.Net.Http.Formatting
         private object CreateDefaultSerializer(Type type, bool throwOnError)
         {
             Contract.Assert(type != null, "type cannot be null.");
+
+#if NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
+            if (!UseXmlSerializer)
+            {
+                if (throwOnError)
+                {
+                    throw new PlatformNotSupportedException(Error.Format(
+                        Properties.Resources.XmlMediaTypeFormatter_DCS_NotSupported,
+                        nameof(UseXmlSerializer)));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+#endif
+
             Exception exception = null;
             object serializer = null;
 
@@ -522,13 +539,12 @@ namespace System.Net.Http.Formatting
                 }
                 else
                 {
-#if !NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3
-                    // REVIEW: Is there something comparable in WinRT?
+#if !NETSTANDARD1_3 // Unreachable when targeting netstandard1.3.
                     // Verify that type is a valid data contract by forcing the serializer to try to create a data contract
                     FormattingUtilities.XsdDataContractExporter.GetRootElementName(type);
-#endif
 
                     serializer = CreateDataContractSerializer(type);
+#endif
                 }
             }
             catch (Exception caught)

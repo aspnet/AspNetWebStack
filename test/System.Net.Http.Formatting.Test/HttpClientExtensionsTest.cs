@@ -66,6 +66,7 @@ namespace System.Net.Http
             Assert.ThrowsArgumentNull(() => client.PostAsXmlAsync("http://www.example.com", new object()), "client");
         }
 
+#if !Testing_NetStandard1_3 // Avoid "The configured formatter 'System.Net.Http.Formatting.XmlMediaTypeFormatter' cannot write an object of type 'Object'."
         [Fact]
         public void PostAsXmlAsync_String_WhenUriIsNull_ThrowsException()
         {
@@ -81,6 +82,7 @@ namespace System.Net.Http
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
+#endif
 
         [Fact]
         public void PostAsync_String_WhenClientIsNull_ThrowsException()
@@ -195,6 +197,7 @@ namespace System.Net.Http
             Assert.ThrowsArgumentNull(() => client.PutAsXmlAsync("http://www.example.com", new object()), "client");
         }
 
+#if !Testing_NetStandard1_3 // Avoid "The configured formatter 'System.Net.Http.Formatting.XmlMediaTypeFormatter' cannot write an object of type 'Object'."
         [Fact]
         public void PutAsXmlAsync_String_WhenUriIsNull_ThrowsException()
         {
@@ -210,6 +213,7 @@ namespace System.Net.Http
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
+#endif
 
         [Fact]
         public void PutAsync_String_WhenClientIsNull_ThrowsException()
@@ -324,6 +328,7 @@ namespace System.Net.Http
             Assert.ThrowsArgumentNull(() => client.PostAsXmlAsync(new Uri("http://www.example.com"), new object()), "client");
         }
 
+#if !Testing_NetStandard1_3 // Avoid "The configured formatter 'System.Net.Http.Formatting.XmlMediaTypeFormatter' cannot write an object of type 'Object'."
         [Fact]
         public void PostAsXmlAsync_Uri_WhenUriIsNull_ThrowsException()
         {
@@ -339,6 +344,7 @@ namespace System.Net.Http
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
+#endif
 
         [Fact]
         public void PostAsync_Uri_WhenClientIsNull_ThrowsException()
@@ -453,6 +459,7 @@ namespace System.Net.Http
             Assert.ThrowsArgumentNull(() => client.PutAsXmlAsync(new Uri("http://www.example.com"), new object()), "client");
         }
 
+#if !Testing_NetStandard1_3 // Avoid "The configured formatter 'System.Net.Http.Formatting.XmlMediaTypeFormatter' cannot write an object of type 'Object'."
         [Fact]
         public void PutAsXmlAsync_Uri_WhenUriIsNull_ThrowsException()
         {
@@ -468,6 +475,7 @@ namespace System.Net.Http
             var content = Assert.IsType<ObjectContent<object>>(response.RequestMessage.Content);
             Assert.IsType<XmlMediaTypeFormatter>(content.Formatter);
         }
+#endif
 
         [Fact]
         public void PutAsync_Uri_WhenClientIsNull_ThrowsException()

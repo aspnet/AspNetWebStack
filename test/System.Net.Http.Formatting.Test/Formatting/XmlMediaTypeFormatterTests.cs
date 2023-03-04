@@ -41,6 +41,13 @@ namespace System.Net.Http.Formatting
 #endif
             });
 
+        public static readonly TheoryDataSet<Type> AFewValidTypes = new()
+        {
+            typeof(bool),
+            typeof(int),
+            typeof(string),
+        };
+
         public static IEnumerable<TestData> BunchOfTypedObjectsTestDataCollection
         {
             get { return new TestData[] { BunchOfTypedObjectsTestData, }; }
@@ -100,6 +107,7 @@ namespace System.Net.Http.Formatting
                 roundTripTestValue: 10);
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Fact]
         public async Task ReadDeeplyNestedObjectThrows()
         {
@@ -110,6 +118,7 @@ namespace System.Net.Http.Formatting
             stream.Position = 0;
             await Assert.ThrowsAsync<SerializationException>(() => formatter.ReadFromStreamAsync(typeof(SampleType), stream, null, null));
         }
+#endif
 
         [Fact]
         public void Indent_RoundTrips()
@@ -129,6 +138,7 @@ namespace System.Net.Http.Formatting
                 expectedDefaultValue: false);
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Theory]
         [InlineData(typeof(IEnumerable<string>))]
         [InlineData(typeof(IQueryable<string>))]
@@ -173,6 +183,7 @@ namespace System.Net.Http.Formatting
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("\r\n"), "Using DCS with indent set to true should emit data with indentation.");
         }
+#endif
 
         [Fact]
         public void SetSerializer_ThrowsWithNullType()
@@ -225,6 +236,7 @@ namespace System.Net.Http.Formatting
             Assert.ThrowsArgumentNull(() => { formatter.RemoveSerializer(null); }, "type");
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Fact]
         public async Task FormatterThrowsOnWriteWhenOverridenCreateFails()
         {
@@ -305,9 +317,10 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerXmlSerializer);
         }
+#endif
 
         [Fact]
-        public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
+        public async Task XmlSerializerFormatterThrowsOnWriteWhenOverridenCreateFails()
         {
             // Arrange
             TestXmlMediaTypeFormatter formatter = new TestXmlMediaTypeFormatter();
@@ -327,7 +340,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
+        public async Task XmlSerializerFormatterThrowsOnWriteWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestXmlMediaTypeFormatter formatter = new TestXmlMediaTypeFormatter();
@@ -347,7 +360,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task DataContractFormatterThrowsOnReadWhenOverridenCreateFails()
+        public async Task XmlSerializerFormatterThrowsOnReadWhenOverridenCreateFails()
         {
             // Arrange
             TestXmlMediaTypeFormatter formatter = new TestXmlMediaTypeFormatter();
@@ -369,7 +382,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task DataContractFormatterThrowsOnReadWhenOverridenCreateReturnsNull()
+        public async Task XmlSerializerFormatterThrowsOnReadWhenOverridenCreateReturnsNull()
         {
             // Arrange
             TestXmlMediaTypeFormatter formatter = new TestXmlMediaTypeFormatter();
@@ -478,6 +491,54 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
+        [Theory]
+        [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection", RoundTripDataVariations)]
+        public async Task ReadFromStreamAsync_UsingDataContractSerializer_Throws(Type variationType, object testData)
+        {
+            // Arrange. First, get some data using XmlSerializer.
+            bool canSerialize = IsSerializableWithXmlSerializer(variationType, testData) && Assert.Http.CanRoundTrip(variationType);
+            if (canSerialize)
+            {
+                var formatter = new XmlMediaTypeFormatter() { UseXmlSerializer = true };
+                using var stream = new MemoryStream();
+                using var content = new StringContent(string.Empty);
+
+                await formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null);
+                await stream.FlushAsync();
+                stream.Position = 0L;
+
+                content.Headers.ContentLength = stream.Length;
+                formatter.RemoveSerializer(variationType);
+                formatter.UseXmlSerializer = false;
+
+                // Act & Assert
+                await Assert.ThrowsAsync<PlatformNotSupportedException>(() =>
+                    formatter.ReadFromStreamAsync(variationType, stream, content, formatterLogger: null),
+                    "Unable to validate types on this platform when UseXmlSerializer is 'false'. Please set " +
+                    "UseXmlSerializer or move to a supported platform, one where the 'netstandard2.0' assembly " +
+                    "is usable.");
+            }
+        }
+
+        [Theory]
+        [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection", RoundTripDataVariations)]
+        public async Task WriteToStreamAsync_UsingDataContractSerializer_Throws(Type variationType, object testData)
+        {
+            // Arrange
+            var formatter = new XmlMediaTypeFormatter();
+            using var stream = new MemoryStream();
+            using var content = new StringContent(string.Empty);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<PlatformNotSupportedException>(() =>
+                formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null),
+                "Unable to validate types on this platform when UseXmlSerializer is 'false'. Please set " +
+                "UseXmlSerializer or move to a supported platform, one where the 'netstandard2.0' assembly " +
+                "is usable.");
+        }
+
+#else
 #if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1.
         [Fact]
         public async Task ReadFromStreamAsync_RoundTripsWriteToStreamAsyncUsingDataContractSerializer_DBNull()
@@ -523,6 +584,7 @@ namespace System.Net.Http.Formatting
             // Act & assert
             return ReadFromStreamAsync_UsesCorrectCharacterEncodingHelper(formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
+#endif
 
         [Fact]
         public async Task ReadFromStreamAsync_UsesGetDeserializerAndCreateXmlReader()
@@ -567,6 +629,7 @@ namespace System.Net.Http.Formatting
                 "The object of type 'JsonSerializer' returned by GetDeserializer must be an instance of either XmlObjectSerializer or XmlSerializer.");
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
@@ -578,6 +641,7 @@ namespace System.Net.Http.Formatting
             // Act & assert
             return WriteToStreamAsync_UsesCorrectCharacterEncodingHelper(formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
+#endif
 
         [Fact]
         public async Task WriteToStreamAsync_UsesGetSerializerAndCreateXmlWriter()
@@ -650,6 +714,7 @@ namespace System.Net.Http.Formatting
             Assert.False(formatter.WriterSettings.CheckCharacters);
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Fact]
         public async Task InvalidXmlCharacters_CanBeSerialized_Default()
         {
@@ -672,8 +737,38 @@ namespace System.Net.Http.Formatting
                 () => formatter.WriteToStreamAsync(typeof(string), "\x16", stream, content, null),
                 "'\x16', hexadecimal value 0x16, is an invalid character.");
         }
+#endif
 
-#if !Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation
+        [Theory]
+        [PropertyData(nameof(AFewValidTypes))]
+        public void CanReadType_ReturnsFalse_ForValidTypes(Type type)
+        {
+            XmlMediaTypeFormatter formatter = new();
+
+            var canRead = formatter.CanReadType(type);
+
+#if Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation.
+            Assert.False(canRead);
+#else
+            Assert.True(canRead);
+#endif
+        }
+
+        [Theory]
+        [PropertyData(nameof(AFewValidTypes))]
+        public void CanWriteType_ReturnsFalse_ForValidTypes(Type type)
+        {
+            XmlMediaTypeFormatter formatter = new();
+
+            var canWrite = formatter.CanWriteType(type);
+
+#if Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation.
+            Assert.False(canWrite);
+#else
+            Assert.True(canWrite);
+#endif
+        }
+
         [Fact]
         public void CanReadType_ReturnsFalse_ForInvalidDataContracts()
         {
@@ -689,23 +784,66 @@ namespace System.Net.Http.Formatting
 
             Assert.False(formatter.CanWriteType(typeof(InvalidDataContract)));
         }
-#else
-        [Fact]
-        public void CanReadType_InPortableLibrary_ReturnsFalse_ForInvalidDataContracts()
-        {
-            XmlMediaTypeFormatter formatter = new XmlMediaTypeFormatter();
 
-            // The formatter is unable to positively identify non readable types, so true is always returned
-            Assert.True(formatter.CanReadType(typeof(InvalidDataContract)));
+#if Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
+        [Fact]
+        public override Task Overridden_ReadFromStreamAsyncWithCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
         }
 
         [Fact]
-        public void CanWriteType_InPortableLibrary_ReturnsTrue_ForInvalidDataContracts()
+        public override Task Overridden_ReadFromStreamAsyncWithoutCancellationToken_GetsCalled()
         {
-            XmlMediaTypeFormatter formatter = new XmlMediaTypeFormatter();
+            return Task.CompletedTask;
+        }
 
-            // The formatter is unable to positively identify non readable types, so true is always returned
-            Assert.True(formatter.CanWriteType(typeof(InvalidDataContract)));
+        [Fact]
+        public override Task Overridden_WriteToStreamAsyncWithCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task Overridden_WriteToStreamAsyncWithoutCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        // Attributes are in base class.
+        public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        // Attributes are in base class.
+        public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task WriteToStreamAsync_WhenObjectIsNull_WritesDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
         }
 #endif
 
@@ -803,6 +941,9 @@ namespace System.Net.Http.Formatting
 
         private bool IsSerializableWithDataContractSerializer(Type type, object obj)
         {
+#if Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation.
+            return false;
+#else
             if (Assert.Http.IsKnownUnserializable(type, obj))
             {
                 return false;
@@ -822,6 +963,7 @@ namespace System.Net.Http.Formatting
             }
 
             return true;
+#endif
         }
     }
 }

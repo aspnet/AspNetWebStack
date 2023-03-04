@@ -357,4 +357,10 @@
   <data name="ObjectDisposed_StreamClosed" xml:space="preserve">
     <value>Cannot access a closed stream.</value>
   </data>
+  <data name="JsonMediaTypeFormatter_DCS_NotSupported" xml:space="preserve">
+    <value>Unable to validate types on this platform when {0} is 'true'. Please reset {0} or move to a supported platform, one where the 'netstandard2.0' assembly is usable.</value>
+  </data>
+  <data name="XmlMediaTypeFormatter_DCS_NotSupported" xml:space="preserve">
+    <value>Unable to validate types on this platform when {0} is 'false'. Please set {0} or move to a supported platform, one where the 'netstandard2.0' assembly is usable.</value>
+  </data>
 </root>

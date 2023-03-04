@@ -225,6 +225,7 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerJsonSerializer);
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Fact]
         public async Task DataContractFormatterThrowsOnWriteWhenOverridenCreateFails()
         {
@@ -309,6 +310,7 @@ namespace System.Net.Http.Formatting
             Assert.NotNull(formatter.InnerDataContractSerializer);
             Assert.Null(formatter.InnerJsonSerializer);
         }
+#endif
 
         [Fact]
         public void CanReadType_ReturnsTrueOnJtoken()
