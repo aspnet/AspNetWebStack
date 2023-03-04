@@ -39,4 +39,5 @@ function InitializeXCopyMSBuild([string]$packageVersion, [bool]$install, [string
   return Join-Path $packageDir 'tools'
 }
 
-InitializeXCopyMSBuild -packageVersion $Version -install $true -ToolsDir (join-path $PWD .msbuild)
+$RepoRoot = Resolve-Path (Join-Path $PSScriptRoot '..\')
+InitializeXCopyMSBuild -packageVersion $Version -install $true -ToolsDir (join-path $RepoRoot .msbuild)
