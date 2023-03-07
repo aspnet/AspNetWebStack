@@ -10,6 +10,7 @@ using Microsoft.TestCommon;
 
 namespace System.Web.Http
 {
+    [Xunit.Collection("PortReserver Collection")] // Avoid conflicts between different PortReserver consumers.
     public class BasicOverHttpTest
     {
         [Fact]
