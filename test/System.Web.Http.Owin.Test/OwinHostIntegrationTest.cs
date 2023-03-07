@@ -12,6 +12,7 @@ using Owin;
 
 namespace System.Web.Http.Owin
 {
+    [Xunit.Collection("PortReserver Collection")] // Avoid conflicts between different PortReserver consumers.
     public class OwinHostIntegrationTest
     {
         [Fact]

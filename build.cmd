@@ -1,5 +1,4 @@
 @echo off
-pushd %~dp0
 setlocal
 
 if exist bin goto Build
@@ -29,7 +28,7 @@ for /f "usebackq tokens=*" %%i in (`%vswhere% -version 16 -latest -prerelease -p
     -requires Microsoft.Net.Component.4.5.2.TargetingPack ^
     -requires Microsoft.Net.Component.4.6.2.TargetingPack ^
     -property installationPath`) do (
-  set InstallDir="%%i"
+  set "InstallDir=%%i"
 )
 
 if not DEFINED InstallDir (
@@ -38,35 +37,53 @@ if not DEFINED InstallDir (
   goto BuildFail
 )
 
-REM Find or install MSBuild. Need v17.4 due to our .NET SDK choice.
+REM Find a 64bit MSBuild and add it to path. Require v17.4 or later due to our .NET SDK choice.
+REM Check for VS2022 first.
+set InstallDir=
+for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17.4 -latest -prerelease -products * ^
+    -requires Microsoft.Component.MSBuild ^
+    -property installationPath`) do (
+  set "InstallDir=%%i"
+)
+
+if DEFINED InstallDir (
+  REM Add MSBuild to the path.
+  set "PATH=%InstallDir%\MSBuild\Current\Bin;%PATH%"
+  goto FoundMSBuild
+)
+
+REM Otherwise find or install an xcopy-able MSBuild.
+echo "Could not find a VS2022 installation with the necessary components (MSBuild). Falling back..."
+
 set "MSBuildVersion=17.4.1"
 set "Command=[System.Threading.Thread]::CurrentThread.CurrentCulture = ''"
 set "Command=%Command%; [System.Threading.Thread]::CurrentThread.CurrentUICulture = ''"
 set "Command=%Command%; try { & '%~dp0eng\GetXCopyMSBuild.ps1' %MSBuildVersion%; exit $LASTEXITCODE }"
 set "Command=%Command%  catch { write-host $_; exit 1 }"
-PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass  -Command "%Command%"
+PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass -Command "%Command%"
 if %ERRORLEVEL% neq 0 goto BuildFail
 
 REM Add MSBuild to the path.
-set "PATH=%CD%\.msbuild\%MSBuildVersion%\tools\MSBuild\Current\Bin\;%PATH%"
+set "PATH=%~dp0.msbuild\%MSBuildVersion%\tools\MSBuild\Current\Bin;%PATH%"
 
+:FoundMSBuild
 REM Configure NuGet operations to work w/in this repo i.e. do not pollute system packages folder.
 REM Note this causes two copies of packages restored using packages.config to land in this folder e.g.
 REM StyleCpy.5.0.0/ and stylecop/5.0.0/.
-set "NUGET_PACKAGES=%CD%\packages"
+set "NUGET_PACKAGES=%~dp0packages"
 
 REM Are we running in a local dev environment (not on CI)?
 if DEFINED CI (set Desktop=false) else if DEFINED TEAMCITY_VERSION (set Desktop=false) else (set Desktop=true)
 
 if "%1" == "" goto BuildDefaults
 
-MSBuild Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
+MSBuild "%~dp0Runtime.msbuild" /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
     /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary /t:%*
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
 
 :BuildDefaults
-MSBuild Runtime.msbuild /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
+MSBuild "%~dp0Runtime.msbuild" /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
     /fl /fileLoggerParameters:LogFile=bin\msbuild.log;Verbosity=Normal /consoleLoggerParameters:Summary
 if %ERRORLEVEL% neq 0 goto BuildFail
 goto BuildSuccess
@@ -74,13 +91,11 @@ goto BuildSuccess
 :BuildFail
 echo.
 echo *** BUILD FAILED ***
-popd
 endlocal
 exit /B 999
 
 :BuildSuccess
 echo.
 echo **** BUILD SUCCESSFUL ***
-popd
 endlocal
 exit /B 0

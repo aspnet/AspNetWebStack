@@ -12,6 +12,7 @@ using Microsoft.TestCommon;
 
 namespace System.Web.Http.SelfHost
 {
+    [Xunit.Collection("PortReserver Collection")] // Avoid conflicts between different PortReserver consumers.
     public class HttpSelfHostResponseTest
     {
         [Fact]

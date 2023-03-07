@@ -12,6 +12,11 @@ using System.Threading;
 
 namespace Microsoft.TestCommon
 {
+    [Xunit.CollectionDefinition("PortReserver Collection", DisableParallelization = true)]
+    public class PortReserverCollection
+    {
+    }
+
     /// <summary>
     /// This class allocates ports while ensuring that:
     /// 1. Ports that are permanently taken (or taken for the duration of the test) are not being attempted to be used.
