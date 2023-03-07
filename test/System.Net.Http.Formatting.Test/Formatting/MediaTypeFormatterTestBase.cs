@@ -152,7 +152,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
+        public virtual async Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -173,7 +173,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
+        public virtual async Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();
@@ -219,7 +219,7 @@ namespace System.Net.Http.Formatting
         }
 
         [Fact]
-        public async Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
+        public virtual async Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
         {
             // Arrange
             TFormatter formatter = CreateFormatter();

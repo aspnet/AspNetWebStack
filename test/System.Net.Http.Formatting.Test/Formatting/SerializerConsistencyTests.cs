@@ -4,12 +4,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Formatting;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.TestCommon;
 
-namespace System.Net.Formatting.Tests
+namespace System.Net.Http.Formatting
 {
     // Tests for ensuring the serializers behave consistently in various cases.
     // This is important for conneg.
@@ -18,7 +17,12 @@ namespace System.Net.Formatting.Tests
         [Fact]
         public Task PartialContract()
         {
-            var c = new PartialDataContract { PropertyWithAttribute = "one", PropertyWithoutAttribute = "false" };
+            var c = new PartialDataContract {
+                PropertyWithAttribute = "one",
+#if !Testing_NetStandard1_3 // Xml formatter ignores DCS attributes but JSON one does not in netstandard1.3.
+                PropertyWithoutAttribute = "false"
+#endif
+            };
             return SerializerConsistencyHepers.TestAsync(c);
         }
 
@@ -62,6 +66,7 @@ namespace System.Net.Formatting.Tests
             return SerializerConsistencyHepers.TestAsync(source);
         }
 
+#if !Testing_NetStandard1_3 // XmlSerializer is unable to write XML for a dictionary.
         [Fact]
         public Task Dictionary()
         {
@@ -71,6 +76,7 @@ namespace System.Net.Formatting.Tests
 
             return SerializerConsistencyHepers.TestAsync(dict);
         }
+#endif
 
         [Fact]
         public Task Array()
@@ -80,6 +86,7 @@ namespace System.Net.Formatting.Tests
             return SerializerConsistencyHepers.TestAsync(array);
         }
 
+#if !Testing_NetStandard1_3 // XmlSerializer is unable to read XML for interfaces.
         [Fact]
         public async Task ArrayInterfaces()
         {
@@ -99,6 +106,7 @@ namespace System.Net.Formatting.Tests
             // So explicitly call out IEnumerable<T>
             return SerializerConsistencyHepers.TestAsync(l, typeof(IEnumerable<int>));
         }
+#endif
 
         [Fact]
         public Task StaticProps()
@@ -141,8 +149,10 @@ namespace System.Net.Formatting.Tests
         [DataMember]
         public string PropertyWithAttribute { get; set; }
 
+#if !Testing_NetStandard1_3 // Xml formatter ignores DCS attributes but JSON one does not in netstandard1.3.
         // no attribute here
         public string PropertyWithoutAttribute { get; set; }
+#endif
     }
 
     public class PrivateProperty // with private field

@@ -255,7 +255,11 @@ namespace System.Net.Http.Formatting
             return new MediaTypeFormatter[]
             {
                 new JsonMediaTypeFormatter(),
-                new XmlMediaTypeFormatter(),
+                new XmlMediaTypeFormatter()
+#if NETSTANDARD1_3 // XsdDataContractExporter is not supported in netstandard1.3. Cannot use DCS.
+                { UseXmlSerializer = true }
+#endif
+                ,
                 new FormUrlEncodedMediaTypeFormatter()
             };
         }

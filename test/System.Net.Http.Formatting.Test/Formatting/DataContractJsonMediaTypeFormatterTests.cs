@@ -24,6 +24,13 @@ namespace System.Net.Http.Formatting
 
     public class DataContractJsonMediaTypeFormatterTests : MediaTypeFormatterTestBase<DataContractJsonMediaTypeFormatter>
     {
+        public static readonly TheoryDataSet<Type> AFewValidTypes = new()
+        {
+            typeof(bool),
+            typeof(int),
+            typeof(string),
+        };
+
         public override IEnumerable<MediaTypeHeaderValue> ExpectedSupportedMediaTypes
         {
             get { return HttpTestData.StandardJsonMediaTypes; }
@@ -87,21 +94,20 @@ namespace System.Net.Http.Formatting
             Assert.False(isSerializable != canSupport && isSerializable, String.Format("2nd CanReadType returned wrong value for '{0}'.", variationType));
         }
 
-#if !Testing_NetStandard1_3 // XsdDataContractExporterMethods unconditionally return true without XsdDataContractExporter to use.
-        [Fact]
-        public void CanReadType_ReturnsFalse_ForInvalidDataContracts()
+        [Theory]
+        [PropertyData(nameof(AFewValidTypes))]
+        public void CanWriteType_ReturnsFalse_ForValidTypes(Type type)
         {
-            JsonMediaTypeFormatter formatter = new DataContractJsonMediaTypeFormatter();
-            Assert.False(formatter.CanReadType(typeof(InvalidDataContract)));
-        }
+            XmlMediaTypeFormatter formatter = new();
 
-        [Fact]
-        public void CanWriteType_ReturnsFalse_ForInvalidDataContracts()
-        {
-            JsonMediaTypeFormatter formatter = new DataContractJsonMediaTypeFormatter();
-            Assert.False(formatter.CanWriteType(typeof(InvalidDataContract)));
-        }
+            var canWrite = formatter.CanWriteType(type);
+
+#if Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation.
+            Assert.False(canWrite);
+#else
+            Assert.True(canWrite);
 #endif
+        }
 
         public class InvalidDataContract
         {
@@ -111,6 +117,7 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if !Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
         [Theory]
         [InlineData(typeof(IQueryable<string>))]
         [InlineData(typeof(IEnumerable<string>))]
@@ -124,6 +131,7 @@ namespace System.Net.Http.Formatting
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.True(serializedString.Contains("null"), "Using Json formatter to serialize null should emit 'null'.");
         }
+#endif
 
         [Theory]
         [TestDataSet(typeof(JsonMediaTypeFormatterTests), "ValueAndRefTypeTestDataCollectionExceptULong", RoundTripDataVariations)]
@@ -159,6 +167,54 @@ namespace System.Net.Http.Formatting
             }
         }
 
+#if Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
+        [Theory]
+        [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection", RoundTripDataVariations)]
+        public async Task ReadFromStreamAsync_UsingDataContractSerializer_Throws(Type variationType, object testData)
+        {
+            // Arrange. First, get some data using XmlSerializer.
+            bool canSerialize = IsTypeSerializableWithJsonSerializer(variationType, testData, actuallyCheck: true) &&
+                Assert.Http.CanRoundTrip(variationType);
+            if (canSerialize)
+            {
+                var formatter = new JsonMediaTypeFormatter();
+                using var stream = new MemoryStream();
+                using var content = new StringContent(string.Empty);
+
+                await formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null);
+                await stream.FlushAsync();
+                stream.Position = 0L;
+
+                content.Headers.ContentLength = stream.Length;
+                formatter.UseDataContractJsonSerializer = true;
+
+                // Act & Assert
+                await Assert.ThrowsAsync<PlatformNotSupportedException>(() =>
+                    formatter.ReadFromStreamAsync(variationType, stream, content, formatterLogger: null),
+                    "Unable to validate types on this platform when UseDataContractJsonSerializer is 'true'. " +
+                    "Please reset UseDataContractJsonSerializer or move to a supported platform, one where the " +
+                    "'netstandard2.0' assembly is usable.");
+            }
+        }
+
+        [Theory]
+        [TestDataSet(typeof(CommonUnitTestDataSets), "RepresentativeValueAndRefTypeTestDataCollection", RoundTripDataVariations)]
+        public async Task WriteToStreamAsync_UsingDataContractSerializer_Throws(Type variationType, object testData)
+        {
+            // Arrange
+            var formatter = new JsonMediaTypeFormatter() { UseDataContractJsonSerializer = true};
+            using var stream = new MemoryStream();
+            using var content = new StringContent(string.Empty);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<PlatformNotSupportedException>(() =>
+                formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null),
+                "Unable to validate types on this platform when UseDataContractJsonSerializer is 'true'. " +
+                "Please reset UseDataContractJsonSerializer or move to a supported platform, one where the " +
+                "'netstandard2.0' assembly is usable.");
+        }
+
+#else
 #if !NETCOREAPP2_1 // DBNull not serializable on .NET Core 2.1.
         // Test alternate null value
         [Fact]
@@ -203,6 +259,7 @@ namespace System.Net.Http.Formatting
             string serializedString = new StreamReader(memoryStream).ReadToEnd();
             Assert.False(serializedString.Contains("\r\n"), "Using DCJS should emit data without indentation by default.");
         }
+#endif
 
         [Fact]
         public void UseDataContractJsonSerializer_True_Indent_Throws()
@@ -216,6 +273,67 @@ namespace System.Net.Http.Formatting
                     memoryStream, content, transportContext: null));
         }
 
+#if Testing_NetStandard1_3 // Cannot read or write w/ DCS in netstandard1.3.
+        [Fact]
+        public override Task Overridden_ReadFromStreamAsyncWithCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task Overridden_ReadFromStreamAsyncWithoutCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task Overridden_WriteToStreamAsyncWithCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task Overridden_WriteToStreamAsyncWithoutCancellationToken_GetsCalled()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task ReadFromStreamAsync_ReadsDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        // Attributes are in base class.
+        public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task ReadFromStreamAsync_WhenContentLengthIsNull_ReadsDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        // Attributes are in base class.
+        public override Task WriteToStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task WriteToStreamAsync_WhenObjectIsNull_WritesDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+
+        [Fact]
+        public override Task WriteToStreamAsync_WritesDataButDoesNotCloseStream()
+        {
+            return Task.CompletedTask;
+        }
+#else
         public override Task ReadFromStreamAsync_UsesCorrectCharacterEncoding(string content, string encoding, bool isDefaultEncoding)
         {
             // Arrange
@@ -239,6 +357,7 @@ namespace System.Net.Http.Formatting
             return WriteContentUsingCorrectCharacterEncodingHelperAsync(
                 formatter, content, formattedContent, mediaType, encoding, isDefaultEncoding);
         }
+#endif
 
         public class TestJsonMediaTypeFormatter : DataContractJsonMediaTypeFormatter
         {
@@ -267,8 +386,15 @@ namespace System.Net.Http.Formatting
             }
         }
 
-        private bool IsTypeSerializableWithJsonSerializer(Type type, object obj)
+        private bool IsTypeSerializableWithJsonSerializer(Type type, object obj, bool actuallyCheck = false)
         {
+#if Testing_NetStandard1_3 // Different behavior in netstandard1.3 due to no DataContract validation.
+            if (!actuallyCheck)
+            {
+                return false;
+            }
+#endif
+
             try
             {
                 new DataContractJsonSerializer(type);
