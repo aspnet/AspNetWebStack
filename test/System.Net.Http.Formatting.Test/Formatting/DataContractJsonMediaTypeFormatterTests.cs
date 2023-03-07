@@ -193,7 +193,7 @@ namespace System.Net.Http.Formatting
                     formatter.ReadFromStreamAsync(variationType, stream, content, formatterLogger: null),
                     "Unable to validate types on this platform when UseDataContractJsonSerializer is 'true'. " +
                     "Please reset UseDataContractJsonSerializer or move to a supported platform, one where the " +
-                    "'netstandard2.0' assembly is usable.");
+                    ".NET Standard 2.0 assembly is usable.");
             }
         }
 
@@ -211,7 +211,7 @@ namespace System.Net.Http.Formatting
                 formatter.WriteToStreamAsync(variationType, testData, stream, content, transportContext: null),
                 "Unable to validate types on this platform when UseDataContractJsonSerializer is 'true'. " +
                 "Please reset UseDataContractJsonSerializer or move to a supported platform, one where the " +
-                "'netstandard2.0' assembly is usable.");
+                ".NET Standard 2.0 assembly is usable.");
         }
 
 #else
