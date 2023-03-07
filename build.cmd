@@ -48,7 +48,7 @@ for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17.4 -latest -prerelease 
 
 if DEFINED InstallDir (
   REM Add MSBuild to the path.
-  set "PATH=%InstallDir%\MSBuild\Current\Bin\amd64;%PATH%"
+  set "PATH=%InstallDir%\MSBuild\Current\Bin;%PATH%"
   goto FoundMSBuild
 )
 
@@ -64,7 +64,7 @@ PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass -Command "%Command%"
 if %ERRORLEVEL% neq 0 goto BuildFail
 
 REM Add MSBuild to the path.
-set "PATH=%~dp0.msbuild\%MSBuildVersion%\tools\MSBuild\Current\Bin\amd64;%PATH%"
+set "PATH=%~dp0.msbuild\%MSBuildVersion%\tools\MSBuild\Current\Bin;%PATH%"
 
 :FoundMSBuild
 REM Configure NuGet operations to work w/in this repo i.e. do not pollute system packages folder.
