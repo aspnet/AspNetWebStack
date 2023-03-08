@@ -75,6 +75,7 @@ set "NUGET_PACKAGES=%~dp0packages"
 REM Are we running in a local dev environment (not on CI)?
 if DEFINED CI (set Desktop=false) else if DEFINED TEAMCITY_VERSION (set Desktop=false) else (set Desktop=true)
 
+pushd %~dp0
 if "%1" == "" goto BuildDefaults
 
 MSBuild "%~dp0Runtime.msbuild" /m /nr:false /p:Platform="Any CPU" /p:Desktop=%Desktop% /v:M ^
@@ -91,11 +92,13 @@ goto BuildSuccess
 :BuildFail
 echo.
 echo *** BUILD FAILED ***
+popd
 endlocal
 exit /B 999
 
 :BuildSuccess
 echo.
 echo **** BUILD SUCCESSFUL ***
+popd
 endlocal
 exit /B 0
