@@ -52,14 +52,26 @@
     <Exec Command='"$(NuGetExe)" restore .nuget\packages.config -PackagesDirectory packages -NonInteractive -Verbosity quiet' />
   </Target>
 
+  <ItemGroup>
+    <_Testing_NetStandard1_3 Include="true;false" />
+  </ItemGroup>
+
   <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
-    <ItemGroup>
-      <_ToRestore Include="Runtime.sln" />
-      <_ToRestore Include="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj"
-          AdditionalProperties="Testing_NetStandard1_3=true" />
-    </ItemGroup>
     <Message Text="%0ARestoring NuGet packages..." Importance="High" />
-    <MSBuild Projects="@(_ToRestore)" Targets="Restore"
+
+    <!--
+      Pre-restore Microsoft.TestCommon due to the many dependencies on this project. Batch it to cover the full
+      set of references. Remove $(Platform) to avoid 'Any CPU' appearing in output paths. Can always restore in
+      parallel because $(Testing_NetStandard1_3) changes both obj/ and bin/ folders entirely.
+    -->
+    <MSBuild Projects="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Targets="Restore"
+      BuildInParallel="true"
+      Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
+                  RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion);
+                  Testing_NetStandard1_3=%(_Testing_NetStandard1_3.Identity)"
+      RemoveProperties="Platform" />
+
+    <MSBuild Projects="Runtime.sln" Targets="Restore"
       BuildInParallel="$(RestoreInParallel)"
       Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
                   RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion)" />
@@ -79,14 +91,28 @@
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestoreSkipStrongNames;RestorePackages;BuildTools">
-    <!-- we need to batch the solution files since they both build Microsoft.TestCommon -->
-    <Error Condition=" '$(CodeAnalysis)' == 'true' and '$(Configuration)' == 'Release' " Text="Unable to run code analysis in Release configuration. Release assemblies do not include SuppressMessage attributes (so code analysis would always fail with the errors that are normally suppressed)." />
+    <Error Condition=" '$(CodeAnalysis)' == 'true' and '$(Configuration)' == 'Release' "
+      Text="Unable to run code analysis in Release configuration. Release assemblies do not include SuppressMessage attributes (so code analysis would always fail with the errors that are normally suppressed)." />
     <MakeDir Directories="bin\$(Configuration)" />
+
+    <!--
+      Prebuild Microsoft.TestCommon due to the many dependencies on this project. Batch it to cover the full
+      set of references. Remove $(Platform) to avoid 'Any CPU' appearing in output paths. Can always build in
+      parallel because $(Testing_NetStandard1_3) changes both obj/ and bin/ folders entirely.
+    -->
+    <MSBuild Projects="test\Microsoft.TestCommon\Microsoft.TestCommon.csproj" Targets="Build"
+      BuildInParallel="true"
+      Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
+                  VisualStudioVersion=$(VisualStudioVersion);
+                  Testing_NetStandard1_3=%(_Testing_NetStandard1_3.Identity)"
+      RemoveProperties="Platform" />
+
     <MSBuild
         Projects="Runtime.sln"
         BuildInParallel="$(BuildInParallel)"
         Targets="Build"
-        Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);VisualStudioVersion=$(VisualStudioVersion)" />
+        Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
+                    VisualStudioVersion=$(VisualStudioVersion)" />
   </Target>
 
   <Target Name="UnitTest" DependsOnTargets="Build;PrintTestRunSummary" />
