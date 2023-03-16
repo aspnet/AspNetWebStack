@@ -24,12 +24,17 @@ using System.Runtime.InteropServices;
 //  BUILD_GENERATED_VERSION will be set in any CI build. Versions below are not used.
 // ===================================================================================
 
-#if (ASPNETMVC && (ASPNETWEBPAGES || ASPNETFACEBOOK)) || (ASPNETWEBPAGES && ASPNETFACEBOOK)
-#error Runtime projects cannot define more than one of ASPNETMVC, ASPNETWEBPAGES or ASPNETFACEBOOK
+#if (ASPNETMVC && (ASPNETWEBPAGES || ASPNETFACEBOOK || ASPNETHTTPFORMATTING)) || (ASPNETWEBPAGES && (ASPNETFACEBOOK || ASPNETHTTPFORMATTING)) || (ASPNETFACEBOOK && ASPNETHTTPFORMATTING)
+#error Runtime projects cannot define more than one of ASPNETMVC, ASPNETWEBPAGES, ASPNETFACEBOOK, or ASPNETHTTPFORMATTING
+#elif ASPNETHTTPFORMATTING
+#if !BUILD_GENERATED_VERSION
+[assembly: AssemblyVersion("6.0.0.0")] // ASPNETHTTPFORMATTING
+[assembly: AssemblyFileVersion("6.0.0.0")] // ASPNETHTTPFORMATTING
+#endif
 #elif ASPNETMVC
 #if !BUILD_GENERATED_VERSION
-[assembly: AssemblyVersion("5.2.9.0")] // ASPNETMVC
-[assembly: AssemblyFileVersion("5.2.9.0")] // ASPNETMVC
+[assembly: AssemblyVersion("5.3.0.0")] // ASPNETMVC
+[assembly: AssemblyFileVersion("5.3.0.0")] // ASPNETMVC
 #endif
 [assembly: AssemblyProduct("Microsoft ASP.NET MVC")]
 #elif ASPNETWEBPAGES

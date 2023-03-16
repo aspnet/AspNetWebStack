@@ -7,7 +7,7 @@
     <OutputPath>$(OutputPath)ns2_0\</OutputPath>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <DefineConstants>$(DefineConstants);ASPNETMVC</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASPNETHTTPFORMATTING</DefineConstants>
     <NoWarn>1591</NoWarn>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
