@@ -320,7 +320,7 @@ namespace System.Net.Http.Formatting.Parsers
             {
                 var name = _name.ToString();
                 var value = _value.ToString().Trim(CurrentHeaderFieldStore._linearWhiteSpace);
-                if (string.Equals("expires", name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("expires", name, StringComparison.OrdinalIgnoreCase) || string.Equals("etag", name, StringComparison.OrdinalIgnoreCase))
                 {
                     ignoreHeaderValidation = true;
                 }
