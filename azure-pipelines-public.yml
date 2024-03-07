@@ -1,0 +1,100 @@
+parameters:
+  # Test only the Release build by default.
+- name: ReleaseBuildTarget
+  displayName: 'Build which target for Release?'
+  type: string
+  values: [ Build, Integration, UnitTest ]
+  default: UnitTest
+- name: OtherBuildTarget
+  displayName: 'Build which target for Debug/CodeAnalysis?'
+  type: string
+  values: [ Build, Integration, UnitTest ]
+  default: Build
+
+variables:
+- name: DOTNET_CLI_TELEMETRY_OPTOUT
+  value: 1
+- name: DOTNET_NOLOGO
+  value: 1
+  # Run CodeQL3000 tasks in a separate internal pipeline; not needed here.
+- name: Codeql.SkipTaskAutoInjection
+  value: true
+
+trigger: [main]
+pr: ['*']
+
+jobs:
+- job: build
+  displayName: Build
+  pool:
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      name: NetCore-Svc-Public
+      demands: ImageOverride -equals windows.vs2019.amd64.open
+    ${{ else }}:
+      name: NetCore1ESPool-Svc-Internal
+      demands: ImageOverride -equals windows.vs2019.amd64
+  timeoutInMinutes: 30
+
+  strategy:
+    matrix:
+      Release:
+        _BuildTarget: ${{ parameters.ReleaseBuildTarget }}
+        _Configuration: Release
+        _StyleCopEnabled: true
+        # Do CG work only in internal pipelines.
+        skipComponentGovernanceDetection: ${{ eq(variables['System.TeamProject'], 'public') }}
+      Debug:
+        _BuildTarget: ${{ parameters.OtherBuildTarget }}
+        _Configuration: Debug
+        _StyleCopEnabled: false
+        # Do not redo CG work. Configuration changes in this part of the matrix are not relevant to CG.
+        skipComponentGovernanceDetection: true
+      CodeAnalysis:
+        _BuildTarget: ${{ parameters.OtherBuildTarget }}
+        _Configuration: CodeAnalysis
+        _StyleCopEnabled: false
+        # Do not redo CG work. Configuration changes in this part of the matrix are not relevant to CG.
+        skipComponentGovernanceDetection: true
+
+  steps:
+  - checkout: self
+    clean: true
+    displayName: Checkout
+
+  - task: UseDotNet@2
+    displayName: Get .NET SDK
+    inputs:
+      useGlobalJson: true
+  - task: UseDotNet@2
+    displayName: Get .NET 2.1 runtime
+    inputs:
+      packageType: runtime
+      version: '2.1.x'
+
+  - script: .\build.cmd EnableSkipStrongNames
+    displayName: Enable SkipStrongNames
+  - script: .\build.cmd $(_BuildTarget) ^
+      /binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled) ^
+      /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
+    displayName: Build
+
+  - publish: ./bin/$(_Configuration)/Test/TestResults/
+    artifact: $(_Configuration) Test Results $(System.JobId)
+    condition: and(always(), ne(variables._BuildTarget, 'Build'))
+    continueOnError: true
+    displayName: Upload test results
+  - task: PublishTestResults@2
+    condition: and(always(), ne(variables._BuildTarget, 'Build'))
+    continueOnError: true
+    displayName: Publish test results
+    inputs:
+      mergeTestResults: true
+      searchFolder: ./bin/$(_Configuration)/Test/TestResults/
+      testResultsFiles: '*.xml'
+      testRunner: xUnit
+      testRunTitle: $(_Configuration)
+
+  - publish: ./artifacts/
+    artifact: $(_Configuration) Logs $(System.JobId)
+    condition: always()
+    displayName: Upload logs
