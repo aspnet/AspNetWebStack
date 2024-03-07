@@ -50,23 +50,26 @@ jobs:
       /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
     displayName: Build
 
-  - publish: ./bin/$(_Configuration)/Test/TestResults/
-    artifact: $(_Configuration) Test Results $(System.JobId)
-    condition: and(always(), ne(variables._BuildTarget, 'Build'))
-    continueOnError: true
-    displayName: Upload test results
-  - task: PublishTestResults@2
-    condition: and(always(), ne(variables._BuildTarget, 'Build'))
-    continueOnError: true
-    displayName: Publish test results
-    inputs:
-      mergeTestResults: true
-      searchFolder: ./bin/$(_Configuration)/Test/TestResults/
-      testResultsFiles: '*.xml'
-      testRunner: xUnit
-      testRunTitle: $(_Configuration)
-
   - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - task: PublishBuildArtifacts@1
+      displayName: Upload test results
+      condition: and(always(), ne(variables._BuildTarget, 'Build'))
+      continueOnError: true
+      inputs:
+        pathtoPublish: ./bin/$(_Configuration)/Test/TestResults/
+        artifactName: $(_Configuration) Test Results $(System.JobId)
+        artifactType: Container
+        parallel: true
+    - task: PublishTestResults@2
+      condition: and(always(), ne(variables._BuildTarget, 'Build'))
+      continueOnError: true
+      displayName: Publish test results
+      inputs:
+        mergeTestResults: true
+        searchFolder: ./bin/$(_Configuration)/Test/TestResults/
+        testResultsFiles: '*.xml'
+        testRunner: xUnit
+        testRunTitle: $(_Configuration)
     - task: PublishBuildArtifacts@1
       displayName: Upload logs
       condition: always()
@@ -77,6 +80,11 @@ jobs:
         artifactType: Container
         parallel: true
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}: 
+    - task: 1ES.PublishPipelineArtifact@1
+      inputs:
+        condition: and(always(), ne(variables._BuildTarget, 'Build'))
+        path: ./bin/$(_Configuration)/Test/TestResults/
+        artifact: $(_Configuration) Test Results $(System.JobId)
     - task: 1ES.PublishPipelineArtifact@1
       inputs:
         path: ./artifacts/
