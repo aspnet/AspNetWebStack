@@ -22,3 +22,9 @@ variables:
 
 trigger: [main]
 pr: ['*']
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/templates/default-build.yml
