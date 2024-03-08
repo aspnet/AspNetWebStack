@@ -1,0 +1,95 @@
+parameters:
+  ReleaseBuildTarget: ''
+  OtherBuildTarget: ''
+
+jobs:
+- job: build
+  displayName: Build
+  ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    pool:
+      name: NetCore-Svc-Public
+      demands: ImageOverride -equals windows.vs2019.amd64.open
+  timeoutInMinutes: 30
+
+  strategy:
+    matrix:
+      Release:
+        _BuildTarget: ${{ parameters.ReleaseBuildTarget }}
+        _Configuration: Release
+        _StyleCopEnabled: true
+        # Do CG work only in internal pipelines.
+        skipComponentGovernanceDetection: ${{ eq(variables['System.TeamProject'], 'public') }}
+      Debug:
+        _BuildTarget: ${{ parameters.OtherBuildTarget }}
+        _Configuration: Debug
+        _StyleCopEnabled: false
+        # Do not redo CG work. Configuration changes in this part of the matrix are not relevant to CG.
+        skipComponentGovernanceDetection: true
+      CodeAnalysis:
+        _BuildTarget: ${{ parameters.OtherBuildTarget }}
+        _Configuration: CodeAnalysis
+        _StyleCopEnabled: false
+        # Do not redo CG work. Configuration changes in this part of the matrix are not relevant to CG.
+        skipComponentGovernanceDetection: true
+
+  steps:
+  - checkout: self
+    clean: true
+    displayName: Checkout
+
+  - task: UseDotNet@2
+    displayName: Get .NET SDK
+    inputs:
+      useGlobalJson: true
+  - task: UseDotNet@2
+    displayName: Get .NET 2.1 runtime
+    inputs:
+      packageType: runtime
+      version: '2.1.x'
+
+  - script: .\build.cmd EnableSkipStrongNames
+    displayName: Enable SkipStrongNames
+  - script: .\build.cmd $(_BuildTarget) ^
+      /binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled) ^
+      /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
+    displayName: Build
+
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - task: PublishBuildArtifacts@1
+      displayName: Upload test results
+      condition: and(always(), ne(variables._BuildTarget, 'Build'))
+      continueOnError: true
+      inputs:
+        pathtoPublish: ./bin/$(_Configuration)/Test/TestResults/
+        artifactName: $(_Configuration) Test Results $(System.JobId)
+        artifactType: Container
+        parallel: true
+    - task: PublishTestResults@2
+      condition: and(always(), ne(variables._BuildTarget, 'Build'))
+      continueOnError: true
+      displayName: Publish test results
+      inputs:
+        mergeTestResults: true
+        searchFolder: ./bin/$(_Configuration)/Test/TestResults/
+        testResultsFiles: '*.xml'
+        testRunner: xUnit
+        testRunTitle: $(_Configuration)
+    - task: PublishBuildArtifacts@1
+      displayName: Upload logs
+      condition: always()
+      continueOnError: true
+      inputs:
+        pathtoPublish: ./artifacts/
+        artifactName: $(_Configuration) Logs $(System.JobId)
+        artifactType: Container
+        parallel: true
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}: 
+    - task: 1ES.PublishPipelineArtifact@1
+      inputs:
+        condition: and(always(), ne(variables._BuildTarget, 'Build'))
+        path: ./bin/$(_Configuration)/Test/TestResults/
+        artifact: $(_Configuration) Test Results $(System.JobId)
+    - task: 1ES.PublishPipelineArtifact@1
+      inputs:
+        path: ./artifacts/
+        artifact: $(_Configuration) Logs $(System.JobId)
