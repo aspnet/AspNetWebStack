@@ -1,3 +1,7 @@
+parameters:
+  ReleaseBuildTarget: ''
+  OtherBuildTarget: ''
+
 jobs:
 - job: build
   displayName: Build
@@ -46,7 +50,7 @@ jobs:
   - script: .\build.cmd EnableSkipStrongNames
     displayName: Enable SkipStrongNames
   - script: .\build.cmd $(_BuildTarget)
-      /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled)
+      binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled)
       /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
     displayName: Build
 

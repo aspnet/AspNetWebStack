@@ -43,3 +43,6 @@ extends:
       displayName: Build
       jobs:
       - template: /eng/templates/default-build.yml@self
+        parameters:
+          ReleaseBuildTarget: ${{ parameters.ReleaseBuildTarget }}
+          OtherBuildTarget: ${{ parameters.OtherBuildTarget }}

@@ -28,3 +28,6 @@ stages:
   displayName: Build
   jobs:
   - template: /eng/templates/default-build.yml
+    parameters:
+      ReleaseBuildTarget: ${{ parameters.ReleaseBuildTarget }}
+      OtherBuildTarget: ${{ parameters.OtherBuildTarget }}
