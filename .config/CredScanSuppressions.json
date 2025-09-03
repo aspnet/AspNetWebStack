@@ -1,0 +1,29 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "placeholder": "abcdefg",
+      "_justification": "This is a fake password used in test code."
+    },
+    {
+      "placeholder": "Pa$$AAECAw==",
+      "_justification": "This is a fake password used in test code."
+    },
+    {
+      "placeholder": "ALyuoraY/cIWD1hjo+K81/pf83qo6Q6T+UBYcXN9P3A9WHLvEY10f+lwW5qPG6h9xw==",
+      "_justification": "This is a fake hashed password used in test code."
+    },
+    {
+      "placeholder": "abcdefg123",
+      "_justification": "This is a fake password used in test code."
+    },
+    {
+      "placeholder": "3e29b24f825e737d97aed5eb62df5076",
+      "_justification": "This is a fake password used in test code."
+    },
+    {
+      "placeholder": "My Password",
+      "_justification": "This is a fake password used in test code."
+    }
+  ]
+}
