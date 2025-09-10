@@ -6,7 +6,7 @@ mkdir bin
 
 :Build
 
-REM Require VS2019 (v16.0) on the system. Use `vswhere` for the search because it can find all VS installations.
+REM Require VS2022 (v17.0) on the system. Use `vswhere` for the search because it can find all VS installations.
 set vswhere="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 if not exist %vswhere% (
   set vswhere="%ProgramFiles%\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -23,7 +23,7 @@ if not exist %vswhere% (
 )
 
 set InstallDir=
-for /f "usebackq tokens=*" %%i in (`%vswhere% -version 16 -latest -prerelease -products * ^
+for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17 -latest -prerelease -products * ^
     -requires Microsoft.Net.Component.4.5.TargetingPack ^
     -requires Microsoft.Net.Component.4.5.2.TargetingPack ^
     -requires Microsoft.Net.Component.4.6.2.TargetingPack ^
