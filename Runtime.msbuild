@@ -1,4 +1,4 @@
-<Project DefaultTargets="UnitTest" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="BuildAndTest" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="tools/WebStack.tasks.targets"/>
   <UsingTask TaskName="SkipStrongNames.CheckSkipStrongNamesStatus" AssemblyFile="$(SkipStrongNamesExe)" />
 
@@ -34,7 +34,7 @@
     <Message Text="SkipStrongNames: $(Status)" Importance="High" />
   </Target>
 
-  <Target Name="Integration" DependsOnTargets="Clean;Build;UnitTest" />
+  <Target Name="Integration" DependsOnTargets="Clean;Build;BuildAndTest" />
 
   <Target Name="Clean">
     <MSBuild
@@ -115,7 +115,12 @@
                     VisualStudioVersion=$(VisualStudioVersion)" />
   </Target>
 
-  <Target Name="UnitTest" DependsOnTargets="Build;PrintTestRunSummary" />
+  <PropertyGroup>
+    <BuildAndTestDependsOn Condition="'$(InternalBuild)' == 'true'">Build;PrintTestRunSummary</BuildAndTestDependsOn>
+    <BuildAndTestDependsOn Condition="'$(InternalBuild)' != 'true'">Build</BuildAndTestDependsOn>
+  </PropertyGroup>
+
+  <Target Name="BuildAndTest" DependsOnTargets="$(BuildAndTestDependsOn)" />
 
   <Target Name="RunTests" DependsOnTargets="CheckSkipStrongNames">
     <ItemGroup>

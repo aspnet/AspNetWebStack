@@ -51,3 +51,4 @@ extends:
         parameters:
           ReleaseBuildTarget: ${{ parameters.ReleaseBuildTarget }}
           OtherBuildTarget: ${{ parameters.OtherBuildTarget }}
+          InternalBuild: true

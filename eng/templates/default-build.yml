@@ -1,6 +1,7 @@
 parameters:
   ReleaseBuildTarget: ''
   OtherBuildTarget: ''
+  InternalBuild: ''
 
 jobs:
 - job: build
@@ -51,7 +52,7 @@ jobs:
     displayName: Enable SkipStrongNames
   - script: .\build.cmd $(_BuildTarget) ^
       /binaryLogger:artifacts/msbuild.binlog /p:Configuration=$(_Configuration) /p:StyleCopEnabled=$(_StyleCopEnabled) ^
-      /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
+      /p:InternalBuild=$(InternalBuild) /fileLoggerParameters:LogFile=artifacts/msbuild.log;Summary;Verbosity=minimal
     displayName: Build
 
   - ${{ if eq(variables['System.TeamProject'], 'public') }}:
