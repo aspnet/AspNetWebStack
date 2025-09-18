@@ -4,7 +4,7 @@ parameters:
   displayName: 'Build which target for Release?'
   type: string
   values: [ Build, Integration, UnitTest ]
-  default: UnitTest
+  default: Build
 - name: OtherBuildTarget
   displayName: 'Build which target for Debug/CodeAnalysis?'
   type: string
