@@ -11,7 +11,7 @@
     <RunCodeAnalysis>$(CodeAnalysis)</RunCodeAnalysis>
     <CodeAnalysisRuleSet>..\Strict.ruleset</CodeAnalysisRuleSet>
     <DefineConstants>$(DefineConstants);ASPNETHTTPFORMATTING</DefineConstants>
-    <TargetFrameworkProfile Condition="'$(TargetFrameworkVersion)' != 'v4.5'">Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile Condition="'$(TargetFrameworkVersion)' != 'v4.5.2'">Client</TargetFrameworkProfile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
