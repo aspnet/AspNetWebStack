@@ -24,7 +24,6 @@ if not exist %vswhere% (
 
 set InstallDir=
 for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17 -latest -prerelease -products * ^
-    -requires Microsoft.Net.Component.4.5.TargetingPack ^
     -requires Microsoft.Net.Component.4.5.2.TargetingPack ^
     -requires Microsoft.Net.Component.4.6.2.TargetingPack ^
     -property installationPath`) do (
@@ -32,7 +31,7 @@ for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17 -latest -prerelease -p
 )
 
 if not DEFINED InstallDir (
-  echo "Could not find a VS2019 installation with the necessary components (targeting packs for v4.5, v4.5.2, and v4.6.2)."
+  echo "Could not find a VS2019 installation with the necessary components (targeting packs for v4.5.2 and v4.6.2)."
   echo Please install VS2019 or the missing components.
   goto BuildFail
 )
