@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
     <ProjectGuid>{4CBFC7D3-1600-4CE5-BC6B-AC7BC2D6F853}</ProjectGuid>
