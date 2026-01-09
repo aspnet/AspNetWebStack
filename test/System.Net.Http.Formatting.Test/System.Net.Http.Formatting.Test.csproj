@@ -118,7 +118,7 @@
         Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core\2.4.2\build\xunit.core.props'))" />
     <Error Condition="!Exists('..\..\packages\xunit.core\2.4.2\build\xunit.core.targets')"
         Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.core\2.4.2\build\xunit.core.targets'))" />
-    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.4.5\build\net462\xunit.runner.visualstudio.props')"
-        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.4.5\build\net462\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio\2.4.5\build\net462\xunit.runner.visualstudio.props')"
+        Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio\2.4.5\build\net462\xunit.runner.visualstudio.props'))" />
   </Target>
 </Project>
