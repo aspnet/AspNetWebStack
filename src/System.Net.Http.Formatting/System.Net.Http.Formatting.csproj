@@ -13,6 +13,7 @@
     <DefineConstants>$(DefineConstants);ASPNETHTTPFORMATTING</DefineConstants>
     <TargetFrameworkProfile Condition="'$(TargetFrameworkVersion)' != 'v4.5'">Client</TargetFrameworkProfile>
     <NoWarn>1591</NoWarn>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
   </PropertyGroup>
 
   <ItemGroup>
