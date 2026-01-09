@@ -1,3 +1,12 @@
 <Project>
-  <!-- Stop MsBuild searching parent directories for this file. -->
+  <!-- Copied from Microsoft.NET.Sdk.FrameworkReferenceResolution.targets -->
+  <Target Name="_IncludeTargetingPackReference" BeforeTargets="_CheckForInvalidConfigurationAndPlatform;CollectPackageReferences;CheckForImplicitPackageReferenceOverrides"
+          Condition="'$(TargetFrameworkMoniker)' != '' and '$(TargetFrameworkIdentifier)' == '.NETFramework' and '$(AutomaticallyUseReferenceAssemblyPackages)' != 'false'">
+    <ItemGroup>
+      <_ExistingReferenceAssembliesPackageReference Include="@(PackageReference)" Condition="'%(PackageReference.Identity)' == 'Microsoft.NETFramework.ReferenceAssemblies'"/>
+
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="$(MicrosoftNETFrameworkReferenceAssembliesLatestPackageVersion)" IsImplicitlyDefined="true" PrivateAssets="All"
+                        Condition="('$(_FullFrameworkReferenceAssemblyPaths)' == '' or $(_FullFrameworkReferenceAssemblyPaths.Contains('microsoft.netframework.referenceassemblies'))) and '@(_ExistingReferenceAssembliesPackageReference)' == ''"/>
+    </ItemGroup>
+  </Target>
 </Project>
