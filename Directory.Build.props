@@ -12,6 +12,7 @@
     <!-- Workaround continued use of netcoreapp2.1; suppress the NETSDK1138 warning. -->
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <MicrosoftNETFrameworkReferenceAssembliesLatestPackageVersion>1.0.3</MicrosoftNETFrameworkReferenceAssembliesLatestPackageVersion>
+    <ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>true</ResolveAssemblyReferenceIgnoreTargetFrameworkAttributeVersionMismatch>
   </PropertyGroup>
 
 </Project>
