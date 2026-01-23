@@ -23,11 +23,34 @@ variables:
 trigger: [main]
 pr: ['*']
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - template: /eng/templates/default-build.yml
-    parameters:
-      ReleaseBuildTarget: ${{ parameters.ReleaseBuildTarget }}
-      OtherBuildTarget: ${{ parameters.OtherBuildTarget }}
+resources:
+  repositories:
+  # Repo: 1ESPipelineTemplates/1ESPipelineTemplates
+  - repository: 1esPipelines
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
+  parameters:
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+      prefast:
+        msBuildVersion: '17.8.3'
+        enabled: true
+    pool:
+      name: NetCore-Svc-Public
+      image: windows.vs2019.amd64.open
+      os: windows
+    stages:
+    - stage: build
+      displayName: Build
+      jobs:
+      - template: /eng/templates/default-build.yml@self
+        parameters:
+          ReleaseBuildTarget: ${{ parameters.ReleaseBuildTarget }}
+          OtherBuildTarget: ${{ parameters.OtherBuildTarget }}

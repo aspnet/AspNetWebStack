@@ -39,6 +39,9 @@ extends:
         enabled: true
       tsa:
         enabled: true
+      prefast:
+        msBuildVersion: '17.8.3'
+        enabled: true
     pool:
       name: NetCore1ESPool-Svc-Internal
       image: 1es-windows-2019
