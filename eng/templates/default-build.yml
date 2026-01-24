@@ -7,8 +7,8 @@ jobs:
   displayName: Build
   ${{ if eq(variables['System.TeamProject'], 'public') }}:
     pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals 1es-windows-2019
+      name: NetCore-Svc-Public
+      demands: ImageOverride -equals 1es-windows-2019-open
   timeoutInMinutes: 30
 
   strategy:
