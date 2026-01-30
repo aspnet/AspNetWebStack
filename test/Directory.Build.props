@@ -9,4 +9,14 @@
           '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.ns1_3.Test' AND
           '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.ns2_0.Test' ">v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'Microsoft.TestCommon' AND
+                         '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.ns1_3.Test' AND
+                         '$(MSBuildProjectName)' != 'System.Net.Http.Formatting.ns2_0.Test' ">
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageReference Include="xunit.runner.msbuild" Version="2.4.2" Condition="'$(MSBuildRuntimeType)' != 'Core' and '$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+  </ItemGroup>
 </Project>

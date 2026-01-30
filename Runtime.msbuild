@@ -56,7 +56,7 @@
     <_Testing_NetStandard1_3 Include="true;false" />
   </ItemGroup>
 
-  <Target Name="RestorePackages" DependsOnTargets="DownloadNuGet">
+  <Target Name="RestorePackages">
     <Message Text="%0ARestoring NuGet packages..." Importance="High" />
 
     <!--
@@ -68,13 +68,15 @@
       BuildInParallel="true"
       Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
                   RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion);
-                  Testing_NetStandard1_3=%(_Testing_NetStandard1_3.Identity)"
+                  Testing_NetStandard1_3=%(_Testing_NetStandard1_3.Identity);
+                  MSBuildRestoreSessionId=$([System.Guid]::NewGuid())"
       RemoveProperties="Platform" />
 
     <MSBuild Projects="Runtime.sln" Targets="Restore"
       BuildInParallel="$(RestoreInParallel)"
       Properties="Configuration=$(Configuration);CodeAnalysis=$(CodeAnalysis);StyleCopEnabled=$(StyleCopEnabled);
-                  RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion)" />
+                  RestorePackagesConfig=true;VisualStudioVersion=$(VisualStudioVersion);
+                  MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
     <Message Importance="High" Text="" />
   </Target>
 
