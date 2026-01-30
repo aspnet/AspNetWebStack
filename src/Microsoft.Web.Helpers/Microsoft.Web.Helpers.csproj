@@ -14,6 +14,10 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Note: RazorGenerator.MsBuild uses Razor 3.0 \ Mvc 5.0 for generating views. In the event we update the Mvc parser, we'll need to ensure this package references the updated Mvc build -->
+    <PackageReference Include="RazorGenerator.MsBuild" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
     <CodeAnalysisDictionary Include="..\CodeAnalysisDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +99,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <RazorSrcFiles Include="Analytics.cshtml" />
     <RazorSrcFiles Include="FileUpload.cshtml" />
     <RazorSrcFiles Include="GamerCard.cshtml" />
@@ -105,7 +108,4 @@
     <RazorSrcFiles Include="Maps.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  
-  <!-- Note: RazorGenerator.MsBuild uses Razor 3.0 \ Mvc 5.0 for generating views. In the event we update the Mvc parser, we'll need to ensure this package references the updated Mvc build -->
-  <Import Project="..\..\packages\RazorGenerator.MsBuild.2.2.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\..\packages\RazorGenerator.MsBuild.2.2.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>

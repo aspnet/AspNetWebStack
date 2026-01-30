@@ -11,6 +11,12 @@
     <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
     <!-- Workaround continued use of netcoreapp2.1; suppress the NETSDK1138 warning. -->
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <!-- Workaround continued use of netstandard1.x; suppress the NETSDK1215 warning. -->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+  </ItemGroup>
 
 </Project>

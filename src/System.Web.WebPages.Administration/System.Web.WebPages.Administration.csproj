@@ -14,10 +14,11 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NuGet.Core, Version=1.6.30117.9648, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\..\packages\Nuget.Core.1.6.2\lib\net40\NuGet.Core.dll</HintPath>
-    </Reference>
+    <PackageReference Include="NuGet.Core" Version="1.6.2" />
+    <!-- Note: RazorGenerator.MsBuild uses Razor 3.0 \ Mvc 5.0 for generating views. In the event we update the Mvc parser, we'll need to ensure this package references the updated Mvc build -->
+    <PackageReference Include="RazorGenerator.MsBuild" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -65,7 +66,6 @@
     <Compile Include="Framework\packages\PackageExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <RazorSrcFiles Include="_Layout.cshtml" />
     <RazorSrcFiles Include="Logout.cshtml" />
     <RazorSrcFiles Include="Register.cshtml" />
@@ -169,7 +169,4 @@
     <CodeAnalysisDictionary Include="..\CodeAnalysisDictionary.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  
-  <!-- Note: RazorGenerator.MsBuild uses Razor 3.0 \ Mvc 5.0 for generating views. In the event we update the Mvc parser, we'll need to ensure this package references the updated Mvc build -->
-  <Import Project="..\..\packages\RazorGenerator.MsBuild.2.2.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\..\packages\RazorGenerator.MsBuild.2.2.0\build\RazorGenerator.MsBuild.targets')" />
 </Project>
