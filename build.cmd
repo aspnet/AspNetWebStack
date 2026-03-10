@@ -55,8 +55,10 @@ if DEFINED InstallDir (
 REM VS2022 with MSBuild v17.8.3+ not found. Check for standalone MSBuild SDK.
 set "StandaloneSdkBase=C:\msbuild-standalone\sdk"
 set "StandaloneMSBuildDir="
+echo "Looking in msbuild-standalone dir"
 if exist "%StandaloneSdkBase%" (
   for /f "delims=" %%d in ('dir /b /ad /o-n "%StandaloneSdkBase%"') do (
+    echo "Looking in %StandaloneSdkBase%\%%d\MSBuild.exe"
     if exist "%StandaloneSdkBase%\%%d\MSBuild.exe" (
       set "StandaloneMSBuildDir=%StandaloneSdkBase%\%%d"
       goto CheckStandaloneVersion
@@ -66,6 +68,7 @@ if exist "%StandaloneSdkBase%" (
 goto SkipStandalone
 
 :CheckStandaloneVersion
+echo "Checking standalone version"
 for /f "usebackq tokens=*" %%v in (`"%StandaloneMSBuildDir%\MSBuild.exe" -nologo -version`) do set "MSBuildVer=%%v"
 PowerShell -NoProfile -NoLogo -Command "if ([version]'%MSBuildVer%' -ge [version]'17.8.3') { exit 0 } else { exit 1 }"
 if not errorlevel 1 (
