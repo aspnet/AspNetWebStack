@@ -69,7 +69,7 @@ goto SkipStandalone
 
 :CheckStandaloneVersion
 echo "Checking standalone version"
-for /f "usebackq tokens=*" %%v in (`"%StandaloneMSBuildDir%\MSBuild.dll" -nologo -version`) do set "MSBuildVer=%%v"
+for /f "usebackq tokens=*" %%v in (`dotnet exec "%StandaloneMSBuildDir%\MSBuild.dll" -nologo -version`) do set "MSBuildVer=%%v"
 PowerShell -NoProfile -NoLogo -Command "if ([version]'%MSBuildVer%' -ge [version]'17.8.3') { exit 0 } else { exit 1 }"
 if not errorlevel 1 (
   set "PATH=%StandaloneMSBuildDir%;%PATH%"
