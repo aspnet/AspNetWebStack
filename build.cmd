@@ -37,10 +37,10 @@ if not DEFINED InstallDir (
   goto BuildFail
 )
 
-REM Find a 64bit MSBuild and add it to path. Require v17.4 or later due to our .NET SDK choice.
+REM Find a 64bit MSBuild and add it to path. Require v17.8.3 or later due to our .NET SDK choice.
 REM Check for VS2022 first.
 set InstallDir=
-for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17.4 -latest -prerelease -products * ^
+for /f "usebackq tokens=*" %%i in (`%vswhere% -version 17.8.3 -latest -prerelease -products * ^
     -requires Microsoft.Component.MSBuild ^
     -property installationPath`) do (
   set "InstallDir=%%i"
@@ -51,6 +51,29 @@ if DEFINED InstallDir (
   set "PATH=%InstallDir%\MSBuild\Current\Bin;%PATH%"
   goto FoundMSBuild
 )
+
+REM VS2022 with MSBuild v17.8.3+ not found. Check for standalone MSBuild SDK.
+set "StandaloneSdkBase=C:\msbuild-standalone\sdk"
+set "StandaloneMSBuildDir="
+if exist "%StandaloneSdkBase%" (
+  for /f "delims=" %%d in ('dir /b /ad /o-n "%StandaloneSdkBase%"') do (
+    if exist "%StandaloneSdkBase%\%%d\MSBuild.exe" (
+      set "StandaloneMSBuildDir=%StandaloneSdkBase%\%%d"
+      goto CheckStandaloneVersion
+    )
+  )
+)
+goto SkipStandalone
+
+:CheckStandaloneVersion
+for /f "usebackq tokens=*" %%v in (`"%StandaloneMSBuildDir%\MSBuild.exe" -nologo -version`) do set "MSBuildVer=%%v"
+PowerShell -NoProfile -NoLogo -Command "if ([version]'%MSBuildVer%' -ge [version]'17.8.3') { exit 0 } else { exit 1 }"
+if not errorlevel 1 (
+  set "PATH=%StandaloneMSBuildDir%;%PATH%"
+  goto FoundMSBuild
+)
+
+:SkipStandalone
 
 REM Otherwise find or install an xcopy-able MSBuild.
 echo "Could not find a VS2022 installation with the necessary components (MSBuild). Falling back..."
