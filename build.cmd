@@ -58,8 +58,8 @@ set "StandaloneMSBuildDir="
 echo "Looking in msbuild-standalone dir"
 if exist "%StandaloneSdkBase%" (
   for /f "delims=" %%d in ('dir /b /ad /o-n "%StandaloneSdkBase%"') do (
-    echo "Looking in %StandaloneSdkBase%\%%d\MSBuild.exe"
-    if exist "%StandaloneSdkBase%\%%d\MSBuild.exe" (
+    echo "Looking in %StandaloneSdkBase%\%%d\MSBuild.dll"
+    if exist "%StandaloneSdkBase%\%%d\MSBuild.dll" (
       set "StandaloneMSBuildDir=%StandaloneSdkBase%\%%d"
       goto CheckStandaloneVersion
     )
@@ -69,7 +69,7 @@ goto SkipStandalone
 
 :CheckStandaloneVersion
 echo "Checking standalone version"
-for /f "usebackq tokens=*" %%v in (`"%StandaloneMSBuildDir%\MSBuild.exe" -nologo -version`) do set "MSBuildVer=%%v"
+for /f "usebackq tokens=*" %%v in (`"%StandaloneMSBuildDir%\MSBuild.dll" -nologo -version`) do set "MSBuildVer=%%v"
 PowerShell -NoProfile -NoLogo -Command "if ([version]'%MSBuildVer%' -ge [version]'17.8.3') { exit 0 } else { exit 1 }"
 if not errorlevel 1 (
   set "PATH=%StandaloneMSBuildDir%;%PATH%"
