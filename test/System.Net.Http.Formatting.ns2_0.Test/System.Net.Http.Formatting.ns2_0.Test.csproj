@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.1;net8.0</TargetFrameworks>
     <RootNamespace>System.Net.Http</RootNamespace>
     <OutputPath>..\..\bin\$(Configuration)\Test\ns2_0\</OutputPath>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
