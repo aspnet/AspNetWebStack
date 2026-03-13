@@ -81,7 +81,7 @@ if not errorlevel 1 (
 REM Otherwise find or install an xcopy-able MSBuild.
 echo "Could not find a VS2022 installation with the necessary components (MSBuild). Falling back..."
 
-set "MSBuildVersion=17.4.1"
+set "MSBuildVersion=17.8.5"
 set "Command=[System.Threading.Thread]::CurrentThread.CurrentCulture = ''"
 set "Command=%Command%; [System.Threading.Thread]::CurrentThread.CurrentUICulture = ''"
 set "Command=%Command%; try { & '%~dp0eng\GetXCopyMSBuild.ps1' %MSBuildVersion%; exit $LASTEXITCODE }"
