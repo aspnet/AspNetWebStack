@@ -127,7 +127,8 @@ namespace System.Net.Http
                 range: range,
                 mediaType: (String)null,
                 bufferSize: 128),
-                "mediaType");
+                "mediaType",
+                allowDerivedExceptions: true);
         }
 
         [Fact]

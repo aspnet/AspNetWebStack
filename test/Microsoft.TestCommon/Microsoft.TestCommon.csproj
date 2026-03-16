@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),Runtime.sln))\tools\WebStack.settings.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.1;net8.0</TargetFrameworks>
     <Configurations>$(Configurations);CodeAnalysis</Configurations>
     <DefineConstants
         Condition=" '$(Testing_NetStandard1_3)' == 'true' ">$(DefineConstants);Testing_NetStandard1_3</DefineConstants>

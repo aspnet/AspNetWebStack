@@ -41,7 +41,9 @@ extends:
         enabled: true
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: 1es-windows-2019
+      demands:
+      - ImageOverride -equals windows.vs2019.amd64
+      - ImageVersionOverride -equals 2026.0304.014948
       os: windows
     stages:
     - stage: build
