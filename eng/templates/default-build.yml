@@ -10,7 +10,6 @@ jobs:
       name: NetCore-Svc-Public
       demands:
       - ImageOverride -equals windows.vs2019.amd64.open
-      - ImageVersionOverride -equals 2026.0304.014948
   timeoutInMinutes: 30
 
   strategy:
