@@ -52,32 +52,6 @@ if DEFINED InstallDir (
   goto FoundMSBuild
 )
 
-REM VS2022 with MSBuild v17.8.3+ not found. Check for standalone MSBuild SDK.
-set "StandaloneSdkBase=C:\msbuild-standalone\sdk"
-set "StandaloneMSBuildDir="
-echo "Looking in msbuild-standalone dir"
-if exist "%StandaloneSdkBase%" (
-  for /f "delims=" %%d in ('dir /b /ad /o-n "%StandaloneSdkBase%"') do (
-    echo "Looking in %StandaloneSdkBase%\%%d\MSBuild.dll"
-    if exist "%StandaloneSdkBase%\%%d\MSBuild.dll" (
-      set "StandaloneMSBuildDir=%StandaloneSdkBase%\%%d"
-      goto CheckStandaloneVersion
-    )
-  )
-)
-goto SkipStandalone
-
-:CheckStandaloneVersion
-echo "Checking standalone version"
-for /f "usebackq tokens=*" %%v in (`dotnet exec "%StandaloneMSBuildDir%\MSBuild.dll" -nologo -version`) do set "MSBuildVer=%%v"
-PowerShell -NoProfile -NoLogo -Command "if ([version]'%MSBuildVer%' -ge [version]'17.8.3') { exit 0 } else { exit 1 }"
-if not errorlevel 1 (
-  set "PATH=%StandaloneMSBuildDir%;%PATH%"
-  goto FoundMSBuild
-)
-
-:SkipStandalone
-
 REM Otherwise find or install an xcopy-able MSBuild.
 echo "Could not find a VS2022 installation with the necessary components (MSBuild). Falling back..."
 
