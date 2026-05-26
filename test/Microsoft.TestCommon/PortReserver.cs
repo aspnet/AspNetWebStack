@@ -41,7 +41,7 @@ namespace Microsoft.TestCommon
             private set;
         }
 
-        public PortReserver(int basePort = 50231)
+        public PortReserver(int basePort = 60231)
         {
             if (basePort <= 0)
             {
