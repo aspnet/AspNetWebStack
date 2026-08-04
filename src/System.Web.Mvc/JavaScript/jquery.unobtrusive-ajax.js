@@ -42,19 +42,21 @@
 
         mode = (element.getAttribute("data-ajax-mode") || "").toUpperCase();
         $(element.getAttribute("data-ajax-update")).each(function (i, update) {
+            var top;
+
             switch (mode) {
-            case "BEFORE":
-                $(update).prepend(data);
-                break;
-            case "AFTER":
-                $(update).append(data);
-                break;
-            case "REPLACE-WITH":
-                $(update).replaceWith(data);
-                break;
-            default:
-                $(update).html(data);
-                break;
+                case "BEFORE":
+                    $(update).prepend(data);
+                    break;
+                case "AFTER":
+                    $(update).append(data);
+                    break;
+                case "REPLACE-WITH":
+                    $(update).replaceWith(data);
+                    break;
+                default:
+                    $(update).html(data);
+                    break;
             }
         });
     }
@@ -73,7 +75,7 @@
         $.extend(options, {
             type: element.getAttribute("data-ajax-method") || undefined,
             url: element.getAttribute("data-ajax-url") || undefined,
-            cache: !!element.getAttribute("data-ajax-cache"),
+            cache: (element.getAttribute("data-ajax-cache") || "").toLowerCase() === "true",
             beforeSend: function (xhr) {
                 var result;
                 asyncOnBeforeSend(xhr, method);
@@ -103,6 +105,30 @@
             options.type = "POST";
             options.data.push({ name: "X-HTTP-Method-Override", value: method });
         }
+
+        // change here:
+        // Check for a Form POST with enctype=multipart/form-data
+        // add the input file that were not previously included in the serializeArray()
+        // set processData and contentType to false
+        var $element = $(element);
+        if ($element.is("form") && $element.attr("enctype") == "multipart/form-data") {
+            var formdata = new FormData();
+            $.each(options.data, function (i, v) {
+                formdata.append(v.name, v.value);
+            });
+            $("input[type=file]", $element).each(function () {
+                var file = this;
+                $.each(file.files, function (n, v) {
+                    formdata.append(file.name, v);
+                });
+            });
+            $.extend(options, {
+                processData: false,
+                contentType: false,
+                data: formdata
+            });
+        }
+        // end change
 
         $.ajax(options);
     }
@@ -154,7 +180,7 @@
     $(document).on("submit", "form[data-ajax=true]", function (evt) {
         var clickInfo = $(this).data(data_click) || [],
             clickTarget = $(this).data(data_target),
-            isCancel = clickTarget && clickTarget.hasClass("cancel");
+            isCancel = clickTarget && (clickTarget.hasClass("cancel") || clickTarget.attr('formnovalidate') !== undefined);
         evt.preventDefault();
         if (!isCancel && !validate(this)) {
             return;
