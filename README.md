@@ -26,4 +26,6 @@ Git tag or branch|Other products|MVC package versions|Web API package (product) 
 [v3.2.6](https://github.com/aspnet/AspNetWebStack/tree/v3.2.6)||5.2.6|5.2.6|3.2.6
 [v3.2.7](https://github.com/aspnet/AspNetWebStack/tree/v3.2.7)||5.2.7|5.2.7|3.2.7
 [v3.2.8](https://github.com/aspnet/AspNetWebStack/tree/v3.2.8)||5.2.8|5.2.8|3.2.8
-[main](https://github.com/aspnet/AspNetWebStack/tree/main)|New work e.g. MVC 5.2.9-preview1||||
+[v3.2.9](https://github.com/aspnet/AspNetWebStack/tree/v3.2.9)||5.2.9|5.2.9|3.2.9
+[v3.3.0](https://github.com/aspnet/AspNetWebStack/tree/v3.3.0)||5.3.0|5.3.0 (Client 6.0.0)|3.3.0
+[main](https://github.com/aspnet/AspNetWebStack/tree/main)|New work|5.3.1|5.3.1 (Client 6.0.1)|3.3.1
