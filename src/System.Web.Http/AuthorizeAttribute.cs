@@ -63,7 +63,7 @@ namespace System.Web.Http
         /// <value>
         /// The users string.
         /// </value>
-        /// <remarks>Multiple role names can be specified using the comma character as a separator.</remarks>
+        /// <remarks>Multiple user names can be specified using the comma character as a separator.</remarks>
         public string Users
         {
             get { return _users ?? String.Empty; }
