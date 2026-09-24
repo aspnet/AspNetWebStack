@@ -136,7 +136,7 @@
                         if (matched)
                         {
                             File.SetAttributes(fullPath, File.GetAttributes(fullPath) & ~FileAttributes.ReadOnly);
-                            File.WriteAllText(fullPath, regex.Replace(originalText, "\0x${char}"), Encoding.UTF8);
+                            File.WriteAllText(fullPath, regex.Replace(originalText, "\\x${char}"), Encoding.UTF8);
                         }
 
                         // Collect test failure information from results file.

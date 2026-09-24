@@ -14,13 +14,13 @@ namespace System.Net.Http
         public void Throws_NoException_ReportsFilteredAssertionFailure()
         {
             var exception = Assert.IsAssignableFrom<XunitException>(
-                Record.Exception(() => TestCommonAssert.Throws<InvalidOperationException>(() => { })));
+                Record.Exception(AssertThrowsWithoutException));
 
             Assert.IsAssignableFrom<IAssertionException>(exception);
             Assert.Equal(ThrowsException.ForNoException(typeof(InvalidOperationException)).Message, exception.Message);
             Assert.Null(exception.InnerException);
             Assert.NotNull(exception.StackTrace);
-            Assert.Contains(nameof(Throws_NoException_ReportsFilteredAssertionFailure), exception.StackTrace);
+            Assert.Contains(nameof(AssertThrowsWithoutException), exception.StackTrace);
             Assert.DoesNotContain("at Microsoft.TestCommon.Assert.", exception.StackTrace);
         }
 
@@ -59,6 +59,12 @@ namespace System.Net.Http
 
             Assert.Equal(ThrowsException.ForIncorrectExceptionType(typeof(ArgumentException), actual).Message, exception.Message);
             Assert.Same(actual, exception.InnerException);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void AssertThrowsWithoutException()
+        {
+            TestCommonAssert.Throws<InvalidOperationException>(() => { });
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
