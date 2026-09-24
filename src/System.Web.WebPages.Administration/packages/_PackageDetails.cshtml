@@ -14,7 +14,7 @@
 }
 @{
     var authors = package.Authors as IEnumerable<string>;
-    if (authors.Any()) {
+    if (Enumerable.Any(authors)) {
         <p>
             <strong>@PackageManagerResources.AuthorsLabel: </strong><span class="package-author">@String.Join(PackageManagerResources.WordSeparator, authors)</span>
         </p>

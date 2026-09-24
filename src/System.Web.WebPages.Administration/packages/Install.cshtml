@@ -57,7 +57,7 @@
 
 @{
     var licensePackages = projectManager.GetPackagesRequiringLicenseAcceptance(package);
-    if (licensePackages.Any()) {
+    if (Enumerable.Any(licensePackages)) {
        <hr />
        <ul>
             @foreach(var licensePackage in licensePackages.Where(p => PageUtils.IsValidLicenseUrl(p.LicenseUrl))){
