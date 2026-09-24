@@ -62,7 +62,7 @@ Actual: {2}";
                     string message = String.Format(_invalidEnumFormatString, aggrValues,
                                                    aggrNames.Aggregate((a, b) => a + ", " + b),
                                                    array.Aggregate((a, b) => a + ", " + b));
-                    Assert.True(false, message);
+                    Assert.Fail(message);
                 }
             }
         }

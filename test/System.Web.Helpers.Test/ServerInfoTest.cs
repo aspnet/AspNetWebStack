@@ -94,7 +94,7 @@ namespace System.Web.Helpers.Test
                 IDictionary<string, string> configValue = ServerInfo.LegacyCAS(AppDomain.CurrentDomain);
 
                 Assert.NotNull(configValue);
-                Assert.Equal(0, configValue.Count);
+                Assert.Empty(configValue);
             };
 
             AppDomainUtils.RunInSeparateAppDomain(GetAppDomainSetup(legacyCasEnabled: false), action);

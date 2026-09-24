@@ -267,7 +267,7 @@ namespace System.Web.WebPages.Deployment.Test
             var referencedAssemblies = AssemblyUtils.GetAssembliesMatchingOtherVersions(assemblyReferences);
 
             // Assert
-            Assert.Equal(1, referencedAssemblies.Count);
+            Assert.Single(referencedAssemblies);
             Assert.Equal(@"x:\site\bin\B.dll", referencedAssemblies.Single().Key);
             Assert.Equal(new Version("1.0.0.0"), referencedAssemblies.Single().Value);
         }
@@ -299,7 +299,7 @@ namespace System.Web.WebPages.Deployment.Test
             var referencedAssemblies = AssemblyUtils.GetAssembliesMatchingOtherVersions(assemblyReferences);
 
             // Assert
-            Assert.Equal(1, referencedAssemblies.Count);
+            Assert.Single(referencedAssemblies);
             Assert.Equal(@"x:\site\bin\C.dll", referencedAssemblies.Single().Key);
             Assert.Equal(new Version("1.2.0.0"), referencedAssemblies.Single().Value);
         }

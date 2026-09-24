@@ -187,7 +187,7 @@ namespace System.Web.Cors.Test
 
             CorsResult result = corsEngine.EvaluatePolicy(requestContext, policy);
 
-            Assert.Equal(1, result.AllowedExposedHeaders.Count);
+            Assert.Single(result.AllowedExposedHeaders);
             Assert.Contains("foo", result.AllowedExposedHeaders);
         }
 
@@ -371,7 +371,7 @@ namespace System.Web.Cors.Test
             CorsResult result = corsEngine.EvaluatePolicy(requestContext, policy);
 
             Assert.True(requestContext.IsPreflight);
-            Assert.Equal(1, result.AllowedMethods.Count);
+            Assert.Single(result.AllowedMethods);
             Assert.Contains("GET", result.AllowedMethods);
         }
 
@@ -472,7 +472,7 @@ namespace System.Web.Cors.Test
             CorsResult result = corsEngine.EvaluatePolicy(requestContext, policy);
 
             Assert.True(requestContext.IsPreflight);
-            Assert.Equal(1, result.AllowedHeaders.Count);
+            Assert.Single(result.AllowedHeaders);
             Assert.Contains("Content-Type", result.AllowedHeaders);
         }
 
@@ -544,7 +544,7 @@ namespace System.Web.Cors.Test
 
             bool isValid = corsEngine.TryValidateMethod(new CorsRequestContext { AccessControlRequestMethod = "post" }, policy, result);
             Assert.False(isValid);
-            Assert.Equal(1, result.ErrorMessages.Count);
+            Assert.Single(result.ErrorMessages);
             Assert.Equal("The method 'post' is not allowed.", result.ErrorMessages[0]);
         }
 
@@ -619,7 +619,7 @@ namespace System.Web.Cors.Test
 
             bool isValid = corsEngine.TryValidateOrigin(new CorsRequestContext { Origin = "http://example.com" }, policy, result);
             Assert.False(isValid);
-            Assert.Equal(1, result.ErrorMessages.Count);
+            Assert.Single(result.ErrorMessages);
             Assert.Equal("The origin 'http://example.com' is not allowed.", result.ErrorMessages[0]);
         }
     }

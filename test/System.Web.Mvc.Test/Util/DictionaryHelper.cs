@@ -512,7 +512,7 @@ namespace System.Web.TestUtil
                 foreach (var entry in clonedControlDictionary)
                 {
                     var key = entry.Key;
-                    Assert.True(false, String.Format("Test dictionary did not contain key '{0}'.", key));
+                    Assert.Fail(String.Format("Test dictionary did not contain key '{0}'.", key));
                 }
             }
         }

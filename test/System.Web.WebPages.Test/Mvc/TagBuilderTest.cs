@@ -288,7 +288,7 @@ namespace System.Web.Mvc.Test
             builder.MergeAttributes<string, string>(null);
 
             // Assert
-            Assert.Equal(0, builder.Attributes.Count);
+            Assert.Empty(builder.Attributes);
         }
 
         [Fact]

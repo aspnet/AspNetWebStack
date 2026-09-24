@@ -17,7 +17,7 @@ namespace System.Web.WebPages.Test
             IDictionary<string, object> dictValues = TypeHelper.ObjectToDictionary(dict);
 
             Assert.NotNull(dictValues);
-            Assert.Equal(0, dictValues.Count);
+            Assert.Empty(dictValues);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace System.Web.WebPages.Test
 
             // Assert
             Assert.NotNull(dictValues);
-            Assert.Equal(0, dictValues.Count);
+            Assert.Empty(dictValues);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace System.Web.WebPages.Test
 
             // Assert
             Assert.NotNull(dictValues);
-            Assert.Equal(1, dictValues.Count);
+            Assert.Single(dictValues);
             Assert.Equal(4, dictValues["Length"]);
         }
 

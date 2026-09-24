@@ -178,7 +178,7 @@ namespace System.Web.Razor.Test.Parser.Html
             rewritten = new MarkupCollapser(new HtmlMarkupParser().BuildSpan).Rewrite(rewritten);
 
             // Assert
-            Assert.Equal(0, results.ParserErrors.Count);
+            Assert.Empty(results.ParserErrors);
             EvaluateParseTree(rewritten,
                 new MarkupBlock(
                     Factory.Markup("<a"),
@@ -262,7 +262,7 @@ namespace System.Web.Razor.Test.Parser.Html
             rewritten = new MarkupCollapser(new HtmlMarkupParser().BuildSpan).Rewrite(rewritten);
 
             // Assert
-            Assert.Equal(0, results.ParserErrors.Count);
+            Assert.Empty(results.ParserErrors);
             EvaluateParseTree(rewritten, new MarkupBlock(Factory.Markup(code)));
         }
 

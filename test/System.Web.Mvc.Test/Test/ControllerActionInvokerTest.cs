@@ -990,7 +990,7 @@ namespace System.Web.Mvc.Test
             };
             Func<ActionExecutedContext> continuation = delegate
             {
-                Assert.True(false, "The continuation should not be called.");
+                Assert.Fail("The continuation should not be called.");
                 return null;
             };
 
@@ -1106,7 +1106,7 @@ namespace System.Web.Mvc.Test
             mockHelper.Setup(h => h.PublicInvokeAuthenticationFilters(context, filterInfo.AuthenticationFilters, ad)).Returns(authenticationContext).Verifiable();
             mockHelper.Setup(h => h.PublicInvokeAuthorizationFilters(context, filterInfo.AuthorizationFilters, ad)).Throws(exception).Verifiable();
             mockHelper.Setup(h => h.PublicInvokeExceptionFilters(context, filterInfo.ExceptionFilters, exception)).Returns(exContext).Verifiable();
-            mockHelper.Setup(h => h.PublicInvokeActionResult(context, It.IsAny<ActionResult>())).Callback(delegate { Assert.True(false, "InvokeActionResult() shouldn't be called if the exception was unhandled by filters."); });
+            mockHelper.Setup(h => h.PublicInvokeActionResult(context, It.IsAny<ActionResult>())).Callback(delegate { Assert.Fail("InvokeActionResult() shouldn't be called if the exception was unhandled by filters."); });
             ControllerActionInvokerHelper helper = mockHelper.Object;
 
             // Act
@@ -1267,7 +1267,7 @@ namespace System.Web.Mvc.Test
             };
             Func<ActionResult> continuation = delegate
             {
-                Assert.True(false, "Continuation should not be called.");
+                Assert.Fail("Continuation should not be called.");
                 return null;
             };
             ControllerBase controller = new ContinuationController(continuation);
@@ -1783,7 +1783,7 @@ namespace System.Web.Mvc.Test
         {
             // Arrange
             bool wasCalled = false;
-            Action continuation = delegate { Assert.True(false, "Continuation should not be called."); };
+            Action continuation = delegate { Assert.Fail("Continuation should not be called."); };
             ActionResult actionResult = new ContinuationResult(continuation);
             ControllerBase controller = new Mock<ControllerBase>().Object;
             ControllerContext context = GetControllerContext(controller);
@@ -2152,7 +2152,7 @@ namespace System.Web.Mvc.Test
             };
             Action continuation = delegate
             {
-                Assert.True(false, "The continuation should not be called.");
+                Assert.Fail("The continuation should not be called.");
             };
             ActionResult actionResult = new ContinuationResult(continuation);
 
@@ -2473,7 +2473,7 @@ namespace System.Web.Mvc.Test
             {
                 if (!controller.ValidateRequest)
                 {
-                    Assert.True(false, "ValidateRequest() should not be called if the controller opted out.");
+                    Assert.Fail("ValidateRequest() should not be called if the controller opted out.");
                 }
                 if (validateInputCallback != null)
                 {

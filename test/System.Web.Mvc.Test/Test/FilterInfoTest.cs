@@ -205,7 +205,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(actionFilters);
-            Assert.Equal(1, actionFilters.Count);
+            Assert.Single(actionFilters);
             Assert.Same(expectedLastFilter, actionFilters[0]);
         }
 
@@ -261,7 +261,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(authorizationFilters);
-            Assert.Equal(1, authorizationFilters.Count);
+            Assert.Single(authorizationFilters);
             Assert.Same(expectedLastFilter, authorizationFilters[0]);
         }
 
@@ -285,7 +285,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(authenticationFilters);
-            Assert.Equal(1, authenticationFilters.Count);
+            Assert.Single(authenticationFilters);
             Assert.Same(expectedLastFilter, authenticationFilters[0]);
         }
 
@@ -309,7 +309,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(exceptionFilters);
-            Assert.Equal(1, exceptionFilters.Count);
+            Assert.Single(exceptionFilters);
             Assert.Same(expectedLastFilter, exceptionFilters[0]);
         }
 
@@ -333,7 +333,7 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(resultFilters);
-            Assert.Equal(1, resultFilters.Count);
+            Assert.Single(resultFilters);
             Assert.Same(expectedLastFilter, resultFilters[0]);
         }
 
@@ -354,10 +354,10 @@ namespace System.Web.Mvc.Test
 
             // Assert
             Assert.NotNull(actionFilters);
-            Assert.Equal(1, actionFilters.Count);
+            Assert.Single(actionFilters);
             Assert.Same(expectedInstance, actionFilters[0]);
             Assert.NotNull(exceptionFilters);
-            Assert.Equal(0, exceptionFilters.Count);
+            Assert.Empty(exceptionFilters);
         }
 
         private static IActionFilter CreateDummyActionFilter()

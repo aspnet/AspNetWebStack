@@ -132,12 +132,12 @@ namespace System.Net.Http.Formatting
         {
             get
             {
-                Assert.True(false, "serializers should never call static properties");
+                Assert.Fail("serializers should never call static properties");
                 return string.Empty;
             }
             set
             {
-                Assert.True(false, "serializers should never call static properties");
+                Assert.Fail("serializers should never call static properties");
                 throw new InvalidOperationException(); // assert already threw
             }
         }

@@ -14,7 +14,7 @@ namespace System.Web.Mvc.Test
             var clientValidationRule = new ModelClientValidationMinLengthRule("Min Length message", 2);
 
             // Assert
-            Assert.Equal(1, clientValidationRule.ValidationParameters.Count);
+            Assert.Single(clientValidationRule.ValidationParameters);
             Assert.Equal(2, clientValidationRule.ValidationParameters["min"]);
             Assert.Equal("Min Length message", clientValidationRule.ErrorMessage);
         }

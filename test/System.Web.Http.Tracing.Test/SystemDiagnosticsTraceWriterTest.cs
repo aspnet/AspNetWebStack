@@ -332,7 +332,7 @@ namespace System.Web.Http.Tracing.Diagnostics.Test
             writer.Trace(request, "TestCategory", TraceLevel.Info, (tr) => { });
 
             // Assert
-            Assert.Equal(0, ((TestTraceListener)writer.TraceSource.Listeners[0]).Messages.Count);
+            Assert.Empty(((TestTraceListener)writer.TraceSource.Listeners[0]).Messages);
         }
 
         [Fact]
@@ -352,7 +352,7 @@ namespace System.Web.Http.Tracing.Diagnostics.Test
             writer.Trace(request, "TestCategory", TraceLevel.Info, (tr) => { tr.Kind = TraceKind.Begin; tr.Message = "TestMessage"; });
 
             // Assert
-            Assert.Equal(0, ((TestTraceListener)writer.TraceSource.Listeners[0]).Messages.Count);
+            Assert.Empty(((TestTraceListener)writer.TraceSource.Listeners[0]).Messages);
         }
 
         [Theory]
@@ -379,7 +379,7 @@ namespace System.Web.Http.Tracing.Diagnostics.Test
             writer.Trace(request, "TestCategory", level - 1, (tr) => { });
 
             // Assert
-            Assert.Equal(0, ((TestTraceListener)writer.TraceSource.Listeners[0]).Messages.Count);
+            Assert.Empty(((TestTraceListener)writer.TraceSource.Listeners[0]).Messages);
         }
 
         [Fact]
@@ -851,7 +851,7 @@ namespace System.Web.Http.Tracing.Diagnostics.Test
             new SystemDiagnosticsTraceWriter().TranslateHttpResponseException(traceRecord);
 
             // Assert
-            Assert.Equal(0, ParseTrace(traceRecord.Message).Count);
+            Assert.Empty(ParseTrace(traceRecord.Message));
         }
 
         [Fact]

@@ -45,7 +45,7 @@ namespace System.Web.WebPages.Test
             var d = new PageDataDictionary<dynamic>();
             d.Add("x", 2);
             d.Clear();
-            Assert.Equal(0, d.Data.Count);
+            Assert.Empty(d.Data);
         }
 
         [Fact]
