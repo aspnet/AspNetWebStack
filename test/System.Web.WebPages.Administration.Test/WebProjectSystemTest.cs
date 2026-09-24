@@ -16,6 +16,14 @@ namespace System.Web.WebPages.Administration.Test
     public class WebProjectSystemTest
     {
         [Fact]
+        public void IsBindingRedirectSupportedReturnsTrue()
+        {
+            IProjectSystem webProjectSystem = new WebProjectSystem(Path.GetTempPath());
+
+            Assert.True(webProjectSystem.IsBindingRedirectSupported);
+        }
+
+        [Fact]
         public void ResolvePathReturnsAppCodePathIfPathIsSourceFile()
         {
             // Arrange

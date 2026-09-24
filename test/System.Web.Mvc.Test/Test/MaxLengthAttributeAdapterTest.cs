@@ -25,7 +25,7 @@ namespace System.Web.Mvc.Test
             // Assert
             ModelClientValidationRule rule = Assert.Single(rules);
             Assert.Equal("maxlength", rule.ValidationType);
-            Assert.Equal(1, rule.ValidationParameters.Count);
+            Assert.Single(rule.ValidationParameters);
             Assert.Equal(10, rule.ValidationParameters["max"]);
             Assert.Equal("The field Length must be a string or array type with a maximum length of '10'.", rule.ErrorMessage);
         }
@@ -48,7 +48,7 @@ namespace System.Web.Mvc.Test
             // Assert
             ModelClientValidationRule rule = Assert.Single(rules);
             Assert.Equal("maxlength", rule.ValidationType);
-            Assert.Equal(1, rule.ValidationParameters.Count);
+            Assert.Single(rule.ValidationParameters);
             Assert.Equal(5, rule.ValidationParameters["max"]);
             Assert.Equal("Length must be at most 5", rule.ErrorMessage);
         }

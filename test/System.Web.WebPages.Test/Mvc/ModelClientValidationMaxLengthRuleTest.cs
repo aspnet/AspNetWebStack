@@ -14,7 +14,7 @@ namespace System.Web.Mvc.Test
             var clientValidationRule = new ModelClientValidationMaxLengthRule("Max length error message", 8);
 
             // Assert
-            Assert.Equal(1, clientValidationRule.ValidationParameters.Count);
+            Assert.Single(clientValidationRule.ValidationParameters);
             Assert.Equal(8, clientValidationRule.ValidationParameters["max"]);
             Assert.Equal("Max length error message", clientValidationRule.ErrorMessage);
         }

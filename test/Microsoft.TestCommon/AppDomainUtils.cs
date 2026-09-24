@@ -14,7 +14,10 @@ namespace System.Web.WebPages.TestUtils
         // other tests will not be affected.
         public static void RunInSeparateAppDomain(Action action)
         {
-            RunInSeparateAppDomain(new AppDomainSetup(), action);
+            RunInSeparateAppDomain(new AppDomainSetup
+            {
+                ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
+            }, action);
         }
 
         public static void RunInSeparateAppDomain(AppDomainSetup setup, Action action)

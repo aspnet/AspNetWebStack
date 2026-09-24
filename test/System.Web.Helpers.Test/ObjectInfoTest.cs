@@ -461,7 +461,7 @@ namespace System.Web.Helpers.Test
             printer.VisitConvertedValue('x', "x");
 
             // Assert
-            Assert.Equal(1, element.Children.Count);
+            Assert.Single(element.Children);
             HtmlElement child = element.Children[0];
             Assert.Equal("'x'", child.InnerText);
             Assert.Equal("quote", child["class"]);
@@ -479,7 +479,7 @@ namespace System.Web.Helpers.Test
             printer.VisitConvertedValue('\t', "\t");
 
             // Assert
-            Assert.Equal(1, element.Children.Count);
+            Assert.Single(element.Children);
             HtmlElement child = element.Children[0];
             Assert.Equal("'\\t'", child.InnerText);
             Assert.Equal("quote", child["class"]);

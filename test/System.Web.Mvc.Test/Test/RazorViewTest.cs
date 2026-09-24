@@ -134,7 +134,7 @@ namespace System.Web.Mvc.Test
             RazorView view = new RazorView(controllerContext, "~/viewPath", null, false, Enumerable.Empty<string>(), activator.Object);
             view.StartPageLookup = (WebPageRenderingBase p, string n, IEnumerable<string> e) =>
             {
-                Assert.True(false, "ViewStart page lookup should not be called");
+                Assert.Fail("ViewStart page lookup should not be called");
                 return null;
             };
             view.BuildManager = buildManager;

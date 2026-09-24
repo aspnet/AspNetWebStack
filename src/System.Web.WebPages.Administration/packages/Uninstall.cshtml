@@ -61,7 +61,7 @@
     @AntiForgery.GetHtml()
     <input type="hidden" name="package" value="@packageId" />
     <input type="hidden" name="version" value="@version" />
-    @if (package.Dependencies.Any()) {
+    @if (Enumerable.Any(package.Dependencies)) {
         <div>
             <label><input type="checkbox" name="removeDependencies" value="true" checked="checked"/>@PackageManagerResources.RemoveDependencies</label>
         </div>

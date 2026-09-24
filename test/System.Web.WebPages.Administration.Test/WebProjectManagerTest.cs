@@ -127,7 +127,44 @@ namespace System.Web.WebPages.Administration.Test
             var result = WebProjectManager.GetPackagesRequiringLicenseAcceptance(package, localRepository, remoteRepository);
 
             // Assert
-            Assert.False(result.Any());
+            Assert.False(Enumerable.Any(result));
+        }
+
+        [Fact]
+        public void GetUpdateReturnsOnlyLatestVersion()
+        {
+            var installed = GetPackage("A");
+            var olderUpdate = GetPackage("A", version: "2.0");
+            var latestUpdate = GetPackage("A", version: "3.0");
+            Mock.Get(olderUpdate).SetupGet(p => p.Listed).Returns(true);
+            Mock.Get(latestUpdate).SetupGet(p => p.Listed).Returns(true);
+            var repository = new Mock<IPackageRepository>();
+            repository.Setup(r => r.GetPackages()).Returns(new[] { olderUpdate, latestUpdate }.AsQueryable());
+            var projectManager = new Mock<IProjectManager>();
+            projectManager.SetupGet(p => p.SourceRepository).Returns(repository.Object);
+            var webProjectManager = new WebProjectManager(projectManager.Object, @"x:\");
+
+            var update = webProjectManager.GetUpdate(installed);
+
+            Assert.Same(latestUpdate, update);
+        }
+
+        [Fact]
+        public void CollapseVersionsPreservesPackageOrderAndSelectsHighestVersion()
+        {
+            var first = GetPackage("B", version: "1.0");
+            var latest = GetPackage("B", version: "3.0");
+            var intermediate = GetPackage("B", version: "2.0");
+            var second = GetPackage("A");
+            var packages = new[] { first, latest, intermediate, second };
+            foreach (var package in packages)
+            {
+                Mock.Get(package).SetupGet(p => p.IsLatestVersion).Returns(true);
+            }
+
+            var collapsed = WebProjectManager.CollapseVersions(packages.AsQueryable());
+
+            Assert.Equal(new[] { latest, second }, collapsed);
         }
 
         private static IPackageRepository GetRepository()

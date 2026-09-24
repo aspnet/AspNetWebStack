@@ -57,7 +57,7 @@ namespace System.Web.Routing
 
             // Assert
             var attributeRoutes = GetAttributeRoutes(routes);
-            Assert.Equal(1, attributeRoutes.Count);
+            Assert.Single(attributeRoutes);
             Route route = (Route)attributeRoutes.Single();
 
             Assert.Equal("fruits/{apple}", route.Url);
@@ -97,7 +97,7 @@ namespace System.Web.Routing
 
             // Assert
             var attributeRoutes = GetAttributeRoutes(routes);
-            Assert.Equal(1, attributeRoutes.Count);
+            Assert.Single(attributeRoutes);
 
             Route route = (Route)attributeRoutes.Single();
             Assert.Equal("prefpref/getme", route.Url);
@@ -128,7 +128,7 @@ namespace System.Web.Routing
 
             // Assert
             var attributeRoutes = GetAttributeRoutes(routes);
-            Assert.Equal(1, attributeRoutes.Count);
+            Assert.Single(attributeRoutes);
 
             Route route = (Route)attributeRoutes.Single();
 
@@ -151,7 +151,7 @@ namespace System.Web.Routing
 
             // Assert
             var attributeRoutes = GetAttributeRoutes(routes);
-            Assert.Equal(1, attributeRoutes.Count);
+            Assert.Single(attributeRoutes);
 
             Route route = (Route)attributeRoutes.Single();
 

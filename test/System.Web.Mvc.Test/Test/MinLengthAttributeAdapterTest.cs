@@ -25,7 +25,7 @@ namespace System.Web.Mvc.Test
             // Assert
             ModelClientValidationRule rule = Assert.Single(rules);
             Assert.Equal("minlength", rule.ValidationType);
-            Assert.Equal(1, rule.ValidationParameters.Count);
+            Assert.Single(rule.ValidationParameters);
             Assert.Equal(6, rule.ValidationParameters["min"]);
             Assert.Equal("The field Length must be a string or array type with a minimum length of '6'.", rule.ErrorMessage);
         }
@@ -48,7 +48,7 @@ namespace System.Web.Mvc.Test
             // Assert
             ModelClientValidationRule rule = Assert.Single(rules);
             Assert.Equal("minlength", rule.ValidationType);
-            Assert.Equal(1, rule.ValidationParameters.Count);
+            Assert.Single(rule.ValidationParameters);
             Assert.Equal(2, rule.ValidationParameters["min"]);
             Assert.Equal("Array must have at least 2 items.", rule.ErrorMessage);
         }

@@ -18,11 +18,11 @@ namespace System.Web.Mvc.Async.Test
             {
                 if (premature)
                 {
-                    Assert.True(false, "Event fired too early!");
+                    Assert.Fail("Event fired too early!");
                 }
                 if (eventFired)
                 {
-                    Assert.True(false, "Event fired multiple times.");
+                    Assert.Fail("Event fired multiple times.");
                 }
 
                 Assert.Equal(ops, sender);

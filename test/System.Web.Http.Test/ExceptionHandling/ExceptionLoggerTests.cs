@@ -242,7 +242,7 @@ namespace System.Web.Http.ExceptionHandling
             Assert.True(data.Contains(ExceptionLogger.LoggedByKey));
             object updatedLoggedBy = data[ExceptionLogger.LoggedByKey];
             Assert.Same(loggedBy, updatedLoggedBy);
-            Assert.Equal(1, loggedBy.Count);
+            Assert.Single(loggedBy);
         }
 
         [Fact]

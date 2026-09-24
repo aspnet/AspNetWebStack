@@ -324,7 +324,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("facebook", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("FB", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);
@@ -341,7 +341,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("microsoft", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("MS", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);
@@ -358,7 +358,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("twitter", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("Tweet", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);
@@ -375,7 +375,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("linkedIn", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("LINKED", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);
@@ -392,7 +392,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("google", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("GOOG", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);
@@ -409,7 +409,7 @@ namespace Microsoft.Web.WebPages.OAuth.Test
 
             // Assert
             Assert.True(data.IsReadOnly);
-            Assert.Equal(1, data.Count);
+            Assert.Single(data);
             Assert.Equal("yahoo", data.First().AuthenticationClient.ProviderName);
             Assert.Equal("YHOO", data.First().DisplayName);
             Assert.Null(data.First().ExtraData);

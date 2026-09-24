@@ -300,7 +300,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(0, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(1, grid.Rows.First()["P1"]);
         }
 
@@ -364,7 +364,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(1, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(4, grid.Rows.First()["P1"]);
         }
 
@@ -380,7 +380,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(0, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(1, grid.Rows.First()["P1"]);
         }
 
@@ -396,7 +396,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(0, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(1, grid.Rows.First()["P1"]);
         }
 
@@ -412,7 +412,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(1, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(4, grid.Rows.First()["P1"]);
         }
 
@@ -428,7 +428,7 @@ namespace System.Web.Helpers.Test
                     new { P1 = 4, P2 = '5', P3 = "6" }
                 });
             Assert.Equal(1, grid.PageIndex);
-            Assert.Equal(1, grid.Rows.Count);
+            Assert.Single(grid.Rows);
             Assert.Equal(4, grid.Rows.First()["P1"]);
         }
 

@@ -132,7 +132,7 @@
     return;
 }
 
-@if (!grid.Rows.Any()) {
+@if (!Enumerable.Any(grid.Rows)) {
     <h3>@PackageManagerResources.NoPackagesFound</h3>
 }
 else {

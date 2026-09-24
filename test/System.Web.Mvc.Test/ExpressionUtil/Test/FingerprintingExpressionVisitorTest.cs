@@ -33,7 +33,7 @@ namespace System.Web.Mvc.ExpressionUtil.Test
                     sb.AppendLine();
                     sb.Append(method);
                 }
-                Assert.True(false, sb.ToString());
+                Assert.Fail(sb.ToString());
             }
         }
 

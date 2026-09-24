@@ -258,7 +258,7 @@ namespace System.Web.Razor.Test.Framework
                 }
                 else
                 {
-                    Assert.True(false, String.Format("\r\n{0}", collector.Message));
+                    Assert.Fail(String.Format("\r\n{0}", collector.Message));
                 }
             }
         }

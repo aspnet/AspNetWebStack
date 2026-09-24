@@ -89,7 +89,7 @@ namespace Microsoft.Web.Mvc.Test
             AsyncManager asyncManager = new AsyncManager(syncContext);
 
             Func<AsyncCallback, IAsyncResult> beginDelegate = cb => { throw new InvalidOperationException("BeginDelegate throws."); };
-            Action<IAsyncResult> endDelegate = ar => { Assert.True(false, "This should never be called."); };
+            Action<IAsyncResult> endDelegate = ar => { Assert.Fail("This should never be called."); };
 
             // Act & assert
             Assert.Throws<InvalidOperationException>(

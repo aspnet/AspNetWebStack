@@ -652,17 +652,26 @@ namespace Microsoft.TestCommon
 
         // Custom ThrowsException so we can filter the stack trace.
         [Serializable]
-        private class ThrowsException : Xunit.Sdk.ThrowsException
+        private class ThrowsException : Xunit.Sdk.XunitException
         {
-            public ThrowsException(Type type) : base(type) { }
+            private readonly string _stackTrace;
 
-            public ThrowsException(Type type, Exception ex) : base(type, ex) { }
+            public ThrowsException(Type type)
+                : base(Xunit.Sdk.ThrowsException.ForNoException(type).Message)
+            {
+            }
+
+            public ThrowsException(Type type, Exception ex)
+                : base(Xunit.Sdk.ThrowsException.ForIncorrectExceptionType(type, ex).Message, ex)
+            {
+                _stackTrace = ex.StackTrace;
+            }
 
             public override string StackTrace
             {
                 get
                 {
-                    return ExceptionUtility.FilterStackTrace(base.StackTrace);
+                    return ExceptionUtility.FilterStackTrace(_stackTrace ?? base.StackTrace);
                 }
             }
         }

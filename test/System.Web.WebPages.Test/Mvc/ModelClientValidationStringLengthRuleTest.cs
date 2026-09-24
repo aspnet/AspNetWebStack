@@ -14,7 +14,7 @@ namespace System.Web.Mvc.Test
             var clientValidationRule = new ModelClientValidationStringLengthRule("Test message", 0, 10);
 
             // Assert
-            Assert.Equal(1, clientValidationRule.ValidationParameters.Count);
+            Assert.Single(clientValidationRule.ValidationParameters);
             Assert.Equal(10, clientValidationRule.ValidationParameters["max"]);
         }
 
@@ -25,7 +25,7 @@ namespace System.Web.Mvc.Test
             var clientValidationRule = new ModelClientValidationStringLengthRule("Test message", 3, Int32.MaxValue);
 
             // Assert
-            Assert.Equal(1, clientValidationRule.ValidationParameters.Count);
+            Assert.Single(clientValidationRule.ValidationParameters);
             Assert.Equal(3, clientValidationRule.ValidationParameters["min"]);
         }
 

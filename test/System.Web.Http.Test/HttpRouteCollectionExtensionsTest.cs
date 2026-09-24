@@ -38,7 +38,7 @@ namespace System.Web.Http
             // Assert
             Assert.NotNull(route);
             Assert.Equal("template", route.RouteTemplate);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("D1", route.Defaults["d1"]);
             Assert.Same(route, routes["name"]);
         }
@@ -56,7 +56,7 @@ namespace System.Web.Http
             // Assert
             Assert.NotNull(route);
             Assert.Equal("template", route.RouteTemplate);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("D1", route.Defaults["d1"]);
             Assert.Same(route, routes["name"]);
         }
@@ -81,9 +81,9 @@ namespace System.Web.Http
             // Assert
             Assert.NotNull(route);
             Assert.Equal("template", route.RouteTemplate);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("D1", route.Defaults["d1"]);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("C1", route.Constraints["c1"]);
             Assert.Same(route, routes["name"]);
         }
@@ -102,9 +102,9 @@ namespace System.Web.Http
             // Assert
             Assert.NotNull(route);
             Assert.Equal("template", route.RouteTemplate);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("D1", route.Defaults["d1"]);
-            Assert.Equal(1, route.Defaults.Count);
+            Assert.Single(route.Defaults);
             Assert.Equal("C1", route.Constraints["c1"]);
             Assert.Same(route, routes["name"]);
         }

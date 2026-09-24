@@ -544,7 +544,7 @@ namespace System.Web.Mvc.Async.Test
                     IAsyncResult asyncResult = AsyncResultWrapper.Begin<object>(
                     callback, null,
                     (innerCallback, callbackState, state) => mockResult,
-                    (ar, state) => { Assert.True(false, "This callback should never execute since we timed out."); },
+                    (ar, state) => { Assert.Fail("This callback should never execute since we timed out."); },
                     null,
                     null, 0);
 

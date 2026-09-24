@@ -19,7 +19,7 @@ namespace System.Web.WebPages.Test
             var template = TemplateStack.GetCurrentTemplate(httpContext);
 
             // Assert
-            Assert.Equal(1, httpContext.Items.Count);
+            Assert.Single(httpContext.Items);
             Assert.Null(template);
         }
 
