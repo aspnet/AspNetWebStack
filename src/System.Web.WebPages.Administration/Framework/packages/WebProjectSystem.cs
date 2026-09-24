@@ -40,6 +40,14 @@ namespace System.Web.WebPages.Administration.PackageManager
             get { return VersionUtility.DefaultTargetFramework; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether assembly binding redirects are supported.
+        /// </summary>
+        public bool IsBindingRedirectSupported
+        {
+            get { return true; }
+        }
+
         public void AddReference(string referencePath, Stream stream)
         {
             // Copy to bin by default
@@ -82,7 +90,7 @@ namespace System.Web.WebPages.Administration.PackageManager
             DeleteFile(GetReferencePath(name));
 
             // Delete the bin directory if this was the last reference
-            if (!GetFiles(BinDir).Any())
+            if (!Enumerable.Any(GetFiles(BinDir, recursive: false)))
             {
                 DeleteDirectory(BinDir);
             }
@@ -172,11 +180,12 @@ namespace System.Web.WebPages.Administration.PackageManager
 
             // Get the name of the existing references 
             // References are stored in the format <add assembly="System.Web.Abstractions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
-            bool existingAssembly = (from item in assemblies.Elements()
-                                     where !String.IsNullOrEmpty(item.GetOptionalAttributeValue("assembly"))
-                                     let assemblyName = new AssemblyName(item.Attribute("assembly").Value).Name
-                                     where String.Equals(assemblyName, references, StringComparison.OrdinalIgnoreCase)
-                                     select item).Any();
+            bool existingAssembly = Enumerable.Any(
+                from item in assemblies.Elements()
+                where !String.IsNullOrEmpty(item.GetOptionalAttributeValue("assembly"))
+                let assemblyName = new AssemblyName(item.Attribute("assembly").Value).Name
+                where String.Equals(assemblyName, references, StringComparison.OrdinalIgnoreCase)
+                select item);
 
             if (!existingAssembly)
             {

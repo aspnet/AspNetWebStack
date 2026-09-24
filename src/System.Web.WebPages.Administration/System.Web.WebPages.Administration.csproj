@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="razorgenerator.directives" />
     <RazorSrcFiles Include="_Layout.cshtml" />
     <RazorSrcFiles Include="Logout.cshtml" />
     <RazorSrcFiles Include="Register.cshtml" />

@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="razorgenerator.directives" />
     <RazorSrcFiles Include="Analytics.cshtml" />
     <RazorSrcFiles Include="FileUpload.cshtml" />
     <RazorSrcFiles Include="GamerCard.cshtml" />
