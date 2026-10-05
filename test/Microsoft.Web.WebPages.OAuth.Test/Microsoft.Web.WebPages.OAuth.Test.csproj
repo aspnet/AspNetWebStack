@@ -42,8 +42,8 @@
       <HintPath>..\..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.20.72.0, Culture=neutral, PublicKeyToken=69f491c39445e920">
-      <HintPath>..\..\packages\Moq.4.20.72\lib\net462\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.21.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920">
+      <HintPath>..\..\packages\Moq.4.21.0\lib\net462\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
