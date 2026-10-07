@@ -23,6 +23,14 @@ variables:
 trigger: [main]
 pr: ['*']
 
+schedules:
+- cron: "0 9 1,15 * *"
+  displayName: "Twice-monthly official build"
+  branches:
+    include:
+    - main
+  always: true
+
 resources:
   repositories:
   # Repo: 1ESPipelineTemplates/1ESPipelineTemplates
